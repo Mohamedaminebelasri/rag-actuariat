@@ -24,7 +24,40 @@ HF_MODEL = "intfloat/multilingual-e5-large"
 HF_API_URL = f"https://router.huggingface.co/hf-inference/models/{HF_MODEL}"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
-st.set_page_config(page_title="Démo en ligne — corpus publics uniquement", page_icon="📄")
+st.set_page_config(page_title="Assistant réglementaire — IFRS 17 & Solvabilité II", page_icon="📄")
+
+st.markdown(
+    """
+    <style>
+    h1, h2, h3, [data-testid="stMarkdownContainer"] h1 {
+        font-family: Georgia, "Times New Roman", serif;
+    }
+    .bandeau-demo {
+        font-size: 0.85rem;
+        color: #6B7280;
+        border-left: 3px solid #1C3C6E;
+        padding: 0.35rem 0.75rem;
+        margin: 0.25rem 0 1.25rem 0;
+        background: #F4F6F9;
+    }
+    .pied-reponse {
+        font-size: 0.8rem;
+        color: #6B7280;
+        margin-top: 0.75rem;
+        font-style: italic;
+    }
+    footer[data-testid="stFooter"] { visibility: hidden; }
+    .footer-app {
+        font-size: 0.75rem;
+        color: #9CA3AF;
+        margin-top: 3rem;
+        border-top: 1px solid #E5E7EB;
+        padding-top: 0.75rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 class HFInferenceEmbeddings(Embeddings):
@@ -90,6 +123,14 @@ def get_secret(key):
         return None
 
 
+def reference_label(norme, page):
+    if norme == "Solvabilité II":
+        return f"Directive Solvabilité II — page {page}"
+    if norme == "IFRS 17":
+        return f"Norme IFRS 17 — page {page}"
+    return f"{norme} — page {page}"
+
+
 def poser_question_cloud(question, vs, k=5):
     hf_token = get_secret("HF_TOKEN")
     groq_key = get_secret("GROQ_API_KEY")
@@ -104,17 +145,17 @@ def poser_question_cloud(question, vs, k=5):
         if status == 429:
             return None, None, "Quota du prototype épuisé — réessayez dans quelques heures."
         if status in (401, 403):
-            return None, None, f"Embeddings HF — HTTP {status} : token HF invalide ou sans les droits requis."
+            return None, None, f"Recherche documentaire indisponible (HTTP {status}) : accès non autorisé."
         body = ""
         try:
             body = e.response.text[:300]
         except Exception:
             pass
-        return None, None, f"Erreur d'embedding (HTTP {status}) : {body or 'réponse vide'}"
+        return None, None, f"Recherche documentaire indisponible (HTTP {status}) : {body or 'réponse vide'}"
     except requests.ConnectionError as e:
-        return None, None, f"Embeddings HF — connexion impossible ({e.__class__.__name__}) : {e}"
+        return None, None, f"Recherche documentaire indisponible (connexion impossible) : {e}"
     except requests.RequestException as e:
-        return None, None, f"Embeddings HF — erreur réseau ({e.__class__.__name__}) : {e}"
+        return None, None, f"Recherche documentaire indisponible (erreur réseau) : {e}"
 
     docs = vs.similarity_search_by_vector(query_vec, k=k)
     ctx = "".join(
@@ -151,8 +192,12 @@ RÉPONSE :"""
 
 # ─────────────────────────── UI ───────────────────────────
 
-st.title("Démo en ligne — corpus publics uniquement")
-st.caption("IFRS 17 & Solvabilité II · retrieval dense · réponses citées, refus si absent des documents")
+st.title("Assistant réglementaire — IFRS 17 & Solvabilité II")
+st.caption("Recherche documentaire avec citation systématique des sources · Démonstration sur corpus publics")
+st.markdown(
+    '<div class="bandeau-demo">Version de démonstration — ne constitue pas un avis actuariel</div>',
+    unsafe_allow_html=True,
+)
 
 vs = load_index()
 
@@ -160,9 +205,9 @@ if "question" not in st.session_state:
     st.session_state.question = ""
 
 EXEMPLES = [
-    ("CSM", "Qu'est-ce que la CSM selon IFRS 17 ?"),
-    ("Comment IFRS 17 définit-il le SCR ?", "Comment IFRS 17 définit-il le SCR ?"),
-    ("Pourquoi le SCR est calibré à 99,9 % ?", "Pourquoi le SCR est calibré à 99,9 % ?"),
+    ("Définition de la CSM", "Qu'est-ce que la CSM selon IFRS 17 ?"),
+    ("Le SCR relève-t-il d'IFRS 17 ?", "Comment IFRS 17 définit-il le SCR ?"),
+    ("Calibrage du SCR à 99,9 % ?", "Pourquoi le SCR est calibré à 99,9 % ?"),
 ]
 
 cols = st.columns(len(EXEMPLES))
@@ -172,15 +217,32 @@ for col, (label, q) in zip(cols, EXEMPLES):
 
 question = st.text_input("Votre question :", key="question")
 
-if st.button("Interroger", type="primary") and question.strip():
-    with st.spinner("Recherche puis génération..."):
+if st.button("Rechercher dans les textes", type="primary") and question.strip():
+    with st.spinner("Recherche dans les textes réglementaires..."):
         reponse, docs, erreur = poser_question_cloud(question, vs)
 
     if erreur:
         st.error(erreur)
     else:
-        st.markdown(reponse)
-        with st.expander("Sources"):
-            for i, d in enumerate(docs, 1):
-                st.markdown(f"**[{i}]** {d.metadata.get('norme', '?')} — page {d.metadata.get('page', '?')}")
+        with st.container(border=True):
+            st.markdown(reponse)
+            st.markdown(
+                '<div class="pied-reponse">Réponse générée à partir des seuls extraits cités ci-dessus</div>',
+                unsafe_allow_html=True,
+            )
+
+        st.markdown("**Références**")
+        for i, d in enumerate(docs, 1):
+            titre = reference_label(d.metadata.get("norme", "?"), d.metadata.get("page", "?"))
+            with st.expander(titre):
                 st.caption(d.page_content[:300] + ("…" if len(d.page_content) > 300 else ""))
+
+st.markdown(
+    """
+    <div class="footer-app">
+    Indexation et recherche documentaire réalisées hors cloud.<br>
+    Prototype développé pour Iconcilio — Mohamed Amine Belasri · 2026
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
