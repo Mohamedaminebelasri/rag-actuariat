@@ -18,7 +18,10 @@ ROOT = Path(__file__).parent
 FAISS_DIR = ROOT / "faiss_multinorme"
 
 HF_MODEL = "intfloat/multilingual-e5-large"
-HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
+# ATTENTION : l'ancien endpoint "api-inference.huggingface.co/models/..."
+# ne résout plus en DNS (0 enregistrement, vérifié le 2026-07-17) — HF a migré
+# vers le "router". Ne pas revenir à l'ancienne URL sans revérifier en DNS.
+HF_API_URL = f"https://router.huggingface.co/hf-inference/models/{HF_MODEL}"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
 st.set_page_config(page_title="Démo en ligne — corpus publics uniquement", page_icon="📄")
@@ -100,9 +103,18 @@ def poser_question_cloud(question, vs, k=5):
         status = e.response.status_code if e.response is not None else None
         if status == 429:
             return None, None, "Quota du prototype épuisé — réessayez dans quelques heures."
-        return None, None, f"Erreur d'embedding (HTTP {status}) — réessayez dans un instant."
-    except requests.RequestException:
-        return None, None, "Service d'embeddings indisponible — réessayez dans un instant."
+        if status in (401, 403):
+            return None, None, f"Embeddings HF — HTTP {status} : token HF invalide ou sans les droits requis."
+        body = ""
+        try:
+            body = e.response.text[:300]
+        except Exception:
+            pass
+        return None, None, f"Erreur d'embedding (HTTP {status}) : {body or 'réponse vide'}"
+    except requests.ConnectionError as e:
+        return None, None, f"Embeddings HF — connexion impossible ({e.__class__.__name__}) : {e}"
+    except requests.RequestException as e:
+        return None, None, f"Embeddings HF — erreur réseau ({e.__class__.__name__}) : {e}"
 
     docs = vs.similarity_search_by_vector(query_vec, k=k)
     ctx = "".join(
