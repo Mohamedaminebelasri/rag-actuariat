@@ -1,0 +1,7 @@
+streamlit
+faiss-cpu
+langchain-community
+langchain-core
+openai
+requests
+numpy

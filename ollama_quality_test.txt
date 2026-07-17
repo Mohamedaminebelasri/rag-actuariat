@@ -1,0 +1,19 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights:  54%|█████▍    | 211/391 [00:00<00:00, 2106.95it/s]Loading weights: 100%|██████████| 391/391 [00:00<00:00, 3648.68it/s]
+====================================================================================================
+Q1: Qu'est-ce que la CSM selon IFRS 17 ?
+Temps : 23.6s
+R1: [IFRS 17 — page 27] La CSM (Cash Shortfall Measure) est la différence positive entre la valeur de marché des flux entrants et les estimations de flux sortants, désactualisés et ajustés pour risques.
+
+====================================================================================================
+Q2: Quel est le taux de TVA des croissants ?
+Temps : 2.5s
+R2: Je ne trouve pas cette information dans les documents fournis.
+
+====================================================================================================
+Q3: Comment IFRS 17 définit-il le SCR ?
+Temps : 10.7s
+R3: [IFRS 17 — page 89]
+
+La norme IFRS 17 définit le SCR (Solvabilité Capital Requirement) comme étant la somme des quantités de chaque sous-module du risque de marché, calculées en fonction des concentrations et des marges associées à chaque sous-module.
+

@@ -1,0 +1,11 @@
+# secrets — jamais commités
+.env
+.streamlit/secrets.toml
+
+# environnement local
+.venv/
+__pycache__/
+*.pyc
+
+# config locale Claude Code
+.claude/
