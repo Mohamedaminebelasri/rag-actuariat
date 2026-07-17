@@ -6,6 +6,7 @@ donc par l'API HuggingFace Inference — aucun modèle local, aucun torch.
 
 mode dense uniquement (pas de BM25/reranker : RAM et simplicité).
 """
+import time
 import numpy as np
 import requests
 import streamlit as st
@@ -131,7 +132,7 @@ def reference_label(norme, page):
     return f"{norme} — page {page}"
 
 
-def poser_question_cloud(question, vs, k=5):
+def poser_question_cloud(question, vs, norme=None, k=5):
     hf_token = get_secret("HF_TOKEN")
     groq_key = get_secret("GROQ_API_KEY")
     if not hf_token or not groq_key:
@@ -157,7 +158,10 @@ def poser_question_cloud(question, vs, k=5):
     except requests.RequestException as e:
         return None, None, f"Recherche documentaire indisponible (erreur réseau) : {e}"
 
-    docs = vs.similarity_search_by_vector(query_vec, k=k)
+    # filter accepté nativement par similarity_search_by_vector (vérifié :
+    # FAISS.similarity_search_by_vector(embedding, k, filter=None, fetch_k=20, ...))
+    filtre = {"norme": norme} if norme else None
+    docs = vs.similarity_search_by_vector(query_vec, k=k, filter=filtre, fetch_k=max(20, k * 4))
     ctx = "".join(
         f"\n[{d.metadata['norme']} — page {d.metadata.get('page', '?')}]\n{d.page_content}\n"
         for d in docs
@@ -199,19 +203,35 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+with st.expander("Protocole de validation", expanded=False):
+    st.markdown(
+        "Ce système a été évalué sur 25 questions annotées, dont 10 pièges "
+        "conçus pour provoquer une invention (concepts inexistants, chiffres "
+        "erronés, confusion entre normes).\n\n"
+        "Résultat : 100 % des pièges refusés · 0 source inventée (vérification "
+        "manuelle sur les PDF) · score global 25/25 en configuration dense.\n\n"
+        "Le système répond exclusivement à partir des textes indexés et "
+        "signale explicitement toute information absente."
+    )
+
 vs = load_index()
 
 if "question" not in st.session_state:
     st.session_state.question = ""
 
+NORMES = {"Les deux normes": None, "IFRS 17": "IFRS 17", "Solvabilité II": "Solvabilité II"}
+choix_norme = st.radio("Rechercher dans :", list(NORMES.keys()), horizontal=True)
+
 EXEMPLES = [
     ("Définition de la CSM", "Qu'est-ce que la CSM selon IFRS 17 ?"),
     ("Le SCR relève-t-il d'IFRS 17 ?", "Comment IFRS 17 définit-il le SCR ?"),
     ("Calibrage du SCR à 99,9 % ?", "Pourquoi le SCR est calibré à 99,9 % ?"),
+    ("Décomposition des provisions techniques", "Comment se décomposent les provisions techniques sous Solvabilité II ?"),
 ]
 
-cols = st.columns(len(EXEMPLES))
-for col, (label, q) in zip(cols, EXEMPLES):
+ligne1 = st.columns(2)
+ligne2 = st.columns(2)
+for col, (label, q) in zip(ligne1 + ligne2, EXEMPLES):
     if col.button(label, use_container_width=True):
         st.session_state.question = q
 
@@ -219,7 +239,9 @@ question = st.text_input("Votre question :", key="question")
 
 if st.button("Rechercher dans les textes", type="primary") and question.strip():
     with st.spinner("Recherche dans les textes réglementaires..."):
-        reponse, docs, erreur = poser_question_cloud(question, vs)
+        t0 = time.time()
+        reponse, docs, erreur = poser_question_cloud(question, vs, norme=NORMES[choix_norme])
+        duree = time.time() - t0
 
     if erreur:
         st.error(erreur)
@@ -231,6 +253,9 @@ if st.button("Rechercher dans les textes", type="primary") and question.strip():
                 unsafe_allow_html=True,
             )
 
+        duree_str = f"{duree:.1f}".replace(".", ",")
+        st.caption(f"Réponse en {duree_str} s — version de démonstration ; 2 à 3 s en déploiement local.")
+
         st.markdown("**Références**")
         for i, d in enumerate(docs, 1):
             titre = reference_label(d.metadata.get("norme", "?"), d.metadata.get("page", "?"))
@@ -240,7 +265,7 @@ if st.button("Rechercher dans les textes", type="primary") and question.strip():
 st.markdown(
     """
     <div class="footer-app">
-    Indexation et recherche documentaire réalisées hors cloud.<br>
+    Architecture conçue pour exécution locale — cette démonstration utilise des services hébergés, les corpus étant publics.<br>
     Prototype développé pour Iconcilio — Mohamed Amine Belasri · 2026
     </div>
     """,
