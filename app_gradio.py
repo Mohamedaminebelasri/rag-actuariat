@@ -1,3 +1,8 @@
+# Expérimentation abandonnée (migration Hugging Face Spaces / ZeroGPU non
+# retenue, on est passé à un déploiement VM Oracle Cloud) — app.py (Streamlit)
+# est la version active. Conservé pour historique, requirements.txt ne le
+# supporte plus (gradio/spaces retirés).
+
 import os
 import sys
 
