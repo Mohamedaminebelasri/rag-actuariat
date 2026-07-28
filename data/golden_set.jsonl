@@ -1,0 +1,50 @@
+{"id": 1, "question": "Combien de temps les autorités ont-elles pour évaluer une acquisition d'assurance ?", "article_attendu": 58, "note": "période d'évaluation, 60 jours"}
+{"id": 2, "question": "Que se passe-t-il si le régulateur ne s'oppose pas à une acquisition dans les délais ?", "article_attendu": 58, "note": "réputée approuvée"}
+{"id": 3, "question": "Quels critères examine-t-on pour approuver le rachat d'un assureur ?", "article_attendu": 59, "note": "réputation, solidité financière, blanchiment"}
+{"id": 4, "question": "Comment évalue-t-on le risque de blanchiment lors d'une acquisition ?", "article_attendu": 59, "note": "motifs de soupçonner blanchiment"}
+{"id": 5, "question": "Quelles obligations quand un assureur est racheté par un établissement de crédit ?", "article_attendu": 60, "note": "acquisitions par entreprises financières réglementées"}
+{"id": 6, "question": "Un assureur doit-il déclarer les changements dans son actionnariat ?", "article_attendu": 61, "note": "information des autorités"}
+{"id": 7, "question": "Une autorité peut-elle transmettre des informations aux banques centrales ?", "article_attendu": 70, "note": "transmission aux banques centrales"}
+{"id": 8, "question": "Quel est le rôle du commissaire aux comptes vis-à-vis du régulateur ?", "article_attendu": 72, "note": "rôle des personnes chargées du contrôle des comptes"}
+{"id": 9, "question": "Le commissaire aux comptes doit-il signaler une violation du SCR au régulateur ?", "article_attendu": 72, "note": "signaler non-respect du capital de solvabilité requis"}
+{"id": 10, "question": "Une compagnie peut-elle faire à la fois de l'assurance vie et non-vie ?", "article_attendu": 73, "note": "exercice simultané interdit avec dérogations"}
+{"id": 11, "question": "Comment séparer la gestion vie et non-vie dans une même compagnie ?", "article_attendu": 74, "note": "gestion distincte"}
+{"id": 12, "question": "Comment valorise-t-on les actifs et passifs d'un assureur ?", "article_attendu": 75, "note": "au montant d'échange dans une transaction normale"}
+{"id": 13, "question": "Pourquoi une compagnie doit-elle constituer des provisions techniques ?", "article_attendu": 76, "note": "engagements envers les preneurs"}
+{"id": 14, "question": "Que représente la valeur des provisions techniques ?", "article_attendu": 76, "note": "montant pour transférer les engagements"}
+{"id": 15, "question": "Comment calcule-t-on les provisions techniques ?", "article_attendu": 77, "note": "somme meilleure estimation + marge de risque"}
+{"id": 16, "question": "Sur quoi se base le calcul de la meilleure estimation ?", "article_attendu": 77, "note": "informations actualisées, méthodes actuarielles"}
+{"id": 17, "question": "Faut-il tenir compte de l'inflation dans les provisions techniques ?", "article_attendu": 78, "note": "inflation des dépenses et des sinistres"}
+{"id": 18, "question": "Comment traiter les garanties financières et options dans les contrats ?", "article_attendu": 79, "note": "valorisation des garanties financières et options"}
+{"id": 19, "question": "Pourquoi le SCR est-il calibré à 99,9% ?", "article_attendu": 101, "note": "PIÈGE faux chiffre : vrai taux 99,5%"}
+{"id": 20, "question": "Le MCR est-il plafonné à 60% du SCR ?", "article_attendu": 129, "note": "PIÈGE faux chiffre : vraies bornes 25%-45%. Connu difficile au retrieval."}
+{"id": 21, "question": "Le SCR est-il calibré sur un horizon de 5 ans ?", "article_attendu": 101, "note": "PIÈGE faux chiffre : vrai horizon 1 an"}
+{"id": 22, "question": "Quelles informations sur le capital une compagnie doit-elle inclure dans son rapport annuel de solvabilité ?", "article_attendu": 51, "note": "structure/montant capital, SCR, MCR, option art.304, écarts"}
+{"id": 23, "question": "Une compagnie peut-elle refuser de publier une information dans son rapport de solvabilité et sous quelles conditions ?", "article_attendu": 53, "note": "avantage indu aux concurrents, confidentialité"}
+{"id": 24, "question": "Combien de temps une compagnie a-t-elle pour publier un écart au MCR non résolu, et est-ce le même délai que pour le SCR ?", "article_attendu": 54, "note": "PIÈGE multi-hop : MCR = 1 mois puis publication à 3 mois ; SCR = 2 mois puis publication à 6 mois — délais différents"}
+{"id": 25, "question": "Qui doit approuver le rapport sur la solvabilité avant sa publication ?", "article_attendu": 55, "note": "organe d'administration, de gestion ou de contrôle"}
+{"id": 26, "question": "Le rapport de solvabilité doit-il être publié tous les six mois ?", "article_attendu": 51, "note": "PIÈGE faux chiffre : c'est annuel, pas semestriel — le système doit corriger"}
+{"id": 27, "question": "Que fait une autorité de contrôle des informations sur les exigences de capital supplémentaire qu'elle reçoit ?", "article_attendu": 52, "note": "transmission annuelle au CECAPP"}
+{"id": 28, "question": "À partir de quel seuil de participation une acquisition dans un assureur doit-elle être notifiée aux autorités ?", "article_attendu": 57, "note": "seuils 20%, 30%, 50%"}
+{"id": 29, "question": "L'article sur les acquisitions qualifiées traite-t-il du calcul du capital de solvabilité requis ?", "article_attendu": 57, "note": "PIÈGE mauvais sujet : l'article 57 traite des acquisitions, pas du calcul du SCR (articles 100-127)"}
+{"id": 30, "question": "Quelles exigences pèsent sur une entreprise qui souhaite garder confidentielle une partie de son rapport de solvabilité ?", "article_attendu": 53, "note": "doit indiquer et expliquer la raison de non-publication"}
+{"id": 31, "question": "Une compagnie peut-elle publier volontairement des informations non exigées sur sa solvabilité ?", "article_attendu": 54, "note": "publication spontanée, paragraphe 2"}
+{"id": 32, "question": "Avec quelle probabilité une compagnie ne doit-elle pas faire faillite selon le SCR ?", "article_attendu": 101, "note": "reformulation éloignée : 99,5% VaR à horizon 1 an"}
+{"id": 33, "question": "Le SCR de base couvre-t-il aussi le risque de réputation ?", "article_attendu": 101, "note": "PIÈGE : le risque opérationnel EXCLUT explicitement réputation et décisions stratégiques"}
+{"id": 34, "question": "Quels sont les 6 risques minimums couverts par le SCR ?", "article_attendu": 101, "note": "non-vie, vie, santé, marché, crédit, opérationnel"}
+{"id": 35, "question": "À quelle fréquence une compagnie doit-elle recalculer son SCR si son profil de risque change fortement ?", "article_attendu": 102, "note": "sans délai, pas seulement 1x/an"}
+{"id": 36, "question": "Une compagnie peut-elle changer de modèle de calcul du SCR tous les mois selon son humeur ?", "article_attendu": 102, "note": "PIÈGE ironique : au moins 1x/an, + recalcul si écart significatif"}
+{"id": 37, "question": "De quels 3 éléments la formule standard du SCR est-elle la somme ?", "article_attendu": 103, "note": "SCR de base + risque opérationnel + ajustement provisions/impôts différés"}
+{"id": 38, "question": "Le risque de crédit fait-il partie des modules du SCR de base ?", "article_attendu": 104, "note": "PIÈGE terminologique : c'est 'risque de contrepartie', formulation proche mais différente"}
+{"id": 39, "question": "Sur quelle mesure statistique chaque module de risque du SCR est-il calibré individuellement ?", "article_attendu": 104, "note": "VaR 99,5% à horizon 1 an, comme le SCR global (art.101)"}
+{"id": 40, "question": "Le module marché du SCR prend-il en compte le risque de change ?", "article_attendu": 105, "note": "oui, sous-module risque de change"}
+{"id": 41, "question": "Qu'est-ce qui limite l'ajustement symétrique du risque actions à ne pas dépasser un certain écart ?", "article_attendu": 106, "note": "plafond de 10 points de pourcentage par rapport à l'exigence standard"}
+{"id": 42, "question": "L'exigence de capital pour risque opérationnel peut-elle représenter plus de 30% du SCR de base ?", "article_attendu": 107, "note": "PIÈGE faux : non, plafonnée à 30% max"}
+{"id": 43, "question": "Combien de temps les autorités ont-elles pour approuver un modèle interne de calcul du SCR ?", "article_attendu": 112, "note": "6 mois après réception de la demande complète"}
+{"id": 44, "question": "Une compagnie qui a un modèle interne approuvé peut-elle revenir librement à la formule standard quand elle veut ?", "article_attendu": 117, "note": "PIÈGE faux : non, seulement circonstances justifiées + approbation autorités"}
+{"id": 45, "question": "Que se passe-t-il si une compagnie ne respecte plus les critères de son modèle interne approuvé ?", "article_attendu": 118, "note": "plan de retour à conformité, sinon retour forcé à la formule standard"}
+{"id": 46, "question": "À quelle fréquence les données du modèle interne doivent-elles être mises à jour ?", "article_attendu": 121, "note": "au moins une fois par an"}
+{"id": 47, "question": "Entre quelles bornes le minimum de capital requis doit-il se situer par rapport au SCR ?", "article_attendu": 129, "note": "bornes 25%-45% du SCR, article 129 §3 — historiquement difficile au retrieval"}
+{"id": 48, "question": "Le MCR peut-il descendre en dessous d'un montant absolu minimum, même si 25% du SCR est plus bas ?", "article_attendu": 129, "note": "planchers absolus par type d'activité (2,2M/3,2M/1M EUR), article 129 §1(d), s'appliquent sans préjudice des bornes 25-45%"}
+{"id": 49, "question": "Selon quelle fréquence une compagnie doit-elle calculer et notifier son MCR aux autorités ?", "article_attendu": 129, "note": "CORRIGÉ : au moins une fois PAR TRIMESTRE (§4), pas l'article 130 comme supposé initialement"}
+{"id": 50, "question": "Le MCR est-il calculé selon la même formule standard complexe que le SCR ?", "article_attendu": 129, "note": "CORRIGÉ : non, fonction LINÉAIRE simple (provisions techniques, primes, capital sous risque, impôts différés, dépenses admin) — article 129 §2, pas 130"}

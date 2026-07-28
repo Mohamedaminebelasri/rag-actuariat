@@ -1,0 +1,8 @@
+{"id": 1, "question": "Comment calcule-t-on le SCR ?", "article_attendu": 101, "note": "SCR = capital de solvabilité requis"}
+{"id": 2, "question": "Quelles sont les bornes du MCR ?", "article_attendu": 129, "note": "MCR = minimum de capital requis, absent du corpus tel quel"}
+{"id": 3, "question": "Qu'est-ce que l'ORSA ?", "article_attendu": 45, "note": "ORSA = évaluation interne des risques et de la solvabilité, absent du corpus"}
+{"id": 4, "question": "Comment calcule-t-on la BE ?", "article_attendu": 77, "note": "BE = meilleure estimation (best estimate), absent du corpus"}
+{"id": 5, "question": "Comment valorise-t-on les PT ?", "article_attendu": 76, "note": "PT = provisions techniques, absent du corpus tel quel"}
+{"id": 6, "question": "Que doit contenir le SFCR ?", "article_attendu": 51, "note": "SFCR = rapport sur la solvabilité et la situation financière, absent du corpus"}
+{"id": 7, "question": "Quels facteurs utiliser pour classer les FP par niveau ?", "article_attendu": 93, "note": "FP = fonds propres"}
+{"id": 8, "question": "Sur quelle VaR se base le calibrage du capital réglementaire ?", "article_attendu": 101, "note": "VaR = valeur à risque, absent du corpus tel quel"}

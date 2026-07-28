@@ -1,51 +1,110 @@
-import re
-from pathlib import Path
-from collections import Counter
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
+import json
+import os
+import time
 
-ROOT = Path(__file__).parent.parent
-CORPUS = [("ifrs17.pdf", "IFRS 17"), ("solva2.pdf", "Solvabilité II")]
+import faiss
+import numpy as np
+import torch
+from sentence_transformers import SentenceTransformer
 
+ARTICLES_PATH = "data/articles.jsonl"
+INDEX_DIR = "faiss_solva2"
+INDEX_PATH = os.path.join(INDEX_DIR, "index.faiss")
+MAPPING_PATH = os.path.join(INDEX_DIR, "mapping.json")
 
-def clean_page(text):
-    """Recolle les césures du JO européen (soft-hyphen \xad avant retour à la
-    ligne, ex: 'assu\xad\nrance' -> 'assurance') et normalise les espaces
-    insécables \xa0. Ne touche pas aux \n/\n\n : le splitter s'appuie dessus."""
-    text = re.sub(r"(\w)\xad\s*\n?\s*(\w)", r"\1\2", text)
-    text = text.replace("\xad", "")
-    text = text.replace("\xa0", " ")
-    return text
+MODEL_NAME = "Shitao/bge-m3"  # miroir safetensors du même modèle que BAAI/bge-m3
+BATCH_SIZE = 8
 
 
-docs = []
-for fichier, norme in CORPUS:
-    pages = PyPDFLoader(str(ROOT / "data" / fichier)).load()
-    for p in pages:
-        p.metadata["norme"] = norme
-        p.page_content = clean_page(p.page_content)
-    docs.extend(pages)
-    print(f"✅ {norme:<16} {len(pages)} pages")
+def load_articles():
+    articles = []
+    with open(ARTICLES_PATH, encoding="utf-8") as f:
+        for line in f:
+            articles.append(json.loads(line))
+    return articles
 
-chunks = RecursiveCharacterTextSplitter(
-    chunk_size=512, chunk_overlap=150,
-    separators=["\n\n", "\n", ".", " "]
-).split_documents(docs)
 
-print(f"\n✅ {len(chunks)} chunks")
-for n, c in Counter(c.metadata["norme"] for c in chunks).items():
-    print(f"   {n:<16} {c}")
+def build_index():
+    articles = load_articles()
+    print(f"Articles chargés : {len(articles)} (cible 312)")
 
-print("\n⏳ Chargement e5-large (~15s)...")
-emb = HuggingFaceEmbeddings(
-    model_name="intfloat/multilingual-e5-large",
-    model_kwargs={"device": "cuda"},
-    encode_kwargs={"normalize_embeddings": True},
-)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Device utilisé : {device}")
 
-print("⏳ Vectorisation...")
-vs = FAISS.from_documents(chunks, emb)
-vs.save_local(str(ROOT / "faiss_multinorme"))
-print(f"✅ Index : {vs.index.ntotal} vecteurs · {vs.index.d} dim")
+    model = SentenceTransformer(MODEL_NAME, device=device)
+    model.max_seq_length = 1024
+
+    texts = [f"{a['titre']}\n{a['texte']}" for a in articles]
+
+    t0 = time.perf_counter()
+    embeddings = model.encode(
+        texts,
+        batch_size=BATCH_SIZE,
+        normalize_embeddings=True,
+        show_progress_bar=False,
+        convert_to_numpy=True,
+    )
+    encode_time = time.perf_counter() - t0
+
+    embeddings = embeddings.astype(np.float32)
+    dim = embeddings.shape[1]
+
+    index = faiss.IndexFlatIP(dim)
+    index.add(embeddings)
+
+    os.makedirs(INDEX_DIR, exist_ok=True)
+    faiss.write_index(index, INDEX_PATH)
+
+    mapping = [
+        {"numero_article": a["numero_article"], "titre": a["titre"], "texte": a["texte"]}
+        for a in articles
+    ]
+    with open(MAPPING_PATH, "w", encoding="utf-8") as f:
+        json.dump(mapping, f, ensure_ascii=False)
+
+    index_size = os.path.getsize(INDEX_PATH)
+    mapping_size = os.path.getsize(MAPPING_PATH)
+
+    print(f"\nNombre de vecteurs : {index.ntotal}")
+    print(f"Dimension : {dim}")
+    print(f"Temps d'encodage des {len(articles)} articles : {encode_time:.1f} s")
+    print(f"Fichier {INDEX_PATH} : {index_size / 1024:.0f} Ko")
+    print(f"Fichier {MAPPING_PATH} : {mapping_size / 1024:.0f} Ko")
+
+    del model
+    if device == "cuda":
+        torch.cuda.empty_cache()
+
+
+def verify():
+    print("\n--- VÉRIFICATION : rechargement depuis le disque ---")
+    index = faiss.read_index(INDEX_PATH)
+    with open(MAPPING_PATH, encoding="utf-8") as f:
+        mapping = json.load(f)
+
+    print(f"Index rechargé : {index.ntotal} vecteurs, dimension {index.d}")
+    print(f"Mapping rechargé : {len(mapping)} entrées")
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = SentenceTransformer(MODEL_NAME, device=device)
+    model.max_seq_length = 1024
+
+    question = "Comment calcule-t-on le minimum de capital requis ?"
+    q_emb = model.encode([question], normalize_embeddings=True, convert_to_numpy=True).astype(np.float32)
+    scores, idxs = index.search(q_emb, 5)
+
+    print(f"\nQuestion test : \"{question}\"")
+    for rank, (idx, score) in enumerate(zip(idxs[0], scores[0]), start=1):
+        entry = mapping[idx]
+        print(f"  {rank}. Article {entry['numero_article']} — \"{entry['titre']}\" (score={score:.4f})")
+
+    top1 = mapping[idxs[0][0]]
+    if top1["numero_article"] == 129:
+        print("\n=> VÉRIFICATION OK : Article 129 en rang 1.")
+    else:
+        print(f"\n=> VÉRIFICATION ÉCHOUÉE : rang 1 = Article {top1['numero_article']}, pas 129.")
+
+
+if __name__ == "__main__":
+    build_index()
+    verify()

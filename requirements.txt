@@ -1,7 +1,9 @@
-streamlit
-faiss-cpu
-langchain-community
-langchain-core
-openai
-requests
-numpy
+gradio==6.20.0
+spaces==0.51.1
+sentence-transformers==5.6.0
+torch==2.8.0
+faiss-cpu==1.14.3
+rank-bm25==0.2.2
+openai==2.45.0
+python-dotenv==1.2.2
+numpy==2.2.6

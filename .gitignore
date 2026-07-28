@@ -6,6 +6,11 @@
 .venv/
 __pycache__/
 *.pyc
+.hf_cache/
+
+# logs et scripts jetables
+*_output.txt
+scratch_*.py
 
 # config locale Claude Code
 .claude/
