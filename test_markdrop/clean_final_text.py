@@ -7,7 +7,7 @@
 # ------------------------------------------------------------------
 """clean_final_text.py — Corrige 3 problèmes de texte confirmés par
 detect_anomalies.py sur chunks_avec_metadata.json, SANS toucher à
-chemin_hierarchique, pages ni annee_document :
+pages ni annee_document :
 
 1. PUA résiduel en tête du "titre" des sous-chunks bullet-titre (51 cas
    détectés) — RÉGRESSION : enrichir_avec_texte_integral
@@ -16,6 +16,12 @@ chemin_hierarchique, pages ni annee_document :
    par retype_bullet_headers.py. Corrigé ici avec EXACTEMENT la même
    fonction (commence_par_puce_pua + retirer_puce, importées, pas
    réécrites), réappliquée pour de bon sur le champ "titre" final.
+   ATTACHÉ À CETTE MÊME CORRECTION (pas un 4e bug séparé) : le dernier
+   segment de "chemin_hierarchique" (construit dans attach_metadata.py à
+   partir du "titre" encore non nettoyé à ce moment-là, cf.
+   construire_chemin_final) porte la même puce résiduelle — corrigé ici
+   en repropageant le titre déjà nettoyé sur ce dernier segment,
+   jamais recalculé depuis zéro.
 
 2. PUA résiduel À L'INTÉRIEUR du corps du texte (12 cas détectés) — des
    puces décoratives qui n'ont jamais été des SECTION_HEADER, donc jamais
@@ -105,6 +111,17 @@ def nettoyer_titre_bullet(titre):
     return titre
 
 
+def nettoyer_dernier_segment_chemin(chemin_hierarchique, titre_propre):
+    """Remplace le DERNIER segment (" > "-délimité) de chemin_hierarchique
+    par `titre_propre` — jamais un recalcul complet, juste la même
+    correction que nettoyer_titre_bullet propagée au segment qui, par
+    construction (construire_chemin_final, attach_metadata.py), est
+    exactement ce même titre encore sale à ce moment-là de la chaîne."""
+    segments = chemin_hierarchique.split(" > ")
+    segments[-1] = titre_propre
+    return " > ".join(segments)
+
+
 def nettoyer_pua_corps(texte):
     """Bug #2 : retire tout caractère PUA isolé (+ l'espace qui le suit
     immédiatement, s'il y en a) où qu'il apparaisse dans le texte."""
@@ -145,6 +162,9 @@ def main():
             titre_apres = nettoyer_titre_bullet(titre_avant)
             if titre_apres != titre_avant:
                 nouveau["titre"] = titre_apres
+                nouveau["chemin_hierarchique"] = nettoyer_dernier_segment_chemin(
+                    nouveau["chemin_hierarchique"], titre_apres
+                )
                 log.append({
                     "chunk": id_log, "type": "PUA-titre",
                     "avant": titre_avant, "apres": titre_apres,
