@@ -57,6 +57,21 @@ DÉCISIONS PRISES ICI (documentées aussi dans DECISIONS.md) :
 Réutilise TELS QUELS les clients/fonctions déjà configurés dans
 recherche_collections.py (encoder_bge, encoder_cohere, get_client_qdrant)
 — pas recréés différemment.
+
+4. **Filtres disponibles (Décision 047, Phase 2)** — `_construire_filtre`
+   (filtre Qdrant natif, avant fusion/reranking) sur "year" (int, Décision
+   032) et "company_name" (str, Décision 047), combinables (ET logique) ou
+   omis (recherche sur tout le corpus). 4 modes, tous documentés dans
+   DECISIONS.md Décision 047 :
+   - Mode 1 — global : `fusionner_candidats(question)` (défauts).
+   - Mode 2 — filtre entreprise : `fusionner_candidats(question, company_name="Groupama")`.
+   - Mode 3 — filtre année : `fusionner_candidats(question, annee=2025)`.
+   - Mode 4 — comparatif (2+ entreprises, résultats groupés PAR entreprise,
+     jamais fusionnés entre elles) : `fusionner_candidats_comparatif(question, ["Groupama", "X"])`.
+   `pipeline_complet*` (avec reranking LLM) accepte les mêmes paramètres
+   `annee`/`company_name` que `fusionner_candidats`, transmis tels quels.
+   Index de payload Qdrant sur "company_name"/"year" : `creer_index_payload.py`
+   (idempotent, vérifié — relançable sans risque après une réindexation).
 """
 
 import base64
@@ -79,6 +94,8 @@ TOP_K_FINAL = 5            # nb de résultats retournés APRÈS reranking
 
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 GEMINI_MODELE = "gemini-flash-latest"  # même config que src/rag.py (projet principal)
+
+from qdrant_client.http.models import Filter, FieldCondition, MatchValue
 
 import chemins_visuels as cv
 from recherche_collections import get_client_qdrant, encoder_bge, encoder_cohere
@@ -118,16 +135,24 @@ def _charger_chunks_indexables():
 #    candidats {id, type, payload, rang} (rang 1-indexé, ordre Qdrant).
 # ---------------------------------------------------------------------
 
-def _filtre_annee(annee):
-    """Filtre Qdrant natif sur year, ou None si `annee` n'est
-    pas précisé (comportement inchangé : recherche sur toutes les années
-    présentes dans la collection, cf. Décision 032). Filtre NATIF (passé
-    à query_points/Prefetch), jamais un post-traitement après coup — la
-    limite top_k s'applique alors réellement APRÈS filtrage, pas avant."""
-    if annee is None:
+def _construire_filtre(annee=None, company_name=None):
+    """Filtre Qdrant natif combinant year (Décision 032) et company_name
+    (Décision 047), en ET logique quand les deux sont précisés — None si
+    aucun des deux ne l'est (comportement inchangé : recherche sur tout le
+    corpus, toutes années/entreprises confondues). Filtre NATIF (passé à
+    query_points/Prefetch), jamais un post-traitement après coup — la
+    limite top_k s'applique alors réellement APRÈS filtrage, pas avant.
+    `_filtre_annee` était le nom d'origine (year seul) — généralisé ici
+    plutôt que dupliqué à côté, tous les appelants existants continuent de
+    fonctionner en ne passant que `annee`."""
+    conditions = []
+    if annee is not None:
+        conditions.append(FieldCondition(key="year", match=MatchValue(value=annee)))
+    if company_name is not None:
+        conditions.append(FieldCondition(key="company_name", match=MatchValue(value=company_name)))
+    if not conditions:
         return None
-    from qdrant_client.http.models import Filter, FieldCondition, MatchValue
-    return Filter(must=[FieldCondition(key="year", match=MatchValue(value=annee))])
+    return Filter(must=conditions)
 
 
 def _points_vers_candidats(points, type_collection, prefixe_id):
@@ -143,27 +168,27 @@ def _points_vers_candidats(points, type_collection, prefixe_id):
     return candidats
 
 
-def rechercher_texte_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None):
+def rechercher_texte_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None, company_name=None):
     vecteur = encoder_bge(question)
     reponse = get_client_qdrant().query_points(
         collection_name="texte", query=vecteur, using="dense", limit=top_k,
-        query_filter=_filtre_annee(annee),
+        query_filter=_construire_filtre(annee, company_name),
     )
     return _points_vers_candidats(reponse.points, "texte", "texte")
 
 
-def rechercher_tableaux_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None):
+def rechercher_tableaux_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None, company_name=None):
     """UNE SEULE liste pour "tableaux" (cf. point 2 de la documentation du
     module) — construite par fusion RRF NATIVE Qdrant des 2 vecteurs
     "texte" (BGE-M3) et "image" (Cohere Embed v4), pas un choix arbitraire
-    entre les deux. Filtre annee appliqué à CHAQUE Prefetch (chacun est
-    une sous-requête vectorielle indépendante) ET au niveau top (RRF sur
-    le résultat déjà filtré des 2 sous-requêtes)."""
+    entre les deux. Filtre (annee/company_name) appliqué à CHAQUE Prefetch
+    (chacun est une sous-requête vectorielle indépendante) ET au niveau top
+    (RRF sur le résultat déjà filtré des 2 sous-requêtes)."""
     from qdrant_client.http.models import Prefetch, RrfQuery, Rrf
 
     vecteur_texte = encoder_bge(question)
     vecteur_image = encoder_cohere(question)
-    filtre = _filtre_annee(annee)
+    filtre = _construire_filtre(annee, company_name)
     reponse = get_client_qdrant().query_points(
         collection_name="tableaux",
         prefetch=[
@@ -178,20 +203,20 @@ def rechercher_tableaux_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=
     return _points_vers_candidats(reponse.points, "tableau", "tableaux")
 
 
-def rechercher_images_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None):
+def rechercher_images_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None, company_name=None):
     vecteur = encoder_cohere(question)
     reponse = get_client_qdrant().query_points(
         collection_name="images", query=vecteur, using="image", limit=top_k,
-        query_filter=_filtre_annee(annee),
+        query_filter=_construire_filtre(annee, company_name),
     )
     return _points_vers_candidats(reponse.points, "image", "images")
 
 
-def rechercher_qrt_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None):
+def rechercher_qrt_pour_fusion(question, top_k=TOP_K_PAR_COLLECTION, annee=None, company_name=None):
     vecteur = encoder_cohere(question)
     reponse = get_client_qdrant().query_points(
         collection_name="qrt", query=vecteur, using="image", limit=top_k,
-        query_filter=_filtre_annee(annee),
+        query_filter=_construire_filtre(annee, company_name),
     )
     return _points_vers_candidats(reponse.points, "page_qrt", "qrt")
 
@@ -218,21 +243,56 @@ def fusionner_rrf(listes_candidats, k=RRF_K):
     return tous
 
 
-def fusionner_candidats(question, top_k_par_collection=TOP_K_PAR_COLLECTION, top_k_apres_fusion=TOP_K_APRES_FUSION, annee=None):
-    """`annee` optionnel (défaut None, comportement inchangé — recherche
-    sur toutes les années présentes) : quand l'année visée par la
-    question est connue (mesure d'un golden set annuel typé), filtre
-    NATIF Qdrant sur year dans les 4 collections (cf.
-    Décision 032) — élimine par construction toute confusion inter-année
-    au niveau de la RECHERCHE, avant même le reranking LLM."""
+def fusionner_candidats(question, top_k_par_collection=TOP_K_PAR_COLLECTION, top_k_apres_fusion=TOP_K_APRES_FUSION,
+                         annee=None, company_name=None):
+    """Modes 1-3 de la recherche filtrée (Décision 047) :
+    - Mode 1 (global) : annee=None, company_name=None (défaut, comportement
+      inchangé) — recherche sur tout le corpus, toutes années/entreprises.
+    - Mode 2 (filtre entreprise) : company_name="Groupama" par ex.
+    - Mode 3 (filtre année) : annee=2025 par ex.
+    - Les deux ensemble filtrent sur les deux à la fois (ET logique, cf.
+      _construire_filtre).
+    Filtre NATIF Qdrant (cf. Décision 032) dans les 4 collections, avant
+    même le reranking LLM — jamais un post-filtrage après coup."""
     listes = [
-        rechercher_texte_pour_fusion(question, top_k_par_collection, annee=annee),
-        rechercher_tableaux_pour_fusion(question, top_k_par_collection, annee=annee),
-        rechercher_images_pour_fusion(question, top_k_par_collection, annee=annee),
-        rechercher_qrt_pour_fusion(question, top_k_par_collection, annee=annee),
+        rechercher_texte_pour_fusion(question, top_k_par_collection, annee=annee, company_name=company_name),
+        rechercher_tableaux_pour_fusion(question, top_k_par_collection, annee=annee, company_name=company_name),
+        rechercher_images_pour_fusion(question, top_k_par_collection, annee=annee, company_name=company_name),
+        rechercher_qrt_pour_fusion(question, top_k_par_collection, annee=annee, company_name=company_name),
     ]
     fusionnes = fusionner_rrf(listes)
     return fusionnes[:top_k_apres_fusion]
+
+
+def fusionner_candidats_comparatif(question, entreprises, top_k_par_collection=TOP_K_PAR_COLLECTION,
+                                    top_k_apres_fusion=TOP_K_APRES_FUSION, annee=None):
+    """Mode 4 — recherche comparative (Décision 047) : lance
+    fusionner_candidats() EN PARALLÈLE pour CHAQUE entreprise de
+    `entreprises` (ThreadPoolExecutor — les appels sont I/O-bound : requêtes
+    HTTP Qdrant + encodage), puis regroupe les résultats PAR ENTREPRISE
+    plutôt que de les fusionner entre eux : {entreprise: candidats_fusionnes}.
+    Une fusion RRF unique entre entreprises mélangerait des résultats
+    destinés à être comparés côte à côte, pas classés ensemble — ce n'est
+    pas ce que "comparer Groupama et X" demande. `annee` optionnel,
+    s'applique à CHAQUE entreprise identiquement (comparaison à année
+    égale)."""
+    import concurrent.futures
+
+    resultats = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(entreprises))) as executor:
+        futures = {
+            executor.submit(
+                fusionner_candidats, question, top_k_par_collection, top_k_apres_fusion,
+                annee=annee, company_name=entreprise,
+            ): entreprise
+            for entreprise in entreprises
+        }
+        for future in concurrent.futures.as_completed(futures):
+            resultats[futures[future]] = future.result()
+    # Ordre stable en sortie (celui de `entreprises`), pas l'ordre
+    # d'achèvement des threads (non déterministe) — important pour tout
+    # affichage/comparaison reproductible côté appelant.
+    return {entreprise: resultats[entreprise] for entreprise in entreprises}
 
 
 # ---------------------------------------------------------------------
@@ -381,25 +441,26 @@ def juger_candidats_llm_openrouter(question, candidats):
 
 
 def pipeline_complet(question, top_k_par_collection=TOP_K_PAR_COLLECTION,
-                      top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL, annee=None):
+                      top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL, annee=None, company_name=None):
     """Fusion RRF (4 collections) puis reranking LLM multimodal (Gemini)
     sur le top des candidats fusionnés — pipeline complet de bout en
     bout. Reranking LLM CHEMIN VALIDÉ, non modifié (cf. Décision 028) ;
-    `annee` (défaut None, comportement inchangé) ajoute UNIQUEMENT un
-    filtre natif Qdrant en amont, au niveau de la recherche (cf.
-    Décision 032) — ne touche pas juger_candidats_llm."""
-    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee)
+    `annee`/`company_name` (défaut None, comportement inchangé) ajoutent
+    UNIQUEMENT un filtre natif Qdrant en amont, au niveau de la recherche
+    (cf. Décisions 032, 047) — ne touche pas juger_candidats_llm."""
+    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee, company_name=company_name)
     reclasses = juger_candidats_llm(question, fusionnes)
     return reclasses[:top_k_final]
 
 
 def pipeline_complet_openrouter(question, top_k_par_collection=TOP_K_PAR_COLLECTION,
-                                 top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL, annee=None):
+                                 top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL,
+                                 annee=None, company_name=None):
     """MÊME pipeline que pipeline_complet (fusion RRF identique, même
     fonction fusionner_candidats), mais reranking via le juge de secours
     OpenRouter au lieu de Gemini — utilisé uniquement pour les questions
     du golden set unifié que Gemini n'a pas pu traiter."""
-    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee)
+    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee, company_name=company_name)
     reclasses = juger_candidats_llm_openrouter(question, fusionnes)
     return reclasses[:top_k_final]
 
@@ -673,19 +734,21 @@ def juger_candidats_llm_claude(question, candidats, modele=CLAUDE_MODELE_JUGE, p
 
 
 def pipeline_complet_claude(question, top_k_par_collection=TOP_K_PAR_COLLECTION,
-                             top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL, annee=None):
+                             top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL,
+                             annee=None, company_name=None):
     """MÊME pipeline que pipeline_complet (fusion RRF identique), mais
     reranking via Claude Haiku 4.5. Retourne (candidats[:top_k_final], cout_usd)."""
-    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee)
+    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee, company_name=company_name)
     reclasses, cout = juger_candidats_llm_claude(question, fusionnes)
     return reclasses[:top_k_final], cout
 
 
 def pipeline_complet_mistral(question, top_k_par_collection=TOP_K_PAR_COLLECTION,
-                              top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL, annee=None):
+                              top_k_apres_fusion=TOP_K_APRES_FUSION, top_k_final=TOP_K_FINAL,
+                              annee=None, company_name=None):
     """MÊME pipeline que pipeline_complet (fusion RRF identique), mais
     reranking via le juge de secours Mistral au lieu de Gemini."""
-    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee)
+    fusionnes = fusionner_candidats(question, top_k_par_collection, top_k_apres_fusion, annee=annee, company_name=company_name)
     reclasses = juger_candidats_llm_mistral(question, fusionnes)
     return reclasses[:top_k_final]
 
@@ -710,7 +773,7 @@ def baseline_meilleur_score_normalise(question, top_k_par_collection=TOP_K_PAR_C
     vecteur_bge = encoder_bge(question)
     vecteur_cohere = encoder_cohere(question)
     client = get_client_qdrant()
-    filtre = _filtre_annee(annee)
+    filtre = _construire_filtre(annee)
 
     reponse_texte = client.query_points(collection_name="texte", query=vecteur_bge, using="dense", limit=top_k_par_collection, query_filter=filtre)
     reponse_tableaux_image = client.query_points(collection_name="tableaux", query=vecteur_cohere, using="image", limit=top_k_par_collection, query_filter=filtre)

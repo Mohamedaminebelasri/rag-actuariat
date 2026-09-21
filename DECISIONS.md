@@ -3056,3 +3056,79 @@ indexation) avec `--pdf`/`--company`/`--type`/`--year` propagés de bout en
 bout. `generation.py` garde le libellé "SFCR Groupama {année}" en dur
 (hors périmètre explicite de cette décision — l'étape 2.4/comparaison
 multi-entreprises y reviendra si besoin).
+
+## Décision 047 — Phase 2, étape 2.4 : filtrage par entreprise/année dans la recherche (4 modes), index de payload
+
+CONTEXTE : suite à la Décision 046 (métadonnées injectées à l'indexation),
+l'étape 2.4 demande le filtrage côté RECHERCHE — 4 modes (global, filtre
+entreprise, filtre année, comparaison multi-entreprises), appliqués aux 4
+collections EN PARALLÈLE avant la fusion RRF, filtre optionnel (comportement
+actuel préservé par défaut), index Qdrant sur company_name/year pour la
+performance.
+
+GÉNÉRALISATION DE `_filtre_annee` (existant, Décision 032) EN
+`_construire_filtre(annee=None, company_name=None)`, dans
+`fusion_reranking.py` — pas une fonction séparée à côté : construit un
+`Filter` Qdrant avec les conditions `year`/`company_name` présentes (ET
+logique si les deux sont donnés), `None` si aucune (recherche non filtrée,
+comportement inchangé). Threadé dans les 4 fonctions `rechercher_*_pour_
+fusion`, `fusionner_candidats`, et les 4 variantes de `pipeline_complet*`
+(Gemini/OpenRouter/Claude/Mistral) — même signature partout
+(`annee=None, company_name=None`), aucun appelant existant cassé (tous les
+nouveaux paramètres sont optionnels, positionnés après les paramètres
+existants).
+
+4 MODES (tous dans `fusion_reranking.py`, documentés dans son docstring de
+module, point 4) :
+1. **Global** — `fusionner_candidats(question)` : aucun changement, filtre
+   `None` comme avant la Décision 032.
+2. **Filtre entreprise** — `fusionner_candidats(question, company_name="Groupama")`.
+3. **Filtre année** — `fusionner_candidats(question, annee=2025)` (déjà
+   existant depuis la Décision 032, inchangé).
+4. **Comparatif (2+ entreprises)** — nouvelle fonction
+   `fusionner_candidats_comparatif(question, entreprises, annee=None)` :
+   lance `fusionner_candidats` EN PARALLÈLE (ThreadPoolExecutor, appels
+   I/O-bound) pour CHAQUE entreprise de la liste, retourne un dict
+   `{entreprise: candidats_fusionnes}` — les résultats sont GROUPÉS PAR
+   ENTREPRISE, jamais fusionnés entre elles (une fusion RRF unique entre
+   entreprises mélangerait des résultats destinés à être comparés côte à
+   côte). Ordre de sortie = ordre de la liste `entreprises` passée en
+   entrée, pas l'ordre d'achèvement des threads (non déterministe).
+
+INDEX DE PAYLOAD : nouveau script `creer_index_payload.py` (pas ajouté à
+`create_collection_*.py`, qui refusent explicitement de toucher une
+collection déjà créée) — crée un index KEYWORD sur `company_name` et
+INTEGER sur `year`, pour les 4 collections. VÉRIFIÉ CONTRE LE SERVEUR LOCAL
+RÉEL (pas supposé) : exécuté 2 fois de suite, aucune erreur au 2e passage,
+les 4 collections confirment les 2 champs indexés après coup (relecture,
+pas juste absence d'exception) — l'idempotence annoncée dans le docstring
+est vérifiée, pas seulement présumée du comportement Qdrant en général.
+
+VÉRIFICATION SANS RÉINDEXATION (les points existants portent encore
+`annee_document`, pas `year`, et n'ont pas `company_name` — la
+réindexation réelle est l'étape 2.5) :
+- `_construire_filtre()` testé sur les 4 combinaisons (aucun filtre,
+  company_name seul, annee seul, les deux) — structure `Filter` correcte
+  dans chaque cas.
+- `rechercher_texte_pour_fusion` interrogé en réel contre le serveur Qdrant
+  local : sans filtre, résultats non vides (3/3) ; avec `company_name=
+  "Groupama"` ou `annee=2025`, 0 résultat — ATTENDU, pas un bug : confirmé
+  en relisant un point brut via l'API Qdrant (`scroll`) que le payload
+  porte encore `annee_document: 2025`, pas `year`, et aucun `company_name`
+  — la migration réelle des données se fait à l'étape 2.5, pas ici.
+- `fusionner_candidats_comparatif` : le chemin réel (Cohere) a buté sur un
+  quota épuisé (clé `COHERE_API_KEY` trial, 1000 appels/mois, déjà
+  documentée comme limite connue dans `recherche_collections.py`) — donc
+  vérifié structurellement à la place (fusionner_candidats stubbé) : les 3
+  entreprises testées sont bien interrogées EN PARALLÈLE (pas séquentiel),
+  chacune reçoit ses propres candidats correctement étiquetés, l'ordre de
+  sortie respecte l'ordre d'entrée malgré un achèvement de threads non
+  déterministe (délai simulé différent par entreprise).
+
+RÉSULTAT : code des 4 modes + index de payload écrits et vérifiés au niveau
+fonction/structure/serveur Qdrant réel (index), mais PAS encore vérifiés de
+bout en bout sur des données réellement filtrables (company_name/year
+absents des points actuels) — c'est l'objet de l'étape 2.5. `generation.py`
+garde le libellé "SFCR Groupama {année}" en dur, pas généralisé ici (hors
+périmètre — n'affecte pas la recherche/le filtrage, seulement l'affichage
+du nom de document dans le prompt de génération finale).
