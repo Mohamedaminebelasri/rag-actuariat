@@ -119,7 +119,7 @@ def _charger_chunks_indexables():
 # ---------------------------------------------------------------------
 
 def _filtre_annee(annee):
-    """Filtre Qdrant natif sur annee_document, ou None si `annee` n'est
+    """Filtre Qdrant natif sur year, ou None si `annee` n'est
     pas précisé (comportement inchangé : recherche sur toutes les années
     présentes dans la collection, cf. Décision 032). Filtre NATIF (passé
     à query_points/Prefetch), jamais un post-traitement après coup — la
@@ -127,7 +127,7 @@ def _filtre_annee(annee):
     if annee is None:
         return None
     from qdrant_client.http.models import Filter, FieldCondition, MatchValue
-    return Filter(must=[FieldCondition(key="annee_document", match=MatchValue(value=annee))])
+    return Filter(must=[FieldCondition(key="year", match=MatchValue(value=annee))])
 
 
 def _points_vers_candidats(points, type_collection, prefixe_id):
@@ -222,7 +222,7 @@ def fusionner_candidats(question, top_k_par_collection=TOP_K_PAR_COLLECTION, top
     """`annee` optionnel (défaut None, comportement inchangé — recherche
     sur toutes les années présentes) : quand l'année visée par la
     question est connue (mesure d'un golden set annuel typé), filtre
-    NATIF Qdrant sur annee_document dans les 4 collections (cf.
+    NATIF Qdrant sur year dans les 4 collections (cf.
     Décision 032) — élimine par construction toute confusion inter-année
     au niveau de la RECHERCHE, avant même le reranking LLM."""
     listes = [

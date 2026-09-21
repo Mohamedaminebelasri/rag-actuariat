@@ -2967,3 +2967,92 @@ json`, `clean_final_text.py` corrigé sur un point réel et documenté sur un
 écart résiduel mineur et sciemment non reproduit (1 mot sur 1 chunk/226).
 Suite : construction de `run_pipeline.py` (orchestrateur complet narratif +
 QRT + indexation), puis validation croisée identique sur le document 2024.
+
+## Décision 046 — Phase 2, étapes 2.1/2.3 : métadonnées multi-documents (company_name/company_type/chapter/section/content_type/page_number/source_file), renommage annee_document -> year
+
+CONTEXTE : Phase 2 demande d'ajouter 9 champs de métadonnées à chaque point
+des 4 collections Qdrant (company_name, company_type, year, chapter,
+chapter_code, section, content_type, page_number, source_file), reportait
+explicitement que "les 4 collections séparées" restent la décision actée
+(cf. Décision 028) — pas de fusion. Reprend et réactive la Décision 030
+(multi-entité explicitement reportée en juillet) : ce chantier l'implémente
+maintenant, à la demande explicite de l'utilisateur.
+
+RENOMMAGE `annee_document` -> `year` : décidé par l'utilisateur (rendu
+cohérent avec le nom demandé par la spec Phase 2, plutôt que de garder le
+nom existant et faire porter l'incohérence de nommage indéfiniment).
+Appliqué dans les 11 fichiers vivants qui utilisaient ce champ (le rename
+touche UNIQUEMENT la clé de payload/dict, pas les noms de variables Python
+internes en français type `ANNEE_DOCUMENT`/`annee` qui restent inchangés,
+ni le comportement de `id_deterministe(annee=...)` qui reste un paramètre
+de salage d'ID indépendant) : `attach_metadata.py` (source du champ, CLI
+`--annee` renommé `--year`), `build_index_texte_bge.py`,
+`build_index_visuels.py`, `associer_visuels_chunks.py`,
+`detect_anomalies.py` (CLI `--annee` renommé `--year`), `clean_final_text.py`
+(docstring), `fusion_reranking.py` (filtre Qdrant `_filtre_annee`),
+`recherche_collections.py` (docstring), `generation.py`, `ingest_qdrant.py`,
+`ingest_qdrant_2024.py`. Les 2 fichiers archivés dans `_historique_dev/`
+(non vivants, exclus du git) n'ont pas été touchés.
+
+POINT D'INJECTION CHOISI : `ingest_qdrant.py`, pas les scripts amont
+(`attach_metadata.py`, `build_index_*.py`), pour 3 des 4 nouveaux champs :
+- `company_name`/`company_type`/`source_file` : constants pour tout un
+  document, n'existaient nulle part en amont — les injecter directement
+  dans `main()`/les 3 fonctions `ingerer_*` évite de modifier 8+ scripts
+  intermédiaires pour faire transiter une valeur qui ne varie jamais au
+  sein d'un même run.
+- `chapter`/`chapter_code`/`section` : DÉRIVÉS de `chemin_hierarchique`,
+  déjà présent tel quel dans les 4 collections (ex. "A. ACTIVITÉ ET
+  RÉSULTATS > A.1. Activité > A.1.1. Informations générales sur le
+  Groupe") — contient déjà les codes de section en clair dans chaque
+  segment. `extraire_chapitre()` réutilise le motif de `parsers._CODE`
+  (importé, pas dupliqué — même heuristique que la détection de chapitre
+  mentionnée dans la spec) sur le DERNIER segment qui porte un code
+  reconnu (pas forcément le tout dernier segment — ex. chemin se terminant
+  par un sous-titre libre non codé, le code du parent le plus proche est
+  utilisé). `section` = 1ère lettre du code. Cas `None` réels et attendus :
+  chunks "SYNTHÈSE" (avant la 1ère section lettrée A-E) et tout contenu QRT
+  (jamais de chemin_hierarchique, rendu pleine page) — pour ce dernier cas,
+  `chapter` vaut explicitement "Annexes QRT" (nom standard SFCR), pas None.
+- `content_type` : littéral selon la collection/le type d'entrée ("text"
+  pour texte, "table" pour tableaux, "image"/"qrt" dérivés de
+  `nom_collection` dans `ingerer_visuels_simple`).
+- `page_number` : `min(pages)` — `pages` (liste) déjà présent n'est ni
+  retiré ni renommé, `page_number` (entier unique, demandé par la spec)
+  s'ajoute à côté.
+
+UN SEUL POINT D'INJECTION POUR LES 4 COLLECTIONS (`enrichir_payload_phase2`,
+appelée dans les 3 fonctions `ingerer_*`) plutôt que 4 branchements
+distincts en amont — cohérent avec le choix de garder les 4 collections
+séparées (Décision 028) mais de partager la logique de métadonnées.
+
+CLI : `ingest_qdrant.py` n'avait aucun argparse (`main()` appelé sans
+argument). Ajouté : `--company`, `--type`, `--year`, `--source-file` (+ les
+paramètres déjà existants de `main()` exposés en CLI : chemins des 3 index,
+comptes attendus, `--verifier-delta-uniquement`). Défauts de
+`--company`/`--type`/`--source-file` = valeurs Groupama 2025 réelles, pour
+que `python ingest_qdrant.py` sans argument garde EXACTEMENT le comportement
+actuel (dont le rappel de `ingest_qdrant_2024.py`, mis à jour pour passer
+`company_name="Groupama", company_type="mutuelle",
+source_file="SFCR_2024_Groupe-Groupama.pdf"` explicitement).
+
+VÉRIFIÉ (fonctions pures, sans toucher au serveur Qdrant réel — la
+vérification contre les 4 collections réelles est prévue à l'étape 2.5,
+lors de la réindexation) : `extraire_chapitre()` testé sur des
+`chemin_hierarchique` réels de `index_texte_bge.json` (entrées 0, 5, 100,
+150, 180, 189) — résultats corrects sur SYNTHÈSE (None), sections A/C/D/E,
+et sur le cas à sous-titre non codé (garde le code du parent le plus
+proche, ex. "C.1.3.1." pour un chemin se terminant par "Gestion du risque
+de cumul", non codé). `enrichir_payload_phase2()` testé sur un cas QRT
+(chapter="Annexes QRT") et un cas texte (chapter="E.1. Fonds propres").
+CLI testée via `--help`, aucune erreur de syntaxe sur les fichiers modifiés.
+
+CE QUI RESTE HORS PÉRIMÈTRE DE CETTE DÉCISION (reporté à l'étape 2.5) : les
+4 scripts non encore revérifiés depuis la restauration (Décision 045) —
+`extraire_visuels.py`, `associer_visuels_chunks.py`,
+`build_index_texte_bge.py`, `build_index_visuels.py` — et la construction
+de `run_pipeline.py`, qui orchestrera l'ensemble (narratif + QRT +
+indexation) avec `--pdf`/`--company`/`--type`/`--year` propagés de bout en
+bout. `generation.py` garde le libellé "SFCR Groupama {année}" en dur
+(hors périmètre explicite de cette décision — l'étape 2.4/comparaison
+multi-entreprises y reviendra si besoin).

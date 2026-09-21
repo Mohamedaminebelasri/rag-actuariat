@@ -77,8 +77,8 @@ def parse_cli():
     p.add_argument("chunks_json", nargs="?",
                     default=str(BASE_DIR / "output_structure_brute" / "chunks_avec_metadata.json"))
     p.add_argument("output_dir", nargs="?", default=str(BASE_DIR / "output_structure_brute"))
-    p.add_argument("--annee", type=int, default=ANNEE_ATTENDUE_DEFAUT,
-                   help="Année attendue pour annee_document (défaut 2025)")
+    p.add_argument("--year", type=int, default=ANNEE_ATTENDUE_DEFAUT,
+                   help="Année attendue pour year (défaut 2025)")
     return p.parse_args()
 
 
@@ -181,8 +181,8 @@ def detecter_metadonnees_incoherentes(indexables):
             if saut_max > SEUIL_SAUT_PAGES:
                 pages_saut_anormal.append(fiche(c, saut_max=saut_max))
 
-        if c.get("annee_document") != ANNEE_ATTENDUE:
-            annee_incoherente.append(fiche(c, annee_document=c.get("annee_document")))
+        if c.get("year") != ANNEE_ATTENDUE:
+            annee_incoherente.append(fiche(c, year=c.get("year")))
 
     return pages_absentes, pages_saut_anormal, annee_incoherente
 
@@ -284,7 +284,7 @@ def detecter_texte_suspect(indexables):
 def main():
     global ANNEE_ATTENDUE
     args = parse_cli()
-    ANNEE_ATTENDUE = args.annee
+    ANNEE_ATTENDUE = args.year
     with open(args.chunks_json, encoding="utf-8") as f:
         chunks = json.load(f)
 

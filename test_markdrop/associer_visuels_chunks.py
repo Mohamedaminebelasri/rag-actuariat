@@ -86,7 +86,7 @@ def main():
             chunks_avec_visuels.append(nouveau)
             continue
 
-        annee = chunk.get("annee_document")
+        annee = chunk.get("year")
         if annee not in mappings_par_annee:
             mappings_par_annee[annee] = cv.charger_mapping_dedup(annee)
         mapping_dedup = mappings_par_annee[annee]

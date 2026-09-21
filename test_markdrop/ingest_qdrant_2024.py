@@ -43,7 +43,7 @@ def snapshot_echantillon_2025(client, n=3):
     (des points insérés entre-temps), donc l'échantillon "après" n'était
     pas les MÊMES points que l'échantillon "avant" : 8 "disparitions"
     signalées à tort, alors qu'un retrieve() direct par ID a confirmé les
-    8 points parfaitement intacts (annee_document=2025). Fix : on fige ici
+    8 points parfaitement intacts (year=2025). Fix : on fige ici
     la LISTE D'IDs via un seul scroll(), puis on relit TOUJOURS ces mêmes
     IDs explicites (retrieve, jamais scroll) pour la comparaison finale."""
     echantillons = {}
@@ -109,6 +109,8 @@ def main():
         n_images_attendu=N_IMAGES_2024,
         n_qrt_attendu=N_QRT_2024,
         verifier_delta_uniquement=True,
+        company_name="Groupama", company_type="mutuelle",
+        source_file="SFCR_2024_Groupe-Groupama.pdf",
     )
 
     print("\n" + "=" * 70)
@@ -118,13 +120,13 @@ def main():
     comparer_echantillons(echantillon_avant, echantillon_apres)
 
     print("\n" + "=" * 70)
-    print("VÉRIFICATION — les points 2024 sont bien retrouvables par filtre annee_document=2024")
+    print("VÉRIFICATION — les points 2024 sont bien retrouvables par filtre year=2024")
     print("=" * 70)
     from qdrant_client.http.models import Filter, FieldCondition, MatchValue
-    filtre_2024 = Filter(must=[FieldCondition(key="annee_document", match=MatchValue(value=2024))])
+    filtre_2024 = Filter(must=[FieldCondition(key="year", match=MatchValue(value=2024))])
     for nom in ("texte", "tableaux", "images", "qrt"):
         n = client.count(collection_name=nom, count_filter=filtre_2024).count
-        print(f"  {nom:10} : {n} point(s) avec annee_document=2024")
+        print(f"  {nom:10} : {n} point(s) avec year=2024")
 
 
 if __name__ == "__main__":

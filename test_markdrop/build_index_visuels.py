@@ -151,7 +151,7 @@ def construire_entrees_tableaux_et_images(occurrences):
             "chemin_hierarchique": chemin_hier,
             "occurrences_narratives": occ,
             "statut_narratif": statut,
-            "annee_document": ANNEE_DOCUMENT,
+            "year": ANNEE_DOCUMENT,
         })
 
     for chemin_png in sorted((cv.RACINE_VISUELS / str(ANNEE_DOCUMENT) / "images").glob("picture_*.png")):
@@ -166,7 +166,7 @@ def construire_entrees_tableaux_et_images(occurrences):
             "chemin_hierarchique": chemin_hier,
             "occurrences_narratives": occ,
             "statut_narratif": statut,
-            "annee_document": ANNEE_DOCUMENT,
+            "year": ANNEE_DOCUMENT,
         })
 
     return entrees
@@ -187,7 +187,7 @@ def construire_entrees_qrt():
             "chemin_hierarchique": None,
             "occurrences_narratives": None,
             "statut_narratif": "hors_texte_narratif",
-            "annee_document": ANNEE_DOCUMENT,
+            "year": ANNEE_DOCUMENT,
         })
     return entrees
 

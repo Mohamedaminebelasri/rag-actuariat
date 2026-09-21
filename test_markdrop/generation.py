@@ -143,10 +143,10 @@ def generer_reponse_claude(question, candidat_gagnant):
     # (seule la formulation générique "rapport réglementaire SFCR
     # Solvabilité II" apparaissait dans le prompt) : le modèle devait
     # deviner/inventer la source depuis le contenu, ce qui produisait
-    # parfois "Solvabilité II" ou la mauvaise année. annee_document est
+    # parfois "Solvabilité II" ou la mauvaise année. year est
     # déjà présent dans le payload (même champ que le filtre Qdrant,
     # cf. fusion_reranking._filtre_annee) -- on l'injecte ici directement.
-    annee_document = candidat_gagnant["payload"].get("annee_document")
+    annee_document = candidat_gagnant["payload"].get("year")
     nom_document = f"SFCR Groupama {annee_document}" if annee_document else "le rapport fourni"
 
     contenu = [{"type": "text", "text":

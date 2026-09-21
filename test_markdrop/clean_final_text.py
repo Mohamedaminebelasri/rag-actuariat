@@ -7,7 +7,7 @@
 # ------------------------------------------------------------------
 """clean_final_text.py — Corrige 3 problèmes de texte confirmés par
 detect_anomalies.py sur chunks_avec_metadata.json, SANS toucher à
-pages ni annee_document :
+pages ni year :
 
 1. PUA résiduel en tête du "titre" des sous-chunks bullet-titre (51 cas
    détectés) — RÉGRESSION : enrichir_avec_texte_integral

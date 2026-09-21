@@ -38,7 +38,7 @@ ici plutôt que corrigé en silence.
 
 Ne modifie ni chunks_finaux.json ni sections_directes.json (lecture seule).
 
-    python attach_metadata.py [chunks_finaux.json] [sections_directes.json] [dossier_sortie] [--annee 2025]
+    python attach_metadata.py [chunks_finaux.json] [sections_directes.json] [dossier_sortie] [--year 2025]
 """
 
 import argparse
@@ -50,7 +50,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 BASE_DIR = Path(__file__).parent
 
-# Isolé et paramétrable en ligne de commande (--annee) : même pipeline
+# Isolé et paramétrable en ligne de commande (--year) : même pipeline
 # réutilisé tel quel pour le document 2024 plus tard, sans toucher au
 # code, juste à l'argument passé.
 ANNEE_DOCUMENT_DEFAUT = 2025
@@ -65,7 +65,7 @@ def parse_cli():
     p.add_argument("sections_directes_json", nargs="?",
                     default=str(BASE_DIR / "output_structure_brute" / "sections_directes.json"))
     p.add_argument("output_dir", nargs="?", default=str(BASE_DIR / "output_structure_brute"))
-    p.add_argument("--annee", type=int, default=ANNEE_DOCUMENT_DEFAUT,
+    p.add_argument("--year", type=int, default=ANNEE_DOCUMENT_DEFAUT,
                     help="Année du document SFCR (défaut : %(default)s)")
     return p.parse_args()
 
@@ -123,14 +123,14 @@ def main():
     # --- Attache des métadonnées : conserve tous les champs existants,
     # met à jour "chemin_hierarchique" (étendu pour les vrais sous-chunks
     # bullet-titre) et "pages" (déjà calculées au bon grain par chunk,
-    # cf. LIMITE CONNUE en tête de module), ajoute "annee_document". ---
+    # cf. LIMITE CONNUE en tête de module), ajoute "year". ---
     chunks_avec_metadata = []
     for chunk in chunks:
         chemin_parent = chemins_parents[chunk["position_header"]]
         nouveau_chunk = dict(chunk)  # copie — ne modifie pas l'entrée d'origine
         nouveau_chunk["chemin_hierarchique"] = construire_chemin_final(chunk, chemin_parent)
         nouveau_chunk["pages"] = chunk["pages"]  # déjà au grain du chunk précis (cf. LIMITE CONNUE)
-        nouveau_chunk["annee_document"] = args.annee
+        nouveau_chunk["year"] = args.year
         chunks_avec_metadata.append(nouveau_chunk)
 
     output_dir = Path(args.output_dir)
@@ -159,7 +159,7 @@ def main():
         print(f"  titre             : {c['titre']!r}")
         print(f"  chemin_hierarchique : {c['chemin_hierarchique']!r}")
         print(f"  pages             : {c['pages']}")
-        print(f"  annee_document    : {c['annee_document']}")
+        print(f"  year              : {c['year']}")
         print(f"  nb_mots           : {c['nb_mots']}")
         print(f"  categorie         : {c['categorie']}")
         print(f"  texte (aperçu)    : {apercu!r}")
@@ -171,7 +171,7 @@ def main():
     print(f"  Chunks avec métadonnées attachées : {len(chunks_avec_metadata)}")
     n_chemin_etendu = sum(1 for c in chunks if est_vrai_sous_chunk_bullet(c))
     print(f"  dont chemin_hierarchique étendu (vrai bullet-titre) : {n_chemin_etendu}")
-    print(f"  Année du document (--annee)  : {args.annee}")
+    print(f"  Année du document (--year)  : {args.year}")
     print(f"\n[export] {len(chunks_avec_metadata)} chunks écrits dans {out_path}")
 
 

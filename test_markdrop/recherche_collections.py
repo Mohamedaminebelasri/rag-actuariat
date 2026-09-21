@@ -155,7 +155,7 @@ def formater_resultats(reponse_qdrant):
 def rechercher_texte(question, top_k=5):
     """Interroge la collection "texte" (190 chunks narratifs) sur le
     vecteur nommé "dense" (BGE-M3, 1024 dim). Payload : chemin_hierarchique,
-    pages, annee_document, position_header/position_origine."""
+    pages, year, position_header/position_origine."""
     vecteur = encoder_bge(question)
     reponse = get_client_qdrant().query_points(
         collection_name="texte", query=vecteur, using="dense", limit=top_k,

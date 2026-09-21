@@ -236,7 +236,7 @@ def main():
             "position_header": chunk["position_header"],
             "chemin_hierarchique": chunk["chemin_hierarchique"],
             "pages": chunk["pages"],
-            "annee_document": chunk["annee_document"],
+            "year": chunk["year"],
             "embedding": embedding.tolist(),
         }
         for chunk, embedding in zip(chunks, embeddings)
@@ -291,7 +291,7 @@ def main():
             "self_ref": t["self_ref"],
             "chemin_hierarchique": chemin_hier,
             "pages": [t["page"]],
-            "annee_document": ANNEE_DOCUMENT,
+            "year": ANNEE_DOCUMENT,
             "embedding": embedding.tolist(),
         })
 
