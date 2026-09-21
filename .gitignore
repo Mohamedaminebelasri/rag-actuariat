@@ -14,3 +14,16 @@ scratch_*.py
 
 # config locale Claude Code
 .claude/
+
+# test_markdrop/ — pipeline SFCR : gros artefacts générés/binaires,
+# jamais le code source (cf. Phase 2, branche phase2-metadonnees-multidoc)
+test_markdrop/.web/
+test_markdrop/.states/
+test_markdrop/docling-models/
+test_markdrop/qdrant_server/
+test_markdrop/output_structure_brute/
+test_markdrop/output_structure_brute_2024/
+test_markdrop/_historique_dev/
+test_markdrop/reflex.lock
+test_markdrop/reflex.log
+test_markdrop/input/*.pdf
