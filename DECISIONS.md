@@ -3559,3 +3559,56 @@ RÉSULTAT : Phase 3 (3.1 à 3.5) terminée sur Groupama — schéma, définition
 extraction (21/22 valeurs), contrôles (30/30), couche de service. Aucun
 fichier du RAG/Qdrant/pipeline SFCR touché sur l'ensemble de la Phase 3,
 conformément à la consigne initiale.
+
+## Décision 054 — Phase 3.6 : validation finale, 5 vérifications manuelles, ajout de 4 méthodes à kpi_service.py
+
+CONTEXTE : dernière passe de vérification demandée avant de considérer la
+Phase 3 close sur Groupama — 5 KPIs recontrôlés indépendamment contre le
+PDF source, rapport de contrôles réaffiché via l'API de service (pas
+juste relu en base), `kpi_service.py` testé avec les noms de méthodes
+réellement attendus par l'utilisateur (`get_kpis`, `compare_kpis`,
+`get_corpus_stats`, `get_validation_report` — absents jusqu'ici,
+ajoutés ici en complément des méthodes existantes, pas en remplacement).
+
+DEUX PRÉCISIONS RÉELLES TROUVÉES EN VÉRIFIANT (aucune ne remet en cause
+une valeur déjà stockée, mais toutes deux auraient pu induire en erreur
+sans être signalées) :
+
+1. **Page 87 n'a AUCUN texte extractible** — vérifié directement (couche
+   texte = 206 caractères, seulement "Annexe 6" + en-tête/pied de page,
+   0 chiffre). Les 2 tableaux QRT de cette page (S.25.05.22.01 ET .02)
+   sont des images incrustées dans le PDF, pas du texte sélectionnable.
+   La "relecture manuelle" de `R0060`/`R0220`/`R0470` documentée en
+   Décision 051 était donc une lecture de pixels par l'agent, de la MÊME
+   NATURE que les appels vision LLM (Gemini/Claude) utilisés pour
+   `picture_75` — sa fiabilité vient exclusivement du croisement réussi
+   contre S.23.01 (vrai texte natif, concordance exacte sur `scr_total`
+   et `mcr`), pas du fait d'être "extraite du texte". Nuance importante
+   pour toute réutilisation future de cette valeur : ce n'est pas une
+   source plus fiable par nature qu'une lecture vision, juste une lecture
+   vision faite avec plus de soin et recoupée.
+
+2. **`fonds_propres_eligibles` utilise `R0660`, PAS `R0290`** (la ligne
+   demandée lors de cette vérification) — choix DÉJÀ documenté en
+   Décision 051, reconfirmé ici avec les 2 valeurs affichées côte à côte
+   (`R0290`=16 349 956 vs `R0660`=16 481 186, un écart réel de 131 230 k€,
+   PAS un arrondi) : `R0660` ("Total eligible own funds to meet the total
+   group SCR") est la ligne qui, divisée par `scr_total`, redonne
+   exactement le `ratio_scr` publié — `R0290` ("Total basic own funds
+   after deductions") est une étape antérieure de la cascade EIOPA, avant
+   les plafonds d'éligibilité par tier. Pas un désaccord non résolu :
+   juste rendu explicite pour que quiconque relit cette ligne plus tard
+   sache que les 2 chiffres existent et lequel a été retenu, et pourquoi.
+
+VÉRIFICATIONS RÉELLES (5/5, indépendantes du code d'extraction) :
+`ratio_scr` (narratif p.75 "274%" + S.23.01/R0690 "2,74"), `scr_total`
+(S.23.01/R0680 texte natif + picture_75, concordance exacte),
+`fonds_propres_eligibles` (écart réel R0290 vs R0660 expliqué ci-dessus),
+`best_estimate` (recalcul indépendant depuis les 5 lignes brutes : somme
+exacte 69 035 100 k€), `scr_marche` (picture_75 rezoomée : "4 675 236",
+exact).
+
+RÉSULTAT : 21/22 valeurs confirmées, 30/30 contrôles actuariels
+reconfirmés via l'API de service, `kpi_service.py` complété et testé en
+conditions réelles (y compris le cas CNP Assurances absente — dict/liste
+vide, jamais d'exception). Phase 3 close sur Groupama.

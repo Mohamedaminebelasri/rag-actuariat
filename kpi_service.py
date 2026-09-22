@@ -161,6 +161,65 @@ class KpiService:
             ).fetchall()
             return [dict(r) for r in rows]
 
+    # -----------------------------------------------------------------
+    # Alias/compléments ajoutés en Phase 3.6 (usage réel du dashboard) —
+    # GRACIEUX sur une entreprise absente (dict/liste vide, jamais une
+    # exception) : contrairement à get_kpi/get_all_kpis (strictes, lèvent
+    # KpiIntrouvable), ces méthodes sont pensées pour un affichage
+    # multi-entreprises qui ne doit jamais planter juste parce qu'une
+    # entreprise n'a pas encore été ingérée (ex. CNP Assurances).
+    # -----------------------------------------------------------------
+
+    def get_kpis(self, company_name, year):
+        """Comme get_all_kpis, mais en dict {kpi_name: row} plutôt qu'une
+        liste (accès direct par nom), et VIDE {} si l'entreprise n'existe
+        pas encore — jamais KpiIntrouvable."""
+        with self._connexion() as conn:
+            row = conn.execute("SELECT id FROM companies WHERE name=?", (company_name,)).fetchone()
+            if row is None:
+                return {}
+            company_id = row["id"]
+            rows = conn.execute(
+                "SELECT * FROM kpis WHERE company_id=? AND year=? ORDER BY category, kpi_name",
+                (company_id, year),
+            ).fetchall()
+            return {r["kpi_name"]: dict(r) for r in rows}
+
+    def compare_kpis(self, kpi_name, year):
+        """Ce KPI pour TOUTES les entreprises déjà dans companies (pas
+        besoin de lister les noms, contrairement à compare())."""
+        entreprises = [c["name"] for c in self.liste_entreprises()]
+        return self.compare(entreprises, year, kpi_name)
+
+    def get_corpus_stats(self, kpi_name, year):
+        """Moyenne/médiane/min/max de ce KPI sur toutes les entreprises
+        qui l'ont en base avec une valeur non-NULL. Ne plante jamais sur 0
+        ou 1 entreprise (cas réel actuel : seule Groupama en base) — les
+        stats valent simplement None si aucune valeur numérique."""
+        import statistics
+        valeurs = []
+        for nom in [c["name"] for c in self.liste_entreprises()]:
+            k = self.get_kpi(nom, year, kpi_name)
+            if k and k["value"] is not None:
+                valeurs.append(k["value"])
+        if not valeurs:
+            return {"n": 0, "moyenne": None, "mediane": None, "min": None, "max": None}
+        return {
+            "n": len(valeurs),
+            "moyenne": statistics.mean(valeurs),
+            "mediane": statistics.median(valeurs),
+            "min": min(valeurs),
+            "max": max(valeurs),
+        }
+
+    def get_validation_report(self, company_name, year):
+        """Rapport complet : résumé agrégé + détail de chaque contrôle
+        (combine validation_summary + get_validation_checks en 1 appel)."""
+        return {
+            "summary": self.validation_summary(company_name, year),
+            "checks": self.get_validation_checks(company_name, year),
+        }
+
 
 if __name__ == "__main__":
     import sys
