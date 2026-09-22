@@ -3491,3 +3491,45 @@ l'absence avant NULL" a évité 7 faux négatifs. Insérés dans `kpis.db`
 `ON CONFLICT...DO UPDATE`). 2 bugs réels trouvés en cours de route
 (résolution de sous-feuille S.25.05.22, déduplication pHash picture_76) —
 documentés, PAS corrigés (hors périmètre explicite de cette étape).
+
+## Décision 052 — Phase 3.4 : contrôles actuariels sur les 22 KPIs (validate_kpis.py)
+
+CONTEXTE : suite à la Décision 051, valider ce qui a été extrait plutôt que
+de s'arrêter à l'extraction — contrôles écrits dans `validation_checks`,
+`kpis.validated` mis à jour en conséquence (jamais optimiste par défaut :
+0 sauf si TOUS les contrôles concernant ce KPI passent, cf. schéma
+Décision 049).
+
+CHOIX DES CONTRÔLES — uniquement des identités/inégalités CERTAINES, rien
+d'approximatif présenté comme une règle actuarielle :
+1. `provisions_techniques = best_estimate + marge_risque` (identité de
+   construction).
+2. `fonds_propres_eligibles = T1nr+T1r+T2+T3` (identité de construction).
+3. `ratio_scr` recalculé (fonds_propres_eligibles/scr_total×100) vs publié
+   — tolérance 1%.
+4. `ratio_mcr` recalculé, numérateur `R0570` relu directement depuis
+   `corpus_final.json` (pas stocké comme KPI séparé, hors périmètre des 22
+   demandés).
+5. `mcr < scr_total` — **volontairement PAS le corridor réglementaire
+   25%-45% de l'article 129** : ce corridor est défini pour les entités
+   SOLO ; rien ne garantit qu'il s'applique identiquement à un MCR
+   CONSOLIDÉ GROUPE (le MCR groupe = somme des MCR solo, une construction
+   différente) — affirmer ce corridor sans vérification aurait été le
+   même type d'erreur que les KPIs SCR détaillés déclarés NULL trop vite
+   en premier jet (Décision 051). Seul l'invariant universellement vrai
+   (MCR < SCR) est testé.
+6-7. Croisements de sources déjà faits à l'extraction (`scr_total`,
+   `scr_souscription_nonvie`), persistés ici en base plutôt que laissés
+   uniquement dans la console de `extract_kpis.py`.
+8. Signe de chacun des 21 KPIs non-NULL, contre `kpi_definitions.py`
+   (champ `sign`) — 1 contrôle par KPI.
+9. Complétude : 22 lignes exactement, 1 seul NULL (`resultat_technique`).
+
+RÉSULTAT : **30/30 contrôles passés** — écarts de recalcul des ratios
+faibles et attendus (0,099% sur `ratio_scr`, 0,0009% sur `ratio_mcr`,
+cohérent avec le fait que le SFCR ne publie ces ratios qu'à 2 décimales).
+13 KPIs marqués `validated=1` (les 13 directement concernés par une
+identité/un recalcul/un croisement — les 6 KPIs SCR détaillés de
+`picture_75` et `scr_diversification` restent `validated=0` : aucun
+contrôle indépendant ne les couvre encore, pas une non-confiance
+arbitraire, juste l'absence d'un 2e signal pour ceux-là).
