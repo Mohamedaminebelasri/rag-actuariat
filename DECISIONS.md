@@ -3533,3 +3533,29 @@ identité/un recalcul/un croisement — les 6 KPIs SCR détaillés de
 `picture_75` et `scr_diversification` restent `validated=0` : aucun
 contrôle indépendant ne les couvre encore, pas une non-confiance
 arbitraire, juste l'absence d'un 2e signal pour ceux-là).
+
+## Décision 053 — Phase 3.5 : kpi_service.py, couche de lecture pour le futur dashboard
+
+CONTEXTE : pas de spec détaillée fournie pour cette étape (contrairement
+aux 3.1-3.4) — conçu par cohérence avec l'usage déjà annoncé en Décision
+049 ("dashboard comparatif multi-assureurs").
+
+DÉCISION : `KpiService`, LECTURE SEULE sur `kpis.db` (jamais d'écriture —
+`extract_kpis.py`/`validate_kpis.py` restent les seuls écrivains, séparation
+volontaire) : `get_kpi`, `get_all_kpis`, `get_kpis_by_category`,
+`compare` (1 KPI, plusieurs entreprises), `compare_categorie` (tous les
+KPIs d'une catégorie, plusieurs entreprises — forme table, utile pour un
+dashboard), `validation_summary`, `kpis_non_valides`. `compare()` ne lève
+jamais d'exception pour une entreprise absente (`None` dans le résultat) —
+pour ne pas interrompre l'affichage des autres entreprises déjà en base
+quand une seule manque (ex. CNP Assurances, pas encore ingérée).
+
+VÉRIFIÉ (exécution réelle, pas juste lu) : `get_all_kpis` → 22 lignes,
+`get_kpis_by_category("scr")` → 8 lignes (conforme à `kpi_definitions.py`),
+`compare(["Groupama","CNP Assurances"], ...)` → `{"Groupama": 274.0,
+"CNP Assurances": None}` sans erreur.
+
+RÉSULTAT : Phase 3 (3.1 à 3.5) terminée sur Groupama — schéma, définitions,
+extraction (21/22 valeurs), contrôles (30/30), couche de service. Aucun
+fichier du RAG/Qdrant/pipeline SFCR touché sur l'ensemble de la Phase 3,
+conformément à la consigne initiale.
