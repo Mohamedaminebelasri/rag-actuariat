@@ -3303,3 +3303,37 @@ place, 0 doublon confirmé) avec les 8 nouveaux champs de métadonnées ; les
 4 modes de filtrage (+ chapter_code) et la fusion RRF/reranking sont
 vérifiés fonctionnels contre le serveur Qdrant réel, filtre actif compris.
 2024 reste sciemment non migré (limite connue, pas une régression).
+
+## Décision 049 — Phase 3, étape 3.1 : schéma initial de kpis.db (SQLite), indépendant du RAG/Qdrant
+
+CONTEXTE : Phase 3 ajoute une base SQLite (`kpis.db`, racine du projet) pour
+stocker des KPIs actuariels pré-calculés, en vue d'un dashboard comparatif
+multi-assureurs — usage distinct du RAG/Qdrant (pas de retrieval sémantique
+ici, des chiffres structurés et leurs contrôles de cohérence). Demande
+explicite : ne toucher à rien d'autre (RAG, Qdrant, pipeline SFCR).
+
+DÉCISION : `init_kpi_db.py` (racine du projet, sibling de `kpis.db`, PAS
+dans `test_markdrop/` — cohérent avec le fait que `kpis.db` lui-même est
+demandé à la racine, sous-système séparé du pipeline SFCR de `test_markdrop/`)
+crée 3 tables exactement selon le schéma fourni : `companies`, `kpis`,
+`validation_checks`, + 2 index (`kpis(company_id, year)`, `kpis(kpi_name)`).
+DDL en `CREATE TABLE IF NOT EXISTS` / `CREATE INDEX IF NOT EXISTS` +
+`INSERT OR IGNORE` pour l'entreprise Groupama — idempotent par construction,
+pas juste par convention.
+
+VÉRIFIÉ (pas supposé) :
+- Script exécuté 2 fois de suite : 2e exécution sans erreur, `companies`
+  reste à 1 seule ligne Groupama (pas de doublon).
+- Schéma relu via `sqlite_master` après création : les 3 tables + 2 index
+  correspondent exactement à la demande.
+- `value NULL` accepté sur `kpis` (extraction incertaine, jamais devinée —
+  conforme à la contrainte demandée).
+- `UNIQUE(company_id, year, kpi_name)` testé en réel : un doublon exact est
+  rejeté (`IntegrityError`), pas juste déclaré dans le DDL sans être vérifié.
+- Contrainte `FOREIGN KEY (company_id) REFERENCES companies(id)` testée en
+  réel avec `PRAGMA foreign_keys = ON` (off par défaut en SQLite, activé
+  explicitement dans le script) : un `company_id` inexistant est rejeté.
+
+RÉSULTAT : `kpis.db` créé et vérifié fonctionnellement sur les 3 contraintes
+demandées (nullable, unicité, clé étrangère), pas seulement sur la présence
+du DDL. Aucun fichier du RAG/pipeline SFCR/Qdrant modifié.
