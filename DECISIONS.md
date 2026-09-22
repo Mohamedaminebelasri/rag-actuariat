@@ -3337,3 +3337,63 @@ VÉRIFIÉ (pas supposé) :
 RÉSULTAT : `kpis.db` créé et vérifié fonctionnellement sur les 3 contraintes
 demandées (nullable, unicité, clé étrangère), pas seulement sur la présence
 du DDL. Aucun fichier du RAG/pipeline SFCR/Qdrant modifié.
+
+## Décision 050 — Phase 3, étape 3.2 : KPI_DEFINITIONS (22 KPIs) + écart réel trouvé sur 2 des 5 QRT sources demandées
+
+CONTEXTE : `kpi_definitions.py` (racine du projet) définit les 22 KPIs à
+extraire (6 catégories : solvabilité 2, fonds_propres 5, scr 8, provisions
+3, mcr 1, activité 3 — total vérifié par script, `kpi_name` tous uniques).
+`unit` assigné par cohérence avec les montants réels déjà observés dans le
+SFCR Groupama (ex. "500 millions d'euros" pour une émission obligataire,
+Décision 045) : "M€" pour tous les montants, "pct" pour les 2 ratios de
+couverture. `sign="negative"` pour `scr_diversification` (donnée explicite
+de la consigne — un bénéfice de diversification qui SOUSTRAIT du SCR
+total) ; `sign="any"` pour `resultat_technique` (jugement ajouté, pas dans
+la consigne : un solde technique P&L peut légitimement être une perte,
+contrairement aux montants de capital/primes toujours positifs) ; tous les
+19 autres KPIs en `sign="positive"`.
+
+VÉRIFICATION DEMANDÉE (QRT réellement présents pour Groupama) — faite
+contre `corpus_final.json` (sortie réelle d'`ingest.py`, Décision 048, PAS
+un fichier théorique), qui liste les `template_id` EIOPA effectivement
+extraits, eux-mêmes résolus depuis l'index "ANNEXES – QRT PUBLICS" du
+document lui-même (pas une heuristique de ce projet — l'index officiel du
+SFCR) : **`S.02.01.02`, `S.05.01.02`, `S.05.02.04`, `S.22.01.22`,
+`S.23.01.22`, `S.25.05.22`, `S.32.01.22`** — 7 templates, aucun autre.
+
+Sur les 5 QRT sources demandées par la spec Phase 3 :
+- `S.02.01` ✓ présent (`S.02.01.02.01`)
+- `S.05.01` ✓ présent (`S.05.01.02.01`, `S.05.01.02.02`)
+- `S.23.01` ✓ présent (`S.23.01.22.01`, `S.23.01.22.02`)
+- **`S.25.01` ✗ ABSENT** — le document publie `S.25.05.22` à la place, PAS
+  une erreur de triage : `S.25.05` est le template EIOPA pour les groupes
+  utilisant un modèle interne partiel/complet en complément de la formule
+  standard, distinct de `S.25.01` (formule standard seule). Cohérent avec
+  un grand groupe d'assurance susceptible d'utiliser un modèle interne
+  partiel sur certains modules de risque.
+- **`S.28.01` ✗ ABSENT entièrement** — aucune annexe QRT dédiée au MCR
+  n'est publiée dans ce rapport GROUPE. Hypothèse la plus probable, non
+  vérifiée plus avant (hors périmètre de cette étape, purement définitoire) :
+  le MCR groupe ("Minimum consolidated Group SCR") apparaît comme une ligne
+  à l'intérieur de `S.23.01` (fonds propres/solvabilité groupe) plutôt que
+  dans un template solo dédié — `S.28.01`/`S.28.02` sont typiquement des
+  templates SOLO (entité individuelle), pas des templates de reporting
+  groupe standard.
+
+DÉCISION : `KPI_DEFINITIONS` créé EXACTEMENT selon la spec fournie (schéma
+de référence cible, indépendant de ce qui est disponible aujourd'hui pour
+UN émetteur précis) — ne pas remplacer `S.25.01`/`S.28.01` par
+`S.25.05`/une source alternative dans ce fichier, qui reste la table de
+référence déclarative. L'écart est documenté ici pour que l'étape
+d'EXTRACTION (pas encore commencée) sache, avant de commencer, qu'il lui
+faudra une logique dédiée pour `ratio_mcr`/`mcr`/les 7 KPIs `scr_*` sur
+Groupama : soit lire `S.25.05.22` à la place de `S.25.01`, soit chercher le
+MCR ailleurs (probablement `S.23.01`) plutôt que d'échouer silencieusement
+ou d'inventer une valeur — cohérent avec la contrainte `value` nullable de
+`kpis.db` (Décision 049) : mieux vaut NULL qu'une valeur devinée depuis la
+mauvaise source.
+
+RÉSULTAT : 22 KPIs définis et vérifiés (compte, unicité). Écart RÉEL trouvé
+sur 2/5 sources QRT demandées, vérifié contre les données réelles (pas
+supposé), documenté pour la suite plutôt que masqué ou corrigé
+silencieusement dans la définition elle-même.
