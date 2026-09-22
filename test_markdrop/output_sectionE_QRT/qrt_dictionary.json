@@ -1,0 +1,598 @@
+{
+  "S.02.01.02": {
+    "S.02.01.02.01": {
+      "titre": "S.02.01.02.01 - Balance sheet",
+      "row_codes": {
+        "R0010": "Assets – Goodwill",
+        "R0020": "Assets – Deferred acquisition costs",
+        "R0030": "Assets – Intangible assets",
+        "R0040": "Assets – Deferred tax assets",
+        "R0050": "Assets – Pension benefit surplus",
+        "R0060": "Assets – Property, plant & equipment held for own use",
+        "R0070": "Assets – Investments (other than assets held for index-linked and unit-linked contracts)",
+        "R0080": "Assets – Property (other than for own use)",
+        "R0090": "Assets – Holdings in related undertakings, including participations",
+        "R0100": "Assets – Equities",
+        "R0110": "Assets – Equities - listed",
+        "R0120": "Assets – Equities - unlisted",
+        "R0130": "Assets – Bonds",
+        "R0140": "Assets – Government Bonds",
+        "R0150": "Assets – Corporate Bonds",
+        "R0160": "Assets – Structured notes",
+        "R0170": "Assets – Collateralised securities",
+        "R0180": "Assets – Collective Investments Undertakings",
+        "R0190": "Assets – Derivatives",
+        "R0200": "Assets – Deposits other than cash equivalents",
+        "R0210": "Assets – Other investments",
+        "R0220": "Assets – Assets held for index-linked and unit-linked contracts",
+        "R0230": "Assets – Loans and mortgages",
+        "R0240": "Assets – Loans on policies",
+        "R0250": "Assets – Loans and mortgages to individuals",
+        "R0260": "Assets – Other loans and mortgages",
+        "R0270": "Assets – Reinsurance recoverables from:",
+        "R0280": "Assets – Non-life and health similar to non-life",
+        "R0290": "Assets – Non-life excluding health",
+        "R0300": "Assets – Health similar to non-life",
+        "R0310": "Assets – Life and health similar to life, excluding health and index-linked and unit-linked",
+        "R0320": "Assets – Health similar to life",
+        "R0330": "Assets – Life excluding health and index-linked and unit-linked",
+        "R0340": "Assets – Life index-linked and unit-linked",
+        "R0350": "Assets – Deposits to cedants",
+        "R0360": "Assets – Insurance and intermediaries receivables",
+        "R0370": "Assets – Reinsurance receivables",
+        "R0380": "Assets – Receivables (trade, not insurance)",
+        "R0390": "Assets – Own shares (held directly)",
+        "R0400": "Assets – Amounts due in respect of own fund items or initial fund called up but not yet paid in",
+        "R0410": "Assets – Cash and cash equivalents",
+        "R0420": "Assets – Any other assets, not elsewhere shown",
+        "R0500": "Assets – Total assets",
+        "R0510": "Liabilities – Technical provisions - non-life",
+        "R0520": "Liabilities – Technical provisions - non-life (excluding health)",
+        "R0530": "Liabilities – Technical provisions calculated as a whole",
+        "R0540": "Liabilities – Best Estimate",
+        "R0550": "Liabilities – Risk margin",
+        "R0560": "Liabilities – Technical provisions - health (similar to non-life)",
+        "R0570": "Liabilities – Technical provisions calculated as a whole",
+        "R0580": "Liabilities – Best Estimate",
+        "R0590": "Liabilities – Risk margin",
+        "R0600": "Liabilities – Technical provisions - life (excluding index-linked and unit-linked)",
+        "R0610": "Liabilities – Technical provisions - health (similar to life)",
+        "R0620": "Liabilities – Technical provisions calculated as a whole",
+        "R0630": "Liabilities – Best Estimate",
+        "R0640": "Liabilities – Risk margin",
+        "R0650": "Liabilities – Technical provisions - life (excluding health and index-linked and unit-linked)",
+        "R0660": "Liabilities – Technical provisions calculated as a whole",
+        "R0670": "Liabilities – Best Estimate",
+        "R0680": "Liabilities – Risk margin",
+        "R0690": "Liabilities – Technical provisions - index-linked and unit-linked",
+        "R0700": "Liabilities – Technical provisions calculated as a whole",
+        "R0710": "Liabilities – Best Estimate",
+        "R0720": "Liabilities – Risk margin",
+        "R0730": "Liabilities – Other technical provisions",
+        "R0740": "Liabilities – Contingent liabilities",
+        "R0750": "Liabilities – Provisions other than technical provisions",
+        "R0760": "Liabilities – Pension benefit obligations",
+        "R0770": "Liabilities – Deposits from reinsurers",
+        "R0780": "Liabilities – Deferred tax liabilities",
+        "R0790": "Liabilities – Derivatives",
+        "R0800": "Liabilities – Debts owed to credit institutions",
+        "R0810": "Liabilities – Financial liabilities other than debts owed to credit institutions",
+        "R0820": "Liabilities – Insurance & intermediaries payables",
+        "R0830": "Liabilities – Reinsurance payables",
+        "R0840": "Liabilities – Payables (trade, not insurance)",
+        "R0850": "Liabilities – Subordinated liabilities",
+        "R0860": "Liabilities – Subordinated liabilities not in Basic Own Funds",
+        "R0870": "Liabilities – Subordinated liabilities in Basic Own Funds",
+        "R0880": "Liabilities – Any other liabilities, not elsewhere shown",
+        "R0900": "Liabilities – Total liabilities",
+        "R1000": "Excess of assets over liabilities"
+      },
+      "col_codes": {
+        "C0010": "Solvency II value"
+      },
+      "col_groups": {
+        "C0010": "C0010"
+      }
+    }
+  },
+  "S.05.01.02": {
+    "S.05.01.02.01": {
+      "titre": "S.05.01.02.01 - Non-Life (direct business/accepted proportional reinsurance and accepted non-proportional reinsurance)",
+      "row_codes": {
+        "R0110": "Premiums written – Gross - Direct Business",
+        "R0120": "Premiums written – Gross - Proportional reinsurance accepted",
+        "R0130": "Premiums written – Gross - Non-proportional reinsurance accepted",
+        "R0140": "Premiums written – Reinsurers' share",
+        "R0200": "Premiums written – Net",
+        "R0210": "Premiums earned – Gross - Direct Business",
+        "R0220": "Premiums earned – Gross - Proportional reinsurance accepted",
+        "R0230": "Premiums earned – Gross - Non-proportional reinsurance accepted",
+        "R0240": "Premiums earned – Reinsurers' share",
+        "R0300": "Premiums earned – Net",
+        "R0310": "Claims incurred – Gross - Direct Business",
+        "R0320": "Claims incurred – Gross - Proportional reinsurance accepted",
+        "R0330": "Claims incurred – Gross - Non-proportional reinsurance accepted",
+        "R0340": "Claims incurred – Reinsurers' share",
+        "R0400": "Claims incurred – Net",
+        "R0550": "Expenses incurred",
+        "R1210": "Balance - other technical expenses/income",
+        "R1300": "Total technical expenses"
+      },
+      "col_codes": {
+        "C0010": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Medical expense insurance",
+        "C0020": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Income protection insurance",
+        "C0030": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Workers' compensation insurance",
+        "C0040": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Motor vehicle liability insurance",
+        "C0050": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Other motor insurance",
+        "C0060": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Marine, aviation and transport insurance",
+        "C0070": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Fire and other damage to property insurance",
+        "C0080": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – General liability insurance",
+        "C0090": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Credit and suretyship insurance",
+        "C0100": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Legal expenses insurance",
+        "C0110": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Assistance",
+        "C0120": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance) – Miscellaneous financial loss",
+        "C0130": "Line of Business for: accepted non-proportional reinsurance – Health",
+        "C0140": "Line of Business for: accepted non-proportional reinsurance – Casualty",
+        "C0150": "Line of Business for: accepted non-proportional reinsurance – Marine, aviation, transport",
+        "C0160": "Line of Business for: accepted non-proportional reinsurance – Property",
+        "C0200": "Total"
+      },
+      "col_groups": {
+        "C0010": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0020": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0030": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0040": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0050": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0060": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0070": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0080": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0090": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0100": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0110": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0120": "Line of Business for: non-life insurance and reinsurance obligations (direct business and accepted proportional reinsurance)",
+        "C0130": "Line of Business for: accepted non-proportional reinsurance",
+        "C0140": "Line of Business for: accepted non-proportional reinsurance",
+        "C0150": "Line of Business for: accepted non-proportional reinsurance",
+        "C0160": "Line of Business for: accepted non-proportional reinsurance",
+        "C0200": "Total"
+      }
+    },
+    "S.05.01.02.02": {
+      "titre": "S.05.01.02.02 - Life",
+      "row_codes": {
+        "R1410": "Premiums written – Gross",
+        "R1420": "Premiums written – Reinsurers' share",
+        "R1500": "Premiums written – Net",
+        "R1510": "Premiums earned – Gross",
+        "R1520": "Premiums earned – Reinsurers' share",
+        "R1600": "Premiums earned – Net",
+        "R1610": "Claims incurred – Gross",
+        "R1620": "Claims incurred – Reinsurers' share",
+        "R1700": "Claims incurred – Net",
+        "R1900": "Expenses incurred",
+        "R2510": "Balance - other technical expenses/income",
+        "R2600": "Total technical expenses",
+        "R2700": "Total amount of surrenders"
+      },
+      "col_codes": {
+        "C0210": "Line of Business for: life insurance obligations – Health insurance",
+        "C0220": "Line of Business for: life insurance obligations – Insurance with profit participation",
+        "C0230": "Line of Business for: life insurance obligations – Index-linked and unit-linked insurance",
+        "C0240": "Line of Business for: life insurance obligations – Other life insurance",
+        "C0250": "Line of Business for: life insurance obligations – Annuities stemming from non-life insurance contracts and relating to health insurance obligations",
+        "C0260": "Line of Business for: life insurance obligations – Annuities stemming from non-life insurance contracts and relating to insurance obligations other than health insurance obligations",
+        "C0270": "Life reinsurance obligations – Health reinsurance",
+        "C0280": "Life reinsurance obligations – Life reinsurance",
+        "C0300": "Total"
+      },
+      "col_groups": {
+        "C0210": "Line of Business for: life insurance obligations",
+        "C0220": "Line of Business for: life insurance obligations",
+        "C0230": "Line of Business for: life insurance obligations",
+        "C0240": "Line of Business for: life insurance obligations",
+        "C0250": "Line of Business for: life insurance obligations",
+        "C0260": "Line of Business for: life insurance obligations",
+        "C0270": "Life reinsurance obligations",
+        "C0280": "Life reinsurance obligations",
+        "C0300": "Total"
+      }
+    }
+  },
+  "S.05.02.04": {
+    "S.05.02.04.01": {
+      "titre": "S.05.02.04.01 - Home Country - non-life obligations",
+      "row_codes": {
+        "R0110": "Premiums written – Gross - Direct Business",
+        "R0120": "Premiums written – Gross - Proportional reinsurance accepted",
+        "R0130": "Premiums written – Gross - Non-proportional reinsurance accepted",
+        "R0140": "Premiums written – Reinsurers' share",
+        "R0200": "Premiums written – Net",
+        "R0210": "Premiums earned – Gross - Direct Business",
+        "R0220": "Premiums earned – Gross - Proportional reinsurance accepted",
+        "R0230": "Premiums earned – Gross - Non-proportional reinsurance accepted",
+        "R0240": "Premiums earned – Reinsurers' share",
+        "R0300": "Premiums earned – Net",
+        "R0310": "Claims incurred – Gross - Direct Business",
+        "R0320": "Claims incurred – Gross - Proportional reinsurance accepted",
+        "R0330": "Claims incurred – Gross - Non-proportional reinsurance accepted",
+        "R0340": "Claims incurred – Reinsurers' share",
+        "R0400": "Claims incurred – Net",
+        "R0550": "Expenses incurred",
+        "R1210": "Balance - other technical expenses/income",
+        "R1300": "Total technical expenses"
+      },
+      "col_codes": {
+        "C0080": "Home country"
+      },
+      "col_groups": {
+        "C0080": "C0080"
+      }
+    },
+    "S.05.02.04.02": {
+      "titre": "S.05.02.04.02 - Top 5 countries (by amount of gross premiums written) - non-life obligations",
+      "row_codes": {
+        "R0110": "Premiums written – Gross - Direct Business",
+        "R0120": "Premiums written – Gross - Proportional reinsurance accepted",
+        "R0130": "Premiums written – Gross - Non-proportional reinsurance accepted",
+        "R0140": "Premiums written – Reinsurers' share",
+        "R0200": "Premiums written – Net",
+        "R0210": "Premiums earned – Gross - Direct Business",
+        "R0220": "Premiums earned – Gross - Proportional reinsurance accepted",
+        "R0230": "Premiums earned – Gross - Non-proportional reinsurance accepted",
+        "R0240": "Premiums earned – Reinsurers' share",
+        "R0300": "Premiums earned – Net",
+        "R0310": "Claims incurred – Gross - Direct Business",
+        "R0320": "Claims incurred – Gross - Proportional reinsurance accepted",
+        "R0330": "Claims incurred – Gross - Non-proportional reinsurance accepted",
+        "R0340": "Claims incurred – Reinsurers' share",
+        "R0400": "Claims incurred – Net",
+        "R0550": "Expenses incurred",
+        "R1210": "Balance - other technical expenses/income",
+        "R1300": "Total technical expenses"
+      },
+      "col_codes": {
+        "C0090": "Country (by amount of gross premiums written) - non-life obligations"
+      },
+      "col_groups": {
+        "C0090": "C0090"
+      }
+    },
+    "S.05.02.04.03": {
+      "titre": "S.05.02.04.03 - Total Top 5 and home country - non-life obligations",
+      "row_codes": {
+        "R0110": "Premiums written – Gross - Direct Business",
+        "R0120": "Premiums written – Gross - Proportional reinsurance accepted",
+        "R0130": "Premiums written – Gross - Non-proportional reinsurance accepted",
+        "R0140": "Premiums written – Reinsurers' share",
+        "R0200": "Premiums written – Net",
+        "R0210": "Premiums earned – Gross - Direct Business",
+        "R0220": "Premiums earned – Gross - Proportional reinsurance accepted",
+        "R0230": "Premiums earned – Gross - Non-proportional reinsurance accepted",
+        "R0240": "Premiums earned – Reinsurers' share",
+        "R0300": "Premiums earned – Net",
+        "R0310": "Claims incurred – Gross - Direct Business",
+        "R0320": "Claims incurred – Gross - Proportional reinsurance accepted",
+        "R0330": "Claims incurred – Gross - Non-proportional reinsurance accepted",
+        "R0340": "Claims incurred – Reinsurers' share",
+        "R0400": "Claims incurred – Net",
+        "R0550": "Expenses incurred",
+        "R1210": "Balance - other technical expenses/income",
+        "R1300": "Total technical expenses"
+      },
+      "col_codes": {
+        "C0140": "Total Top 5 and home country"
+      },
+      "col_groups": {
+        "C0140": "C0140"
+      }
+    },
+    "S.05.02.04.04": {
+      "titre": "S.05.02.04.04 - Home Country - life obligations",
+      "row_codes": {
+        "R1410": "Premiums written – Gross",
+        "R1420": "Premiums written – Reinsurers' share",
+        "R1500": "Premiums written – Net",
+        "R1510": "Premiums earned – Gross",
+        "R1520": "Premiums earned – Reinsurers' share",
+        "R1600": "Premiums earned – Net",
+        "R1610": "Claims incurred – Gross",
+        "R1620": "Claims incurred – Reinsurers' share",
+        "R1700": "Claims incurred – Net",
+        "R1900": "Expenses incurred",
+        "R2510": "Balance - other technical expenses/income",
+        "R2600": "Total technical expenses",
+        "R2700": "Total amount of surrenders"
+      },
+      "col_codes": {
+        "C0220": "Home country"
+      },
+      "col_groups": {
+        "C0220": "C0220"
+      }
+    },
+    "S.05.02.04.05": {
+      "titre": "S.05.02.04.05 - Top 5 countries (by amount of gross premiums written) - life obligations",
+      "row_codes": {
+        "R1410": "Premiums written – Gross",
+        "R1420": "Premiums written – Reinsurers' share",
+        "R1500": "Premiums written – Net",
+        "R1510": "Premiums earned – Gross",
+        "R1520": "Premiums earned – Reinsurers' share",
+        "R1600": "Premiums earned – Net",
+        "R1610": "Claims incurred – Gross",
+        "R1620": "Claims incurred – Reinsurers' share",
+        "R1700": "Claims incurred – Net",
+        "R1900": "Expenses incurred",
+        "R2510": "Balance - other technical expenses/income",
+        "R2600": "Total technical expenses",
+        "R2700": "Total amount of surrenders"
+      },
+      "col_codes": {
+        "C0230": "Country (by amount of gross premiums written) - life obligations"
+      },
+      "col_groups": {
+        "C0230": "C0230"
+      }
+    },
+    "S.05.02.04.06": {
+      "titre": "S.05.02.04.06 - Total Top 5 and home country - life obligations",
+      "row_codes": {
+        "R1410": "Premiums written – Gross",
+        "R1420": "Premiums written – Reinsurers' share",
+        "R1500": "Premiums written – Net",
+        "R1510": "Premiums earned – Gross",
+        "R1520": "Premiums earned – Reinsurers' share",
+        "R1600": "Premiums earned – Net",
+        "R1610": "Claims incurred – Gross",
+        "R1620": "Claims incurred – Reinsurers' share",
+        "R1700": "Claims incurred – Net",
+        "R1900": "Expenses incurred",
+        "R2510": "Balance - other technical expenses/income",
+        "R2600": "Total technical expenses",
+        "R2700": "Total amount of surrenders"
+      },
+      "col_codes": {
+        "C0280": "Total Top 5 and home country"
+      },
+      "col_groups": {
+        "C0280": "C0280"
+      }
+    }
+  },
+  "S.22.01.22": {
+    "S.22.01.22.01": {
+      "titre": "S.22.01.22.01 - Impact of long term guarantees measures and transitionals",
+      "row_codes": {
+        "R0010": "Technical provisions",
+        "R0020": "Basic own funds",
+        "R0050": "Eligible own funds to meet Solvency Capital Requirement",
+        "R0090": "Solvency Capital Requirement"
+      },
+      "col_codes": {
+        "C0010": "Amount with Long Term Guarantee measures and transitionals",
+        "C0030": "Impact of transitional on technical provisions",
+        "C0050": "Impact of transitional on interest rate",
+        "C0070": "Impact of volatility adjustment set to zero",
+        "C0090": "Impact of matching adjustment set to zero"
+      },
+      "col_groups": {
+        "C0010": "C0010",
+        "C0030": "C0030",
+        "C0050": "C0050",
+        "C0070": "C0070",
+        "C0090": "C0090"
+      }
+    }
+  },
+  "S.23.01.22": {
+    "S.23.01.22.01": {
+      "titre": "S.23.01.22.01 - Own funds",
+      "row_codes": {
+        "R0010": "Basic own funds before deduction – Ordinary share capital (gross of own shares)",
+        "R0020": "Basic own funds before deduction – Non-available called but not paid in ordinary share capital to be deducted at group level",
+        "R0030": "Basic own funds before deduction – Share premium account related to ordinary share capital",
+        "R0040": "Basic own funds before deduction – Initial funds, members' contributions or the equivalent basic own - fund item for mutual and mutual-type undertakings",
+        "R0050": "Basic own funds before deduction – Subordinated mutual member accounts",
+        "R0060": "Basic own funds before deduction – Non-available subordinated mutual member accounts to be deducted at group level",
+        "R0070": "Basic own funds before deduction – Surplus funds",
+        "R0080": "Basic own funds before deduction – Non-available surplus funds to be deducted at group level",
+        "R0090": "Basic own funds before deduction – Preference shares",
+        "R0100": "Basic own funds before deduction – Non-available preference shares to be dedcuted at group level",
+        "R0110": "Basic own funds before deduction – Share premium account related to preference shares",
+        "R0120": "Basic own funds before deduction – Non-available share premium account related to preference shares at group level",
+        "R0130": "Basic own funds before deduction – Reconciliation reserve",
+        "R0140": "Basic own funds before deduction – Subordinated liabilities",
+        "R0150": "Basic own funds before deduction – Non-available subordinated liabilities to be deducted at group level",
+        "R0160": "Basic own funds before deduction – An amount equal to the value of net deferred tax assets",
+        "R0170": "Basic own funds before deduction – The amount equal to the value of net deferred tax assets not available to be deducted at the group level",
+        "R0180": "Basic own funds before deduction – Other items approved by supervisory authority as basic own funds not specified above",
+        "R0190": "Basic own funds before deduction – Non available own funds related to other own funds items approved by supervisory authority",
+        "R0200": "Basic own funds before deduction – Minority interests",
+        "R0210": "Basic own funds before deduction – Non-available minority interests to be deducted at group level",
+        "R0220": "Own funds from the financial statements that should not be represented by the reconciliation reserve and do not meet the criteria to be classified as Solvency II own funds",
+        "R0230": "Deductions – Deductions for participations in other financial undertakings, including non-regulated undertakings carrying out financial activities",
+        "R0240": "Deductions – whereof deducted according to art 228 of the Directive 2009/138/EC",
+        "R0250": "Deductions – Deductions for participations where there is non-availability of information (Article 229)",
+        "R0260": "Deductions – Deduction for participations included via Deduction and Aggregation method (D&A) when a combination of methods are used",
+        "R0270": "Deductions – Total of non-available own fund items to be deducted",
+        "R0280": "Total deductions",
+        "R0290": "Total basic own funds after deductions",
+        "R0300": "Ancillary own funds – Unpaid and uncalled ordinary share capital callable on demand",
+        "R0310": "Ancillary own funds – Unpaid and uncalled initial funds, members' contributions or the equivalent basic own fund item for mutual and mutual - type undertakings, callable on demand",
+        "R0320": "Ancillary own funds – Unpaid and uncalled preference shares callable on demand",
+        "R0330": "Ancillary own funds – A legally binding commitment to subscribe and pay for subordinated liabilities on demand",
+        "R0340": "Ancillary own funds – Letters of credit and guarantees under Article 96(2) of the Directive 2009/138/EC",
+        "R0350": "Ancillary own funds – Letters of credit and guarantees other than under Article 96(2) of the Directive 2009/138/EC",
+        "R0360": "Ancillary own funds – Supplementary members calls under first subparagraph of Article 96(3) of the Directive 2009/138/EC",
+        "R0370": "Ancillary own funds – Supplementary members calls - other than under first subparagraph of Article 96(3) of the Directive 2009/138/EC",
+        "R0380": "Ancillary own funds – Non available ancillary own funds to be dedcuted at group level",
+        "R0390": "Ancillary own funds – Other ancillary own funds",
+        "R0400": "Total ancillary own funds",
+        "R0410": "Own funds of other financial sectors – Credit institutions, investment firms, financial institutions, alternative investment fund managers, UCITS management companies - total",
+        "R0420": "Own funds of other financial sectors – Institutions for occupational retirement provision",
+        "R0430": "Own funds of other financial sectors – Non regulated undertakings carrying out financial activities",
+        "R0440": "Own funds of other financial sectors – Total own funds of other financial sectors",
+        "R0450": "Own funds when using the D&A, exclusively or in combination with method 1 – Own funds aggregated when using the D&A and combination of method",
+        "R0460": "Own funds when using the D&A, exclusively or in combination with method 1 – Own funds aggregated when using the D&A and combination of method net of IGT",
+        "R0520": "Own funds when using the D&A, exclusively or in combination with method 1 – Total available own funds to meet the consolidated part of the group SCR (excluding own funds from other financial sector and from the undertakings included via D&A )",
+        "R0530": "Own funds when using the D&A, exclusively or in combination with method 1 – Total available own funds to meet the minimum consolidated group SCR",
+        "R0560": "Own funds when using the D&A, exclusively or in combination with method 1 – Total eligible own funds to meet the consolidated part of the group SCR (excluding own funds from other financial sector and from the undertakings included via D&A )",
+        "R0570": "Own funds when using the D&A, exclusively or in combination with method 1 – Total eligible own funds to meet the minimum consolidated group SCR",
+        "R0610": "Minimum consolidated Group SCR",
+        "R0650": "Ratio of Eligible own funds to Minimum Consolidated Group SCR",
+        "R0660": "Total eligible own funds to meet the total group SCR (including own funds from other financial sector and from the undertakings included via D&A)",
+        "R0680": "Total Group SCR",
+        "R0690": "Ratio of Total Eligible own funds to Total group SCR - ratio including other financial sectors and the undertakings included via D&A"
+      },
+      "col_codes": {
+        "C0010": "Total",
+        "C0020": "Tier 1 - unrestricted",
+        "C0030": "Tier 1 - restricted",
+        "C0040": "Tier 2",
+        "C0050": "Tier 3"
+      },
+      "col_groups": {
+        "C0010": "C0010",
+        "C0020": "C0020",
+        "C0030": "C0030",
+        "C0040": "C0040",
+        "C0050": "C0050"
+      }
+    },
+    "S.23.01.22.02": {
+      "titre": "S.23.01.22.02 - Reconciliation reserve",
+      "row_codes": {
+        "R0700": "Reconciliation reserve – Excess of assets over liabilities",
+        "R0710": "Reconciliation reserve – Own shares (held directly and indirectly)",
+        "R0720": "Reconciliation reserve – Foreseeable dividends, distributions and charges",
+        "R0730": "Reconciliation reserve – Other basic own fund items",
+        "R0740": "Reconciliation reserve – Adjustment for restricted own fund items in respect of matching adjustment portfolios and ring fenced funds",
+        "R0750": "Reconciliation reserve – Other non available own funds",
+        "R0760": "Reconciliation reserve",
+        "R0770": "Expected profits – Expected profits included in future premiums (EPIFP) - Life business",
+        "R0780": "Expected profits – Expected profits included in future premiums (EPIFP) - Non-life business",
+        "R0790": "Total Expected profits included in future premiums (EPIFP)"
+      },
+      "col_codes": {
+        "C0060": "Value"
+      },
+      "col_groups": {
+        "C0060": "C0060"
+      }
+    }
+  },
+  "S.25.05.22": {
+    "S.25.05.22.01": {
+      "titre": "S.25.05.22.01 - Component - specific information",
+      "row_codes": {
+        "R0020": "Risk type – Total diversification",
+        "R0030": "Risk type – Total diversified risk before tax",
+        "R0040": "Risk type – Total diversified risk after tax",
+        "R0070": "Risk type – Total market & credit risk",
+        "R0080": "Risk type – Market & Credit risk - diversified",
+        "R0190": "Risk type – Credit event risk not covered in market & credit risk",
+        "R0200": "Risk type – Credit event risk not covered in market & credit risk - diversified",
+        "R0270": "Risk type – Total Business risk",
+        "R0280": "Risk type – Total Business risk - diversified",
+        "R0310": "Risk type – Total Net Non-life underwriting risk",
+        "R0320": "Risk type – Total Net Non-life underwriting risk - diversified",
+        "R0400": "Risk type – Total Life & Health underwriting risk",
+        "R0410": "Risk type – Total Life & Health underwriting risk - diversified",
+        "R0480": "Risk type – Total Operational risk",
+        "R0490": "Risk type – Total Operational risk - diversified",
+        "R0500": "Risk type – Other risk"
+      },
+      "col_codes": {
+        "C0010": "Solvency Capital Requirement",
+        "C0070": "Amount modelled",
+        "C0090": "USP",
+        "C0120": "Simplifications"
+      },
+      "col_groups": {
+        "C0010": "C0010",
+        "C0070": "C0070",
+        "C0090": "C0090",
+        "C0120": "C0120"
+      }
+    },
+    "S.25.05.22.02": {
+      "titre": "S.25.05.22.02 - Calculation of Solvency Capital Requirement",
+      "row_codes": {
+        "R0110": "Total undiversified components",
+        "R0060": "Diversification",
+        "R0120": "Adjustment due to RFF/MAP nSCR aggregation",
+        "R0160": "Capital requirement for business operated in accordance with Art. 4 of Directive 2003/41/EC",
+        "R0200": "Solvency Capital Requirement calculated on the basis of Art. 336 (a) of Delegated Regulation (EU) 2015/35, excluding capital add-on",
+        "R0210": "Capital add-ons already set",
+        "R0211": "Capital add-ons already set – of which, Capital add-ons already set - Article 37 (1) Type a",
+        "R0212": "Capital add-ons already set – of which, Capital add-ons already set - Article 37 (1) Type b",
+        "R0213": "Capital add-ons already set – of which, Capital add-ons already set - Article 37 (1) Type c",
+        "R0214": "Capital add-ons already set – of which, Capital add-ons already set - Article 37 (1) Type d",
+        "R0220": "Consolidated Group SCR",
+        "R0300": "Other information on SCR – Amount/estimate of the overall loss-absorbing capacity of technical provisions",
+        "R0310": "Other information on SCR – Amount/estimate of the loss absorbing capacity for deferred taxes",
+        "R0400": "Other information on SCR – Capital requirement for duration-based equity risk sub-module",
+        "R0410": "Other information on SCR – Total amount of Notional Solvency Capital Requirements for remaining part",
+        "R0420": "Other information on SCR – Total amount of Notional Solvency Capital Requirements for ring-fenced funds",
+        "R0430": "Other information on SCR – Total amount of Notional Solvency Capital Requirements for matching adjustment portfolios",
+        "R0440": "Other information on SCR – Diversification effects due to RFF nSCR aggregation for article 304",
+        "R0470": "Other information on SCR – Minimum consolidated group solvency capital requirement",
+        "R0500": "Information on other entities – Capital requirement for other financial sectors (Non-insurance capital requirements)",
+        "R0510": "Information on other entities – Capital requirement for other financial sectors (Non-insurance capital requirements) - Credit institutions, investment firms and financial institutions, alternative investment funds managers, UCITS management companies",
+        "R0520": "Information on other entities – Capital requirement for other financial sectors (Non-insurance capital requirements) - Institutions for occupational retirement provisions",
+        "R0530": "Information on other entities – Capital requirement for other financial sectors (Non-insurance capital requirements) - Capital requirement for non-regulated undertakings carrying out financial activities",
+        "R0540": "Information on other entities – Capital requirement for non-controlled participation",
+        "R0550": "Information on other entities – Capital requirement for residual undertakings",
+        "R0555": "Information on other entities – Capital requirement for collective investment undertakings or investments packaged as funds",
+        "R0560": "Overall SCR – SCR for undertakings included via D&A method",
+        "R0570": "Overall SCR – Total group solvency capital requirement"
+      },
+      "col_codes": {
+        "C0100": "Value"
+      },
+      "col_groups": {
+        "C0100": "C0100"
+      }
+    }
+  },
+  "S.32.01.22": {
+    "S.32.01.22.01": {
+      "titre": "S.32.01.22.01 - Undertakings in the scope of the group",
+      "row_codes": {},
+      "col_codes": {
+        "C0010": "Country",
+        "C0040": "Legal Name of the undertaking",
+        "C0050": "Type of undertaking",
+        "C0060": "Legal form",
+        "C0070": "Category (mutual/non mutual)",
+        "C0080": "Supervisory Authority",
+        "C0180": "Criteria of influence – % capital share",
+        "C0190": "Criteria of influence – % used for the establishment of consolidated accounts",
+        "C0200": "Criteria of influence – % voting rights",
+        "C0210": "Criteria of influence – Other criteria",
+        "C0220": "Criteria of influence – Level of influence",
+        "C0230": "Criteria of influence – Proportional share used for group solvency calculation",
+        "C0240": "Inclusion in the scope of Group supervision – Yes/No",
+        "C0250": "Inclusion in the scope of Group supervision – Date of decision if art. 214 is applied",
+        "C0260": "Group solvency calculation – Method used and under method 1, treatment of the undertaking"
+      },
+      "col_groups": {
+        "C0010": "Country",
+        "C0040": "Legal Name of the undertaking",
+        "C0050": "Type of undertaking",
+        "C0060": "Legal form",
+        "C0070": "Category (mutual/non mutual)",
+        "C0080": "Supervisory Authority",
+        "C0180": "Criteria of influence",
+        "C0190": "Criteria of influence",
+        "C0200": "Criteria of influence",
+        "C0210": "Criteria of influence",
+        "C0220": "Criteria of influence",
+        "C0230": "Criteria of influence",
+        "C0240": "Inclusion in the scope of Group supervision",
+        "C0250": "Inclusion in the scope of Group supervision",
+        "C0260": "Group solvency calculation"
+      }
+    }
+  }
+}

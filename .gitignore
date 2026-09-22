@@ -27,3 +27,7 @@ test_markdrop/_historique_dev/
 test_markdrop/reflex.lock
 test_markdrop/reflex.log
 test_markdrop/input/*.pdf
+# output_sectionE_QRT/ : qrt_dictionary.json (référence EIOPA statique) est
+# suivi explicitement ; le reste (sorties d'extraction régénérables) ne l'est pas
+test_markdrop/output_sectionE_QRT/*
+!test_markdrop/output_sectionE_QRT/qrt_dictionary.json

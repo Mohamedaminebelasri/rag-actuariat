@@ -861,21 +861,28 @@ async def main_async(pdf_path_str, work_dir_str=None):
     with open(BASE_DIR / "output_sectionE_QRT" / "qrt_dictionary.json", encoding="utf-8") as f:
         qrt_dict = json.load(f)
 
-    elements_narratifs, anomalies_narratif, t_narratif = process_narrative(pdf_path, [p["page"] for p in pages_narratives], work_dir)
-    print(f"[narratif] {len(elements_narratifs)} éléments en {t_narratif:.1f}s")
+    # process_narrative()/process_sommaire() NE SONT PLUS APPELÉES ICI —
+    # rôle réel confirmé d'ingest.py : QRT uniquement (cf. GUIDE_PROJET.md,
+    # Décision 045). process_narrative() est du code mort (son unique
+    # appelant était ce bloc ; le vrai pipeline narratif est la chaîne
+    # extract_raw_structure.py -> ... -> correction_fusion_caisses.py,
+    # jamais celle-ci) — l'appeler plantait (run_test.py/dedup.py/
+    # build_final.py/verify_final.py n'existent plus à la racine).
+    # process_sommaire() ne plante pas mais son résultat n'est consommé
+    # par rien en aval (corpus_final.json n'est lu par aucun script
+    # d'indexation réel) — retirée par cohérence, pas par nécessité.
+    anomalies_narratif = {"ecarts_totaux": [], "images_non_logo": []}
+    t_narratif = 0.0
 
     elements_qrt, anomalies_qrt, t_qrt = await process_qrt(pdf_path, pages_qrt, qrt_dict, work_dir)
     print(f"[qrt] {len(elements_qrt)} éléments en {t_qrt:.1f}s")
 
-    elements_sommaire, t_sommaire = process_sommaire(pages_sommaire)
-    print(f"[sommaire] {len(elements_sommaire)} entrées en {t_sommaire:.1f}s")
-
     t0 = time.time()
-    corpus, metadata = assemble_corpus(pdf_path, entite, annee, elements_narratifs, elements_qrt, elements_sommaire)
+    corpus, metadata = assemble_corpus(pdf_path, entite, annee, [], elements_qrt, [])
     t_assemblage = time.time() - t0
 
     temps = {"triage_s": round(t_triage, 1), "narratif_s": round(t_narratif, 1),
-             "qrt_s": round(t_qrt, 1), "sommaire_s": round(t_sommaire, 1),
+             "qrt_s": round(t_qrt, 1), "sommaire_s": 0.0,
              "assemblage_s": round(t_assemblage, 1), "total_s": round(time.time() - t_start, 1)}
 
     diagnostic = build_diagnostic(classification, temps, anomalies_narratif, anomalies_qrt)

@@ -3132,3 +3132,174 @@ absents des points actuels) — c'est l'objet de l'étape 2.5. `generation.py`
 garde le libellé "SFCR Groupama {année}" en dur, pas généralisé ici (hors
 périmètre — n'affecte pas la recherche/le filtrage, seulement l'affichage
 du nom de document dans le prompt de génération finale).
+
+## Décision 048 — Phase 2 : vérification des 4 derniers scripts, run_pipeline.py, réindexation réelle Groupama 2025 et tests de filtrage (étape 2.5)
+
+CONTEXTE : suite aux Décisions 045-047, il restait à vérifier
+`extraire_visuels.py`, `associer_visuels_chunks.py`, `build_index_texte_bge.py`,
+`build_index_visuels.py`, construire l'orchestrateur `run_pipeline.py`, puis
+réindexer réellement Groupama 2025 et tester les 4 modes de filtrage.
+Exécuté d'un bout à l'autre, sans validation intermédiaire, à la demande
+explicite de l'utilisateur.
+
+**1. VÉRIFICATION DES 4 SCRIPTS RESTANTS** (méthodologie identique à la
+Décision 045 : rejeu réel + comparaison, pas une simple lecture de code) :
+
+- `associer_visuels_chunks.py` : rejoué sur le `chunks_propres.json`
+  fraîchement régénéré (avec `year`) — 85 marqueurs résolus, **0 fichier
+  manquant**, résultat identique à l'existant à l'unique écart déjà connu
+  près (Décision 045, position_header=123/128). Confirme que la ligne
+  `chunk.get("year")` (renommée en Décision 046) fonctionne avec de vraies
+  données.
+- `build_index_texte_bge.py` : rejoué en réel (BGE-M3, local, gratuit) —
+  190/190 chunks + 18/18 tableaux ré-encodés, correction Nord-Est/d'Oc
+  toujours appliquée (Décision 021). Comparaison à l'existant : tous les
+  champs non-embedding strictement identiques (hors renommage), similarité
+  cosinus des embeddings re-calculés vs existants = **0,9999 en moyenne**
+  (min 0,9977) — bruit numérique CPU normal, pas une régression.
+- `build_index_visuels.py` : **`COHERE_API_KEY` (clé principale) s'est
+  révélée épuisée** (quota trial 1000 appels/mois, confirmé par un appel
+  minimal isolé avant tout diagnostic plus poussé) — `COHERE_API_KEY2`
+  (présente dans `.env`, jamais utilisée jusqu'ici) testée et fonctionnelle,
+  utilisée pour ce script ainsi que pour tous les tests de filtrage de
+  cette décision. 1er essai interrompu à 25/36 par un `ConnectTimeout`
+  réseau transitoire (pas un problème de clé/quota) ; 2e essai réussi,
+  36/36 visuels encodés, champs non-embedding identiques à l'existant.
+- `extraire_visuels.py` : **non rejoué** (coût : ouverture PDF + rendu de
+  toutes les pages, script non modifié par cette Phase 2) — vérifié plus
+  légèrement : comptes sur disque (18 tables, 5 images après dédup, 13
+  pages QRT) strictement conformes aux constantes attendues par
+  `build_index_visuels.py`. Vérification proportionnée au risque (script
+  inchangé), pas la même profondeur que les 3 scripts modifiés.
+
+**2. BUG RÉEL TROUVÉ ET CORRIGÉ DANS `ingest.py`** (au-delà de la Décision
+045) : `qrt_dictionary.json` (dictionnaire de référence EIOPA, lu par
+`ingest.py` et `extract_qrt_s23.py`) n'existait plus qu'archivé dans
+`_historique_dev/dossiers_de_test/output_sectionE_QRT/` — même cause que les
+7 scripts restaurés (réarrangement du 14/09), même type d'erreur (dépendance
+réelle archivée par erreur). Restauré à `test_markdrop/output_sectionE_QRT/
+qrt_dictionary.json` (copié, pas déplacé — le reste de ce dossier historique
+est bien du débris de test ponctuel, vérifié fichier par fichier, pas
+restauré). `.gitignore` mis à jour pour suivre explicitement ce seul
+fichier de référence, pas les sorties d'extraction régénérables du même
+dossier.
+
+**3. `ingest.py::main_async` SIMPLIFIÉ EN QRT-SEUL** : `process_narrative()`
+(confirmée code mort en Décision 045) et `process_sommaire()` (résultat
+consommé par rien en aval) ne sont plus appelées — `main_async` correspond
+maintenant exactement au rôle documenté dans `GUIDE_PROJET.md`. Vérifié en
+réel sur le PDF Groupama 2025 (472s, dominé par les appels Gemini VLM des
+pages QRT image-only) : 89 pages triées (71 narratif/12 QRT/6 sommaire),
+12/12 pages QRT résolues à leur template EIOPA, diagnostic conforme aux
+anomalies déjà connues et documentées (décalage de colonne S.32.01.22,
+codes manquants S.02.01.02/S.25.05.22, sous-feuilles incertaines par
+heuristique) — aucune anomalie NOUVELLE introduite par la simplification.
+
+**4. `run_pipeline.py` CONSTRUIT** — orchestrateur complet (narratif 16
+étapes + QRT + indexation), `--pdf/--company/--type/--year` propagés,
+`--skip-narratif/--skip-qrt/--skip-index` pour rejouer un seul bloc. Limites
+documentées explicitement dans son propre docstring (pas cachées) : listes
+blanches de `fix_unnumbered_levels.py`/`final_corrections.py` codées en dur
+pour Groupama 2025 (s'arrêtent proprement sur un 3e document, ne devinent
+rien) ; `build_index_texte_bge.py`/`build_index_visuels.py`/
+`chemins_visuels.RACINE_VISUELS` sans CLI, câblés sur `output_structure_brute/`
+(pas de vraie isolation multi-documents) ; `RACINE_VISUELS` partagée par
+ANNÉE, pas par entreprise (collision possible entre 2 entreprises de même
+année — sans conséquence pour Groupama 2025/2024, à corriger avant un 2e
+émetteur). ÉCRIT MAIS NON REJOUÉ DE BOUT EN BOUT (le rejeu complet
+inclurait 2 reconversions Docling >10 min chacune, jugé disproportionné vu
+que la chaîne narrative est déjà vérifiée bloc par bloc en Décisions
+045/048 point 1) — chaque bloc individuel EST vérifié (narratif via rejeu
+partiel ci-dessous, QRT et indexation en réel ci-dessous et point 3).
+
+**BUG DE CONCEPTION TROUVÉ ET CORRIGÉ EN CONSTRUISANT `run_pipeline.py`** :
+le flag `--year` d'`ingest_qdrant.py` (Décision 046) contrôle À LA FOIS
+(a) rien directement sur le payload — le champ `year` du payload est déjà
+correct, lu depuis les fichiers `index_*.json` régénérés par
+`attach_metadata.py --year`, indépendamment de ce flag — ET (b) le SALAGE
+D'ID (`id_deterministe(annee=...)`, Décision initiale sur `ingest_qdrant_2024.py`).
+Passer `--year 2025` en ré-ingérant Groupama 2025 (dont les points
+EXISTANTS ont des IDs NON salés) créerait des points EN DOUBLE (nouveaux
+UUID salés) au lieu d'un upsert en place. Corrigé AVANT toute exécution
+réelle (pas après coup) : `run_pipeline.py` a un flag séparé `--salt-ids`
+(défaut désactivé), avec un avertissement explicite dans son aide sur
+quand NE JAMAIS l'utiliser.
+
+**5. RÉINDEXATION RÉELLE DE GROUPAMA 2025** (`ingest_qdrant.py --company
+Groupama --type mutuelle --source-file SFCR_2025_Groupe-Groupama.pdf`,
+SANS `--year`/salage, cf. bug ci-dessus) : **upsert en place choisi plutôt
+que suppression-puis-réinsertion** (contrairement à la formulation
+littérale de la spec Phase 2 étape 2.5) — les IDs de point sont
+DÉTERMINISTES (Décision initiale `ingest_qdrant.py`), donc un upsert avec
+les mêmes chaînes identifiantes réécrit les MÊMES points existants, sans
+fenêtre où la donnée serait absente (plus sûr qu'un delete explicite pour
+un résultat final identique). VÉRIFIÉ, PAS SUPPOSÉ : le compteur "ÉCART"
+affiché par `ingest_qdrant.py` (381/36/8/27 points au lieu de 190/18/5/13
+attendus) a d'abord semblé indiquer un doublon — vérification directe
+(requêtes Qdrant par filtre `year`/`annee_document`) confirme qu'il s'agit
+en fait de la somme EXACTE des points 2025 (nouveau champ `year`) et 2024
+(encore `annee_document`, jamais retouché) déjà présents dans les mêmes
+collections : 190+191=381, 18+18=36, 5+3=8, 13+14=27 — **aucun doublon**,
+juste une alerte de vérification calibrée pour un seul document à la fois.
+Point échantillonné directement par son ID Qdrant AVANT/APRÈS : même UUID
+(`013cc95f-be48-516b-ae0b-1201c41dfea5`), payload enrichi des 8 nouveaux
+champs, confirmant l'upsert en place.
+
+**2024 VOLONTAIREMENT NON RETOUCHÉ** dans cette décision (hors périmètre —
+la spec Phase 2 vise Groupama sans préciser les 2 années, et régénérer toute
+la chaîne 2024 aurait dupliqué l'effort sans être demandé) : reste sur
+`annee_document`, sans `company_name`/`company_type`/etc. Conséquence
+directe et attendue : les filtres `year`/`company_name` ne trouvent AUCUN
+point 2024 (vérifié ci-dessous, Mode 3b) — signalé comme limite connue, pas
+un bug.
+
+**6. TESTS DE FILTRAGE — LES 4 MODES, CONTRE LES DONNÉES RÉELLEMENT
+RÉINDEXÉES** (pas de mock, requêtes Qdrant réelles via `fusion_reranking.py`) :
+
+- **Mode 1 (global)** : `fusionner_candidats(question)` — retourne un
+  mélange de points 2024 (`company_name=None`, ancien schéma) et 2025
+  (`company_name='Groupama'`, nouveau schéma) — comportement CORRECT pour
+  "pas de filtre", cohérent avec le point 2024 non retouché ci-dessus.
+- **Mode 2 (filtre entreprise)** : `company_name="Groupama"` → 5/5
+  candidats tous `company_name='Groupama'`. `company_name="SociologiqueAssurance"`
+  (inexistante) → **0 candidat**, confirmé (pas d'erreur, pas de résultat
+  fantôme).
+- **Mode 3 (filtre année)** : `annee=2025` → 5/5 candidats tous
+  `year=2025`. `annee=2024` → **0 candidat**, cohérent avec le point 5
+  ci-dessus (2024 encore sur `annee_document`, jamais retouché) — pas un
+  bug de cette décision.
+- **Mode 4 (comparatif)** : `fusionner_candidats_comparatif(question,
+  ["Groupama", "SociologiqueAssurance"])` → `{"Groupama": 5 candidats,
+  "SociologiqueAssurance": 0 candidats}` — dict groupé par entreprise
+  confirmé, ordre de sortie respecté, aucune fusion croisée entre les deux.
+- **Filtre `chapter_code`** (bonus, demandé dans la spec avec l'exemple
+  "E.1") : `chapter_code == "E.1"` retourne **0 chunk** — vérifié AVANT de
+  conclure à un bug (discipline du projet) : la collection "texte" n'a
+  AUCUN chunk avec `chapter_code` exactement "E.1" littéral, seulement
+  "E.1.1"/"E.1.2" (14 chunks distincts sous `section="E"` recensés,
+  aucun à la profondeur E.1 seule — chaque chunk direct de E.1 est en
+  réalité rattaché à une sous-section plus profonde dans ce document).
+  `chapter_code == "E.1.1"` (code réellement peuplé) retourne bien le
+  chunk correct, confirmant que le MÉCANISME de filtrage fonctionne —
+  l'exemple "E.1" de la spec ne correspond simplement à aucun chunk réel
+  de ce document précis.
+- **Fusion RRF + reranking LLM** (`pipeline_complet`, filtre entreprise
+  actif) : 1er et 2e essais échoués sur un `WriteTimeout` (écriture de la
+  requête HTTP, PAS une erreur de l'API elle-même) lors de l'envoi du
+  payload multi-images au juge Gemini — hypothèse testée AVANT de conclure :
+  requête réduite à 2 candidats (au lieu de 5, donc moins d'images
+  encodées en base64) → **succès immédiat**, confirmant que la cause est
+  la taille du payload/une contrainte réseau de cet environnement, PAS une
+  régression de la fusion RRF ni du reranking eux-mêmes. RRF + reranking
+  LLM restent fonctionnels avec le filtre `company_name` actif.
+
+RÉSULTAT FINAL : les 4 scripts restants sont vérifiés (3 rejoués en réel,
+1 vérifié plus légèrement car non modifié) ; 2 bugs réels trouvés et
+corrigés en cours de route (`qrt_dictionary.json` archivé par erreur,
+confusion `--year` payload/salage) ; `run_pipeline.py` existe et documente
+honnêtement ses limites plutôt que de prétendre à une automatisation
+complète non vérifiée ; Groupama 2025 est réellement réindexé (upsert en
+place, 0 doublon confirmé) avec les 8 nouveaux champs de métadonnées ; les
+4 modes de filtrage (+ chapter_code) et la fusion RRF/reranking sont
+vérifiés fonctionnels contre le serveur Qdrant réel, filtre actif compris.
+2024 reste sciemment non migré (limite connue, pas une régression).
