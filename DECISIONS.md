@@ -3397,3 +3397,97 @@ RÉSULTAT : 22 KPIs définis et vérifiés (compte, unicité). Écart RÉEL trou
 sur 2/5 sources QRT demandées, vérifié contre les données réelles (pas
 supposé), documenté pour la suite plutôt que masqué ou corrigé
 silencieusement dans la définition elle-même.
+
+## Décision 051 — Phase 3.3 : audit exhaustif avant NULL, puis extraction des 22 KPIs Groupama 2025
+
+CONTEXTE : avant d'accepter des `NULL` sur les 7 KPIs SCR détaillés et
+`resultat_technique` (recommandés NULL dans un premier temps), consigne
+explicite de l'utilisateur : "on ne met NULL que quand on a prouvé que le
+chiffre n'est PAS dans le PDF". Audit exhaustif mené AVANT tout code
+d'extraction.
+
+DÉCOUVERTES DE L'AUDIT (aucune supposée, toutes vérifiées contre le PDF
+source ou les fichiers intermédiaires réels) :
+1. **Bug réel confirmé — `S.25.05.22.02` jamais extrait.** La page 87
+   contient 2 tableaux EIOPA empilés (titre imprimé "S.25.05.22.01 -
+   S.25.05.22.02"). Le dictionnaire du projet définit bien les 2 (28
+   lignes pour `.02`), mais la résolution de sous-feuille n'en extrait
+   qu'un. Les 11 lignes "manquantes" du 1er tableau sont réellement vides
+   sur le PDF (vérifié visuellement) — mais le 2e tableau, jamais touché,
+   contient `R0060 Diversification = -4 612 403`, `R0220 = 6 020 977`
+   (= `scr_total`) et `R0470 = 3 840 840` (= `mcr`), les 2 derniers
+   cross-validés à l'identique contre S.23.01. **Correctif du parser
+   PAS fait ici** (hors périmètre de cette étape, accord explicite de
+   l'utilisateur) — valeur `R0060` codée en dur dans `extract_kpis.py`.
+2. **S.28.01 confirmé absent, exhaustivement** — contre l'index officiel
+   du document lui-même (page 77, "ANNEXES – QRT PUBLICS" : exactement 7
+   annexes listées), pas seulement contre le dictionnaire du projet.
+3. **`resultat_technique` cherché sur tout le document** (regex sur
+   "résultat technique", "résultat de souscription", "résultat net",
+   "underwriting/technical result") — aucun chiffre group sous ce libellé
+   exact. Page 18 : Groupama désigne explicitement "résultat opérationnel
+   économique" (1 172 M€ en 2025) comme SON indicateur retenu pour "suivre
+   le résultat de souscription" — un APM maison, pas un concept
+   standardisé Solvabilité II. Tranché par l'utilisateur : **NULL**
+   (pas un proxy non comparable inter-assureurs).
+4. **`picture_76` retrouvée fusionnée à tort avec le logo Groupama**
+   (`picture_1`) par la déduplication pHash — faux positif confirmé en
+   ouvrant les 2 images. Sans impact sur les 22 KPIs (picture_75 seule
+   suffit) — signalé comme bug séparé, pas corrigé ici.
+5. **`picture_75` : organigramme SCR à texte typographié**, pas une photo
+   floue — lu par LLM vision, PAS un remplacement d'une reconversion PDF
+   (image déjà extraite sur disque par `extraire_visuels.py`).
+
+EXTRACTION (`extract_kpis.py`, racine du projet) — 5 niveaux de source,
+CHAQUE lecture de cellule vérifie le libellé officiel EIOPA avant
+d'accepter la valeur (même discipline que `final_corrections.py`,
+`test_markdrop/`) :
+1. Lecture directe (S.23.01.22.01, texte natif, page 85) : `ratio_scr`,
+   `ratio_mcr`, `scr_total`, `mcr`, et les 5 `fonds_propres_*` — TOUS
+   depuis `R0660` (Total eligible own funds to meet total group SCR, PAS
+   `R0290` basic own funds avant restrictions d'éligibilité) pour
+   cohérence interne : vérifié que `R0660/C0010 ÷ R0680 = R0690` (le ratio
+   déjà publié), confirmant que c'est la bonne base.
+2. Somme de lignes (S.02.01.02.01, union pages 78+79) : `best_estimate`
+   (5 lignes), `marge_risque` (5 lignes), `provisions_techniques` (somme
+   des deux) — PAS les lignes "Technical provisions" par segment
+   (R0510/R0600 etc.), qui sont des SOUS-TOTAUX redondants (vérifié :
+   R0510 = R0520+R0560 à l'arrondi près) qui auraient doublé-compté.
+3. Somme lignes×colonnes (S.05.01.02.01+02) : `primes_acquises_brutes`,
+   `charge_sinistres` — gross uniquement, toutes lignes d'activité et
+   tous types (direct/réassurance acceptée proportionnelle/non
+   proportionnelle) sommés.
+4. LLM Vision sur `picture_75.png` : **Gemini a échoué en réel** (503
+   "high demand" persistant sur 3 tentatives + clé de secours
+   `GEMINI_API_KEY2` rejetée en 403 "project denied access") — bascule
+   sur Claude Haiku 4.5 (même modèle/config que le juge de secours déjà
+   utilisé dans `fusion_reranking.py`, pas une config improvisée).
+   **DÉCOUVERTE EN VÉRIFIANT (pas supposée) : la lecture Claude Vision
+   s'est trouvée FAUSSE sur 2-3 des 6 valeurs à chaque appel** (`SCR
+   Défaut` lu 783 108-783 110 au lieu de 785 108 ; `SCR Vie` lu 1 453 720-724
+   au lieu de 1 455 724 ; `SCR Santé` lu 1 271 053 au lieu de 1 271 055 sur
+   un 2e appel) — écarts ~2000 k€, invisibles sans une relecture manuelle
+   zoomée (crop 2x) de l'image. **Décision : la relecture manuelle zoomée
+   fait autorité**, jamais la sortie LLM brute, cohérent avec la
+   contrainte "précision absolue" — chaque appel LLM est quand même
+   journalisé et comparé chiffre par chiffre pour garder une trace de
+   l'écart trouvé, pas juste écrasé silencieusement.
+5. Valeur codée en dur (`R0060` S.25.05.22.02 = -4 612 403, cf. point 1) :
+   `scr_diversification`.
+6. NULL tranché par l'utilisateur : `resultat_technique`.
+
+CROISEMENT DE SOURCES (implémenté, pas juste mentionné) : `scr_total`
+(S.23.01/R0680 vs S.25.05.22.02/R0220, écart 0,00%) et
+`scr_souscription_nonvie` (S.25.05.22.01/R0310 vs relecture manuelle
+picture_75, écart 0,00%) — les 2 concordent exactement après correction
+d'un bug de double-conversion d'unité dans le code de croisement lui-même
+(trouvé et corrigé avant de faire confiance au résultat, pas après).
+
+RÉSULTAT : 22/22 KPIs traités, **21 valeurs + 1 NULL** (résultat_technique
+uniquement) — les 7 KPIs SCR détaillés initialement recommandés NULL sont
+TOUS extraits avec une source vérifiée, confirmant que la consigne "prouver
+l'absence avant NULL" a évité 7 faux négatifs. Insérés dans `kpis.db`
+(company_id=1 Groupama, year=2025, upsert idempotent via
+`ON CONFLICT...DO UPDATE`). 2 bugs réels trouvés en cours de route
+(résolution de sous-feuille S.25.05.22, déduplication pHash picture_76) —
+documentés, PAS corrigés (hors périmètre explicite de cette étape).
