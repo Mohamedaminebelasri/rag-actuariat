@@ -3612,3 +3612,121 @@ RÉSULTAT : 21/22 valeurs confirmées, 30/30 contrôles actuariels
 reconfirmés via l'API de service, `kpi_service.py` complété et testé en
 conditions réelles (y compris le cas CNP Assurances absente — dict/liste
 vide, jamais d'exception). Phase 3 close sur Groupama.
+
+## Décision 055 — Phase 3.7 (WIP) : triple extraction PaddleOCR+Gemini+QRT, 2 bugs corrigés, feasibility PaddleOCR confirmée
+
+CONTEXTE : objectif "zéro LLM comme source unique de chiffre" (consigne
+explicite) — remplacé en cours de route par un design "triple extraction,
+concordance 2-sur-3 à ±1%" après avoir constaté qu'EasyOCR (déjà présent
+en dépendance transitive) lit R0060 en '4612 03' à confiance 0,22 (chiffre
+manquant), inutilisable seul.
+
+SESSION INTERROMPUE PAR L'UTILISATEUR (dépassement 2h/107k tokens) avant
+la fin de l'étape 3.7 — ce qui suit est TERMINÉ ET VÉRIFIÉ vs EN COURS,
+distingué explicitement.
+
+TERMINÉ ET VÉRIFIÉ :
+
+1. **Bug réel corrigé — résolution de sous-feuille (`test_markdrop/ingest.py`,
+   `resoudre_sous_feuille`/`process_qrt`).** Contrat changé : retourne
+   TOUJOURS une liste (au lieu d'une seule sous-feuille devinée). Quand
+   aucun indice textuel ne permet de trancher entre plusieurs sous-feuilles
+   candidates sur une même page (cas page 87 : S.25.05.22.01 ET .02, page
+   sans AUCUN texte natif exploitable — confirmé via `get_text("dict")`,
+   uniquement un bloc image), les 2 sont TOUTES tentées plutôt qu'une
+   seule devinée. Vérifié fonctionnellement (pas seulement syntaxiquement) :
+   `test_markdrop/test_sous_feuille_p87.py` confirme que page 87 résout
+   maintenant en 2 candidats ; `test_markdrop/reextraire_page87.py` (relance
+   `process_qrt` sur la page 87 seule, fusionne le résultat dans
+   `corpus_final.json`) confirme que S.25.05.22.02 passe de 0 élément
+   (jamais extrait, cf. Décision 051) à 26/28 lignes réelles extraites par
+   Gemini VLM, dont R0060=-4 612 403 — IDENTIQUE à la valeur qui était
+   codée en dur depuis Décision 051. R0470=3 840 840 et R0220/R0570=
+   6 020 977 également extraits réellement (nouveaux croisements possibles,
+   cf. ci-dessous).
+
+2. **Correction d'une fausse affirmation antérieure (Décision 051, point 4)** :
+   `picture_76` n'est PAS un faux positif de déduplication pHash fusionné
+   à tort avec le logo. Vérifié en rendant le bbox exact des 2 images
+   (`picture_76` : page 75, bbox quasi identique à `picture_1` page 2,
+   logo Groupama récurrent en en-tête) — c'est littéralement le même logo.
+   Aucun correctif nécessaire, `extraire_visuels.py` non modifié.
+
+3. **Feasibility PaddleOCR confirmée, avec un bug d'environnement identifié
+   et contourné.** `PPStructureV3` (pipeline complet layout+table+OCR)
+   plante après un long chargement de modèles avec
+   `NotImplementedError: ConvertPirAttribute2RuntimeAttribute not support
+   [pir::ArrayAttribute<pir::DoubleAttribute>]` — bug du backend oneDNN de
+   PaddlePaddle 3.3.1 sur ce poste (CPU, Windows), pas une erreur de
+   config. **Contournement trouvé et vérifié : `enable_mkldnn=False`** sur
+   la classe `PaddleOCR` (texte seul, PP-OCRv6 — PAS PP-StructureV3, dont
+   la structure complète est de toute façon inutile ici puisque la
+   position des cellules est déjà connue par ailleurs). Avec ce
+   contournement, PaddleOCR lit :
+   - Page 87 (rendu 3x) : R0060=-4 612 403 (conf 1.00), R0220=6 020 977
+     (conf 0,96-0,98), R0470=3 840 840 (conf 0,94) — les 3 valeurs de
+     référence, EXACTEMENT justes.
+   - `picture_75.png` : les 6 valeurs SCR (677 423 / 4 675 236 / 1 271 055
+     / 785 108 / 1 455 724 / 2 474 794), TOUTES exactes contre
+     `VALEURS_VERIFIEES_PICTURE_75` (Décision 051), à confiance 0,92-1,00.
+   Découverte annexe (empirique, pas supposée) : `S.25.05.22.01` (table
+   QRT réelle du modèle interne partiel) ne décompose PAS le SCR dans les
+   5 modules standards — `R0400 = "Total Life & Health" = 4 389 411`, qui
+   n'est PAS la somme de `scr_souscription_vie` (1 455 724) et
+   `scr_souscription_sante` (1 271 055) = 2 726 779. `picture_75.png` (un
+   graphique narratif) reste donc la SEULE source pour 5 des 6 KPIs SCR
+   détaillés sur ce document précis — aucun raccourci QRT n'existe, pas
+   une lacune du parser.
+   Implémenté dans `paddleocr_reader.py` (nouveau, racine du projet) :
+   `valeur_a_droite_du_code` (tableaux QRT, code à gauche/valeur à droite
+   même ligne) et `valeur_sous_label` (diagramme en boîtes, libellé
+   au-dessus/valeur en dessous) — les 2 stratégies testées et vérifiées
+   contre les valeurs connues ci-dessus, par proximité géométrique réelle
+   (bbox), jamais par ordre de lecture OCR (qui peut désynchroniser
+   labels et valeurs).
+
+4. **`extract_kpis.py` réécrit** pour utiliser `concordance_2_sur_3`
+   (nouvelle fonction : accepte une valeur SEULEMENT si ≥2 sources sur les
+   disponibles concordent à ±1%, sinon NULL — jamais un seul outil qui
+   tranche seul, y compris la relecture manuelle) :
+   - `scr_diversification` (R0060) : QRT réel (Gemini VLM, parser corrigé)
+     + PaddleOCR sur le rendu de la page 87 — la constante codée en dur
+     `R0060_S250522_02` est SUPPRIMÉE.
+   - Les 6 KPIs SCR de `picture_75.png` : PaddleOCR + LLM Vision (Gemini,
+     Claude en secours) + relecture manuelle (UNIQUEMENT pour Groupama
+     2025 — absente pour toute autre entreprise/année, dégénère
+     naturellement en 2 sources).
+   - `croiser_sources` étendu : `scr_total` croisé sur 3 sources QRT
+     désormais toutes réelles (S.23.01/R0680, S.25.05.22.02/R0220 et
+     R0570 — plus d'"audit manuel" en dur) ; nouveau croisement `mcr`
+     (S.23.01/R0610 vs S.25.05.22.02/R0470), inédit, possible seulement
+     depuis la correction du bug de sous-feuille.
+   Syntaxe vérifiée (`ast.parse` OK). **Run end-to-end PAS ENCORE confirmé
+   réussi au moment de l'interruption** — 1re tentative a échoué
+   (`ModuleNotFoundError: paddleocr`, lancée avec le venv racine du projet
+   qui n'a pas paddleocr installé, seul `test_markdrop/.venv` l'a) ; 2e
+   tentative relancée avec le bon interpréteur, toujours en cours au
+   moment du commit.
+
+EN COURS / PAS ENCORE FAIT (à reprendre dans une nouvelle session) :
+- Confirmer le run complet de `extract_kpis.py` (2e tentative), vérifier
+  les 22 valeurs, relancer `validate_kpis.py` (30 contrôles).
+- `kpi_qrt_mapping.py` (mapping multi-variantes solo/groupe/formule
+  standard/modèle interne pour généraliser à un futur SFCR quelconque) —
+  recherche partielle faite (S.23.01 solo confirmé via un QRT annexe réel
+  d'un autre assureur : R0580=SCR, R0600=MCR, R0620=Ratio EOF/SCR,
+  R0700=Excess Assets over Liabilities ; S.25.01 groupe formule standard
+  confirmé via solvencytool.com : R0060=Diversification, R0130=Risque
+  opérationnel, R0220/R0470/R0570=SCR/MCR/Total groupe — structure
+  identique à S.25.05 groupe modèle interne partiel déjà vérifiée sur
+  Groupama), mais PAS ENCORE écrit en fichier, et S.28.01/S.28.02 (MCR
+  solo) pas trouvés.
+- Détection auto des templates présents + format (texte natif/image) +
+  méthode SCR (standard/IM partiel/IM complet) — pas commencé.
+- Table de comparaison finale (4 colonnes : Outil 1/2/3/Concordance/Valeur
+  retenue/Confiance) demandée par l'utilisateur — pas produite.
+- Nettoyage des fichiers de scratch (`test_markdrop/paddle_*.log/json`,
+  `page87_paddle_test.png`, `extract_kpis_run.log`) — non commités
+  (scratch de débogage, régénérables).
+- Reprise Phase 2 (ingestion CNP Assurances) — toujours en pause, après
+  Phase 3 complète (décision de l'utilisateur, inchangée).

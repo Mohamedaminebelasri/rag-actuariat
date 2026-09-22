@@ -47,6 +47,8 @@ BASE_DIR = Path(__file__).parent
 TEST_MARKDROP = BASE_DIR / "test_markdrop"
 CORPUS_FINAL = TEST_MARKDROP / "output_structure_brute" / "corpus_final.json"
 PICTURE_75 = TEST_MARKDROP / "output_structure_brute" / "visuels" / "2025" / "images" / "picture_75.png"
+PDF_SOURCE = BASE_DIR / "data" / "SFCR_2025_Groupe-Groupama.pdf"
+PAGE87_RENDER_CACHE = TEST_MARKDROP / "page87_render_cache.png"
 DB_PATH = BASE_DIR / "kpis.db"
 
 COMPANY_NAME = "Groupama"
@@ -54,14 +56,7 @@ YEAR = 2025
 
 sys.path.insert(0, str(BASE_DIR))
 from kpi_definitions import KPI_DEFINITIONS
-
-# Valeur codée en dur — S.25.05.22.02 n'existe dans AUCUN fichier
-# intermédiaire (jamais extrait, cf. docstring). Relevée manuellement sur
-# le rendu visuel de la page 87 (Annexe 6, 2e tableau de la page,
-# "Calcul du capital de solvabilité requis") pendant l'audit Décision 051,
-# tranchée par l'utilisateur (pas la valeur "Ajustements" de picture_75,
-# qui est un concept différent — cf. Décision 051).
-R0060_S250522_02 = -4_612_403  # k€ — "Diversification"
+from paddleocr_reader import lire_image, valeur_a_droite_du_code, valeur_sous_label
 
 
 class KpiIntrouvable(Exception):
@@ -149,6 +144,102 @@ def sommer_toutes_colonnes(elements, specs):
         if not trouve:
             raise KpiIntrouvable(f"{code_ligne} introuvable dans aucun élément fourni")
     return total
+
+
+# ---------------------------------------------------------------------
+# Règle de concordance 2-sur-3 (Décision 055, Phase 3.7) — AUCUN chiffre
+# n'est accepté sur la foi d'un seul outil. Utilisée pour tout KPI dont la
+# source primaire est une lecture d'image (pas une cellule QRT native).
+# ---------------------------------------------------------------------
+
+def concordance_2_sur_3(kpi_name, valeurs_sources, tolerance_pct=1.0):
+    """valeurs_sources : liste de (nom_source, valeur|None). Accepte une
+    valeur SEULEMENT si au moins 2 sources indépendantes concordent à
+    ±tolerance_pct% — sinon NULL. Ne fait jamais confiance à une source
+    unique, quelle qu'elle soit (y compris une relecture manuelle) :
+    2 sources en désaccord = NULL, jamais un arbitrage silencieux.
+    Retourne (valeur_retenue, confiance, détail_texte)."""
+    dispo = [(n, v) for n, v in valeurs_sources if v is not None]
+    print(f"    {kpi_name}: " + ", ".join(f"{n}={v}" for n, v in valeurs_sources))
+
+    if len(dispo) < 2:
+        print(f"      -> NULL ({len(dispo)}/{len(valeurs_sources)} source(s) disponible(s), minimum 2 requis)")
+        return None, "NULL", f"{len(dispo)}/{len(valeurs_sources)} source(s) disponible(s), minimum 2 requis"
+
+    meilleure_paire = None
+    for i in range(len(dispo)):
+        for j in range(i + 1, len(dispo)):
+            n1, v1 = dispo[i]
+            n2, v2 = dispo[j]
+            base = max(abs(v1), abs(v2), 1)
+            ecart_pct = abs(v1 - v2) / base * 100
+            if ecart_pct <= tolerance_pct and (meilleure_paire is None or ecart_pct < meilleure_paire[2]):
+                meilleure_paire = (n1, n2, ecart_pct, v1)
+
+    if meilleure_paire is None:
+        print(f"      -> NULL (aucune paire ne concorde a {tolerance_pct}% pres)")
+        return None, "NULL", "aucune paire de sources concordantes"
+
+    n1, n2, ecart_pct, valeur = meilleure_paire
+    confiance = "haute" if len(dispo) == len(valeurs_sources) else "partielle"
+    print(f"      -> {valeur} (concordance {n1} & {n2}, ecart {ecart_pct:.3f}%, confiance {confiance})")
+    return valeur, confiance, f"{n1} & {n2} concordent (ecart {ecart_pct:.3f}%), confiance {confiance}"
+
+
+# ---------------------------------------------------------------------
+# PaddleOCR (PP-OCRv6, texte seul) — lecture déterministe non-LLM,
+# tool 1/3 pour toute page/image sans texte natif exploitable (Décision
+# 055). Voir paddleocr_reader.py pour le détail de l'implémentation et
+# le bug oneDNN contourné (enable_mkldnn=False obligatoire sur ce poste).
+# ---------------------------------------------------------------------
+
+def rendre_page87(zoom=3.0):
+    """Rend la page 87 du PDF source (Annexe 6, S.25.05.22) en PNG haute
+    résolution pour lecture PaddleOCR — mis en cache sur disque (le rendu
+    ne change jamais pour un PDF donné)."""
+    if PAGE87_RENDER_CACHE.exists():
+        return PAGE87_RENDER_CACHE
+    import fitz
+    doc = fitz.open(str(PDF_SOURCE))
+    page = doc[86]  # page 87, index 0
+    pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom))
+    pix.save(str(PAGE87_RENDER_CACHE))
+    doc.close()
+    return PAGE87_RENDER_CACHE
+
+
+def lire_r0060_paddleocr():
+    """Lecture PaddleOCR de R0060 (Diversification, S.25.05.22.02) sur le
+    rendu de la page 87 — code ancré à gauche, valeur la plus proche à
+    droite sur la même ligne (cf. paddleocr_reader.valeur_a_droite_du_code,
+    vérifié -4 612 403 à confiance 1.00 contre la valeur QRT réelle)."""
+    items = lire_image(rendre_page87())
+    valeur, conf = valeur_a_droite_du_code(items, "R0060")
+    return valeur
+
+
+LABELS_PICTURE_75_PADDLEOCR = {
+    "scr_operationnel": "scrop",
+    "scr_marche": "scrmarche",
+    "scr_souscription_sante": "scrsante",
+    "scr_contrepartie": "scrdefaut",
+    "scr_souscription_vie": "scrvie",
+    "scr_souscription_nonvie": "scrnonvie",
+}
+
+
+def lire_picture_75_paddleocr():
+    """Lecture PaddleOCR des 6 valeurs SCR de picture_75.png — libellé
+    normalisé (accents/espaces retirés) ancré au-dessus, valeur la plus
+    proche géométriquement au-dessous (cf.
+    paddleocr_reader.valeur_sous_label, vérifié : les 6 valeurs concordent
+    EXACTEMENT avec VALEURS_VERIFIEES_PICTURE_75, ci-dessous)."""
+    items = lire_image(PICTURE_75)
+    resultat = {}
+    for kpi_name, label_norm in LABELS_PICTURE_75_PADDLEOCR.items():
+        valeur, conf = valeur_sous_label(items, label_norm)
+        resultat[kpi_name] = valeur
+    return resultat
 
 
 # ---------------------------------------------------------------------
@@ -287,29 +378,47 @@ VALEURS_VERIFIEES_PICTURE_75 = {
 
 
 def lire_picture_75():
-    """Gemini d'abord (config par défaut du projet) ; Claude en secours
-    UNIQUEMENT si Gemini échoue (erreur réellement rencontrée : 503 "high
-    demand" sur gemini-flash-latest, 2 tentatives + clé de secours
-    GEMINI_API_KEY2 elle-même rejetée en 403 "project denied access") —
-    même discipline de fallback que fusion_reranking.py (jamais silencieux :
-    l'échec Gemini est affiché avant de basculer). PUIS comparaison
-    chiffre par chiffre à VALEURS_VERIFIEES_PICTURE_75 (relecture manuelle
-    zoomée) — tout écart est affiché, et la valeur vérifiée manuellement
-    est TOUJOURS retenue au final (cf. son docstring : 2 écarts réels
-    trouvés sur ce document précis)."""
+    """3 sources indépendantes par KPI (Décision 055, Phase 3.7) :
+    1. PaddleOCR (déterministe, non-LLM, primaire) — lit picture_75.png
+       directement.
+    2. LLM Vision (Gemini par défaut, Claude en secours si Gemini échoue —
+       503 "high demand" réellement rencontré en Phase 3.3, GEMINI_API_KEY2
+       aussi rejetée en 403 — jamais un fallback silencieux, l'échec est
+       affiché).
+    3. Relecture manuelle zoomée (VALEURS_VERIFIEES_PICTURE_75) — UNIQUEMENT
+       pour Groupama 2025, ce document précis (Décision 051) ; absente pour
+       toute autre entreprise/année, le système retombe alors sur
+       PaddleOCR + LLM Vision seuls (2 sources).
+    Règle 2-sur-3 (concordance_2_sur_3) : aucun outil ne décide seul — 2
+    sources doivent concorder à ±1%, sinon NULL."""
+    print("\n  --- Lecture picture_75.png : jusqu'à 3 sources indépendantes ---")
+    paddle_valeurs = lire_picture_75_paddleocr()
+
     try:
-        brut, source = lire_picture_75_gemini(), "Gemini (gemini-flash-latest)"
+        llm_valeurs, source_llm = lire_picture_75_gemini(), "Gemini"
     except Exception as e:
         print(f"  [secours] Gemini a échoué ({type(e).__name__}: {str(e)[:150]}) — bascule sur Claude Vision")
-        brut, source = lire_picture_75_claude(), "Claude (claude-haiku-4-5-20251001, secours Gemini indisponible)"
+        try:
+            llm_valeurs, source_llm = lire_picture_75_claude(), "Claude"
+        except Exception as e2:
+            print(f"  [secours] Claude a aussi échoué ({type(e2).__name__}: {str(e2)[:150]}) — LLM Vision indisponible")
+            llm_valeurs, source_llm = {}, None
 
-    print(f"\n  Comparaison lecture LLM ({source}) vs relecture manuelle zoomée de picture_75.png :")
-    for kpi_name, valeur_verifiee in VALEURS_VERIFIEES_PICTURE_75.items():
-        valeur_llm = brut.get(kpi_name)
-        statut = "OK" if valeur_llm == valeur_verifiee else "CORRIGÉ"
-        print(f"    {kpi_name:28} : LLM={valeur_llm}  vérifié={valeur_verifiee}  [{statut}]")
+    est_document_de_reference = (COMPANY_NAME, YEAR) == ("Groupama", 2025)
 
-    return dict(VALEURS_VERIFIEES_PICTURE_75), f"relecture manuelle zoomée (comparée à {source})"
+    resultat, details = {}, {}
+    for kpi_name in LABELS_PICTURE_75_PADDLEOCR:
+        sources = [
+            ("PaddleOCR", paddle_valeurs.get(kpi_name)),
+            (source_llm or "LLM(indisponible)", llm_valeurs.get(kpi_name) if llm_valeurs else None),
+        ]
+        if est_document_de_reference:
+            sources.append(("relecture manuelle", VALEURS_VERIFIEES_PICTURE_75.get(kpi_name)))
+        valeur, confiance, detail = concordance_2_sur_3(kpi_name, sources)
+        resultat[kpi_name] = valeur
+        details[kpi_name] = f"picture_75.png — {detail} [confiance {confiance}]"
+
+    return resultat, details
 
 
 # ---------------------------------------------------------------------
@@ -376,24 +485,49 @@ def extraire_tout():
     valeurs["primes_acquises_brutes"] = (primes_brutes / 1000, 80, "S.05.01.02.01+02, somme gross toutes colonnes")
     valeurs["charge_sinistres"] = (charge_sinistres / 1000, 80, "S.05.01.02.01+02, somme gross toutes colonnes")
 
-    # --- Niveau 4 : Vision sur picture_75.png (page 75) ---
-    vision, source_vision = lire_picture_75()
+    # --- Niveau 4 : picture_75.png — 3 sources indépendantes, concordance 2-sur-3 ---
+    vision, details_vision = lire_picture_75()
     for kpi_name in ("scr_operationnel", "scr_marche", "scr_souscription_sante",
                       "scr_contrepartie", "scr_souscription_vie", "scr_souscription_nonvie"):
         v = vision.get(kpi_name)
-        valeurs[kpi_name] = (v / 1000 if v is not None else None, 75, f"picture_75.png, {source_vision}")
+        valeurs[kpi_name] = (v / 1000 if v is not None else None, 75, details_vision[kpi_name])
 
-    # --- Niveau 5 : valeur codée en dur, S.25.05.22.02 (page 87) ---
-    valeurs["scr_diversification"] = (R0060_S250522_02 / 1000, 87,
-                                       "S.25.05.22.02/R0060 (jamais extrait par le parser, "
-                                       "valeur relevée manuellement, cf. Décision 051)")
+    # --- Niveau 5 : S.25.05.22.02/R0060 (page 87, image-only) — 2 sources
+    # indépendantes désormais que le bug de résolution de sous-feuille est
+    # corrigé (Décision 055) : lecture QRT réelle (Gemini VLM, via le
+    # parser corrigé) + lecture PaddleOCR déterministe directe sur le
+    # rendu de la page. Concordance 2-sur-3 comme pour picture_75 (avec
+    # seulement 2 sources dispo ici : les 2 doivent s'accorder). ---
+    s250501 = elements_par_template(corpus, "S.25.05.22.01")
+    s250502 = elements_par_template(corpus, "S.25.05.22.02")
+    if not s250501 or not s250502:
+        raise KpiIntrouvable("S.25.05.22.01/02 absent de corpus_final.json — relancer reextraire_page87.py")
+
+    r0060_qrt = lire_cellule(s250502, "R0060", "C0100", "Diversification")
+    r0060_paddle = lire_r0060_paddleocr()
+    print("\n  --- Lecture S.25.05.22.02/R0060 (page 87) : 2 sources indépendantes ---")
+    r0060_valeur, r0060_confiance, r0060_detail = concordance_2_sur_3(
+        "scr_diversification", [("QRT (Gemini VLM, parser corrigé)", r0060_qrt), ("PaddleOCR", r0060_paddle)]
+    )
+    valeurs["scr_diversification"] = (
+        r0060_valeur / 1000 if r0060_valeur is not None else None, 87,
+        f"S.25.05.22.02/R0060 — {r0060_detail} [confiance {r0060_confiance}]",
+    )
 
     # --- NULL tranché (Décision 051) ---
     valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé trouvé (Décision 051)")
 
-    return valeurs, {"scr_total_qrt": scr_total, "scr_nonvie_qrt": lire_cellule(
-        elements_par_template(corpus, "S.25.05.22.01"), "R0310", "C0010", "Total Net Non-life underwriting risk"
-    ), "vision": vision}
+    scr_nonvie_qrt = lire_cellule(s250501, "R0310", "C0010", "Total Net Non-life underwriting risk")
+    mcr_qrt_s25 = lire_cellule(s250502, "R0470", "C0100", "Minimum consolidated group solvency capital requirement")
+    scr_total_qrt_s25 = lire_cellule(s250502, "R0220", "C0100", "Consolidated Group SCR")
+    scr_total_qrt_s25_bis = lire_cellule(s250502, "R0570", "C0100", "Total group solvency capital requirement")
+
+    return valeurs, {
+        "scr_total_qrt": scr_total, "mcr_qrt": mcr,
+        "scr_total_qrt_s25_R0220": scr_total_qrt_s25, "scr_total_qrt_s25_R0570": scr_total_qrt_s25_bis,
+        "mcr_qrt_s25_R0470": mcr_qrt_s25,
+        "scr_nonvie_qrt": scr_nonvie_qrt, "vision": vision,
+    }
 
 
 # ---------------------------------------------------------------------
@@ -407,20 +541,28 @@ def croiser_sources(valeurs, extras):
     imprimé, jugement laissé à l'étape 3.4 (contrôles actuariels)."""
     rapport = []
 
-    # scr_total : S.23.01/R0680 vs picture_75 "SCR" total (non demandé
-    # explicitement au modèle vision ci-dessus, donc comparé uniquement
-    # à la valeur déjà connue de l'audit manuel : 6 020 977 k€, identique).
+    # scr_total : 3 sources QRT indépendantes, désormais TOUTES réelles
+    # (le bug de résolution de sous-feuille corrigé, Décision 055, donne
+    # accès à S.25.05.22.02 — plus d'"audit manuel" en dur ici).
     scr_total_qrt = extras["scr_total_qrt"]
     rapport.append(("scr_total", "S.23.01/R0680", scr_total_qrt,
-                     "S.25.05.22.02/R0220 (audit manuel)", 6_020_977))
+                     "S.25.05.22.02/R0220", extras["scr_total_qrt_s25_R0220"]))
+    rapport.append(("scr_total (bis)", "S.23.01/R0680", scr_total_qrt,
+                     "S.25.05.22.02/R0570", extras["scr_total_qrt_s25_R0570"]))
 
-    # scr_souscription_nonvie : S.25.05.22.01/R0310 vs picture_75 (relecture
-    # manuelle vérifiée, déjà en k€ — PAS de x1000, valeurs["vision"] est
-    # déjà à l'échelle QRT depuis la correction du bug de double-conversion).
+    # mcr : S.23.01/R0610 vs S.25.05.22.02/R0470 — nouveau croisement,
+    # possible seulement depuis la correction du bug de sous-feuille.
+    rapport.append(("mcr", "S.23.01/R0610", extras["mcr_qrt"],
+                     "S.25.05.22.02/R0470", extras["mcr_qrt_s25_R0470"]))
+
+    # scr_souscription_nonvie : S.25.05.22.01/R0310 (donnée réelle du
+    # corpus désormais) vs picture_75 (concordance 2-sur-3 déjà appliquée
+    # en amont dans lire_picture_75 — ici on revérifie juste l'accord avec
+    # le QRT, pour la traçabilité du rapport).
     scr_nonvie_qrt = extras["scr_nonvie_qrt"]
     scr_nonvie_vision = extras["vision"].get("scr_souscription_nonvie")
     rapport.append(("scr_souscription_nonvie", "S.25.05.22.01/R0310", scr_nonvie_qrt,
-                     "picture_75.png (relecture manuelle vérifiée)", scr_nonvie_vision))
+                     "picture_75.png (valeur retenue par concordance 2-sur-3)", scr_nonvie_vision))
 
     print("\n" + "=" * 70)
     print("CROISEMENT DES SOURCES (concordance attendue, tolérance 2%)")

@@ -286,19 +286,31 @@ def _cle_composite(template_id, groupe):
 
 
 def resoudre_sous_feuille(page, template_id, qrt_dict):
-    """Détermine la sous-feuille EIOPA exacte (ex. 'S.23.01.22.01') pour
-    une page QRT donnée. Retourne (sheet_key|None, methode, sheet_dict_override).
-    sheet_dict_override est None dans le cas normal (le sheet_dict se
-    trouve alors via qrt_dict[template_id][sheet_key]) — non-None
-    uniquement quand plusieurs sous-feuilles ont dû être fusionnées (cf.
-    grouper_sous_feuilles_fusionnables), auquel cas sheet_key est une clé
-    composite (ex. "S.05.02.04.01+02+03") absente du dictionnaire brut."""
+    """Détermine la ou les sous-feuille(s) EIOPA (ex. 'S.23.01.22.01') pour
+    une page QRT donnée. Retourne une LISTE de (sheet_key|None, methode,
+    sheet_dict_override) — normalement 1 élément ; PLUSIEURS uniquement
+    dans le cas "AUCUN indice trouvé" (cf. plus bas) quand le template a
+    plusieurs sous-feuilles NON regroupables (row_codes distincts) : on
+    tente alors TOUTES les candidates plutôt que de deviner la première
+    (bug réel trouvé et corrigé, cf. DECISIONS.md — page 87 du SFCR
+    Groupama 2025, S.25.05.22, où le libellé "S.25.05.22.01 -
+    S.25.05.22.02" imprimé sur la page N'EST MÊME PAS DU TEXTE EXTRACTIBLE
+    — la page entière est une image incrustée, donc AUCUNE regex sur le
+    texte de la page ne peut jamais désambiguïser ce cas ; seul un
+    changement du comportement par défaut — tenter les deux plutôt qu'une
+    seule — peut le corriger, de façon générale, pas seulement pour ce
+    document). sheet_dict_override est None dans le cas normal (le
+    sheet_dict se trouve alors via qrt_dict[template_id][sheet_key]) —
+    non-None quand plusieurs sous-feuilles ont dû être fusionnées (cf.
+    grouper_sous_feuilles_fusionnables) OU quand toutes les candidates
+    isolées sont tentées (sheet_dict_override reste None dans ce dernier
+    cas, chaque sheet_key candidate garde son propre sheet_dict normal)."""
     template_dict = qrt_dict.get(template_id, {})
     sheet_keys = sorted(template_dict.keys())
     if not sheet_keys:
-        return None, "template absent du dictionnaire", None
+        return [(None, "template absent du dictionnaire", None)]
     if len(sheet_keys) == 1:
-        return sheet_keys[0], "unique sous-feuille disponible pour ce template", None
+        return [(sheet_keys[0], "unique sous-feuille disponible pour ce template", None)]
 
     groupes = grouper_sous_feuilles_fusionnables(template_dict)
 
@@ -320,15 +332,15 @@ def resoudre_sous_feuille(page, template_id, qrt_dict):
         if groupes and 1 <= numero <= len(groupes):
             groupe = groupes[numero - 1]
             cle = _cle_composite(template_id, groupe)
-            return cle, (
+            return [(cle, (
                 f"libellé natif '{template_id} - {m.group(1)}' interprété comme la page physique "
                 f"n°{numero} du template (pas comme la sous-feuille .{numero:02d} littérale) — "
                 f"{len(groupe)} sous-feuilles à row_codes identiques fusionnées ({', '.join(groupe)}), "
                 "signal structurel vérifié"
-            ), fusionner_sheet_dicts(groupe, template_dict)
+            ), fusionner_sheet_dicts(groupe, template_dict))]
         candidate = f"{template_id}.{numero:02d}"
         if candidate in template_dict:
-            return candidate, "code de sous-feuille trouvé dans le texte natif", None
+            return [(candidate, "code de sous-feuille trouvé dans le texte natif", None)]
 
     m2 = re.search(r"\((\d+)/(\d+)\)", page["texte"])
     if m2:
@@ -337,17 +349,46 @@ def resoudre_sous_feuille(page, template_id, qrt_dict):
         if groupes and len(groupes) == total and 0 <= idx < len(groupes):
             groupe = groupes[idx]
             cle = _cle_composite(template_id, groupe)
-            return cle, (
+            return [(cle, (
                 f"page {m2.group(1)}/{m2.group(2)} — {len(groupe)} sous-feuilles à row_codes "
                 f"identiques détectées et fusionnées ({', '.join(groupe)}) — signal structurel "
                 "vérifié, pas une supposition de position"
-            ), fusionner_sheet_dicts(groupe, template_dict)
+            ), fusionner_sheet_dicts(groupe, template_dict))]
         if 0 <= idx < len(sheet_keys):
-            return sheet_keys[idx], (f"déduite du suffixe ({m2.group(1)}/{m2.group(2)}) sur la "
-                                      f"page — HEURISTIQUE, pas une lecture directe du code"), None
+            return [(sheet_keys[idx], (f"déduite du suffixe ({m2.group(1)}/{m2.group(2)}) sur la "
+                                      f"page — HEURISTIQUE, pas une lecture directe du code"), None)]
 
-    return sheet_keys[0], ("AUCUN indice trouvé — 1ère sous-feuille prise par défaut — "
-                            "À VÉRIFIER MANUELLEMENT"), None
+    # AUCUN INDICE TEXTUEL — au lieu de deviner sheet_keys[0] (comportement
+    # d'origine), tenter TOUTES les sous-feuilles candidates : chaque groupe
+    # fusionnable (row_codes identiques, cf. grouper_sous_feuilles_fusionnables)
+    # une fois, chaque sous-feuille isolée (row_codes distincts, jamais
+    # regroupée) une fois. Bug réel corrigé ici (cf. docstring de la
+    # fonction) : sur une page sans AUCUN texte extractible (page entière =
+    # image incrustée), aucune regex ne peut jamais distinguer entre
+    # plusieurs sous-feuilles non regroupées — deviner la première en
+    # ratait systématiquement les autres en silence. La complétude par
+    # sous-feuille (déjà calculée en aval, process_qrt) indique ensuite
+    # laquelle a réellement des données trouvées.
+    sheets_dans_un_groupe = {sk for g in groupes for sk in g}
+    candidats_isoles = [sk for sk in sheet_keys if sk not in sheets_dans_un_groupe]
+    n_candidats_total = len(candidats_isoles) + len(groupes)
+
+    if n_candidats_total <= 1:
+        # Cas normal (pas de multiplicité réelle malgré len(sheet_keys)>1 —
+        # ex. tous les sheet_keys appartiennent à un seul et même groupe
+        # fusionnable) : comportement inchangé, 1 seule candidate.
+        seule = candidats_isoles[0] if candidats_isoles else _cle_composite(template_id, groupes[0])
+        override = None if candidats_isoles else fusionner_sheet_dicts(groupes[0], template_dict)
+        return [(seule, "AUCUN indice trouvé — 1ère (et seule) sous-feuille prise par défaut — "
+                         "À VÉRIFIER MANUELLEMENT", override)]
+
+    raison = (f"AUCUN indice trouvé — {n_candidats_total} sous-feuilles candidates non regroupables, "
+              "TOUTES tentées (pas de devinette sur une seule, cf. Décision 055) — "
+              "À VÉRIFIER MANUELLEMENT quelles candidates ont réellement des données")
+    resultats = [(sk, raison, None) for sk in candidats_isoles]
+    for g in groupes:
+        resultats.append((_cle_composite(template_id, g), raison, fusionner_sheet_dicts(g, template_dict)))
+    return resultats
 
 
 def extract_qrt_native(page, sheet_dict, sheet_key):
@@ -652,60 +693,66 @@ async def process_qrt(pdf_path, pages_qrt, qrt_dict, work_dir):
     doc = fitz.open(str(pdf_path))
     for page in pages_qrt:
         template_id = page["template_id"]
-        sheet_key, methode, sheet_dict_override = resoudre_sous_feuille(page, template_id, qrt_dict)
-        if sheet_key is None:
-            anomalies["sous_feuilles_incertaines"].append({
-                "page": page["page"], "template_id": template_id, "raison": methode,
+        # resoudre_sous_feuille retourne une LISTE — normalement 1 élément,
+        # plusieurs UNIQUEMENT dans le cas "aucun indice, plusieurs
+        # sous-feuilles non regroupables" (cf. son docstring, Décision 055) :
+        # boucle interne pour traiter chaque candidate comme un élément QRT
+        # séparé, produit sur la MÊME page physique.
+        candidats = resoudre_sous_feuille(page, template_id, qrt_dict)
+        for sheet_key, methode, sheet_dict_override in candidats:
+            if sheet_key is None:
+                anomalies["sous_feuilles_incertaines"].append({
+                    "page": page["page"], "template_id": template_id, "raison": methode,
+                })
+                continue
+            if "À VÉRIFIER" in methode or "HEURISTIQUE" in methode:
+                anomalies["sous_feuilles_incertaines"].append({
+                    "page": page["page"], "sheet_key": sheet_key, "raison": methode,
+                })
+
+            sheet_dict = sheet_dict_override if sheet_dict_override is not None else qrt_dict[template_id][sheet_key]
+            sheet_dicts_effectifs[sheet_key] = sheet_dict
+
+            # BUG CONFIRMÉ (cf. DECISIONS.md) : extract_qrt_native est bâti autour
+            # de l'ancrage par code R00xx (ROW_CODE_RE) — sur un template SANS
+            # code de ligne (row_codes vide, ex. S.32.01.22, liste d'entités), il
+            # ne peut structurellement rien trouver et retourne {} en silence,
+            # sans qu'aucune anomalie ne soit levée (la complétude est vide des
+            # deux côtés). extract_qrt_gemini a déjà une branche dédiée et
+            # validée pour ce cas (cf. plus bas, "if not row_labels"). Plutôt que
+            # de dupliquer cette logique côté texte natif, on route
+            # systématiquement ces templates vers Gemini, quel que soit
+            # NATIVE_TEXT_THRESHOLD — scopé aux seuls templates row_codes vide,
+            # aucun changement pour les 6 autres.
+            sans_code_de_ligne = not sheet_dict["row_codes"]
+            if page["n_caracteres"] > NATIVE_TEXT_THRESHOLD and not sans_code_de_ligne:
+                pdf_page = doc[page["page"] - 1]
+                resultat = extract_qrt_native(pdf_page, sheet_dict, sheet_key)
+                resultat["methode_extraction"] = "texte natif (positionnel)"
+            else:
+                resultat = await extract_qrt_gemini(pdf_path, page["page"] - 1, sheet_dict, sheet_key, work_dir)
+                resultat["methode_extraction"] = "Gemini VLM"
+
+            resultat["page_source"] = page["page"]
+            resultat["methode_resolution_sous_feuille"] = methode
+
+            contenu = {"completude": resultat["completude"], "methode_extraction": resultat["methode_extraction"]}
+            if "entites" in resultat:
+                contenu["entites"] = resultat["entites"]
+            else:
+                contenu["lignes"] = resultat["lignes"]
+            elements.append({
+                "page_source": page["page"], "type": "qrt", "template_id": sheet_key,
+                "contenu": contenu,
             })
-            continue
-        if "À VÉRIFIER" in methode or "HEURISTIQUE" in methode:
-            anomalies["sous_feuilles_incertaines"].append({
-                "page": page["page"], "sheet_key": sheet_key, "raison": methode,
-            })
 
-        sheet_dict = sheet_dict_override if sheet_dict_override is not None else qrt_dict[template_id][sheet_key]
-        sheet_dicts_effectifs[sheet_key] = sheet_dict
+            if resultat.get("decalages_colonne_suspectes"):
+                anomalies["decalages_colonne"].append({
+                    "page": page["page"], "sheet_key": sheet_key,
+                    "signalements": resultat["decalages_colonne_suspectes"],
+                })
 
-        # BUG CONFIRMÉ (cf. DECISIONS.md) : extract_qrt_native est bâti autour
-        # de l'ancrage par code R00xx (ROW_CODE_RE) — sur un template SANS
-        # code de ligne (row_codes vide, ex. S.32.01.22, liste d'entités), il
-        # ne peut structurellement rien trouver et retourne {} en silence,
-        # sans qu'aucune anomalie ne soit levée (la complétude est vide des
-        # deux côtés). extract_qrt_gemini a déjà une branche dédiée et
-        # validée pour ce cas (cf. plus bas, "if not row_labels"). Plutôt que
-        # de dupliquer cette logique côté texte natif, on route
-        # systématiquement ces templates vers Gemini, quel que soit
-        # NATIVE_TEXT_THRESHOLD — scopé aux seuls templates row_codes vide,
-        # aucun changement pour les 6 autres.
-        sans_code_de_ligne = not sheet_dict["row_codes"]
-        if page["n_caracteres"] > NATIVE_TEXT_THRESHOLD and not sans_code_de_ligne:
-            pdf_page = doc[page["page"] - 1]
-            resultat = extract_qrt_native(pdf_page, sheet_dict, sheet_key)
-            resultat["methode_extraction"] = "texte natif (positionnel)"
-        else:
-            resultat = await extract_qrt_gemini(pdf_path, page["page"] - 1, sheet_dict, sheet_key, work_dir)
-            resultat["methode_extraction"] = "Gemini VLM"
-
-        resultat["page_source"] = page["page"]
-        resultat["methode_resolution_sous_feuille"] = methode
-
-        contenu = {"completude": resultat["completude"], "methode_extraction": resultat["methode_extraction"]}
-        if "entites" in resultat:
-            contenu["entites"] = resultat["entites"]
-        else:
-            contenu["lignes"] = resultat["lignes"]
-        elements.append({
-            "page_source": page["page"], "type": "qrt", "template_id": sheet_key,
-            "contenu": contenu,
-        })
-
-        if resultat.get("decalages_colonne_suspectes"):
-            anomalies["decalages_colonne"].append({
-                "page": page["page"], "sheet_key": sheet_key,
-                "signalements": resultat["decalages_colonne_suspectes"],
-            })
-
-        resultats.append({"page": page["page"], "template_id": template_id,
+            resultats.append({"page": page["page"], "template_id": template_id,
                            "sheet_key": sheet_key, "resultat": resultat})
 
     doc.close()
