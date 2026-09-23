@@ -402,7 +402,17 @@ def extract_qrt_native(page, sheet_dict, sheet_key):
 
     header_words = [(x0, y0, x1, y1, t) for (x0, y0, x1, y1, t) in words if COL_CODE_RE.match(t)]
     col_x = {t: (x0 + x1) / 2 for (x0, y0, x1, y1, t) in header_words}
-    header_y_max = max((y1 for _, _, _, y1, _ in header_words), default=0)
+    # Bug réel trouvé et corrigé (Décision 059, test CNP) : une feuille à
+    # PLUSIEURS sections d'en-tête de colonnes (ex. S.23.01.01.01 — un
+    # en-tête 5 colonnes C0010-C0050 en haut, un en-tête C0060 seul plus
+    # bas pour la réserve de réconciliation) faisait passer header_y_max
+    # au MAX de tous les en-têtes trouvés sur la page, excluant alors
+    # TOUTES les lignes situées entre le 1er en-tête et le dernier (ici :
+    # R0500-R0640, silencieusement perdues). Le MIN (1er en-tête, celui
+    # qui sépare le titre de page du tableau) est le seuil réellement
+    # voulu — revérifié fonctionnellement sur CNP ET Groupama (aucune
+    # régression, cf. Décision 059) avant d'être adopté.
+    header_y_max = min((y1 for _, _, _, y1, _ in header_words), default=0)
 
     row_words = [(x0, y0, x1, y1, t) for (x0, y0, x1, y1, t) in words
                  if ROW_CODE_RE.match(t) and y0 > header_y_max]

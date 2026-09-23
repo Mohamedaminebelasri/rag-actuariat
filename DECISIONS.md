@@ -4023,3 +4023,108 @@ PAS FAIT (prochaine session) :
 - Étapes 2-5 du prompt (extraction ciblée, tableau 22 KPIs CNP, insertion
   DB, `compare_kpis`, commit final) — non atteintes, bloquées par ce qui
   précède.
+
+## Décision 059 — Phase 3.8 : extraction CNP Assurances réussie (16/22), 2 bugs réels corrigés
+
+CONTEXTE : suite de la Décision 058 (extraction bloquée). Cette session
+a débloqué le pipeline en vérifiant manuellement chaque template CNP
+directement dans le PDF source (pas de dictionnaire EIOPA officiel
+téléchargé — le site EIOPA n'a pas été consulté, l'approche "QRT réels
+vérifiés" déjà validée en session précédente s'est montrée plus rapide
+et plus fiable).
+
+TERMINÉ ET VÉRIFIÉ :
+
+1. **2 nouveaux bugs réels trouvés et corrigés, tous deux dans du code
+   PARTAGÉ avec Groupama — retesté sur Groupama après chaque correctif** :
+   - `classify_pages()` a un **faux positif** (page 76 : mention narrative
+     "QRT S.23.01.01 présenté en annexe", pas une vraie table) et **rate
+     les pages de continuation** sans code répété (84, 87, 96, 99 — les
+     vraies suites de S.02.01.02, S.05.01.02, S.23.01.01, S.28.02.01).
+     Contourné pour CNP par une liste de pages vérifiée manuellement
+     (`test_markdrop/extraire_cnp.py`) plutôt qu'une correction générale
+     de `classify_pages()` (hors budget de cette session).
+   - **Bug réel dans `extract_qrt_native()`** (`ingest.py`) : `header_y_max`
+     prenait le **MAX** de TOUS les en-têtes de colonnes trouvés sur la
+     page — sur une feuille à plusieurs sections d'en-têtes (ex.
+     S.23.01.01.01 : en-tête 5 colonnes en haut, en-tête 1 colonne plus
+     bas pour la réserve de réconciliation), cela excluait SILENCIEUSEMENT
+     toutes les lignes situées ENTRE le 1er et le dernier en-tête (R0500-
+     R0640 perdues, exactement les lignes SCR/MCR dont on a besoin).
+     Corrigé en `min()` (le 1er en-tête, celui qui sépare le titre de page
+     du tableau). **Revérifié sur Groupama après correction : les 22 KPIs
+     restent identiques à la référence (Décision 057), aucune régression.**
+
+2. **Dictionnaire QRT minimal pour CNP** (`test_markdrop/qrt_dictionary_cnp.json`,
+   5 templates : S.02.01.02, S.05.01.02, S.23.01.01, S.25.01.21, S.28.02.01)
+   — PAS un dictionnaire "universel" exhaustif (hors budget), mais couvrant
+   exactement ce qui est nécessaire aux 22 KPIs, chaque code R/C vérifié
+   en lisant directement le texte natif des pages PDF de CNP (`fitz`,
+   pas de résumé IA) — pas la taxonomie EIOPA officielle, pas devinée.
+
+3. **Découverte empirique : le suffixe ".21" (S.25.01.21, formule
+   standard) a EXACTEMENT les mêmes codes de ligne que ".01"/".22"**
+   (R0010-R0050 modules, R0060 diversification, R0130 opérationnel,
+   R0220 SCR final) — confirmé en lisant la page 97 de CNP directement et
+   en croisant R0220=14 256 819 contre S.23.01.01/R0580=14 256 819 (écart
+   0%). **Mais la COLONNE diffère** : C0110 chez CNP (taxonomie EIOPA
+   2025) contre C0040/C0100 chez AXA (rapport 2023) — nouvelle variante
+   ajoutée à `kpi_qrt_mapping.py` avec la bonne colonne, pas une simple
+   généralisation du suffixe.
+
+4. **S.28.02.01 (MCR composite vie+non-vie) enfin vérifié** — jamais
+   trouvé de QRT réel rempli en 2 sessions de recherche précédentes ;
+   lu directement depuis la page 99 de CNP (R0300-R0400, mêmes codes que
+   S.28.01) et **croisé contre S.23.01.01/R0600 : 6 415 569 = 6 415 569,
+   écart 0%**. Ajouté au mapping avec cette vérification citée.
+
+5. **Découverte : CNP rédige son SFCR en FRANÇAIS** (Groupama/AXA/
+   Bornholms/Yuzzu étaient tous en anglais) — les libellés officiels
+   ("Ratio fonds propres éligibles sur capital de solvabilité requis" vs
+   "Ratio of Eligible own funds to SCR") ne correspondaient à AUCUNE
+   variante existante du mapping, provoquant des NULL silencieux corrects
+   (jamais une valeur fausse) mais incomplets. **Variantes françaises
+   ajoutées** pour ratio_scr/ratio_mcr/fonds_propres_*/best_estimate/
+   marge_risque/primes_acquises_brutes/charge_sinistres — EN ADDITION
+   des variantes anglaises existantes (Groupama/AXA restent inchangés).
+
+6. **Extraction CNP : 16/22 KPIs extraits, 6 NULL honnêtes** (pas devinés) :
+   `best_estimate`, `marge_risque`, `provisions_techniques`,
+   `primes_acquises_brutes`, `charge_sinistres` — CNP déclare ses
+   provisions non-vie sous "santé similaire à la non-vie" (R0560-590),
+   PAS sous "non-vie pure" (R0540-550, littéralement vide dans son
+   bilan — vérifié en lisant la page 84) ; le mapping actuel exige les 5
+   lignes standard (dont R0540/R0550) et échoue proprement plutôt que de
+   sommer un sous-ensemble. **Corrigible dans une session future** (ajouter
+   une variante utilisant R0560-590 au lieu de R0540-550) mais pas fait
+   ici (temps).
+
+RÉSULTAT (16 valeurs, `extract_kpis_cnp.py`, insérées dans `kpis.db`,
+entreprise "CNP Assurances" créée) :
+
+| KPI | CNP | Groupama |
+|---|---|---|
+| ratio_scr | 258.00 % | 274.00 % |
+| ratio_mcr | 506.00 % | 379.28 % |
+| scr_total | 14 256.82 M€ | 6 020.98 M€ |
+| mcr | 6 415.57 M€ | 3 840.84 M€ |
+| fonds_propres_eligibles | 36 778.13 M€ | 16 481.19 M€ |
+| scr_marche | 34 424.16 M€ | 4 675.24 M€ |
+| scr_operationnel | 1 065.80 M€ | 677.42 M€ |
+| scr_diversification | -9 821.13 M€ | -4 612.40 M€ |
+| (+8 autres KPIs SCR/fonds propres) | ... | ... |
+| best_estimate, marge_risque, primes, sinistres | NULL (4) | valeurs réelles |
+
+`compare_kpis("ratio_scr", 2025)` testé et fonctionnel — 1re comparaison
+multi-assureurs réelle du projet.
+
+PAS FAIT (temps épuisé, session largement au-delà d'1h30) :
+- Fix pour best_estimate/marge_risque/primes/charge_sinistres (variante
+  R0560-590 pour CNP) — diagnostiqué, pas corrigé.
+- `validate_kpis.py` pas adapté/relancé pour CNP (script mono-Groupama).
+- Généralisation de `classify_pages()` (faux positif + pages de
+  continuation) — contournée manuellement pour CNP, pas corrigée à la
+  racine.
+- Dictionnaire QRT vraiment "universel" (S.02.01.01, S.25.03, etc. de la
+  demande initiale) — seuls les 5 templates nécessaires aux 22 KPIs sur
+  CNP ont été construits et vérifiés.

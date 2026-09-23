@@ -1,0 +1,86 @@
+{
+  "S.02.01.02": {
+    "S.02.01.02.01": {
+      "titre": "S.02.01.02.01 - Bilan",
+      "row_codes": {
+        "R0540": "Best Estimate", "R0550": "Risk margin",
+        "R0580": "Best Estimate", "R0590": "Risk margin",
+        "R0630": "Best Estimate", "R0640": "Risk margin",
+        "R0670": "Best Estimate", "R0680": "Risk margin",
+        "R0710": "Best Estimate", "R0720": "Risk margin",
+        "R1000": "Excédent d'actif sur passif"
+      },
+      "col_codes": {"C0010": "Solvency II value"},
+      "col_groups": {"C0010": "C0010"}
+    }
+  },
+  "S.05.01.02": {
+    "S.05.01.02.01": {
+      "titre": "S.05.01.02.01 - Primes, sinistres et dépenses (non-vie)",
+      "row_codes": {
+        "R0210": "Premiums earned", "R0220": "Premiums earned", "R0230": "Premiums earned",
+        "R0310": "Claims incurred", "R0320": "Claims incurred", "R0330": "Claims incurred"
+      },
+      "col_codes": {"C0010": "Assurance des frais médicaux", "C0020": "Assurance de protection du revenu",
+                    "C0030": "Assurance d'indemnisation des travailleurs", "C0200": "Total"},
+      "col_groups": {"C0010": "C0010", "C0020": "C0020", "C0030": "C0030", "C0200": "C0200"}
+    },
+    "S.05.01.02.02": {
+      "titre": "S.05.01.02.02 - Primes, sinistres et dépenses (vie)",
+      "row_codes": {"R1510": "Premiums earned", "R1610": "Claims incurred"},
+      "col_codes": {"C0210": "Assurance maladie", "C0220": "Assurance avec participation aux bénéfices",
+                    "C0230": "Assurance indexée et en unités de compte", "C0240": "Autres assurances vie",
+                    "C0270": "Réassurance maladie", "C0280": "Réassurance vie", "C0300": "Total"},
+      "col_groups": {"C0210": "C0210", "C0220": "C0220", "C0230": "C0230", "C0240": "C0240",
+                     "C0270": "C0270", "C0280": "C0280", "C0300": "C0300"}
+    }
+  },
+  "S.23.01.01": {
+    "S.23.01.01.01": {
+      "titre": "S.23.01.01.01 - Fonds propres",
+      "row_codes": {
+        "R0500": "Total des fonds propres disponibles pour couvrir le capital de solvabilité requis",
+        "R0510": "Total des fonds propres disponibles pour couvrir le minimum de capital requis",
+        "R0540": "Total des fonds propres éligibles pour couvrir le capital de solvabilité requis",
+        "R0550": "Total des fonds propres éligibles pour couvrir le minimum de capital requis",
+        "R0580": "Capital de solvabilité requis",
+        "R0600": "Minimum de capital requis",
+        "R0620": "Ratio fonds propres éligibles sur capital de solvabilité requis",
+        "R0640": "Ratio fonds propres éligibles sur minimum de capital requis",
+        "R0700": "Excédent d'actif sur passif"
+      },
+      "col_codes": {"C0010": "Total", "C0020": "Niveau 1 - non restreint", "C0030": "Niveau 1 - restreint",
+                    "C0040": "Niveau 2", "C0050": "Niveau 3", "C0060": "Réserve de réconciliation"},
+      "col_groups": {"C0010": "C0010", "C0020": "C0020", "C0030": "C0030", "C0040": "C0040",
+                     "C0050": "C0050", "C0060": "C0060"}
+    }
+  },
+  "S.25.01.21": {
+    "S.25.01.21.01": {
+      "titre": "S.25.01.21.01 - Capital de solvabilité requis (formule standard)",
+      "row_codes": {
+        "R0010": "Risque de marché", "R0020": "Risque de défaut de la contrepartie",
+        "R0030": "Risque de souscription en vie", "R0040": "Risque de souscription en santé",
+        "R0050": "Risque de souscription en non-vie", "R0060": "Diversification",
+        "R0100": "Capital de solvabilité requis de base", "R0130": "Risque opérationnel",
+        "R0200": "Capital de solvabilité requis à l'exclusion des exigences de capital supplémentaire",
+        "R0220": "Capital de solvabilité requis"
+      },
+      "col_codes": {"C0110": "Capital de solvabilité requis brut", "C0100": "Value"},
+      "col_groups": {"C0110": "C0110", "C0100": "C0100"}
+    }
+  },
+  "S.28.02.01": {
+    "S.28.02.01.01": {
+      "titre": "S.28.02.01.01 - Minimum de capital requis (activité vie et non-vie)",
+      "row_codes": {
+        "R0300": "MCR linéaire", "R0310": "Capital de solvabilité requis",
+        "R0320": "Plafond du MCR", "R0330": "Plancher du MCR",
+        "R0340": "MCR combiné", "R0350": "Seuil plancher absolu du MCR",
+        "R0400": "Minimum de capital requis"
+      },
+      "col_codes": {"C0130": "Value"},
+      "col_groups": {"C0130": "C0130"}
+    }
+  }
+}
