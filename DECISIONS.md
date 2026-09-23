@@ -4324,3 +4324,49 @@ PAS FAIT (limitations MACSF restantes, hors périmètre de ce fix ciblé) :
   capturées par `NUMERIC_FRAGMENT_RE`, différent du cas "%").
 - `fonds_propres_t1_r/t2/t3` toujours NULL (cohérent : MACSF n'a que du
   Tier 1, vérifié).
+
+## Décision 063 — Fix tiret EIOPA "-" → 0.0 : MACSF passe de 16/22 à 21/22, 0 régression
+
+CONTEXTE : suite du diagnostic demandé (5 KPIs NULL identifiés : cellule
+QRT contenant un tiret isolé "-", convention EIOPA "zéro/non
+applicable"). Vérifié AVANT correctif (pas supposé) que les 3 tirets de
+S.23.01.01.01/R0540 (Niveau1-restreint/Niveau2/Niveau3) sont à x=507,9/
+531,7/555,5 — écarts >20pt entre eux et par rapport aux vrais nombres,
+bien au-delà de `MERGE_GAP_PT` (5.0) — aucun risque de fusion accidentelle
+avec un signe moins de nombre négatif voisin.
+
+FIX (2 endroits, additif comme le fix "%" de la Décision 062) :
+1. `NUMERIC_FRAGMENT_RE` (`ingest.py`) : 3e alternative `^-$` — un tiret
+   isolé est désormais un fragment valide (auparavant totalement ignoré,
+   la cellule n'apparaissait même pas dans `valeurs`).
+2. `_vers_float()` (`extract_kpis.py`) : si la chaîne vaut exactement
+   "-", retourne 0.0.
+
+RÉSULTAT :
+- **MACSF passe de 16/22 à 21/22 KPIs** — les 5 valeurs ciblées valent
+  toutes 0.00 M€, comme attendu (`fonds_propres_t1_r/t2/t3`,
+  `scr_souscription_sante/nonvie`).
+- **Groupama : 22/22 identiques à la référence, 30/30 contrôles
+  actuariels toujours OK.**
+- **CNP : 21/22 identiques à la référence.** Aucune régression.
+- Seul NULL restant sur les 3 documents : `resultat_technique` (acté,
+  pas un bug, cf. Décision 051).
+
+**DÉCOUVERTE ANNEXE, PAS CORRIGÉE ICI (hors périmètre de cette demande,
+signalée pour transparence)** : en vérifiant les positions de tokens
+autour de R0060 (Diversification, MACSF) pour m'assurer que le fix du
+tiret ne risquait pas d'interférer avec un signe négatif, j'ai constaté
+que `scr_diversification` de MACSF vaut **+14,14 M€ (positif)** alors
+que la diversification est TOUJOURS un effet négatif par construction
+(bénéfice qui réduit le SCR total — Groupama=-4 612,40, CNP=-9 821,13,
+`kpi_definitions.py` déclare explicitement `sign: "negative"` pour ce
+KPI). Cause probable : sur la page 62 de MACSF, le signe "-" de R0060
+est positionné à x≈467 (colonne C0080) tandis que le nombre "14 137"
+est à x≈557 (colonne C0090) — 90pt d'écart, donc jamais fusionnés par
+`merge_numeric_fragments`, et mon mapping lit uniquement C0090 (positif,
+sans signe). Le tiret-fix de cette session NE RÉSOUT PAS ce cas (le
+tiret isolé de R0060 est dans une colonne différente de celle lue par
+le mapping, donc n'a aucun effet sur cette valeur). **Signe
+potentiellement faux pour ce KPI précis sur MACSF — à corriger dans une
+session dédiée**, pas traité maintenant (hors périmètre de la demande
+"fix tiret pour les 5 NULL identifiés").

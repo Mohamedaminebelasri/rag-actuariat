@@ -92,10 +92,19 @@ def _vers_float(brut):
     Ajout strictement additif : une valeur sans "%" suit exactement le
     même chemin qu'avant, aucun changement de comportement possible pour
     les cellules déjà extraites avec succès (un "%" faisait échouer
-    float() avant, donc aucun cas existant ne pouvait l'avoir contenu)."""
+    float() avant, donc aucun cas existant ne pouvait l'avoir contenu).
+
+    Support tiret isolé "-" (convention EIOPA "zéro/non applicable",
+    vérifié sur MACSF S.23.01.01.01/R0540 colonnes Niveau1-restreint/
+    Niveau2/Niveau3 et S.25.01.21.01/R0040-R0050) : retourne 0.0. Ajout
+    tout aussi additif — un "-" seul faisait échouer float() avant (ni
+    chiffre ni signe suivi de chiffres), donc aucune cellule déjà
+    extraite avec succès ne pouvait avoir cette valeur brute."""
     if isinstance(brut, (int, float)):
         return float(brut)
     s = str(brut).replace(" ", "").replace(",", ".")
+    if s == "-":
+        return 0.0
     if s.endswith("%"):
         return float(s[:-1]) / 100
     return float(s)

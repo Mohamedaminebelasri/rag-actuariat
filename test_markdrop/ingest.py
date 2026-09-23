@@ -57,7 +57,7 @@ NATIVE_TEXT_THRESHOLD = 500  # caractères ; seuil observé (QRT image-only : ~2
 
 ROW_CODE_RE = re.compile(r"^R\d{4}$")
 COL_CODE_RE = re.compile(r"^C\d{4}$")
-NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$")
+NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$|^-$")
 # Élargi (fix ratios %, cf. DECISIONS.md) : certains documents (MACSF)
 # impriment les ratios directement en pourcentage ("521%", un seul mot
 # PDF) plutôt qu'en décimal brut ("2,74") comme Groupama/CNP — jamais
@@ -65,7 +65,17 @@ NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$")
 # (un ValueError aurait simplement fait échouer cette cellule) : ajout
 # strictement additif, pas de changement de comportement pour les
 # valeurs déjà extraites avec succès. Le 2e terme (`^%$`) couvre le cas
-# où le signe "%" est un mot PDF séparé du nombre ("521 %").
+# où le signe "%" est un mot PDF séparé du nombre ("521 %"). Le 3e terme
+# (`^-$`) couvre le tiret isolé EIOPA (convention "zéro/non applicable" —
+# vérifié sur MACSF, S.23.01.01.01/R0540 colonnes Niveau1-restreint/
+# Niveau2/Niveau3, et S.25.01.21.01/R0040-R0050 : 3 tirets bien séparés
+# les uns des autres, distance > MERGE_GAP_PT, jamais fusionnés entre
+# eux) — traité comme 0.0 dans _vers_float (extract_kpis.py), jamais ici.
+# Vérifié ne PAS interférer avec un signe moins de nombre négatif : un
+# "-" collé à des chiffres (ex. "-14137") est déjà un seul mot PDF et
+# matche le 1er terme de la regex directement ; un "-" isolé loin de tout
+# chiffre (cas ici) reste un fragment séparé après merge_numeric_fragments,
+# jamais fusionné avec un nombre à plus de MERGE_GAP_PT.
 MERGE_GAP_PT = 5.0
 LINE_TOLERANCE_PT = 1.5
 RASTER_ZOOM = 4.0
