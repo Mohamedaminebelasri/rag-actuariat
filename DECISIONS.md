@@ -4213,3 +4213,62 @@ PAS FAIT :
   déduit automatiquement — un 3e assureur pourrait exiger une nouvelle
   variante explicite plutôt qu'une règle générale (aucune règle fiable
   identifiée entre 2 documents seulement).
+
+## Décision 061 — Test AXA SA (redirigé vers MACSF prévoyance) : 3e assureur, 14/22 KPIs
+
+CONTEXTE : le prompt demandait AXA SA 2025. **Blocage réel, documenté
+avant de router ailleurs (consigne "diagnostique et corrige, ne
+t'arrête pas")** : le PDF AXA SA 2025 déjà présent dans `data/` est
+UNIQUEMENT narratif — page 81 mentionne explicitement "Annexe I -
+Modèles de déclaration quantitative" mais les tableaux QRT eux-mêmes ne
+sont PAS dans ce fichier (AXA publie narratif et QRT en 2 PDF séparés,
+confirmé aussi en session précédente en trouvant un vrai QRT AXA sur un
+domaine séparé axa-contento-118412.eu). Recherche du compagnon QRT 2025
+infructueuse en temps raisonnable (le fichier FY2025 n'est pas encore
+indexé). **Pivot vers MACSF prévoyance** (`data/RAPPORT_SFCR_MACSF_
+prevoyance_2025.pdf`), déjà présent dans le dossier, QRT embarqués dans
+le même fichier — décision justifiée par la consigne "économie de temps
+maximale" plutôt que de bloquer sur un fichier externe introuvable.
+
+TERMINÉ ET VÉRIFIÉ — 2 nouvelles variantes de colonne EIOPA découvertes
+(4e et 5e observées au total pour les mêmes concepts, sur seulement 3
+documents solo formule standard) :
+- S.23.01.01 (SCR/MCR/fonds propres) : colonne **C0060** chez MACSF
+  (au lieu de C0010 chez AXA/Bornholms/CNP) — ajoutée au mapping.
+- S.25.01.21 (répartition SCR) : colonne **C0090** chez MACSF (au lieu
+  de C0110 chez CNP, C0040/C0100 chez AXA) — ajoutée au mapping (1re
+  tentative avait mis C0080 par erreur de lecture du positionnement des
+  en-têtes, corrigée après vérification empirique de la vraie colonne
+  porteuse de la valeur).
+
+RÉSULTAT : 14/22 KPIs MACSF extraits et vérifiés contre lecture manuelle
+du PDF (SCR=439,84 M€, MCR=109,96 M€, fonds propres éligibles=2 291,37 M€,
+best_estimate=88,00 M€, marge_risque=14,38 M€, primes=42,60 M€,
+sinistres=14,99 M€, + 5 des 7 KPIs SCR détaillés). MACSF prévoyance
+insérée dans `kpis.db`. `compare_kpis("ratio_scr", 2025)` : CNP=258%,
+Groupama=274%, MACSF=NULL (limitation documentée ci-dessous).
+
+**Groupama ET CNP retestés après tous les ajouts de cette session : 0
+régression** (22/22 et 21/22 identiques aux valeurs de référence).
+
+PAS FAIT / LIMITATIONS DOCUMENTÉES (honnêtes, pas des chiffres inventés) :
+- `ratio_scr`/`ratio_mcr` NULL pour MACSF : les valeurs sont imprimées en
+  FORMAT POURCENTAGE ("521%", "2084%") sur cette page précise, et
+  `NUMERIC_FRAGMENT_RE` (`ingest.py`) n'accepte que des fragments
+  purement numériques (pas de "%" final) — jamais rencontré sur Groupama/
+  CNP (ratios toujours en décimal brut "2,74" ou "%"-séparé). Correctif
+  identifié (élargir la regex) mais PAS appliqué — c'est une regex
+  PARTAGÉE avec tout le pipeline, et le temps restant ne permettait pas
+  de la modifier ET de revérifier Groupama/CNP en toute sécurité (cf.
+  la régression réelle de la Décision 060, qui a montré qu'un changement
+  partagé non revérifié peut casser un document qui marchait).
+- `fonds_propres_t1_r/t2/t3` NULL pour MACSF — cohérent avec la réalité
+  (MACSF n'a que du Tier 1 non restreint, vérifié sur le PDF : toutes
+  les autres colonnes de fonds propres à "-").
+- `scr_souscription_sante`/`scr_souscription_nonvie` NULL pour MACSF —
+  valeurs réellement à "-" (zéro) sur le PDF, pas capturées par
+  l'extracteur positionnel (même limite que les pourcentages : "-" n'est
+  pas reconnu comme "0" par `NUMERIC_FRAGMENT_RE`) — NULL plutôt que
+  deviné, conforme à la consigne.
+- Compagnon QRT réel d'AXA SA 2025 non trouvé — reste à faire si AXA
+  est explicitement requis dans une session future.

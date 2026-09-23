@@ -1,0 +1,69 @@
+{
+  "S.02.01.02": {
+    "S.02.01.02.01": {
+      "titre": "S.02.01.02.01 - Bilan",
+      "row_codes": {
+        "R0540": "Meilleure estimation", "R0550": "Marge de risque",
+        "R0580": "Meilleure estimation", "R0590": "Marge de risque",
+        "R0630": "Meilleure estimation", "R0640": "Marge de risque",
+        "R0670": "Meilleure estimation", "R0680": "Marge de risque",
+        "R0710": "Meilleure estimation", "R0720": "Marge de risque"
+      },
+      "col_codes": {"C0010": "Valeur Solvabilité II"},
+      "col_groups": {"C0010": "C0010"}
+    }
+  },
+  "S.05.01.02": {
+    "S.05.01.02.01": {
+      "titre": "S.05.01.02.01 - Primes, sinistres et dépenses (non-vie)",
+      "row_codes": {
+        "R0210": "Primes acquises", "R0220": "Primes acquises", "R0230": "Primes acquises",
+        "R0310": "Charge des sinistres", "R0320": "Charge des sinistres", "R0330": "Charge des sinistres"
+      },
+      "col_codes": {"C0200": "Total"},
+      "col_groups": {"C0200": "C0200"}
+    },
+    "S.05.01.02.02": {
+      "titre": "S.05.01.02.02 - Primes, sinistres et dépenses (vie)",
+      "row_codes": {"R1510": "Primes acquises", "R1610": "Charge des sinistres"},
+      "col_codes": {"C0300": "Total"},
+      "col_groups": {"C0300": "C0300"}
+    }
+  },
+  "S.23.01.01": {
+    "S.23.01.01.01": {
+      "titre": "S.23.01.01.01 - Fonds propres",
+      "row_codes": {
+        "R0540": "Total des fonds propres éligibles pour couvrir le capital de solvabilité requis",
+        "R0580": "Capital de solvabilité requis",
+        "R0600": "Minimum de capital requis",
+        "R0620": "Ratio fonds propres éligibles sur capital de solvabilité requis",
+        "R0640": "Ratio fonds propres éligibles sur minimum de capital requis"
+      },
+      "col_codes": {"C0010": "Total", "C0020": "Niveau 1 - non restreint", "C0030": "Niveau 1 - restreint",
+                    "C0040": "Niveau 2", "C0050": "Niveau 3"},
+      "col_groups": {"C0010": "C0010", "C0020": "C0020", "C0030": "C0030", "C0040": "C0040", "C0050": "C0050"}
+    }
+  },
+  "S.25.01.21": {
+    "S.25.01.21.01": {
+      "titre": "S.25.01.21.01 - Capital de solvabilité requis (formule standard)",
+      "row_codes": {
+        "R0010": "Risque de marché", "R0020": "Risque de défaut de la contrepartie",
+        "R0030": "Risque de souscription en vie", "R0040": "Risque de souscription en santé",
+        "R0050": "Risque de souscription en non-vie", "R0060": "Diversification",
+        "R0130": "Risque opérationnel", "R0220": "Capital de solvabilité requis"
+      },
+      "col_codes": {"C0080": "Capital de solvabilité requis net", "C0100": "Value"},
+      "col_groups": {"C0080": "C0080", "C0100": "C0100"}
+    }
+  },
+  "S.28.01.01": {
+    "S.28.01.01.01": {
+      "titre": "S.28.01.01.01 - Minimum de capital requis (vie ou non-vie exclusivement)",
+      "row_codes": {"R0400": "Minimum de capital requis"},
+      "col_codes": {"C0070": "Value"},
+      "col_groups": {"C0070": "C0070"}
+    }
+  }
+}
