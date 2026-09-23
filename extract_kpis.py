@@ -136,11 +136,52 @@ def sommer_cellules(elements, specs):
     return total
 
 
-def sommer_toutes_colonnes(elements, specs):
+def sommer_cellules_tolerant(elements, specs):
+    """Comme sommer_cellules, mais NE FAIT PAS échouer toute la somme si
+    une ligne est trouvée avec le bon libellé mais SANS valeur (cellule
+    vide dans le PDF source — cas réel : CNP n'a pas de provisions
+    "non-vie pure", seulement "santé similaire non-vie"/"vie"/"UC", cf.
+    Décision 060) — cette ligne contribue alors 0, comme demandé
+    explicitement ("somme uniquement ceux qui ont une valeur"). Un
+    DÉSACCORD de libellé (vraie erreur, pas juste une case vide) continue
+    en revanche à faire échouer, même discipline que sommer_cellules."""
+    total = 0.0
+    for code_ligne, libelle_attendu in specs:
+        trouve_avec_bon_libelle = False
+        for e in elements:
+            lignes = e["contenu"].get("lignes", {})
+            if code_ligne not in lignes:
+                continue
+            row = lignes[code_ligne]
+            libelle = row["libelle_officiel"] or ""
+            if libelle_attendu.lower() not in libelle.lower():
+                raise KpiIntrouvable(f"{code_ligne} : libellé {libelle!r} ne contient pas {libelle_attendu!r}")
+            trouve_avec_bon_libelle = True
+            if "C0010" in row["valeurs"]:
+                total += _vers_float(row["valeurs"]["C0010"]["valeur_brute"])
+            break
+        if not trouve_avec_bon_libelle:
+            raise KpiIntrouvable(f"{code_ligne} introuvable (ni avec valeur ni vide) dans aucun élément fourni")
+    return total
+
+
+def sommer_toutes_colonnes(elements, specs, exclure_total=False):
     """Comme sommer_cellules, mais somme TOUTES les colonnes présentes de
     chaque ligne (pas seulement C0010) — nécessaire pour S.05.01 où les
     lignes de branches (direct/réassurance) sont ventilées sur plusieurs
-    colonnes de ligne d'activité, jamais une seule colonne "Total"."""
+    colonnes de ligne d'activité, jamais une seule colonne "Total".
+
+    Un élément dont le libellé NE correspond PAS est simplement IGNORÉ
+    (pas une erreur immédiate) — bug réel trouvé sur CNP (Décision 060) :
+    quand une sous-feuille ambiguë est tentée sur PLUSIEURS candidats
+    (cf. resoudre_sous_feuille, Décision 055), la même page physique peut
+    apparaître comme élément sous 2 clés de template différentes, l'une
+    correcte (libellé attendu) et l'autre un doublon mal étiqueté (le
+    dictionnaire de l'autre sous-feuille ne connaît pas ce code, donc
+    "(code absent du dictionnaire EIOPA)") — la 1re version levait une
+    erreur dès la rencontre du doublon, avant même d'atteindre le bon
+    élément. La ligne ENTIÈRE échoue seulement si AUCUN élément n'a le
+    bon libellé pour ce code."""
     total = 0.0
     for code_ligne, libelle_attendu in specs:
         trouve = False
@@ -151,12 +192,26 @@ def sommer_toutes_colonnes(elements, specs):
             row = lignes[code_ligne]
             libelle = row["libelle_officiel"] or ""
             if libelle_attendu.lower() not in libelle.lower():
-                raise KpiIntrouvable(f"{code_ligne} : libellé {libelle!r} inattendu")
+                continue
+            # exclure_total (Décision 060) : certains documents (CNP) ont
+            # une colonne "Total" DÉJÀ PEUPLÉE en plus des colonnes par
+            # ligne d'activité (vérifié : C0200 = C0010+C0020+C0030
+            # exactement sur S.05.01.02.01 de CNP) — sommer "toutes les
+            # colonnes" y double-compte. MAIS Groupama (vérifié en
+            # régression réelle, pas supposé) a l'inverse : certaines
+            # lignes n'ont de valeur QUE dans la colonne "Total" (colonnes
+            # par ligne d'activité vides) — l'exclure y donnerait 0,
+            # divisant le résultat par 2. Pas de règle universelle
+            # observée : contrôlé au cas par cas via le paramètre
+            # `exclure_total`, jamais activé par défaut (comportement
+            # historique de Groupama préservé).
             for cellule in row["valeurs"].values():
+                if exclure_total and (cellule.get("libelle_colonne") or "").strip().lower() == "total":
+                    continue
                 total += _vers_float(cellule["valeur_brute"])
             trouve = True
         if not trouve:
-            raise KpiIntrouvable(f"{code_ligne} introuvable dans aucun élément fourni")
+            raise KpiIntrouvable(f"{code_ligne} introuvable avec le libellé {libelle_attendu!r} dans aucun élément fourni")
     return total
 
 
@@ -183,9 +238,10 @@ def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
         try:
             if isinstance(row, list):
                 if col == "toutes":
-                    valeur = sommer_toutes_colonnes(elements, [(r, libelle) for r in row])
+                    valeur = sommer_toutes_colonnes(elements, [(r, libelle) for r in row],
+                                                     exclure_total=v.get("exclure_total", False))
                 else:
-                    valeur = sommer_cellules(elements, [(r, libelle) for r in row])
+                    valeur = sommer_cellules_tolerant(elements, [(r, libelle) for r in row])
             else:
                 valeur = lire_cellule(elements, row, col, libelle)
             template_id_complet = next(e["template_id"] for e in elements if row in e["contenu"].get("lignes", {})) \

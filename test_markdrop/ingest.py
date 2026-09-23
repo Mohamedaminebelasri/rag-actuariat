@@ -433,6 +433,20 @@ def extract_qrt_native(page, sheet_dict, sheet_key):
         valeurs = {}
         for x_centre, text in merged:
             if not col_x:
+                # Bug réel trouvé et corrigé (Décision 060, test CNP) :
+                # une page de CONTINUATION d'un tableau mono-colonne (ex.
+                # S.02.01.02.01 — page 83 "Actifs" a l'en-tête "C0010",
+                # page 84 "Passifs" ne le répète pas) n'a AUCUN mot-clé
+                # C0xxx détectable sur cette page précise : col_x est vide
+                # et TOUTE valeur était silencieusement perdue (aucune
+                # ligne de la page 84 n'avait de valeur, y compris des
+                # lignes non ambiguës comme R0670/R0710). Repli sûr
+                # UNIQUEMENT si le sheet_dict ne déclare qu'UNE seule
+                # colonne (aucune ambiguïté possible sur laquelle assigner
+                # la valeur) — sinon on ne devine pas, on laisse vide
+                # comme avant.
+                if len(col_labels) == 1:
+                    valeurs[next(iter(col_labels))] = text
                 continue
             nearest_col = min(col_x, key=lambda c: abs(col_x[c] - x_centre))
             valeurs[nearest_col] = text

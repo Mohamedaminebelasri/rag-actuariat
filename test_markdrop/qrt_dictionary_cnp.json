@@ -18,8 +18,8 @@
     "S.05.01.02.01": {
       "titre": "S.05.01.02.01 - Primes, sinistres et dépenses (non-vie)",
       "row_codes": {
-        "R0210": "Premiums earned", "R0220": "Premiums earned", "R0230": "Premiums earned",
-        "R0310": "Claims incurred", "R0320": "Claims incurred", "R0330": "Claims incurred"
+        "R0210": "Primes acquises", "R0220": "Primes acquises", "R0230": "Primes acquises",
+        "R0310": "Charge des sinistres", "R0320": "Charge des sinistres", "R0330": "Charge des sinistres"
       },
       "col_codes": {"C0010": "Assurance des frais médicaux", "C0020": "Assurance de protection du revenu",
                     "C0030": "Assurance d'indemnisation des travailleurs", "C0200": "Total"},
@@ -27,7 +27,7 @@
     },
     "S.05.01.02.02": {
       "titre": "S.05.01.02.02 - Primes, sinistres et dépenses (vie)",
-      "row_codes": {"R1510": "Premiums earned", "R1610": "Claims incurred"},
+      "row_codes": {"R1510": "Primes acquises", "R1610": "Charge des sinistres"},
       "col_codes": {"C0210": "Assurance maladie", "C0220": "Assurance avec participation aux bénéfices",
                     "C0230": "Assurance indexée et en unités de compte", "C0240": "Autres assurances vie",
                     "C0270": "Réassurance maladie", "C0280": "Réassurance vie", "C0300": "Total"},

@@ -253,9 +253,11 @@ KPI_QRT_MAPPING = {
         {"template": "S.05.01.02", "row": ["R1510"], "col": "toutes", "libelle_attendu": "Premiums earned",
          "variante": "vie, solo ET groupe, même codes (EN)", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.05.01.02", "row": ["R0210", "R0220", "R0230"], "col": "toutes", "libelle_attendu": "Primes acquises",
-         "variante": "non-vie, même codes (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
+         "variante": "non-vie, même codes (FR) — colonne Total déjà peuplée chez CNP, exclue pour éviter le double-comptage",
+         "verifie_contre": "CNP Assurances 2025 (extraction réelle)", "exclure_total": True},
         {"template": "S.05.01.02", "row": ["R1510"], "col": "toutes", "libelle_attendu": "Primes acquises",
-         "variante": "vie, même codes (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
+         "variante": "vie, même codes (FR) — colonne Total déjà peuplée chez CNP, exclue pour éviter le double-comptage",
+         "verifie_contre": "CNP Assurances 2025 (extraction réelle)", "exclure_total": True},
     ],
     "charge_sinistres": [
         {"template": "S.05.01.02", "row": ["R0310", "R0320", "R0330"], "col": "toutes", "libelle_attendu": "Claims incurred",
@@ -263,9 +265,11 @@ KPI_QRT_MAPPING = {
         {"template": "S.05.01.02", "row": ["R1610"], "col": "toutes", "libelle_attendu": "Claims incurred",
          "variante": "vie, solo ET groupe, même codes (EN)", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.05.01.02", "row": ["R0310", "R0320", "R0330"], "col": "toutes", "libelle_attendu": "Charge des sinistres",
-         "variante": "non-vie, même codes (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
+         "variante": "non-vie, même codes (FR) — colonne Total déjà peuplée chez CNP, exclue pour éviter le double-comptage",
+         "verifie_contre": "CNP Assurances 2025 (extraction réelle)", "exclure_total": True},
         {"template": "S.05.01.02", "row": ["R1610"], "col": "toutes", "libelle_attendu": "Charge des sinistres",
-         "variante": "vie, même codes (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
+         "variante": "vie, même codes (FR) — colonne Total déjà peuplée chez CNP, exclue pour éviter le double-comptage",
+         "verifie_contre": "CNP Assurances 2025 (extraction réelle)", "exclure_total": True},
     ],
     "resultat_technique": [
         # Aucun équivalent QRT standardisé trouvé (Décision 051, audit

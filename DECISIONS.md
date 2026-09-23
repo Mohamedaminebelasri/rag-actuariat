@@ -4128,3 +4128,88 @@ PAS FAIT (temps épuisé, session largement au-delà d'1h30) :
 - Dictionnaire QRT vraiment "universel" (S.02.01.01, S.25.03, etc. de la
   demande initiale) — seuls les 5 templates nécessaires aux 22 KPIs sur
   CNP ont été construits et vérifiés.
+
+## Décision 060 — Phase 3.8.1 : 21/22 KPIs sur CNP ET Groupama, régression trouvée et corrigée en cours de route
+
+CONTEXTE : suite de la Décision 059 (16/22 sur CNP), objectif : couvrir
+les 6 KPIs restants (provisions + primes/sinistres) en sommant TOUS les
+segments (non-vie/santé/vie/UC), pas seulement non-vie.
+
+TERMINÉ ET VÉRIFIÉ — 3 bugs réels trouvés et corrigés :
+
+1. **`extract_qrt_native()` (`ingest.py`) : les pages de CONTINUATION
+   d'un tableau mono-colonne perdaient TOUTES leurs valeurs.** Page 84 de
+   CNP (section "Passifs" de S.02.01.02, suite de la page 83 "Actifs")
+   ne répète pas l'en-tête "C0010" — `col_x` restait vide et AUCUNE
+   valeur n'était assignée, même pour des lignes non ambiguës (R0670=
+   208 236 026, R0710=63 315 077, vérifiées manuellement correctes sur le
+   PDF). Corrigé : repli sûr sur l'unique colonne déclarée quand le
+   sheet_dict n'a qu'UNE colonne (aucune ambiguïté possible) — pas de
+   changement de comportement si plusieurs colonnes sont possibles.
+
+2. **`sommer_toutes_colonnes()` (`extract_kpis.py`) : un doublon mal
+   étiqueté faisait échouer toute la somme au lieu d'être ignoré.**
+   Conséquence directe de la résolution de sous-feuille "essaie tous les
+   candidats" (Décision 055) : la même page physique de CNP (86, 87)
+   apparaît comme élément sous LES 2 clés de sous-feuille (S.05.01.02.01
+   ET .02), l'une correcte, l'autre un doublon dont le dictionnaire ne
+   connaît pas le code (libellé "(code absent du dictionnaire EIOPA)").
+   La fonction levait une erreur dès qu'elle rencontrait CE doublon,
+   avant même d'atteindre le bon élément. Corrigée pour ignorer un
+   élément au libellé non conforme et continuer à en chercher un bon,
+   échouant seulement si AUCUN élément valide n'existe pour ce code.
+
+3. **RÉGRESSION RÉELLE TROUVÉE ET CORRIGÉE avant de continuer** (la
+   consigne "ne casse pas Groupama" a directement attrapé ce bug) : 1er
+   correctif du double-comptage (CNP a une colonne "Total" DÉJÀ PEUPLÉE
+   en plus des colonnes par ligne d'activité — vérifié : C0200 =
+   C0010+C0020+C0030 exactement sur S.05.01.02.01 de CNP, donc sommer
+   "toutes les colonnes" double-comptait) — appliqué GLOBALEMENT à
+   `sommer_toutes_colonnes`, a fait chuter `primes_acquises_brutes`/
+   `charge_sinistres` de Groupama à EXACTEMENT la moitié de leur valeur
+   de référence (39 062,34 → 19 531,17 M€). **Diagnostiqué avant de
+   committer** : Groupama a la structure INVERSE (certaines lignes n'ont
+   de valeur QUE dans la colonne "Total", les colonnes par activité étant
+   vides — les exclure donne 0 et divise le résultat par 2, pas une
+   coïncidence). Pas de règle universelle solo/groupe ou EN/FR ici —
+   corrigé en ajoutant un paramètre `exclure_total` au niveau de CHAQUE
+   variante du mapping (`kpi_qrt_mapping.py`), activé UNIQUEMENT sur les
+   4 variantes françaises ajoutées pour CNP, comportement de Groupama
+   totalement inchangé. Cause racine annexe trouvée en diagnostiquant :
+   `qrt_dictionary_cnp.json` utilisait des libellés PLACEHOLDER anglais
+   ("Premiums earned") copiés de la structure Groupama au lieu du texte
+   français réel de CNP — corrigé en "Primes acquises"/"Charge des
+   sinistres", ce qui fait désormais matcher la BONNE variante du
+   mapping (française, `exclure_total=True`) au lieu de l'anglaise.
+
+RÉSULTAT — 21/22 KPIs sur CNP ET Groupama (`resultat_technique` NULL
+pour les deux, acté, pas un bug) :
+
+| KPI | CNP | Groupama |
+|---|---|---|
+| ratio_scr | 258,00 % | 274,00 % |
+| ratio_mcr | 506,00 % | 379,28 % |
+| scr_total | 14 256,82 M€ | 6 020,98 M€ |
+| mcr | 6 415,57 M€ | 3 840,84 M€ |
+| fonds_propres_eligibles | 36 778,13 M€ | 16 481,19 M€ |
+| fonds_propres_t1_nr/t1_r/t2/t3 | 28 605,49 / 2 605,98 / 4 379,84 / 1 186,82 M€ | 13 329,15 / 601,32 / 2 068,91 / 481,82 M€ |
+| best_estimate | 277 208,17 M€ | 69 035,10 M€ |
+| marge_risque | 3 740,67 M€ | 2 384,34 M€ |
+| provisions_techniques | 280 948,84 M€ | 71 419,44 M€ |
+| primes_acquises_brutes | 22 238,96 M€ | 39 062,34 M€ |
+| charge_sinistres | 20 072,45 M€ | 27 949,85 M€ |
+| scr_marche/vie/santé/contrepartie/opérationnel/diversification | (tous remplis) | (tous remplis) |
+| scr_souscription_nonvie | 0,00 M€ (réel — CNP n'a quasi aucune activité non-vie) | 2 474,79 M€ |
+| resultat_technique | NULL | NULL |
+
+`validate_kpis.py` (Groupama) : **30/30 toujours OK.** `extract_kpis.py`
+(Groupama, retesté 3 fois après chaque correctif) : **22/22 valeurs
+identiques à la référence à chaque fois** — aucune régression persistante.
+
+PAS FAIT :
+- `validate_kpis.py` non adapté pour tourner sur CNP (script mono-Groupama,
+  déjà noté Décision 059).
+- Le comportement `exclure_total` reste réglé variante par variante, pas
+  déduit automatiquement — un 3e assureur pourrait exiger une nouvelle
+  variante explicite plutôt qu'une règle générale (aucune règle fiable
+  identifiée entre 2 documents seulement).
