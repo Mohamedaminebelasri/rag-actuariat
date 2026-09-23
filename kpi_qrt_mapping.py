@@ -56,6 +56,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.23.01.01", "row": "R0620", "col": "C0010",
          "libelle_attendu": "Ratio fonds propres éligibles sur capital de solvabilité requis",
          "variante": "solo (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
+        {"template": "S.23.01.01", "row": "R0620", "col": "C0060",
+         "libelle_attendu": "Ratio fonds propres éligibles sur capital de solvabilité requis",
+         "variante": "solo (FR), colonne C0060, format pourcentage", "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
     ],
     "ratio_mcr": [
         {"template": "S.23.01.22", "row": "R0650", "col": "C0010",
@@ -67,6 +70,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.23.01.01", "row": "R0640", "col": "C0010",
          "libelle_attendu": "Ratio fonds propres éligibles sur minimum de capital requis",
          "variante": "solo (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
+        {"template": "S.23.01.01", "row": "R0640", "col": "C0060",
+         "libelle_attendu": "Ratio fonds propres éligibles sur minimum de capital requis",
+         "variante": "solo (FR), colonne C0060, format pourcentage", "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
     ],
 
     # --- Fonds propres ---

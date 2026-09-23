@@ -57,7 +57,15 @@ NATIVE_TEXT_THRESHOLD = 500  # caractères ; seuil observé (QRT image-only : ~2
 
 ROW_CODE_RE = re.compile(r"^R\d{4}$")
 COL_CODE_RE = re.compile(r"^C\d{4}$")
-NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?$")
+NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$")
+# Élargi (fix ratios %, cf. DECISIONS.md) : certains documents (MACSF)
+# impriment les ratios directement en pourcentage ("521%", un seul mot
+# PDF) plutôt qu'en décimal brut ("2,74") comme Groupama/CNP — jamais
+# rencontré avant, donc AUCUN cas déjà géré ne pouvait matcher "%"
+# (un ValueError aurait simplement fait échouer cette cellule) : ajout
+# strictement additif, pas de changement de comportement pour les
+# valeurs déjà extraites avec succès. Le 2e terme (`^%$`) couvre le cas
+# où le signe "%" est un mot PDF séparé du nombre ("521 %").
 MERGE_GAP_PT = 5.0
 LINE_TOLERANCE_PT = 1.5
 RASTER_ZOOM = 4.0

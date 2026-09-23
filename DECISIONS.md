@@ -4272,3 +4272,55 @@ PAS FAIT / LIMITATIONS DOCUMENTÉES (honnêtes, pas des chiffres inventés) :
   deviné, conforme à la consigne.
 - Compagnon QRT réel d'AXA SA 2025 non trouvé — reste à faire si AXA
   est explicitement requis dans une session future.
+
+## Décision 062 — Fix regex "%" : ratio_scr/ratio_mcr MACSF corrigés, 0 régression
+
+CONTEXTE : suite de la Décision 061, correctif identifié mais pas
+appliqué (temps insuffisant pour revérifier Groupama/CNP en toute
+sécurité après la vraie régression de la Décision 060).
+
+FIX (2 endroits, strictement additif — aucun cas déjà géré ne pouvait
+contenir "%", donc aucune valeur déjà extraite avec succès ne peut être
+affectée) :
+1. `NUMERIC_FRAGMENT_RE` (`ingest.py`) élargie de `^-?\d+([.,]\d+)?$` à
+   `^-?\d+([.,]\d+)?%?$|^%$` — accepte un "%" directement accolé au
+   nombre ("521%", 1 seul mot PDF, cas réel vérifié sur MACSF) ou un "%"
+   en mot PDF séparé ("521 %", fusionné ensuite par
+   `merge_numeric_fragments` déjà existant, pas modifié).
+2. `_vers_float()` (`extract_kpis.py`) : un suffixe "%" est retiré et le
+   nombre divisé par 100, pour revenir à la même convention "décimal
+   brut" que Groupama/CNP (qui impriment "2,74", pas "274%") — le code
+   appelant multiplie TOUJOURS par 100 au niveau KPI, donc sans cette
+   division "521%" deviendrait 52 100% au lieu de 521%.
+2 nouvelles variantes ajoutées au mapping (`ratio_scr`/`ratio_mcr`,
+colonne C0060 chez MACSF, format pourcentage — vérifiées contre le PDF).
+
+RÉSULTAT :
+- **MACSF : ratio_scr passe de NULL à 521,00 %, ratio_mcr de NULL à
+  2 084,00 %** — vérifiés exacts contre le texte imprimé sur le PDF
+  ("521%", "2084%"). MACSF passe de 14/22 à **16/22 KPIs**.
+- **Groupama : 22/22 valeurs identiques à la référence, 30/30 contrôles
+  actuariels toujours OK.**
+- **CNP : 21/22 valeurs identiques à la référence.**
+- Aucune régression sur aucun des 2 documents déjà validés.
+
+| KPI | CNP | Groupama | MACSF |
+|---|---|---|---|
+| ratio_scr | 258,00 % | 274,00 % | 521,00 % |
+| ratio_mcr | 506,00 % | 379,28 % | 2 084,00 % |
+| scr_total | 14 256,82 M€ | 6 020,98 M€ | 439,84 M€ |
+| mcr | 6 415,57 M€ | 3 840,84 M€ | 109,96 M€ |
+| fonds_propres_eligibles | 36 778,13 M€ | 16 481,19 M€ | 2 291,37 M€ |
+
+Note : `ratio_mcr` de MACSF (2 084 %) est réellement énorme mais pas
+suspect — cohérent avec un MCR très petit (109,96 M€) face à des fonds
+propres de 2 291,37 M€ pour une mutuelle prévoyance de cette taille,
+déjà visible dans le texte source non retraité ("2084%" imprimé tel
+quel sur le PDF).
+
+PAS FAIT (limitations MACSF restantes, hors périmètre de ce fix ciblé) :
+- `scr_souscription_sante`/`scr_souscription_nonvie` toujours NULL
+  (valeurs réellement "-" sur le PDF, pas "0" ni un nombre — non
+  capturées par `NUMERIC_FRAGMENT_RE`, différent du cas "%").
+- `fonds_propres_t1_r/t2/t3` toujours NULL (cohérent : MACSF n'a que du
+  Tier 1, vérifié).

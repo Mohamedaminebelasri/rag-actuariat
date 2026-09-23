@@ -81,10 +81,24 @@ def _vers_float(brut):
     """valeur_brute est tantôt une str (ex. extraction native S.23.01,
     "2160259" ou "2,74"), tantôt un int/float JSON natif (ex. certaines
     lignes Gemini VLM, S.02.01) — les 2 formats coexistent réellement dans
-    corpus_final.json, vérifié en le découvrant ici plutôt que supposé."""
+    corpus_final.json, vérifié en le découvrant ici plutôt que supposé.
+
+    Support "521%" (MACSF imprime les ratios directement en pourcentage,
+    pas en décimal brut comme Groupama/CNP "2,74") : divisé par 100 pour
+    revenir à la même convention "décimal brut" que les autres documents
+    — le code appelant (extract_kpis_*.py) multiplie TOUJOURS par 100 au
+    niveau KPI pour ratio_scr/ratio_mcr, quel que soit le document ; sans
+    cette division ici, "521%" deviendrait 52 100% au lieu de 521%.
+    Ajout strictement additif : une valeur sans "%" suit exactement le
+    même chemin qu'avant, aucun changement de comportement possible pour
+    les cellules déjà extraites avec succès (un "%" faisait échouer
+    float() avant, donc aucun cas existant ne pouvait l'avoir contenu)."""
     if isinstance(brut, (int, float)):
         return float(brut)
-    return float(str(brut).replace(" ", "").replace(",", "."))
+    s = str(brut).replace(" ", "").replace(",", ".")
+    if s.endswith("%"):
+        return float(s[:-1]) / 100
+    return float(s)
 
 
 def charger_corpus():
