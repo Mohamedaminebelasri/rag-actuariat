@@ -3935,3 +3935,91 @@ le libellé QRT du nouveau document correspond EXACTEMENT à un des
 libellés déjà connus (peu probable pour un 2e modèle interne différent —
 seule certitude testée : ça ne produit PLUS de faux positifs silencieux,
 cf. le bug de la sous-chaîne corrigé ci-dessus).
+
+## Décision 058 — Test CNP Assurances : benchmark localisation QRT fait, extraction bloquée (point d'étape, 1h)
+
+CONTEXTE : 1er test de généralisation réelle sur un 2e document (CNP
+Assurances 2025, solo, 108 pages, déjà téléchargé). Contrainte de temps
+explicite de l'utilisateur ("si ça dépasse 1h, commite ce qui marche").
+
+TERMINÉ ET VÉRIFIÉ :
+
+1. **Benchmark des 3 méthodes de localisation QRT**
+   (`test_markdrop/benchmark_localisation_qrt.py`, nouveau) :
+
+| Méthode | Temps | Pages QRT trouvées | Fiable ? |
+|---|---|---|---|
+| A — Sommaire (pages 1-5) | 70ms | 0 | **Non** — CNP n'a pas de ligne "Annexes/QRT" avec numéro de page dans ses 5 premières pages, matchable par le motif testé |
+| B — Scan par la fin | 109ms | 6 | **Non** — trouve 91,92,94,95,97,98 mais rate 76 et 83 (S.23.01.01 et S.02.01.02, trop loin du début de la fenêtre testée) |
+| C — Scan complet (regex `S\.\d{2}\.\d{2}`) | 595ms | 12 | Techniquement complet MAIS inclut des FAUX POSITIFS (pages 3, 47 — mentions narratives d'un code QRT en passant, pas de vraies tables) |
+
+**Conclusion empirique (pas la recommandation a priori de l'utilisateur,
+confirmée par le test réel)** : aucune des 3 méthodes proposées n'est à
+la fois rapide ET précise sur un document réel. La méthode déjà en place
+depuis Phase 1 (`classify_pages()` dans `ingest.py` — combine plusieurs
+heuristiques : mots-clés sommaire, ratio de "dot leaders", regex codes
+QRT, index des annexes) fait mieux que les 3 : **1,3s, 10 pages exactes,
+0 faux positif, 0 faux négatif** — déjà validée en Phase 1/2, pas besoin
+d'en écrire une 4e. Utilisée directement pour la suite.
+
+2. **Structure du document CNP identifiée** (10 pages QRT réelles) :
+   `document_type=solo` (S.23.01.**01**, pas .22), `scr_method=formule
+   standard` (S.25.01.**21**, PAS S.25.05 — contrairement à Groupama qui
+   est en modèle interne partiel) — templates : S.23.01.01 (p.76 ET 95),
+   S.02.01.02 (p.83), S.05.01.02 (p.86), S.12.01.02 (p.88, vie — absent
+   chez Groupama), S.17.01.02 (p.91, non-vie — absent chez Groupama),
+   S.19.01.21 (p.92, sinistres — absent chez Groupama), S.22.01.21 (p.94,
+   LTG — absent chez Groupama), S.25.01.21 (p.97, SCR formule standard),
+   S.28.02.01 (p.98, MCR vie+non-vie combinées — jamais vu, jamais
+   vérifié).
+
+BLOQUANT RÉEL TROUVÉ (pas une excuse — 2 découvertes concrètes empêchant
+une extraction fiable dans le temps imparti) :
+
+1. **`qrt_dictionary.json` ne couvre QUE les 7 templates de Groupama**
+   (S.02.01.02, S.05.01.02, S.05.02.04, S.22.01.22, S.23.01.22, S.25.05.22,
+   S.32.01.22) — AUCUN ne correspond aux templates de CNP (préfixes
+   différents : S.23.01.**01** pas .22, S.25.01.**21** pas .01/.22 ;
+   templates entièrement absents : S.12.01, S.17.01, S.19.01, S.22.01,
+   S.28.02). `process_qrt()` planterait immédiatement (`KeyError`) sur
+   n'importe quelle page CNP tant qu'un dictionnaire adapté n'existe pas.
+   Ce dictionnaire n'a JAMAIS été conçu pour être multi-documents — c'est
+   un fichier statique généré une fois pour Groupama en Phase 1, jamais
+   généralisé depuis (angle mort non détecté avant ce test, précisément
+   parce que c'est le premier vrai test sur un 2e document).
+
+2. **Découverte du suffixe "21" pour S.25.01** (CNP) — `kpi_qrt_mapping.py`
+   ne matche que "S.25.01.22" (groupe, vérifié solvencytool.com) et
+   "S.25.01.01" (solo, vérifié AXA SA) ; "S.25.01.**21**" ne matche NI
+   l'un NI l'autre (`variantes_disponibles()` retournerait 0 résultat).
+   Les codes de ligne R0010-R0050/R0060/R0130/R0220 sont probablement
+   identiques (formule standard = structure EIOPA fixe, vérifié
+   solo/groupe) mais **PAS reconfirmés empiriquement pour ce suffixe
+   précis** — élargir le mapping sans le vérifier reviendrait à deviner,
+   exactement ce que la consigne interdit.
+
+DÉCISION (conforme à la consigne explicite "si ça dépasse 1h, commite ce
+qui marche, donne le point d'étape") : **ARRÊT ICI plutôt qu'une
+extraction précipitée.** Construire dans le temps restant un dictionnaire
+QRT minimal pour CNP sans le vérifier soigneusement referait exactement
+l'erreur de la Décision 057 (le bug de sous-chaîne sur scr_souscription_
+vie/sante, trouvé PARCE QUE le résultat a été comparé à une référence
+connue) — sauf qu'ici, il n'existe AUCUNE valeur de référence connue pour
+CNP pour détecter une éventuelle erreur silencieuse. Committer un chiffre
+faux et invérifié serait pire que ne pas extraire.
+
+PAS FAIT (prochaine session) :
+- Généraliser `qrt_dictionary.json` (ou une alternative) pour accepter
+  plusieurs documents — actuellement un artefact Groupama-only jamais
+  pensé comme réutilisable.
+- Vérifier le suffixe "21" de S.25.01 contre un exemple QRT réel rempli
+  (comme fait pour "22"/"01") avant de l'ajouter au mapping.
+- Rechercher S.28.02.01 (MCR vie+non-vie combinées) — jamais trouvé de
+  QRT réel rempli avec ce template précis, malgré plusieurs recherches.
+- `extract_kpis.py` reste structurellement mono-document (COMPANY_NAME,
+  YEAR, PDF_SOURCE, CORPUS_FINAL, PICTURE_75 sont des constantes en tête
+  de fichier, pas des paramètres) — non testé sur un 2e appel avec des
+  valeurs différentes, probable travail additionnel non anticipé.
+- Étapes 2-5 du prompt (extraction ciblée, tableau 22 KPIs CNP, insertion
+  DB, `compare_kpis`, commit final) — non atteintes, bloquées par ce qui
+  précède.
