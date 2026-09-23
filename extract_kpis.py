@@ -55,8 +55,22 @@ COMPANY_NAME = "Groupama"
 YEAR = 2025
 
 sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(TEST_MARKDROP))
 from kpi_definitions import KPI_DEFINITIONS
+from kpi_qrt_mapping import KPI_QRT_MAPPING, variantes_disponibles
+import paddleocr_reader
 from paddleocr_reader import lire_image, valeur_a_droite_du_code, valeur_sous_label
+
+# Pré-chargement FORCÉ de PaddleOCR ICI, avant l'import de detecter_templates
+# (qui importe ingest.py, donc Docling/transformers/torch) — bug d'environnement
+# trouvé en réel (Décision 057) : `from paddleocr import PaddleOCR` plante avec
+# `ValueError: torch.__spec__ is not set` si Docling importe torch EN PREMIER
+# (état partiellement initialisé qui casse la vérification lazy de paddlex/
+# modelscope). Contournement : forcer l'import PaddleOCR AVANT tout import
+# lié à Docling, pas un correctif de fond (signalé pour investigation future).
+paddleocr_reader._get_pipeline()
+
+from detecter_templates import detecter_templates
 
 
 class KpiIntrouvable(Exception):
@@ -144,6 +158,89 @@ def sommer_toutes_colonnes(elements, specs):
         if not trouve:
             raise KpiIntrouvable(f"{code_ligne} introuvable dans aucun élément fourni")
     return total
+
+
+# ---------------------------------------------------------------------
+# Résolution générique via kpi_qrt_mapping.py (Décision 056/057, Phase
+# 3.7 étape finale) — remplace les templates Groupama codés en dur.
+# ---------------------------------------------------------------------
+
+def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
+    """Essaie CHAQUE variante de KPI_QRT_MAPPING[kpi_name] dont le
+    template est présent (variantes_disponibles), dans l'ordre déclaré.
+    Retourne la liste de TOUTES celles qui aboutissent (pas seulement la
+    1re) — l'appelant décide : 1re = valeur principale, suivantes =
+    croisement, ou somme de toutes si le KPI est cumulatif (primes,
+    sinistres — vie + non-vie sont 2 variantes complémentaires, pas des
+    alternatives). Chaque élément : (valeur, template_id_complet, variante_dict)."""
+    resultats = []
+    for v in variantes_disponibles(kpi_name, templates_presents):
+        template_prefix = v["template"]
+        elements = [e for e in corpus if e["template_id"].startswith(template_prefix)]
+        if not elements:
+            continue
+        row, col, libelle = v["row"], v["col"], v["libelle_attendu"]
+        try:
+            if isinstance(row, list):
+                if col == "toutes":
+                    valeur = sommer_toutes_colonnes(elements, [(r, libelle) for r in row])
+                else:
+                    valeur = sommer_cellules(elements, [(r, libelle) for r in row])
+            else:
+                valeur = lire_cellule(elements, row, col, libelle)
+            template_id_complet = next(e["template_id"] for e in elements if row in e["contenu"].get("lignes", {})) \
+                if not isinstance(row, list) else elements[0]["template_id"]
+            resultats.append((valeur, template_id_complet, v))
+        except KpiIntrouvable:
+            continue
+    return resultats
+
+
+def resoudre_par_libelle_modele_interne(kpi_name, corpus, templates_presents):
+    """Fallback modèle interne (Décision 056) : les templates S.25.02 à
+    S.25.05 n'ont PAS de code R/C universel (vérifié : Groupama R0060 vs
+    Yuzzu R0020 pour "Diversification", même concept). Cherche une ligne
+    dont le libellé officiel ÉGALE (pas "contient" — cf. Décision 057, bug
+    réel trouvé : "Life underwriting risk" est une SOUS-CHAÎNE de "Non-life
+    underwriting risk", et "Health underwriting risk" une sous-chaîne de
+    "Life & Health underwriting risk" ; la correspondance par sous-chaîne a
+    donc mappé scr_souscription_vie/sante sur les mauvaises lignes en test
+    réel — cette exactitude stricte a été ajoutée EN RÉACTION à cette
+    découverte, pas par précaution théorique) un des libellés attendus
+    déclarés pour ce KPI (toutes variantes du mapping confondues), après
+    normalisation du préfixe "Risk type – "/"Risk type - " et des espaces.
+    UNIQUEMENT parmi les templates modèle interne présents. Retourne
+    (valeur, template_id, libelle_trouve) ou None — jamais un code deviné,
+    et maintenant jamais un concept voisin pris par erreur."""
+    libelles_connus = {
+        v["libelle_attendu"].strip().lower() for v in KPI_QRT_MAPPING.get(kpi_name, [])
+        if v.get("libelle_attendu")
+    }
+    if not libelles_connus:
+        return None
+
+    def normaliser(libelle):
+        l = libelle.strip().lower()
+        for prefixe in ("risk type – ", "risk type - ", "risk type — "):
+            if l.startswith(prefixe):
+                l = l[len(prefixe):]
+        return l.strip()
+
+    for e in corpus:
+        if not e["template_id"].startswith(("S.25.02", "S.25.03", "S.25.04", "S.25.05")):
+            continue
+        for row in e["contenu"].get("lignes", {}).values():
+            libelle = normaliser(row.get("libelle_officiel") or "")
+            if libelle not in libelles_connus:
+                continue
+            valeurs_cols = row.get("valeurs", {})
+            for col_pref in ("C0100", "C0010"):
+                if col_pref in valeurs_cols:
+                    return _vers_float(valeurs_cols[col_pref]["valeur_brute"]), e["template_id"], row["libelle_officiel"]
+            if len(valeurs_cols) == 1:
+                seule = next(iter(valeurs_cols.values()))
+                return _vers_float(seule["valeur_brute"]), e["template_id"], row["libelle_officiel"]
+    return None
 
 
 # ---------------------------------------------------------------------
@@ -422,112 +519,138 @@ def lire_picture_75():
 
 
 # ---------------------------------------------------------------------
-# Extraction
+# Extraction — entièrement pilotée par kpi_qrt_mapping.py +
+# detecter_templates.py (Décision 057, Phase 3.7 finale) : AUCUN
+# template Groupama codé en dur. Le mapping est parcouru dans l'ordre de
+# priorité déclaré ; la 1re variante dont le template est présent ET dont
+# la cellule se lit avec succès (libellé vérifié) devient la valeur
+# retenue, les suivantes servent de croisement.
 # ---------------------------------------------------------------------
+
+def valeur_principale(kpi_name, corpus, templates_presents):
+    """1re variante qui aboutit — lève KpiIntrouvable si aucune ne
+    marche (comportement identique à lire_cellule direct, juste indirect
+    via le mapping)."""
+    resultats = resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
+    if not resultats:
+        raise KpiIntrouvable(f"{kpi_name} : aucune variante du mapping ne matche un template présent")
+    valeur, template_id, variante = resultats[0]
+    return valeur, template_id, variante
+
 
 def extraire_tout():
     corpus = charger_corpus()
-    s2301_01 = elements_par_template(corpus, "S.23.01.22.01")
-    s0201 = elements_par_template(corpus, "S.02.01.02.01")
-    s0501_01 = elements_par_template(corpus, "S.05.01.02.01")
-    s0501_02 = elements_par_template(corpus, "S.05.01.02.02")
+    templates_presents = {e["template_id"] for e in corpus}
 
-    if not s2301_01:
-        raise KpiIntrouvable("S.23.01.22.01 absent de corpus_final.json")
-    if not s0201:
-        raise KpiIntrouvable("S.02.01.02.01 absent de corpus_final.json")
-    if not s0501_01 or not s0501_02:
-        raise KpiIntrouvable("S.05.01.02.01/02 absent de corpus_final.json")
+    inventaire = detecter_templates(PDF_SOURCE)
+    print(f"[detecter_templates] document_type={inventaire['document_type']!r} "
+          f"scr_method={inventaire['scr_method']!r} "
+          f"({len(inventaire['templates'])} templates détectés)")
 
-    valeurs = {}  # kpi_name -> (valeur_M€_ou_pct, source_page, note)
+    valeurs = {}       # kpi_name -> (valeur_M€_ou_pct, source_page, note)
+    templates_utilises_par_kpi = {}  # kpi_name -> (template_id, méthode) pour le tableau final
 
-    # --- Niveau 1 : lecture directe, S.23.01.22.01 (page 85) ---
-    ratio_scr = lire_cellule(s2301_01, "R0690", "C0010", "Ratio of Total Eligible own funds to Total group SCR")
-    ratio_mcr = lire_cellule(s2301_01, "R0650", "C0010", "Ratio of Eligible own funds to Minimum Consolidated Group SCR")
-    scr_total = lire_cellule(s2301_01, "R0680", "C0010", "Total Group SCR")
-    mcr = lire_cellule(s2301_01, "R0610", "C0010", "Minimum consolidated Group SCR")
-    fp_eligibles = lire_cellule(s2301_01, "R0660", "C0010", "Total eligible own funds to meet the total group SCR")
-    fp_t1_nr = lire_cellule(s2301_01, "R0660", "C0020", "Total eligible own funds to meet the total group SCR")
-    fp_t1_r = lire_cellule(s2301_01, "R0660", "C0030", "Total eligible own funds to meet the total group SCR")
-    fp_t2 = lire_cellule(s2301_01, "R0660", "C0040", "Total eligible own funds to meet the total group SCR")
-    fp_t3 = lire_cellule(s2301_01, "R0660", "C0050", "Total eligible own funds to meet the total group SCR")
+    # --- Fonds propres + ratios + SCR/MCR "haut niveau" : S.23.01 (toutes variantes) ---
+    for kpi_name, diviseur, multiplicateur in [
+        ("ratio_scr", 1, 100), ("ratio_mcr", 1, 100),
+        ("scr_total", 1000, 1), ("mcr", 1000, 1),
+        ("fonds_propres_eligibles", 1000, 1), ("fonds_propres_t1_nr", 1000, 1),
+        ("fonds_propres_t1_r", 1000, 1), ("fonds_propres_t2", 1000, 1), ("fonds_propres_t3", 1000, 1),
+    ]:
+        resultats = resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
+        if not resultats:
+            raise KpiIntrouvable(f"{kpi_name} : aucune variante du mapping ne matche un template présent")
+        valeur, template_id, variante = resultats[0]
+        valeurs[kpi_name] = (
+            valeur * multiplicateur / diviseur, 85,
+            f"{template_id}/{variante['row']}/{variante['col']} ({variante['variante']})",
+        )
+        templates_utilises_par_kpi[kpi_name] = (template_id, "texte_natif")
+        # Croisement : variantes suivantes qui matchent aussi (ex. Groupama :
+        # S.23.01.22 ET S.25.05.22 tous 2 présents pour scr_total/mcr).
+        if len(resultats) > 1:
+            valeurs[f"__croisement_{kpi_name}"] = resultats[1]
 
-    valeurs["ratio_scr"] = (ratio_scr * 100, 85, "S.23.01.22.01/R0690/C0010, ratio brut x100")
-    valeurs["ratio_mcr"] = (ratio_mcr * 100, 85, "S.23.01.22.01/R0650/C0010, ratio brut x100")
-    valeurs["scr_total"] = (scr_total / 1000, 85, "S.23.01.22.01/R0680/C0010")
-    valeurs["mcr"] = (mcr / 1000, 85, "S.23.01.22.01/R0610/C0010")
-    valeurs["fonds_propres_eligibles"] = (fp_eligibles / 1000, 85, "S.23.01.22.01/R0660/C0010")
-    valeurs["fonds_propres_t1_nr"] = (fp_t1_nr / 1000, 85, "S.23.01.22.01/R0660/C0020")
-    valeurs["fonds_propres_t1_r"] = (fp_t1_r / 1000, 85, "S.23.01.22.01/R0660/C0030")
-    valeurs["fonds_propres_t2"] = (fp_t2 / 1000, 85, "S.23.01.22.01/R0660/C0040")
-    valeurs["fonds_propres_t3"] = (fp_t3 / 1000, 85, "S.23.01.22.01/R0660/C0050")
-
-    # --- Niveau 2 : somme de lignes, S.02.01.02.01 (pages 78-79) ---
-    best_estimate = sommer_cellules(s0201, [
-        ("R0540", "Best Estimate"), ("R0580", "Best Estimate"),
-        ("R0630", "Best Estimate"), ("R0670", "Best Estimate"), ("R0710", "Best Estimate"),
-    ])
-    marge_risque = sommer_cellules(s0201, [
-        ("R0550", "Risk margin"), ("R0590", "Risk margin"),
-        ("R0640", "Risk margin"), ("R0680", "Risk margin"), ("R0720", "Risk margin"),
-    ])
-    valeurs["best_estimate"] = (best_estimate / 1000, 79, "S.02.01.02.01, somme 5 lignes Best Estimate")
-    valeurs["marge_risque"] = (marge_risque / 1000, 79, "S.02.01.02.01, somme 5 lignes Risk margin")
+    # --- Provisions : S.02.01, codes identiques solo/groupe (mapping) ---
+    best_estimate, be_template, _ = valeur_principale("best_estimate", corpus, templates_presents)
+    marge_risque, mr_template, _ = valeur_principale("marge_risque", corpus, templates_presents)
+    valeurs["best_estimate"] = (best_estimate / 1000, 79, f"{be_template}, somme 5 lignes Best Estimate (mapping)")
+    valeurs["marge_risque"] = (marge_risque / 1000, 79, f"{mr_template}, somme 5 lignes Risk margin (mapping)")
     valeurs["provisions_techniques"] = ((best_estimate + marge_risque) / 1000, 79, "best_estimate + marge_risque")
+    templates_utilises_par_kpi["best_estimate"] = (be_template, "texte_natif")
+    templates_utilises_par_kpi["marge_risque"] = (mr_template, "texte_natif")
+    templates_utilises_par_kpi["provisions_techniques"] = ("calculé", "-")
 
-    # --- Niveau 3 : somme lignes x colonnes, S.05.01 (pages 80-81) ---
-    primes_brutes = sommer_toutes_colonnes(s0501_01, [
-        ("R0210", "Premiums earned"), ("R0220", "Premiums earned"), ("R0230", "Premiums earned"),
-    ]) + sommer_toutes_colonnes(s0501_02, [("R1510", "Premiums earned")])
-    charge_sinistres = sommer_toutes_colonnes(s0501_01, [
-        ("R0310", "Claims incurred"), ("R0320", "Claims incurred"), ("R0330", "Claims incurred"),
-    ]) + sommer_toutes_colonnes(s0501_02, [("R1610", "Claims incurred")])
-    valeurs["primes_acquises_brutes"] = (primes_brutes / 1000, 80, "S.05.01.02.01+02, somme gross toutes colonnes")
-    valeurs["charge_sinistres"] = (charge_sinistres / 1000, 80, "S.05.01.02.01+02, somme gross toutes colonnes")
+    # --- Activité : S.05.01, variantes vie + non-vie CUMULATIVES (pas des
+    # alternatives — sommées toutes ensemble quand présentes) ---
+    for kpi_name in ("primes_acquises_brutes", "charge_sinistres"):
+        resultats = resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
+        if not resultats:
+            raise KpiIntrouvable(f"{kpi_name} : aucune variante du mapping ne matche un template présent")
+        total = sum(v for v, _, _ in resultats)
+        template_id = resultats[0][1]
+        valeurs[kpi_name] = (total / 1000, 80, f"{template_id}, somme {len(resultats)} variante(s) (mapping)")
+        templates_utilises_par_kpi[kpi_name] = (template_id, "image")
 
-    # --- Niveau 4 : picture_75.png — 3 sources indépendantes, concordance 2-sur-3 ---
+    # --- Niveau 4 : picture_75.png — 3 sources indépendantes, concordance 2-sur-3.
+    # Sert de fallback pour les 6 KPIs SCR détaillés : d'abord tenté via le
+    # mapping (formule standard S.25.01, ou libellé en modèle interne) ;
+    # sur Groupama (modèle interne, aucun libellé standard trouvé, cf.
+    # Décision 056), les 2 tentatives échouent proprement et on retombe
+    # ici — comportement inchangé depuis Décision 055 pour ce document.
     vision, details_vision = lire_picture_75()
     for kpi_name in ("scr_operationnel", "scr_marche", "scr_souscription_sante",
                       "scr_contrepartie", "scr_souscription_vie", "scr_souscription_nonvie"):
-        v = vision.get(kpi_name)
-        valeurs[kpi_name] = (v / 1000 if v is not None else None, 75, details_vision[kpi_name])
+        qrt_direct = resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
+        libelle_fallback = None if qrt_direct else resoudre_par_libelle_modele_interne(kpi_name, corpus, templates_presents)
+        if qrt_direct:
+            valeur, template_id, variante = qrt_direct[0]
+            valeurs[kpi_name] = (valeur / 1000, 85, f"{template_id}/{variante['row']} (mapping, code R/C)")
+            templates_utilises_par_kpi[kpi_name] = (template_id, "texte_natif/image")
+        elif libelle_fallback:
+            valeur, template_id, libelle = libelle_fallback
+            valeurs[kpi_name] = (valeur / 1000, 87, f"{template_id}, libellé {libelle!r} (fallback modèle interne)")
+            templates_utilises_par_kpi[kpi_name] = (template_id, "image, résolu par libellé")
+        else:
+            v = vision.get(kpi_name)
+            valeurs[kpi_name] = (v / 1000 if v is not None else None, 75, details_vision[kpi_name])
+            templates_utilises_par_kpi[kpi_name] = ("picture_75.png", "image (hors QRT)")
 
-    # --- Niveau 5 : S.25.05.22.02/R0060 (page 87, image-only) — 2 sources
-    # indépendantes désormais que le bug de résolution de sous-feuille est
-    # corrigé (Décision 055) : lecture QRT réelle (Gemini VLM, via le
-    # parser corrigé) + lecture PaddleOCR déterministe directe sur le
-    # rendu de la page. Concordance 2-sur-3 comme pour picture_75 (avec
-    # seulement 2 sources dispo ici : les 2 doivent s'accorder). ---
-    s250501 = elements_par_template(corpus, "S.25.05.22.01")
-    s250502 = elements_par_template(corpus, "S.25.05.22.02")
-    if not s250501 or not s250502:
-        raise KpiIntrouvable("S.25.05.22.01/02 absent de corpus_final.json — relancer reextraire_page87.py")
-
-    r0060_qrt = lire_cellule(s250502, "R0060", "C0100", "Diversification")
+    # --- scr_diversification : QRT (via mapping, code Groupama-spécifique
+    # S.25.05.22/R0060 déjà déclaré) + PaddleOCR, concordance 2-sur-3 ---
+    div_qrt_resultats = resoudre_variantes_qrt("scr_diversification", corpus, templates_presents)
+    if not div_qrt_resultats:
+        raise KpiIntrouvable("scr_diversification : aucune variante du mapping ne matche (S.25.05.22 attendu)")
+    r0060_qrt, div_template_id, div_variante = div_qrt_resultats[0]
     r0060_paddle = lire_r0060_paddleocr()
-    print("\n  --- Lecture S.25.05.22.02/R0060 (page 87) : 2 sources indépendantes ---")
+    print(f"\n  --- Lecture {div_template_id}/{div_variante['row']} (page 87) : 2 sources indépendantes ---")
     r0060_valeur, r0060_confiance, r0060_detail = concordance_2_sur_3(
-        "scr_diversification", [("QRT (Gemini VLM, parser corrigé)", r0060_qrt), ("PaddleOCR", r0060_paddle)]
+        "scr_diversification", [("QRT (Gemini VLM, parser corrigé, via mapping)", r0060_qrt), ("PaddleOCR", r0060_paddle)]
     )
     valeurs["scr_diversification"] = (
         r0060_valeur / 1000 if r0060_valeur is not None else None, 87,
-        f"S.25.05.22.02/R0060 — {r0060_detail} [confiance {r0060_confiance}]",
+        f"{div_template_id}/{div_variante['row']} — {r0060_detail} [confiance {r0060_confiance}]",
     )
+    templates_utilises_par_kpi["scr_diversification"] = (div_template_id, "image")
 
     # --- NULL tranché (Décision 051) ---
     valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé trouvé (Décision 051)")
+    templates_utilises_par_kpi["resultat_technique"] = ("-", "-")
 
-    scr_nonvie_qrt = lire_cellule(s250501, "R0310", "C0010", "Total Net Non-life underwriting risk")
-    mcr_qrt_s25 = lire_cellule(s250502, "R0470", "C0100", "Minimum consolidated group solvency capital requirement")
-    scr_total_qrt_s25 = lire_cellule(s250502, "R0220", "C0100", "Consolidated Group SCR")
-    scr_total_qrt_s25_bis = lire_cellule(s250502, "R0570", "C0100", "Total group solvency capital requirement")
-
-    return valeurs, {
-        "scr_total_qrt": scr_total, "mcr_qrt": mcr,
-        "scr_total_qrt_s25_R0220": scr_total_qrt_s25, "scr_total_qrt_s25_R0570": scr_total_qrt_s25_bis,
-        "mcr_qrt_s25_R0470": mcr_qrt_s25,
-        "scr_nonvie_qrt": scr_nonvie_qrt, "vision": vision,
+    extras = {
+        "scr_total_qrt": valeurs["scr_total"][0] * 1000,
+        "mcr_qrt": valeurs["mcr"][0] * 1000,
+        "vision": vision,
+        "templates_utilises_par_kpi": templates_utilises_par_kpi,
     }
+    if "__croisement_scr_total" in valeurs:
+        extras["scr_total_qrt_s25_R0220"] = valeurs.pop("__croisement_scr_total")[0]
+    if "__croisement_mcr" in valeurs:
+        extras["mcr_qrt_s25_R0470"] = valeurs.pop("__croisement_mcr")[0]
+    nonvie_resultats = resoudre_variantes_qrt("scr_souscription_nonvie", corpus, templates_presents)
+    extras["scr_nonvie_qrt"] = nonvie_resultats[0][0] if nonvie_resultats else None
+
+    return valeurs, extras
 
 
 # ---------------------------------------------------------------------
@@ -541,19 +664,17 @@ def croiser_sources(valeurs, extras):
     imprimé, jugement laissé à l'étape 3.4 (contrôles actuariels)."""
     rapport = []
 
-    # scr_total : 3 sources QRT indépendantes, désormais TOUTES réelles
-    # (le bug de résolution de sous-feuille corrigé, Décision 055, donne
-    # accès à S.25.05.22.02 — plus d'"audit manuel" en dur ici).
+    # scr_total / mcr : croisement entre les 2 premières variantes du
+    # mapping dont le template est présent (pour Groupama : S.23.01.22 vs
+    # S.25.05.22) — plus aucun template codé en dur ici (Décision 057).
     scr_total_qrt = extras["scr_total_qrt"]
-    rapport.append(("scr_total", "S.23.01/R0680", scr_total_qrt,
-                     "S.25.05.22.02/R0220", extras["scr_total_qrt_s25_R0220"]))
-    rapport.append(("scr_total (bis)", "S.23.01/R0680", scr_total_qrt,
-                     "S.25.05.22.02/R0570", extras["scr_total_qrt_s25_R0570"]))
+    if "scr_total_qrt_s25_R0220" in extras:
+        rapport.append(("scr_total", "1re variante mapping", scr_total_qrt,
+                         "2e variante mapping (croisement)", extras["scr_total_qrt_s25_R0220"]))
 
-    # mcr : S.23.01/R0610 vs S.25.05.22.02/R0470 — nouveau croisement,
-    # possible seulement depuis la correction du bug de sous-feuille.
-    rapport.append(("mcr", "S.23.01/R0610", extras["mcr_qrt"],
-                     "S.25.05.22.02/R0470", extras["mcr_qrt_s25_R0470"]))
+    if "mcr_qrt_s25_R0470" in extras:
+        rapport.append(("mcr", "1re variante mapping", extras["mcr_qrt"],
+                         "2e variante mapping (croisement)", extras["mcr_qrt_s25_R0470"]))
 
     # scr_souscription_nonvie : S.25.05.22.01/R0310 (donnée réelle du
     # corpus désormais) vs picture_75 (concordance 2-sur-3 déjà appliquée
@@ -569,8 +690,8 @@ def croiser_sources(valeurs, extras):
     print("=" * 70)
     tout_ok = True
     for kpi, src_a, val_a, src_b, val_b in rapport:
-        if val_b is None:
-            print(f"  {kpi:28} : {src_b} non disponible — pas de croisement possible")
+        if val_a is None or val_b is None:
+            print(f"  {kpi:28} : une des 2 sources indisponible — pas de croisement possible")
             continue
         ecart_pct = abs(val_a - val_b) / val_a * 100 if val_a else float("inf")
         statut = "OK" if ecart_pct <= 2.0 else "ÉCART"

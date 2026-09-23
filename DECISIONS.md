@@ -3838,3 +3838,100 @@ PAS FAIT (temps écoulé) :
 - Test du pipeline complet sur un 2e document réel (CNP ou autre) pour
   valider concrètement la généralisation — nécessite de reprendre Phase 2
   (toujours en pause).
+
+## Décision 057 — Phase 3.7 FINALE : extract_kpis.py généralisé via le mapping, régression trouvée et corrigée
+
+CONTEXTE : suite de la Décision 056, branchement effectif de
+`kpi_qrt_mapping.py`/`detecter_templates.py` dans `extract_kpis.py`
+(plus AUCUN template Groupama codé en dur). Contrainte de temps 45 min.
+
+TERMINÉ ET VÉRIFIÉ :
+
+1. **`extract_kpis.py` réécrit** — `extraire_tout()` appelle
+   `detecter_templates(PDF_SOURCE)` au démarrage (log l'inventaire),
+   puis résout CHAQUE KPI via `resoudre_variantes_qrt()` (parcourt
+   `KPI_QRT_MAPPING[kpi]` dans l'ordre, ne retient que les variantes dont
+   le template est présent dans le corpus). Les 22 templates codés en dur
+   (S.23.01.22.01, S.25.05.22.01/02, S.02.01.02.01, S.05.01.02.01/02) ont
+   TOUS disparu du code — remplacés par des appels au mapping. Nouveau :
+   `resoudre_par_libelle_modele_interne()`, fallback pour S.25.02-05 (pas
+   de code fixe, cf. Décision 056) — cherche une ligne dont le libellé
+   officiel ÉGALE (pas contient) un des libellés attendus du KPI.
+
+2. **Bug d'environnement réel trouvé et contourné** : importer
+   `detecter_templates` (donc `ingest.py`, donc Docling/transformers/
+   torch) AVANT le premier appel à PaddleOCR fait planter
+   `from paddleocr import PaddleOCR` avec
+   `ValueError: torch.__spec__ is not set` (conflit d'ordre d'import entre
+   le chargement torch de Docling et la vérification lazy de paddlex/
+   modelscope) — reproduit 2 fois de suite, pas un flake isolé. Contourné
+   en forçant `paddleocr_reader._get_pipeline()` AVANT l'import de
+   `detecter_templates` dans `extract_kpis.py` — vérifié, la 3e tentative
+   passe. Signalé pour investigation future, pas creusé plus (hors budget).
+
+3. **RÉGRESSION RÉELLE TROUVÉE ET CORRIGÉE** (exactement le scénario que
+   la consigne "STOP si un KPI change" visait à attraper) : la 1re version
+   du fallback par libellé utilisait une correspondance par SOUS-CHAÎNE
+   ("Life underwriting risk" dans le libellé de la ligne) — or "Life
+   underwriting risk" est une sous-chaîne littérale de "**Non**-life
+   underwriting risk", et "Health underwriting risk" une sous-chaîne de
+   "Life **&** Health underwriting risk". Résultat en test réel :
+   `scr_souscription_vie` retombait sur la ligne "Total **Non**-life
+   underwriting risk" de S.25.05.22.01 (2 474,79 M€ au lieu de 1 455,72),
+   et `scr_souscription_sante` sur "Total Life **&** Health underwriting
+   risk" (4 389,41 M€ au lieu de 1 271,06). **Diagnostiqué avant de
+   continuer** (comme demandé), corrigé en passant à une égalité EXACTE
+   (après normalisation du préfixe "Risk type – ") plutôt qu'une
+   inclusion — retesté, les 2 valeurs reviennent à l'identique de la
+   Décision 055/056.
+
+4. **Retest complet confirmé** : les 22 KPIs sont désormais
+   **strictement identiques** aux valeurs de référence (Décision 055) —
+   274.00 / 379.28 / 6020.98 / 3840.84 / 16481.19 / 13329.15 / 601.32 /
+   2068.91 / 481.82 / 69035.10 / 2384.34 / 71419.44 / 39062.34 / 27949.85
+   / 677.42 / 4675.24 / 1271.06 / 785.11 / 1455.72 / 2474.79 / -4612.40 /
+   NULL. **30/30 contrôles actuariels repassés, toujours OK.** Aucune
+   régression persistante.
+
+5. **Tableau final** (Étape 3) :
+
+| KPI | Template utilisé | Méthode | Outil 1 | Outil 2 | Concordance | Valeur | Confiance |
+|---|---|---|---|---|---|---|---|
+| ratio_scr | S.23.01.22.01/R0690 | texte natif | lecture QRT directe | — | 1 source | 274.00 pct | haute |
+| ratio_mcr | S.23.01.22.01/R0650 | texte natif | lecture QRT directe | — | 1 source | 379.28 pct | haute |
+| scr_total | S.23.01.22.01/R0680 | texte natif | QRT S.23.01 | QRT S.25.05.22.02/R0220 | 0.00% OK | 6020.98 M€ | haute |
+| mcr | S.23.01.22.01/R0610 | texte natif | QRT S.23.01 | QRT S.25.05.22.02/R0470 | 0.00% OK | 3840.84 M€ | haute |
+| fonds_propres_eligibles/t1_nr/t1_r/t2/t3 | S.23.01.22.01/R0660 | texte natif | lecture QRT directe | — | 1 source | (5 valeurs) | haute |
+| best_estimate | S.02.01.02.01 | image (Gemini VLM) | somme 5 lignes | — | 1 source | 69035.10 M€ | haute |
+| marge_risque | S.02.01.02.01 | image (Gemini VLM) | somme 5 lignes | — | 1 source | 2384.34 M€ | haute |
+| provisions_techniques | calculé | — | best_estimate+marge_risque | — | — | 71419.44 M€ | haute |
+| primes_acquises_brutes | S.05.01.02.01/02 | image (Gemini VLM) | somme vie+non-vie (2 variantes) | — | 1 source | 39062.34 M€ | haute |
+| charge_sinistres | S.05.01.02.01/02 | image (Gemini VLM) | somme vie+non-vie (2 variantes) | — | 1 source | 27949.85 M€ | haute |
+| scr_operationnel | picture_75.png | image | PaddleOCR | relecture manuelle (LLM indispo) | 0.000% OK | 677.42 M€ | partielle |
+| scr_marche | picture_75.png | image | PaddleOCR | relecture manuelle (LLM indispo) | 0.000% OK | 4675.24 M€ | partielle |
+| scr_souscription_sante | picture_75.png | image | PaddleOCR | relecture manuelle (LLM indispo) | 0.000% OK | 1271.06 M€ | partielle |
+| scr_contrepartie | picture_75.png | image | PaddleOCR | relecture manuelle (LLM indispo) | 0.000% OK | 785.11 M€ | partielle |
+| scr_souscription_vie | picture_75.png | image | PaddleOCR | relecture manuelle (LLM indispo) | 0.000% OK | 1455.72 M€ | partielle |
+| scr_souscription_nonvie | S.25.05.22.01/R0310 | image (Gemini VLM) | QRT (mapping) | picture_75 (PaddleOCR+manuelle) | 0.00% OK | 2474.79 M€ | haute |
+| scr_diversification | S.25.05.22.02/R0060 | image (Gemini VLM) | QRT (mapping) | PaddleOCR (page 87) | 0.000% OK | -4612.40 M€ | haute |
+| resultat_technique | — | — | — | — | — | NULL | — |
+
+Note : Gemini/Claude indisponibles lors du run confirmé (clés API
+absentes de l'environnement) — géré proprement, sans crash (Décision 055).
+
+PAS FAIT (hors périmètre de cette étape finale, pas de blocage pour CNP) :
+- Test sur un 2e document réel (CNP) — nécessite de reprendre Phase 2.
+- S.28.02 (solo, MCR vie+non-vie combinées) toujours non trouvé/mappé.
+- Root cause exacte du conflit d'import torch/modelscope non creusée
+  (contournée, fonctionnelle, mais pas expliquée en profondeur).
+
+**Phase 3.7 est TERMINÉE.** Le système peut désormais, en principe,
+extraire les 22 KPIs de n'importe quel SFCR français dont les templates
+suivent les codes EIOPA standards vérifiés ici (S.23.01, S.25.01,
+S.28.01, S.02.01, S.05.01) — MODULO la limite documentée : les templates
+modèle interne (S.25.02-05) nécessitent une vérification manuelle du
+libellé au cas par cas, la résolution automatique n'y est fiable que si
+le libellé QRT du nouveau document correspond EXACTEMENT à un des
+libellés déjà connus (peu probable pour un 2e modèle interne différent —
+seule certitude testée : ça ne produit PLUS de faux positifs silencieux,
+cf. le bug de la sous-chaîne corrigé ci-dessus).
