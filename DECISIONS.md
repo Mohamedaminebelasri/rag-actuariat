@@ -3730,3 +3730,111 @@ EN COURS / PAS ENCORE FAIT (à reprendre dans une nouvelle session) :
   (scratch de débogage, régénérables).
 - Reprise Phase 2 (ingestion CNP Assurances) — toujours en pause, après
   Phase 3 complète (décision de l'utilisateur, inchangée).
+
+## Décision 056 — Phase 3.7 (session 2, 1h) : mapping multi-variantes, détection auto, contrôles OK
+
+CONTEXTE : suite de la Décision 055, contrainte de temps explicite de
+l'utilisateur ("si ça dépasse 1h, commite ce qui est fait"). Ce qui suit
+est TERMINÉ ET VÉRIFIÉ vs PAS FAIT, distingué explicitement — aucune
+ligne de code de ce commit n'a été devinée, chaque code R0xxx/C0xxx est
+sourcé contre un QRT réel et rempli (jamais un résumé IA d'un PDF
+compressé — le PDF a été relu directement quand la 1re tentative de
+résumé automatique était trop dégradée).
+
+TERMINÉ ET VÉRIFIÉ :
+
+1. **`kpi_qrt_mapping.py`** (nouveau, racine du projet) — dictionnaire
+   `KPI_QRT_MAPPING`, 22 KPIs, chaque variante sourcée contre un QRT réel :
+   - S.23.01.22 (groupe) — Groupama 2025 (extraction réelle).
+   - S.23.01.01 (solo) — Bornholms Brandforsikring (Danemark) ET AXA SA,
+     2 sources concordantes (R0580=SCR, R0600=MCR, R0620=ratio SCR,
+     R0640=ratio MCR, R0540/R0550=fonds propres éligibles).
+   - S.25.01.22/S.25.01.01 (formule standard, groupe/solo) — solvencytool.com
+     (groupe) ET AXA SA (solo, QRT réel rempli) : **R0010=Market risk,
+     R0020=Counterparty default, R0030=Life underwriting, R0040=Health
+     underwriting, R0050=Non-life underwriting, R0060=Diversification,
+     R0130=Operational risk, R0220=SCR final** — mêmes codes solo/groupe,
+     vérifié.
+   - S.28.01.01 (solo, MCR vie-ou-non-vie exclusif) — AXA SA ET Yuzzu
+     (Belgique), 2 sources concordantes (R0400=MCR final).
+   - S.02.01.02/S.05.01.02 (provisions/activité) — **codes IDENTIQUES
+     solo/groupe**, vérifié sur 3 documents indépendants (Groupama, AXA,
+     Yuzzu) : R0540/R0550 etc. pour les provisions, R0210-230/R0310-330
+     pour primes/sinistres.
+   - **Découverte empirique importante** : contrairement aux templates
+     réglementaires "purs" ci-dessus, les templates de répartition SCR en
+     MODÈLE INTERNE (S.25.02 à S.25.05) n'ont **aucun code de ligne fixe
+     universel** — comparaison directe Groupama (groupe, S.25.05.22,
+     Diversification en R0060) vs Yuzzu (solo, S.25.05.01, Diversification
+     en R0020) : même concept, codes différents, chaque modèle interne a
+     sa propre structure. **Documenté explicitement plutôt que masqué** :
+     aucune entrée à code fixe n'est ajoutée pour les 5 KPIs de risque
+     détaillé (scr_marche/contrepartie/vie/sante/operationnel) en modèle
+     interne — la résolution par libellé officiel (déjà en place dans
+     `lire_cellule`) reste la seule méthode fiable pour ces cas.
+   - S.28.02 (solo, MCR vie ET non-vie combinées) — **PAS trouvé de QRT
+     réel rempli** dans le temps imparti, volontairement absent du
+     mapping plutôt que deviné.
+   - **PAS ENCORE FAIT : `extract_kpis.py` n'a PAS été modifié pour
+     utiliser ce mapping** — il continue d'utiliser les templates
+     Groupama codés en dur (S.23.01.22, S.25.05.22, etc.), qui restent
+     corrects pour Groupama lui-même. Le mapping est prêt et documenté
+     mais son intégration (remplacer les appels directs par
+     `kpi_qrt_mapping.variantes_disponibles()`) reste à faire — nécessaire
+     seulement pour généraliser à un futur document (CNP ou autre), pas
+     pour Groupama.
+
+2. **`test_markdrop/detecter_templates.py`** (nouveau) —
+   `detecter_templates(pdf_path)` : scanne les pages QRT via
+   `classify_pages` (déjà dans `ingest.py`), retourne `document_type`
+   (solo/groupe, détecté via le suffixe de S.23.01.XX — SEUL signal fiable
+   vérifié, S.02.01/S.05.01 ne permettent PAS cette distinction), `scr_method`
+   (formule_standard si S.25.01 présent, modele_interne si S.25.02-05,
+   sans distinguer partiel/complet — non vérifiable de façon fiable,
+   laissé explicite plutôt que deviné), et l'inventaire des templates
+   présents avec leur format par page (`texte_natif`/`image`/**`mixte`**
+   quand un même template tronqué couvre des pages de format différent —
+   ex. Groupama S.23.01.22 : page 85 texte natif, page 86 image ; reporté
+   explicitement plutôt que moyenné).
+   **Bug trouvé et corrigé pendant l'implémentation** : 1re version
+   utilisait `template_id.split(".")[2]` pour lire le suffixe solo/groupe,
+   qui retombe TOUJOURS sur "01" (c'est le numéro de version du template,
+   pas l'indicateur solo/groupe) — donnait "solo" pour le document GROUPE
+   de Groupama. Corrigé en `split(".")[-1]` (dernier segment), revérifié :
+   `document_type="groupe"` correct sur Groupama.
+
+3. **`validate_kpis.py` relancé** : 30/30 contrôles toujours OK (aucune
+   régression depuis Décision 055 — normal, `extract_kpis.py` n'a pas
+   été modifié depuis, `kpi_qrt_mapping.py`/`detecter_templates.py` sont
+   des fichiers indépendants pas encore branchés).
+
+4. **Tableau de comparaison** (7 KPIs à sources multiples — les 15 autres
+   sont des lectures QRT texte natif directes, 1 seule source, pas de
+   concordance à afficher) :
+
+| KPI | QRT natif | PaddleOCR | LLM Vision | Relecture manuelle | Concordance retenue | Valeur | Confiance |
+|---|---|---|---|---|---|---|---|
+| scr_operationnel | — | 677 423 | indisponible* | 677 423 | PaddleOCR & manuelle | 677.42 M€ | partielle |
+| scr_marche | — | 4 675 236 | indisponible* | 4 675 236 | PaddleOCR & manuelle | 4675.24 M€ | partielle |
+| scr_souscription_sante | — | 1 271 055 | indisponible* | 1 271 055 | PaddleOCR & manuelle | 1271.06 M€ | partielle |
+| scr_contrepartie | — | 785 108 | indisponible* | 785 108 | PaddleOCR & manuelle | 785.11 M€ | partielle |
+| scr_souscription_vie | — | 1 455 724 | indisponible* | 1 455 724 | PaddleOCR & manuelle | 1455.72 M€ | partielle |
+| scr_souscription_nonvie | R0310=2 474 794 | 2 474 794 | indisponible* | 2 474 794 | QRT & PaddleOCR & manuelle | 2474.79 M€ | haute |
+| scr_diversification | R0060=-4 612 403 (Gemini VLM, parser corrigé) | -4 612 403 | — | — | QRT & PaddleOCR | -4612.40 M€ | haute |
+
+*Gemini/Claude indisponibles lors du dernier run confirmé (clés API
+absentes de l'environnement d'exécution) — géré proprement par le
+fallback (Décision 055), sans crash, concordance recalculée sur les
+sources restantes (jamais moins de 2). scr_total et mcr sont croisés à
+3 et 2 sources QRT respectivement (S.23.01 vs S.25.05.22.02/R0220+R0570
+et R0470), 0.00% d'écart — détaillé en Décision 055.
+
+PAS FAIT (temps écoulé) :
+- Intégration de `kpi_qrt_mapping.py` dans `extract_kpis.py` (le mapping
+  existe et est vérifié, mais `extract_kpis.py` utilise toujours les
+  templates Groupama codés en dur — corrects pour Groupama, pas encore
+  généralisés).
+- S.28.02 (solo, MCR vie+non-vie combinées) non trouvé/mappé.
+- Test du pipeline complet sur un 2e document réel (CNP ou autre) pour
+  valider concrètement la généralisation — nécessite de reprendre Phase 2
+  (toujours en pause).
