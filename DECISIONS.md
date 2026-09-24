@@ -4751,3 +4751,34 @@ pointant vers la résolution réelle par PaddleOCR dans `extract_kpis.py`,
 pour éviter toute confusion future avec un vrai bug.
 
 Commit (batch_diagnostic.py) : voir commit suivant.
+
+## Décision 071 — Session autonome 6 tâches : bilan final
+
+CONTEXTE : session autonome de 2h, 6 tâches séquentielles sans
+confirmation entre elles, commit après chaque tâche réussie, budget de
+temps par tâche, passage à la suivante si dépassement.
+
+| # | Tâche | Statut | Détail |
+|---|-------|--------|--------|
+| 1 | Cardif Vie `scr_operationnel` | **Faite** | Mauvaise colonne (C0100→C0040) corrigée. 19/20→20/20. Décision 067, commit `2a36d2e`. |
+| 2 | Diagnostic AFV + ARE | **Faite (diagnostic seul)** | AFV : template SCR `S.25.05.21` non mappé, structure incompatible, pas de fix <5min. ARE : nomenclature française nationale (RC/RP), pas EIOPA — écart architectural. Décision 070, commit `ab8cb70`. |
+| 3 | Sogécap, vrai template SCR | **Faite** | `classify_pages()` ne lisait que le 1er code par page ; S.25.01.21 était caché derrière S.23.01.22 sur la même page. Fixé génériquement. 13/20→20/20, scr_method inconnu→formule_standard. Décision 068, commit `c991573`. |
+| 4 | CNP, pages de continuation | **Faite** | `classify_pages()` détecte maintenant les pages sans titre via codes R0xxx isolés + template précédent. 10/20→20/20. Décision 069, commit `c991573` (bundlé avec la tâche 3, cf. note de processus dans la Décision 069). |
+| 5 | Clarifier diagnostic Groupama | **Faite** | Note explicite "FAUX SIGNAL" ajoutée au rapport pour les pages image déjà résolues par le pipeline réel (PaddleOCR). Décision 070, commit `ab8cb70`. |
+| 6 | MAIF, intégrer PaddleOCR | **Pas commencée** | Reconnaissance du périmètre effectuée : ~12 pages quasi-image (pas 8), et le seul précédent existant (Groupama/picture_75) est un processus manuel page-par-page (valeurs de référence vérifiées à l'œil, prompts Gemini/Claude sur-mesure par image) — pas une fonction générique réutilisable. Le refaire correctement pour 12 pages dépasse largement le budget restant ; le tenter à la hâte risquerait de violer la règle non négociable "NULL si pas sûr, jamais d'invention" du projet. Documentée, non implémentée. |
+
+RÉGRESSION : vérifiée après CHAQUE tâche sur les 3 pipelines de
+référence dédiés. Résultat stable du début à la fin de la session :
+**Groupama 21/22, CNP 21/22, MACSF 21/22** (1 seul NULL chacun =
+`resultat_technique`, cf. Décision 051 — cohérent avec le comportement
+historique du projet). Note : le prompt de la session mentionnait
+"Groupama 22/22" comme référence attendue ; le compte réel et stable
+sur l'ensemble du projet a toujours été 21/22 pour les 3 documents —
+traité comme la référence correcte plutôt que comme une régression.
+
+DIAGNOSTIC GÉNÉRIQUE (`batch_diagnostic.py`) — évolution sur la session :
+Cardif Vie 19→20/20, Sogécap 13→20/20, CNP 10→20/20, Allianz 2→6/20
+(bénéfice secondaire de la Décision 069). Aucun document n'a régressé.
+
+FIN DE SESSION : les 6 tâches ont été traitées dans l'ordre prescrit ;
+aucune tâche hors de cette liste n'a été entamée.
