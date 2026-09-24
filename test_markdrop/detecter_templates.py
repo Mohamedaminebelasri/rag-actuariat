@@ -21,11 +21,14 @@ MÉTHODE (pas de supposition non vérifiable) :
   seuil que process_qrt dans ingest.py), image sinon.
 """
 
+import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from ingest import classify_pages, NATIVE_TEXT_THRESHOLD
+
+ROW_CODE_ANYWHERE_RE = re.compile(r"\bR0\d{3}\b")
 
 
 def detecter_templates(pdf_path):
@@ -70,7 +73,20 @@ def detecter_templates(pdf_path):
     elif any(t.startswith(("S.25.02", "S.25.03", "S.25.04", "S.25.05")) for t in prefixes):
         scr_method = "modele_interne (partiel ou complet — non distinguable automatiquement)"
 
+    # mode (Décision 064, Phase 3.9) : certains SFCR réels (MAIF, Covéa —
+    # vérifié visuellement, vrais tableaux QRT complets) ne portent JAMAIS
+    # de code R0xxx/C0xxx, seulement le titre du template en libellé
+    # français ("Tableau S.25.01.22 : Capital de solvabilité requis") puis
+    # des lignes 100% en libellé — le pipeline par code est alors
+    # structurellement inutilisable, pas juste incomplet. Détecté en
+    # cherchant un vrai code de ligne (R0xxx) dans le texte des pages QRT
+    # elles-mêmes (pas dans templates.keys(), qui vient du TITRE de page,
+    # présent dans les 2 modes).
+    a_des_codes = any(ROW_CODE_ANYWHERE_RE.search(p["texte"]) for p in pages_qrt)
+    mode = "codes_eiopa" if a_des_codes else "libelles_francais"
+
     return {
+        "mode": mode,
         "document_type": document_type,
         "scr_method": scr_method,
         "templates": templates,

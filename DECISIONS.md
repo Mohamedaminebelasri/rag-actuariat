@@ -4370,3 +4370,111 @@ le mapping, donc n'a aucun effet sur cette valeur). **Signe
 potentiellement faux pour ce KPI précis sur MACSF — à corriger dans une
 session dédiée**, pas traité maintenant (hors périmètre de la demande
 "fix tiret pour les 5 NULL identifiés").
+
+## Décision 064 — Phase 3.9 : mode extraction par libellé français, MAIF + Covéa supportés
+
+CONTEXTE : le diagnostic visuel a confirmé que MAIF et Covéa ont de vrais
+tableaux QRT complets, sans AUCUN code R0xxx/C0xxx — seul le titre de
+section porte le code ("Tableau S.25.01.22 : Capital de solvabilité
+requis"). Objectif : ajouter un mode d'extraction par libellé en repli,
+sans toucher au mode codes_eiopa.
+
+TERMINÉ ET VÉRIFIÉ :
+
+1. **`kpi_labels_fr.py`** (nouveau) — libellés français par KPI, TOUS vus
+   directement (rendu image ou texte brut PyMuPDF) sur MAIF/Covéa/
+   Groupama/CNP/MACSF, aucun deviné.
+
+2. **`extraire_par_libelle.py`** (nouveau) — `classifier_lignes()` sépare
+   le texte brut d'une page en paires (libellé accumulé, valeur(s))
+   selon qu'une ligne est 100% numérique ou non (vérifié sur la structure
+   réelle : labels repliés sur 1-3 lignes, suivis d'une ligne de valeurs
+   séparées par grands espaces). `extraire_par_libelle()` : priorité à
+   l'ÉGALITÉ STRICTE, repli en SUFFIXE avec frontière de mot uniquement
+   si aucune égalité stricte n'existe (bug réel trouvé ET corrigé en
+   cours de route : le repli en suffixe seul cassait MAIF — scr_total et
+   mcr récupéraient la mauvaise ligne, "...pour couvrir le capital de
+   solvabilité requis" au lieu de la ligne exacte — corrigé en donnant
+   priorité à l'égalité stricte).
+
+3. **`detecter_templates()` étendu** avec un champ `mode`
+   ("codes_eiopa"/"libelles_francais"), détecté en cherchant un vrai
+   `R0\d{3}` dans le texte des pages QRT (pas dans les titres, qui
+   portent le code dans les 2 modes). Vérifié : Groupama/CNP/MACSF =
+   codes_eiopa, MAIF/Covéa = libelles_francais. Champ additif, aucun
+   changement pour les appels existants.
+
+4. **RÉGRESSION RÉELLE TROUVÉE ET CORRIGÉE avant de livrer** (la
+   consigne "précision absolue, NULL si pas sûr" l'a directement
+   attrapée) : le repli par libellé, une fois branché dans
+   `batch_diagnostic.py` pour les 12 documents, a produit des **FAUX
+   POSITIFS** sur MAAF/MMA IARD/MMA Vie (12/20 KPIs chacun) — alors que
+   la session précédente avait déjà prouvé, par recherche exhaustive de
+   `R0\d{3}` sur la TOTALITÉ de ces documents, qu'ils ne contiennent
+   AUCUN vrai tableau QRT (narratif pur). Diagnostiqué avant de livrer :
+   le libellé "Meilleure estimation" de MAAF matchait un PARAGRAPHE DE
+   MÉTHODOLOGIE ("la meilleure estimation se décompose en...") et
+   récupérait la valeur 910 — sans rapport avec la réalité (un assureur
+   de cette taille a des provisions en dizaines de millions, pas 910 k€).
+   **Un filtre par densité de paires libellé/valeur a été testé et
+   rejeté** : MAAF produit 347 paires, Covéa (vrai tableau) en produit
+   415 — la densité seule ne distingue PAS narratif de tabulaire (le
+   texte narratif français est lui-même truffé de statistiques
+   chiffrées). Faute d'un détecteur fiable dans le temps imparti,
+   **solution retenue : liste blanche des documents VÉRIFIÉS
+   VISUELLEMENT** (`DOCUMENTS_LIBELLE_VERIFIES` dans
+   `batch_diagnostic.py`) — seuls MAIF et Covéa passent par le repli par
+   libellé ; tout autre document en mode `libelles_francais` reste NULL
+   avec un motif explicite ("document non vérifié, extraction non
+   tentée par prudence") plutôt qu'un risque de faux positif silencieux.
+
+RÉSULTAT :
+
+| KPI | MAIF (test manuel, p.121-122) | Covéa (batch, p.82-99) |
+|---|---|---|
+| ratio_scr | 227,00 % | 221,00 % |
+| ratio_mcr | 869,00 % | 511,00 % |
+| scr_total | 2 344 989 k€ | 15 058 209 k€ |
+| mcr | 612 514 k€ | 6 478 904 k€ |
+| fonds_propres_eligibles | 5 329 707 k€ | 33 251 714 k€ |
+| scr_marche | (image, non extrait) | 12 077 364 k€ |
+| scr_souscription_vie | (image, non extrait) | 7 607 617 k€ |
+| scr_souscription_nonvie | (image, non extrait) | 8 859 509 k€ |
+| scr_souscription_sante | (image, non extrait) | 1 352 876 k€ |
+| scr_contrepartie | (image, non extrait) | 694 793 k€ |
+| scr_operationnel | (image, non extrait) | 1 058 463 k€ |
+| scr_diversification | (image, non extrait) | -10 324 898 k€ |
+| best_estimate | (image, non extrait) | 84 032 648 k€ |
+| marge_risque | (image, non extrait) | 5 263 956 k€ |
+
+Toutes les valeurs Covéa croisées avec succès contre la lecture visuelle
+initiale (diagnostic visuel précédent) — 0 écart. MAIF : 5/5 valeurs de
+S.23.01.01 croisées avec succès contre la lecture visuelle (p.121-122).
+
+**Groupama/CNP/MACSF retestés après tous les changements : 22/22, 21/22,
+21/22 — strictement identiques à la référence, 0 régression.**
+
+PAS FAIT / LIMITATIONS DOCUMENTÉES :
+- **MAIF : 8 des 10 pages de son annexe QRT sont en IMAGE** (S.17.01.02,
+  S.22.01.21, S.25.01.21, S.28.01.01 — vérifié : `n_caracteres` ≈ 90-110,
+  quasi aucun texte extractible) — SEULE S.23.01.01 (pages 121-122) est
+  en texte natif. L'extraction par libellé ne peut structurellement rien
+  faire sur du texte absent ; une lecture PaddleOCR/Gemini serait
+  nécessaire (prévue par la consigne comme "cross-validation", pas
+  implémentée — temps insuffisant).
+- **`batch_diagnostic.py` sur MAIF reste à 0/20** malgré le mode
+  correctement détecté : `classify_pages()` ne trouve QUE 2 pages QRT
+  pour MAIF (112, 121) et RATE la page de continuation 122 (qui porte
+  SCR/MCR/ratios) — même angle mort déjà documenté Décisions 059-060,
+  pas corrigé ici (hors périmètre, risque de regression sur la détection
+  générale). Le test manuel (pages 121-122 concaténées à la main) donne
+  le résultat réel, 5/5 KPIs disponibles pour MAIF.
+- **`primes_acquises_brutes`/`charge_sinistres` en mode libellé** :
+  volontairement NON implémentés (structure multi-lignes/multi-colonnes
+  par ligne d'activité, ex. Covéa "Primes acquises" + sous-lignes "Brut –
+  Assurance directe/Réassurance proportionnelle/non proportionnelle" ×
+  9-16 colonnes de LoB — trop complexe et risqué à fiabiliser dans le
+  temps imparti) — restent NULL pour MAIF et Covéa.
+- Cross-validation PaddleOCR (prévue par la consigne pour les pages
+  image) non implémentée — temps insuffisant après la découverte et la
+  correction de la régression des faux positifs.
