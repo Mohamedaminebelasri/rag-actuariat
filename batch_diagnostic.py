@@ -63,6 +63,62 @@ def _page_a_colonne_total(texte_page):
     return any(l.strip().lower() == "total" for l in lignes[:idx_primes])
 
 
+# Décision 074 : Tâche 6 (session "résoudre tous les problèmes restants")
+# demandait d'intégrer PaddleOCR sur les 8 pages QRT-image de MAIF. En
+# investiguant, découverte d'un chemin BIEN PLUS SÛR et sans OCR : les
+# pages 106-108 (section narrative "E.2 Exigences de capital" / "Gestion
+# du capital", TEXTE NATIF, jamais taguées "qrt" par classify_pages car
+# ce n'est pas l'annexe QRT) contiennent un vrai tableau structuré
+# (colonnes 2025/2024/delta/%) reprenant le détail du SCR par module ET
+# le SCR/MCR/ratios/fonds propres éligibles — la même donnée que le QRT
+# annexe, dans un format bien plus simple à parser. Labels et pages
+# vérifiés manuellement contre le texte brut avant intégration.
+MAIF_PAGES_NARRATIVES_SCR = (106, 107, 108)  # 1-indexés, vérifié Décision 074
+MAIF_LABELS_NARRATIFS = {
+    "scr_total": ["SCR"],
+    "mcr": ["MCR"],
+    "ratio_scr": ["Ratio Eléments éligibles / SCR"],
+    "ratio_mcr": ["Ratio Eléments éligibles / MCR"],
+    "fonds_propres_eligibles": ["Fonds propres éligibles pour le SCR"],
+    "scr_marche": ["Risque de Marché"],
+    "scr_contrepartie": ["Risque de défaut de Contrepartie"],
+    "scr_souscription_vie": ["Risque de souscription vie"],
+    "scr_souscription_sante": ["Risque de souscrition santé", "Risque de souscription santé"],
+    "scr_souscription_nonvie": ["Risque de souscription non vie"],
+    "scr_diversification": ["Diversification"],
+    "scr_operationnel": ["Risque Opérationnel"],
+}
+
+
+MAIF_PAGE_FONDS_PROPRES = 121  # S.23.01.01, 1-indexée, vérifié Décision 074
+
+
+def resoudre_scr_mcr_maif(pdf_path, fitz_module, extraire_par_libelle):
+    """Lit les pages narratives vérifiées (MAIF_PAGES_NARRATIVES_SCR) et
+    tente chaque KPI de MAIF_LABELS_NARRATIFS — colonne 0 = exercice
+    courant (2025). Isolé du KPI_LABELS_FR générique pour ne prendre
+    AUCUN risque de collision sur un autre document (labels très courts
+    type "SCR"/"MCR", sûrs seulement dans ce contexte de page précis).
+    Ajoute aussi fonds_propres_t1_nr depuis la page S.23.01.01 (colonne
+    "Niveau 1 – non restreint" de la ligne "Total fonds propres de base
+    après déductions") — t1_r/t2/t3 restent NULL : sur ce document ces
+    colonnes sont vides (pas même un "-"), ambigu entre "0" et "non
+    imprimé", pas assez sûr pour trancher sans risque (Décision 074)."""
+    doc = fitz_module.open(str(pdf_path))
+    texte = "\n".join(doc[p - 1].get_text() for p in MAIF_PAGES_NARRATIVES_SCR if p - 1 < doc.page_count)
+    resultats = {}
+    for kpi_name, labels in MAIF_LABELS_NARRATIFS.items():
+        v, lbl = extraire_par_libelle(texte, labels, colonne=0)
+        resultats[kpi_name] = (v, f"{lbl} (page narrative 'Gestion du capital', Décision 074)") if v is not None else (None, None)
+
+    if MAIF_PAGE_FONDS_PROPRES - 1 < doc.page_count:
+        texte_fp = doc[MAIF_PAGE_FONDS_PROPRES - 1].get_text()
+        v, lbl = extraire_par_libelle(texte_fp, ["Total fonds propres de base après déductions"], colonne=1)
+        resultats["fonds_propres_t1_nr"] = (v, f"{lbl}, colonne Niveau 1 non restreint (S.23.01.01, Décision 074)") if v is not None else (None, None)
+    doc.close()
+    return resultats
+
+
 def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_libelle):
     """Retourne {"primes_acquises_brutes": (valeur, libelle), "charge_sinistres": (...)}
     en sommant, sur chaque page S.05.01.02 possédant une vraie colonne
@@ -311,6 +367,14 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
                             resultat["kpis_ok"] += 1
                             resultat["kpis_via_libelle"].append({"kpi": kpi_name, "libelle": lbl, "valeur": v})
                             resultat["kpis_null"].remove(kpi_name)
+            if pdf_path.name == "rapport-solvabilite-maif-2025.pdf":
+                maif_res = resoudre_scr_mcr_maif(pdf_path, fitz, extraire_par_libelle)
+                for kpi_name in list(resultat["kpis_null"]):
+                    v, lbl = maif_res.get(kpi_name, (None, None))
+                    if v is not None:
+                        resultat["kpis_ok"] += 1
+                        resultat["kpis_via_libelle"].append({"kpi": kpi_name, "libelle": lbl, "valeur": v})
+                        resultat["kpis_null"].remove(kpi_name)
             texte_toutes_pages_qrt = "\n".join(p["texte"] for p in pages_qrt)
             encore_null = []
             for kpi_name in resultat["kpis_null"]:
