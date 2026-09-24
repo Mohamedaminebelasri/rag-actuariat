@@ -4627,3 +4627,127 @@ continuation non lue). Vérifier CHAQUE signal contre le vrai document
 et contre la liste réelle des KPIs NULL avant de corriger reste
 indispensable — un correctif appliqué aveuglément sur les 4 aurait
 gaspillé la moitié de l'effort sans gagner un seul KPI.
+
+## Décision 067 — Fix scr_operationnel Cardif Vie : mauvaise colonne verifiée session précédente
+
+CONTEXTE : session autonome 6 tâches. Tâche 1 (10 min) — `scr_operationnel`
+restait NULL pour Cardif Assurance Vie malgré l'ajout d'une variante
+`S.25.01.21/R0130/C0100` en fin de session précédente (commit `0373f35`).
+
+DIAGNOSTIC : extraction directe de la page S.25.01.21 de Cardif Vie
+montre que R0130 ("Risque opérationnel") a sa valeur réelle sous
+**C0040**, pas C0100. La variante ajoutée en session précédente était
+tout simplement mal vérifiée (probablement une confusion avec une autre
+colonne du même tableau) — C0040 est cohérent avec `scr_diversification`
+déjà vérifié sur ce même document.
+
+FIX : correction de la colonne dans `kpi_qrt_mapping.py` (C0100 → C0040).
+
+RÉSULTAT : Cardif Assurance Vie 19/20 → 20/20 KPIs (diagnostic générique).
+Aucune régression : Groupama 21/22, CNP 21/22, MACSF 21/22.
+
+Commit : `2a36d2e`.
+
+## Décision 068 — Fix classify_pages() : détection multi-templates sur une même page (Sogécap)
+
+CONTEXTE : Tâche 3 (25 min) — `detecter_templates()` renvoyait
+`scr_method="inconnu"` pour Sogécap alors que le sommaire du document
+liste explicitement "9. ÉTAT S.25.01.21 CAPITAL DE SOLVABILITÉ REQUIS...".
+
+DIAGNOSTIC : `classify_pages()` ne retient que le PREMIER code
+`S.xx.xx.xx` trouvé sur une page (`QRT_CODE_RE.search`, pas
+`.finditer`). Or la page 40 du PDF Sogécap contient physiquement la
+FIN de S.23.01.22 ("FONDS PROPRES (SUITE)") ET le DÉBUT de S.25.01.21
+juste en dessous, sur la même page — le second template était donc
+invisible. Les colonnes lues manuellement sur cette page (C0110/C0090)
+correspondent exactement à la variante déjà vérifiée sur CNP Assurances
+— aucune nouvelle variante de mapping n'était nécessaire.
+
+FIX : `classify_pages()` détecte maintenant TOUS les codes `S.xx.xx.xx`
+distincts sur une page "qrt" (pas seulement le premier) et ajoute une
+entrée de classification supplémentaire par code additionnel, pointant
+vers la même page physique. `process_qrt()`/le diagnostic essaient donc
+d'extraire les deux templates sur cette page — sans risque, car
+l'extraction ancre par regex de code de ligne (R0xxx), indépendante du
+texte qui précède sur la page.
+
+RÉSULTAT : Sogécap 13/20 → 20/20 KPIs (diagnostic générique),
+`scr_method` "inconnu" → "formule_standard".
+
+## Décision 069 — Fix classify_pages() : détection des pages de continuation QRT (CNP)
+
+CONTEXTE : Tâche 4 (30 min) — bug documenté 3 fois auparavant
+(Décisions 059-061, 066) : la page 99 de CNP Assurances est la suite du
+template S.28.02.01 (contient R0210 à R0560, dont R0400 = MCR final)
+mais ne répète PAS le titre "S.28.02.01" — `classify_pages()` la
+classait "narratif" et le diagnostic générique perdait ces lignes.
+
+FIX : `classify_pages()` mémorise le template de la dernière page "qrt"
+immédiatement précédente. Une page classée "narratif" par les critères
+existants, mais qui contient au moins 2 lignes isolées matchant
+`ROW_CODE_RE` (`^R\d{4}$`), est reclassée "qrt" avec ce template
+précédent. La mémoire du template précédent est réinitialisée à chaque
+page qui NE qualifie PAS comme continuation, pour ne pas chaîner au-delà
+de la vraie section QRT et limiter le risque de faux positif.
+
+VÉRIFICATION ANTI-FAUX-POSITIFS : rejoué sur les 14 PDF de `data/` —
+seuls CNP (5 pages recatégorisées, toutes vérifiées manuellement comme
+de vraies suites de tableau QRT) et Allianz (8 pages, même mécanisme,
+document multi-pages volumineux) sont affectés. Aucun autre document
+(Groupama, MACSF, Sogécap, Cardif, Crédit Agricole, etc.) ne change.
+
+RÉSULTAT : CNP 10/20 → 20/20 KPIs (diagnostic générique) — le
+contournement manuel de la Décision 059 n'est plus nécessaire pour que
+le diagnostic générique trouve ces KPIs (le pipeline dédié `extract_kpis_cnp.py`
+reste à 21/22, il contournait déjà le problème). Allianz 2/20 → 6/20
+(bénéfice secondaire, même mécanisme).
+
+**Pipelines réels retestés après les 3 correctifs (067+068+069) :
+Groupama 21/22, CNP 21/22, MACSF 21/22 — strictement identiques à la
+référence, 0 régression.**
+
+NOTE DE PROCESSUS : les correctifs des Décisions 068 et 069 ont été
+codés l'un après l'autre dans `test_markdrop/ingest.py` avant qu'un
+commit intermédiaire ne soit fait entre les deux — ils se retrouvent
+donc TOUS LES DEUX dans le commit `c991573`, dont le message ne décrit
+que la Décision 068. Les deux correctifs sont testés et fonctionnels
+(vérifié séparément avant et après l'ajout de la Décision 069) ; cette
+note sert de trace écrite pour la Décision 069, absente du message de
+commit.
+
+Commit (contient 068 + 069) : `c991573`.
+
+## Décision 070 — Diagnostic AFV/ARE (pas de fix rapide) + clarification du faux signal Groupama
+
+CONTEXTE : Tâche 2 (15 min) — AFV et ARE n'avaient jamais été
+investigués en détail. Tâche 5 (10 min) — le diagnostic générique
+signale des KPIs manquants sur Groupama à cause de pages image, alors
+que le pipeline réel (PaddleOCR) les résout déjà.
+
+**AFV** (`afv-annexes-2025-etats-quantitatifs.pdf`) : 13/20 KPIs, les 7
+`scr_*` manquants viennent tous du même blocage — la page SCR de ce
+document utilise le template `S.25.05.21` (modèle interne complet, non
+mappé), avec une structure de lignes fondamentalement différente de
+toute variante connue (ex. R0070 = "Total market & credit risk" combiné,
+ne se sépare pas proprement en `scr_marche`/`scr_contrepartie`). Un vrai
+fix demanderait une session dédiée de lecture ligne par ligne, pas un
+patch de 5 minutes — documenté, non corrigé. Le signal
+"colonne_inconnue:S.28.02.01" sur ce document est un faux signal : `mcr`
+se résout déjà par une autre voie.
+
+**ARE** (`are-annexes-2025-etats-quantitatifs.pdf`) : 0/0 KPIs. Le
+document n'utilise PAS la nomenclature EIOPA `S.xx.xx.xx` du tout, mais
+la nomenclature française nationale ("États C/P" : `RC.02.01`,
+`RP.05.01.01`, `RP.42.03.01`). `classify_pages()` n'a aucun support pour
+cette famille de codes — écart architectural, pas un fix de colonne/ligne.
+Non corrigé (hors budget).
+
+**Clarification Groupama** : ajout de `DOCUMENTS_IMAGE_RESOLUE_PAR_PIPELINE_REEL`
+dans `batch_diagnostic.py` — quand une page image est ignorée par le
+diagnostic générique (`page_image_non_traitee`) sur un document listé
+(actuellement `SFCR_2025_Groupe-Groupama.pdf`), le problème reporté
+porte maintenant une note explicite `"FAUX SIGNAL pour ce document : ..."`
+pointant vers la résolution réelle par PaddleOCR dans `extract_kpis.py`,
+pour éviter toute confusion future avec un vrai bug.
+
+Commit (batch_diagnostic.py) : voir commit suivant.

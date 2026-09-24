@@ -51,6 +51,18 @@ DOCUMENTS_LIBELLE_VERIFIES = {
     "sfcr_covea_2025.pdf",
 }
 
+# Décision 070 : documents pour lesquels le pipeline RÉEL dédié
+# (extract_kpis.py) résout déjà les pages QRT en image via PaddleOCR +
+# cross-validation Gemini (cf. picture_75.png, S.25.05.22 Groupama) — ce
+# diagnostic générique, lui, n'a PAS d'étape OCR et les compte comme
+# "page_image_non_traitee". Sur ces documents précis, ce signal est un
+# FAUX négatif du diagnostic, pas un vrai manque du pipeline : à ne pas
+# confondre. Ne pas ajouter un document ici sans vérifier que son
+# pipeline dédié résout réellement les KPIs concernés (ne pas deviner).
+DOCUMENTS_IMAGE_RESOLUE_PAR_PIPELINE_REEL = {
+    "SFCR_2025_Groupe-Groupama.pdf": "extract_kpis.py résout les 5 KPIs SCR via picture_75.png (PaddleOCR + relecture manuelle, Décision antérieure) — voir DECISIONS.md",
+}
+
 
 def lister_pdfs():
     """Tous les PDF de data/, sauf exclusions et doublons exacts (même
@@ -149,9 +161,11 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
             templates_vus.add(template_id)
             if page["n_caracteres"] <= NATIVE_TEXT_THRESHOLD:
                 resultat["pages_images_ignorees"] += 1
-                resultat["problemes"].append({
-                    "type": "page_image_non_traitee", "detail": f"{template_id} page {page['page']}",
-                })
+                probleme = {"type": "page_image_non_traitee", "detail": f"{template_id} page {page['page']}"}
+                note_pipeline_reel = DOCUMENTS_IMAGE_RESOLUE_PAR_PIPELINE_REEL.get(pdf_path.name)
+                if note_pipeline_reel:
+                    probleme["note"] = f"FAUX SIGNAL pour ce document : {note_pipeline_reel}"
+                resultat["problemes"].append(probleme)
                 continue
             if template_id not in qrt_dict_synth:
                 resultat["problemes"].append({"type": "template_inconnu", "detail": template_id, "page": page["page"]})
