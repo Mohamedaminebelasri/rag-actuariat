@@ -4478,3 +4478,73 @@ PAS FAIT / LIMITATIONS DOCUMENTÉES :
 - Cross-validation PaddleOCR (prévue par la consigne pour les pages
   image) non implémentée — temps insuffisant après la découverte et la
   correction de la régression des faux positifs.
+
+## Décision 065 — Fix colonnes QRT : Crédit Agricole 20/20, découverte d'un vrai bug dans le diagnostic
+
+CONTEXTE : le batch montrait AFI (13/20) et Crédit Agricole (13/20)
+bloqués sur des colonnes QRT "inconnues".
+
+DIAGNOSTIC PRÉCIS (avant tout correctif) :
+- **AFI : PAS un problème de colonne.** Ses 7 KPIs SCR détaillés NULL
+  viennent de `S.25.05.21`, un template **modèle interne** absent du
+  mapping par choix (Décision 056 : les templates modèle interne
+  S.25.02-05 n'ont aucun code fixe universel, vérifié empiriquement sur
+  Groupama vs Yuzzu — un "ordre de priorité de colonnes" ne peut rien y
+  faire, il faudrait une résolution par libellé document par document,
+  hors périmètre de cette demande). **Non corrigé, honnêtement signalé.**
+- **Crédit Agricole : vrai problème de colonne.** `S.25.01.22` (formule
+  standard, groupe) utilise la colonne **C0110** — vérifié en lisant le
+  texte brut de sa page 78 directement, en français ("Risque de
+  marché... R0010... C0110"). C0110 était déjà connu pour `S.25.01.21`
+  (CNP) mais pas encore ajouté pour `S.25.01.22`.
+
+FIX 1 — `kpi_qrt_mapping.py` : 8 nouvelles variantes `S.25.01.22`/C0110
+(mêmes libellés français que CNP), vérifiées contre Crédit Agricole.
+
+**FIX 2 — bug réel trouvé DANS `batch_diagnostic.py` lui-même, pas dans
+le pipeline réel** : après le fix 1, Crédit Agricole restait bloqué à
+14/20 (seul `scr_diversification` s'est débloqué). Diagnostiqué : la
+fonction `construire_qrt_dict_synthetique()` utilisait `setdefault()`
+pour associer un libellé à chaque (template, ligne) — quand 2 variantes
+du mapping déclarent des libellés DIFFÉRENTS pour le même code (ex.
+`S.25.01.22/R0010` a "Market risk" en anglais ET "Risque de marché" en
+français), seul le PREMIER libellé inséré était conservé. `extract_qrt_
+native` rapportait alors TOUJOURS "Market risk" comme libellé trouvé,
+faisant échouer le contrôle de la variante française même quand la
+cellule existait réellement — un faux "colonne inconnue" qui était en
+réalité un faux "libellé inconnu" causé par le script de diagnostic
+lui-même. **Corrigé en accumulant TOUS les libellés connus pour un code
+donné** (séparés par " | "), pas seulement le premier.
+
+RÉSULTAT — tableau avant/après (batch complet, 12 documents) :
+
+| # | Fichier | Avant | Après |
+|---|---|---|---|
+| 1 | AFI | 13/20 | 13/20 (inchangé, cf. diagnostic ci-dessus) |
+| 2 | Allianz Group 2024 | 2/20 | 2/20 (inchangé, hors périmètre) |
+| 3 | **Crédit Agricole Assurances** | 13/20 | **20/20** |
+| 4 | MAIF | 0/20 | 0/20 (inchangé, angle mort continuation déjà connu) |
+| 5 | **MACSF prévoyance** | 17/20 | **20/20** (bénéficie du même fix 2, EN/FR se percutaient déjà silencieusement) |
+| 6 | Groupama 2024 | 11/20 | 11/20 (inchangé, modèle interne S.25.05) |
+| 7 | Groupama 2025 | 9/20 | 9/20 (inchangé, modèle interne S.25.05) |
+| 8 | CNP Assurances | 10/20 | 10/20 (inchangé) |
+| 9 | Covéa | 14/20 | 14/20 (mode libellé, non affecté) |
+| 10-12 | MAAF/MMA IARD/MMA Vie | 0/20 | 0/20 (inchangé, narratif pur) |
+
+**Groupama/CNP/MACSF (pipelines réels `extract_kpis*.py`, pas le
+diagnostic) retestés : 22/22, 21/22, 21/22 — strictement identiques à
+la référence, 0 régression.**
+
+PAS FAIT :
+- AFI reste à 13/20 — nécessiterait une résolution par libellé pour
+  S.25.05.21 (modèle interne), hors périmètre de "fix colonnes".
+- CNP reste à 10/20 dans le diagnostic BATCH (avec son dictionnaire
+  synthétique générique) — rappel : son pipeline RÉEL dédié
+  (`extract_kpis_cnp.py`, dictionnaire construit à la main) est à 21/22,
+  le diagnostic batch est volontairement plus grossier (1 seule
+  sous-feuille par template, pas de résolution multi-pages) et ne
+  reflète pas la capacité réelle du pipeline sur CNP.
+- Pas de "ordre de priorité générique" façon liste de colonnes à essayer
+  dans le sens demandé par le prompt — chaque variante de colonne
+  ajoutée reste une entrée explicite vérifiée contre un document réel,
+  cohérent avec la règle du projet "ne devine pas".

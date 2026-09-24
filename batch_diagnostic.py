@@ -88,7 +88,23 @@ def construire_qrt_dict_synthetique(kpi_mapping):
             })
             sheet = qrt_dict[template][sheet_key]
             for r in rows:
-                sheet["row_codes"].setdefault(r, libelle)
+                # Bug réel trouvé et corrigé (fix colonnes, cette session) :
+                # setdefault() ne gardait que le PREMIER libellé déclaré
+                # pour un (template, row) donné — si une variante EN est
+                # déclarée avant une variante FR pour le même code (cas
+                # réel : S.25.01.22/R0010 a "Market risk" en EN puis
+                # "Risque de marché" en FR), extract_qrt_native rapportait
+                # TOUJOURS le libellé EN comme "trouvé", faisant échouer
+                # le contrôle libelle_attendu de la variante FR même quand
+                # la cellule existait réellement (Crédit Agricole : colonne
+                # C0110 ajoutée mais toujours NULL, à cause de ce bug, pas
+                # d'un problème de colonne). Corrigé en ACCUMULANT tous
+                # les libellés connus pour ce code (séparés par " | "),
+                # pour que la vérification par sous-chaîne de N'IMPORTE
+                # QUELLE variante déclarée passe.
+                deja = sheet["row_codes"].get(r, "")
+                if libelle not in deja:
+                    sheet["row_codes"][r] = f"{deja} | {libelle}" if deja else libelle
             if col != "toutes":
                 sheet["col_codes"].setdefault(col, col)
                 sheet["col_groups"].setdefault(col, col)
