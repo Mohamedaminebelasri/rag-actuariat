@@ -49,32 +49,70 @@ def _parser_nombre(token):
 
 def classifier_lignes(texte_page):
     """Retourne une liste de (libellé_normalisé, [valeurs_float]) — le
-    libellé accumule les lignes non-numériques consécutives, la 1re
-    ligne 100% numérique qui suit devient sa valeur (plusieurs colonnes
-    possibles, ex. tableau à 5 niveaux de fonds propres)."""
+    libellé accumule les lignes non-numériques consécutives, puis TOUTES
+    les lignes 100% numériques qui suivent immédiatement deviennent ses
+    valeurs (plusieurs colonnes possibles, ex. tableau à 5 niveaux de
+    fonds propres). Décision 073 : sur un tableau large (ex. Covéa
+    S.05.01.02, plusieurs colonnes par ligne d'activité), PyMuPDF imprime
+    souvent CHAQUE colonne sur sa propre ligne de texte plutôt qu'une
+    seule ligne espacée — sans accumulation, seule la 1re colonne était
+    gardée et les suivantes (dont la colonne Total, la dernière) étaient
+    silencieusement perdues."""
     paires = []
     buffer_label = []
+    peut_etendre = False  # True juste après avoir démarré un nouveau (label, valeurs)
     for ligne in texte_page.split("\n"):
         ligne_stripped = ligne.strip()
         if not ligne_stripped:
             continue
         if _est_ligne_valeur(ligne_stripped):
+            tokens = [t for t in SPLIT_COLONNES_RE.split(ligne_stripped) if t.strip()]
+            try:
+                valeurs = [_parser_nombre(t) for t in tokens]
+            except ValueError:
+                buffer_label = []
+                peut_etendre = False
+                continue
             if buffer_label:
                 label = _normaliser(" ".join(buffer_label))
-                tokens = [t for t in SPLIT_COLONNES_RE.split(ligne_stripped) if t.strip()]
-                try:
-                    valeurs = [_parser_nombre(t) for t in tokens]
-                except ValueError:
-                    buffer_label = []
-                    continue
-                paires.append((label, valeurs))
+                paires.append([label, valeurs])
                 buffer_label = []
-            # une ligne de valeur sans libellé accumulé (rare, ex. en-tête
-            # de colonnes "Total / Niveau 1..." sans vrai label devant) —
-            # ignorée, pas rattachable à un KPI
+                peut_etendre = True
+            elif peut_etendre and paires:
+                paires[-1][1].extend(valeurs)
+            # sinon : ligne de valeur sans libellé du tout (rare, ex.
+            # en-tête de colonnes "Total / Niveau 1...") — ignorée
         else:
             buffer_label.append(ligne_stripped)
-    return paires
+            peut_etendre = False
+    return [(label, valeurs) for label, valeurs in paires]
+
+
+def extraire_section(texte_page, debut, fin=None):
+    """Retourne le sous-texte compris entre la 1re ligne EXACTEMENT égale
+    à `debut` (normalisée) et la 1re ligne égale à `fin` qui la suit (ou
+    la fin de page si `fin` est absent/introuvable). Décision 073 : sert
+    à restreindre classifier_lignes()/extraire_par_libelle() à UNE SEULE
+    section d'une page qui répète les mêmes libellés dans plusieurs
+    sections (ex. Covéa S.05.01.02 : "Brut – Assurance directe" apparaît
+    identiquement sous "Primes émises", "Primes acquises" ET "Charge des
+    sinistres") — sans ça, le 1er match sur la page gagne toujours, donc
+    systématiquement la mauvaise section (la 1re, "Primes émises")."""
+    debut_norm = _normaliser(debut)
+    fin_norm = _normaliser(fin) if fin else None
+    lignes = texte_page.split("\n")
+    lignes_norm = [_normaliser(l) for l in lignes]
+    try:
+        i_debut = next(i for i, l in enumerate(lignes_norm) if l == debut_norm)
+    except StopIteration:
+        return ""
+    i_fin = len(lignes)
+    if fin_norm:
+        for i in range(i_debut + 1, len(lignes)):
+            if lignes_norm[i] == fin_norm:
+                i_fin = i
+                break
+    return "\n".join(lignes[i_debut:i_fin])
 
 
 def extraire_par_libelle(texte_page, labels_candidats, colonne=0, sommer_occurrences=False):

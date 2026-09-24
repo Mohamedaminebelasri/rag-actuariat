@@ -35,6 +35,70 @@ REPORT_PATH = Path(__file__).parent / "batch_diagnostic_report.json"
 
 EXCLUSIONS = {"ifrs17.pdf", "solva2.pdf"}  # pas des SFCR (doc réglementaire / norme comptable)
 
+# Décision 073 : primes_acquises_brutes / charge_sinistres en mode
+# libellé (Covéa) — notée "trop complexe" en Phase 3.9. Le tableau
+# S.05.01.02 de Covéa est large (16 lignes d'activité non-vie + 8 vie)
+# et étalé sur plusieurs pages physiques ; PyMuPDF imprime CHAQUE
+# colonne sur sa propre ligne de texte, et "Brut – Assurance directe"
+# réapparaît IDENTIQUE sous "Primes émises", "Primes acquises" ET
+# "Charge des sinistres" sur la MÊME page — un simple lookup de libellé
+# sur toute la page choisit systématiquement la 1re occurrence (fausse
+# section). Fix : restreint l'extraction à la section voulue
+# (extraire_section) et ne retient QUE les pages QRT qui ont
+# effectivement une colonne "Total" imprimée dans leur en-tête (page 86
+# de Covéa n'en a pas — c'est la suite de la 87, qui contient déjà le
+# total agrégé des 2 pages) pour éviter tout double comptage.
+COVEA_SOUS_LABELS_BRUT = {
+    "non_vie": ["Brut – Assurance directe", "Brut – Réassurance proportionnelle acceptée",
+                "Brut – Réassurance non proportionnelle acceptée"],
+    "vie": ["Brut"],
+}
+
+
+def _page_a_colonne_total(texte_page):
+    lignes = [l.strip() for l in texte_page.split("\n") if l.strip()]
+    idx_primes = next((j for j, l in enumerate(lignes) if l.lower().startswith("primes")), None)
+    if idx_primes is None:
+        return False
+    return any(l.strip().lower() == "total" for l in lignes[:idx_primes])
+
+
+def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_libelle):
+    """Retourne {"primes_acquises_brutes": (valeur, libelle), "charge_sinistres": (...)}
+    en sommant, sur chaque page S.05.01.02 possédant une vraie colonne
+    Total, les sous-lignes "Brut" de la section concernée (non-vie 3
+    sous-lignes OU vie 1 seule) — vérifié contre un calcul manuel exact
+    sur Covéa 2025 (Décision 073)."""
+    resultats = {}
+    specs = {
+        "primes_acquises_brutes": ("Primes acquises", "Charge des sinistres"),
+        "charge_sinistres": ("Charge des sinistres", "Dépenses engagées"),
+    }
+    for kpi_name, (debut, fin) in specs.items():
+        total = 0.0
+        trouve = False
+        details = []
+        for page in pages_qrt:
+            if page["template_id"] != "S.05.01.02" or not _page_a_colonne_total(page["texte"]):
+                continue
+            section = extraire_section(page["texte"], debut, fin)
+            if not section:
+                continue
+            for cle, labels in COVEA_SOUS_LABELS_BRUT.items():
+                sous_total, sous_details = 0.0, []
+                for lbl in labels:
+                    v, used = extraire_par_libelle(section, [lbl], colonne=-1)
+                    if v is not None:
+                        sous_total += v
+                        sous_details.append((used, v))
+                if sous_details:
+                    total += sous_total
+                    trouve = True
+                    details.extend(sous_details)
+                    break  # un seul jeu de sous-libellés (non_vie OU vie) par page
+        resultats[kpi_name] = (total, f"somme {len(details)} sous-ligne(s) Brut, colonne Total (Décision 073)") if trouve else (None, None)
+    return resultats
+
 # Documents VÉRIFIÉS VISUELLEMENT (rendu image + lecture du texte brut,
 # cf. session de diagnostic visuel) comme contenant de vrais tableaux QRT
 # complets malgré l'absence de code R0xxx/C0xxx. SEULS ces documents
@@ -236,6 +300,17 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
         # trouvé nulle part, comportement inchangé (toujours NULL, honnête).
         if (extraire_par_libelle and KPI_LABELS_FR and resultat["kpis_null"]
                 and pdf_path.name in DOCUMENTS_LIBELLE_VERIFIES):
+            if pdf_path.name == "sfcr_covea_2025.pdf":
+                from extraire_par_libelle import extraire_section
+                covea_kpis = [k for k in ("primes_acquises_brutes", "charge_sinistres") if k in resultat["kpis_null"]]
+                if covea_kpis:
+                    covea_res = resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_libelle)
+                    for kpi_name in covea_kpis:
+                        v, lbl = covea_res.get(kpi_name, (None, None))
+                        if v is not None:
+                            resultat["kpis_ok"] += 1
+                            resultat["kpis_via_libelle"].append({"kpi": kpi_name, "libelle": lbl, "valeur": v})
+                            resultat["kpis_null"].remove(kpi_name)
             texte_toutes_pages_qrt = "\n".join(p["texte"] for p in pages_qrt)
             encore_null = []
             for kpi_name in resultat["kpis_null"]:
