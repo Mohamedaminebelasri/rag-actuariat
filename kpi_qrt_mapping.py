@@ -47,6 +47,9 @@ concorde — jamais un code pris au hasard.
 KPI_QRT_MAPPING = {
     # --- Solvabilité ---
     "ratio_scr": [
+        {"template": "S.23.01.22", "row": "R0620", "col": "C0010", "libelle_attendu": "Ratio fonds propres éligibles sur capital de solvabilité requis",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0690", "col": "C0010",
          "libelle_attendu": "Ratio of Total Eligible own funds to Total group SCR",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
@@ -61,6 +64,9 @@ KPI_QRT_MAPPING = {
          "variante": "solo (FR), colonne C0060, format pourcentage", "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
     ],
     "ratio_mcr": [
+        {"template": "S.23.01.22", "row": "R0640", "col": "C0010", "libelle_attendu": "Ratio fonds propres éligibles sur minimum de capital requis",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0650", "col": "C0010",
          "libelle_attendu": "Ratio of Eligible own funds to Minimum Consolidated Group SCR",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
@@ -77,6 +83,9 @@ KPI_QRT_MAPPING = {
 
     # --- Fonds propres ---
     "fonds_propres_eligibles": [
+        {"template": "S.23.01.22", "row": "R0540", "col": "C0010", "libelle_attendu": "Total des fonds propres éligibles pour couvrir le capital de solvabilité requis",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0660", "col": "C0010",
          "libelle_attendu": "Total eligible own funds to meet the total group SCR",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
@@ -91,6 +100,9 @@ KPI_QRT_MAPPING = {
          "variante": "solo (FR), colonne C0060", "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
     ],
     "fonds_propres_t1_nr": [
+        {"template": "S.23.01.22", "row": "R0540", "col": "C0020", "libelle_attendu": "Total des fonds propres éligibles",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0660", "col": "C0020", "libelle_attendu": "Total eligible own funds",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.23.01.01", "row": "R0540", "col": "C0020", "libelle_attendu": "Total eligible own funds",
@@ -99,6 +111,9 @@ KPI_QRT_MAPPING = {
          "variante": "solo (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
     ],
     "fonds_propres_t1_r": [
+        {"template": "S.23.01.22", "row": "R0540", "col": "C0030", "libelle_attendu": "Total des fonds propres éligibles",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0660", "col": "C0030", "libelle_attendu": "Total eligible own funds",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.23.01.01", "row": "R0540", "col": "C0030", "libelle_attendu": "Total eligible own funds",
@@ -107,6 +122,9 @@ KPI_QRT_MAPPING = {
          "variante": "solo (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
     ],
     "fonds_propres_t2": [
+        {"template": "S.23.01.22", "row": "R0540", "col": "C0040", "libelle_attendu": "Total des fonds propres éligibles",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0660", "col": "C0040", "libelle_attendu": "Total eligible own funds",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.23.01.01", "row": "R0540", "col": "C0040", "libelle_attendu": "Total eligible own funds",
@@ -115,6 +133,9 @@ KPI_QRT_MAPPING = {
          "variante": "solo (FR)", "verifie_contre": "CNP Assurances 2025 (extraction réelle)"},
     ],
     "fonds_propres_t3": [
+        {"template": "S.23.01.22", "row": "R0540", "col": "C0050", "libelle_attendu": "Total des fonds propres éligibles",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0660", "col": "C0050", "libelle_attendu": "Total eligible own funds",
          "variante": "groupe", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.23.01.01", "row": "R0540", "col": "C0050", "libelle_attendu": "Total eligible own funds",
@@ -125,6 +146,9 @@ KPI_QRT_MAPPING = {
 
     # --- SCR ---
     "scr_total": [
+        {"template": "S.23.01.22", "row": "R0580", "col": "C0010", "libelle_attendu": "Capital de solvabilité requis",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0680", "col": "C0010", "libelle_attendu": "Total Group SCR",
          "variante": "groupe (source Own Funds, la plus fiable)", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.23.01.01", "row": "R0580", "col": "C0010", "libelle_attendu": "SCR",
@@ -146,6 +170,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0220", "col": "C0090", "libelle_attendu": "Capital de solvabilité requis",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0220", "col": "C0100", "libelle_attendu": "Capital de solvabilité requis",
+         "variante": "solo, formule standard, colonne C0100 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0100, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
         {"template": "S.25.05.22", "row": "R0220", "col": "C0100", "libelle_attendu": "Group SCR",
          "variante": "groupe, modèle interne — CODE SPÉCIFIQUE GROUPAMA, pas garanti universel",
          "verifie_contre": "Groupama 2025 (extraction réelle)"},
@@ -164,6 +191,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0010", "col": "C0090", "libelle_attendu": "Risque de marché",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0010", "col": "C0040", "libelle_attendu": "Risque de marché",
+         "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
         # Modèle interne (S.25.02-S.25.05) : PAS de code fixe universel
         # (constat Groupama vs Yuzzu, cf. docstring) — résolution par
         # libellé uniquement, via picture narrative ou lecture QRT label-
@@ -183,6 +213,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0030", "col": "C0090", "libelle_attendu": "Risque de souscription en vie",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0030", "col": "C0040", "libelle_attendu": "Risque de souscription en vie",
+         "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
     ],
     "scr_souscription_nonvie": [
         {"template": "S.25.01.22", "row": "R0050", "col": "C0040", "libelle_attendu": "Non-life underwriting risk",
@@ -198,6 +231,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0050", "col": "C0090", "libelle_attendu": "Risque de souscription en non-vie",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0050", "col": "C0040", "libelle_attendu": "Risque de souscription en non-vie",
+         "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
         {"template": "S.25.05.22", "row": "R0310", "col": "C0010", "libelle_attendu": "Total Net Non-life underwriting risk",
          "variante": "groupe, modèle interne — CODE SPÉCIFIQUE GROUPAMA", "verifie_contre": "Groupama 2025 (extraction réelle)"},
     ],
@@ -215,6 +251,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0040", "col": "C0090", "libelle_attendu": "Risque de souscription en santé",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0040", "col": "C0040", "libelle_attendu": "Risque de souscription en santé",
+         "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
     ],
     "scr_contrepartie": [
         {"template": "S.25.01.22", "row": "R0020", "col": "C0040", "libelle_attendu": "Counterparty default risk",
@@ -230,6 +269,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0020", "col": "C0090", "libelle_attendu": "Risque de défaut de la contrepartie",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0020", "col": "C0040", "libelle_attendu": "Risque de défaut de la contrepartie",
+         "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
     ],
     "scr_operationnel": [
         {"template": "S.25.01.22", "row": "R0130", "col": "C0100", "libelle_attendu": "Operational risk",
@@ -245,6 +287,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0130", "col": "C0090", "libelle_attendu": "Risque opérationnel",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0130", "col": "C0100", "libelle_attendu": "Risque opérationnel",
+         "variante": "solo, formule standard, colonne C0100 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0100, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
     ],
     "scr_diversification": [
         {"template": "S.25.01.22", "row": "R0060", "col": "C0040", "libelle_attendu": "Diversification",
@@ -260,6 +305,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0060", "col": "C0090", "libelle_attendu": "Diversification",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0060", "col": "C0040", "libelle_attendu": "Diversification",
+         "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
         {"template": "S.25.05.22", "row": "R0060", "col": "C0100", "libelle_attendu": "Diversification",
          "variante": "groupe, modèle interne — CODE SPÉCIFIQUE GROUPAMA (Yuzzu, solo modèle interne, a R0020 pour le même concept : PAS un code universel)",
          "verifie_contre": "Groupama 2025 (extraction réelle) — cf. Décision 055"},
@@ -292,6 +340,9 @@ KPI_QRT_MAPPING = {
 
     # --- MCR ---
     "mcr": [
+        {"template": "S.23.01.22", "row": "R0600", "col": "C0010", "libelle_attendu": "Minimum de capital requis",
+         "variante": "groupe (titre .22) mais CODES DE LIGNE SOLO (R0580/R0600/R0620/R0640/R0540, pas R0680/R0690/R0610/R0650/R0660) — constat empirique Sogécap, pas un cas générique groupe",
+         "verifie_contre": "Sogécap 2025 (extraction réelle)"},
         {"template": "S.23.01.22", "row": "R0610", "col": "C0010", "libelle_attendu": "Minimum consolidated Group SCR",
          "variante": "groupe (source Own Funds)", "verifie_contre": "Groupama 2025 (extraction réelle)"},
         {"template": "S.23.01.01", "row": "R0600", "col": "C0010", "libelle_attendu": "MCR",

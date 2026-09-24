@@ -4548,3 +4548,82 @@ PAS FAIT :
   dans le sens demandé par le prompt — chaque variante de colonne
   ajoutée reste une entrée explicite vérifiée contre un document réel,
   cohérent avec la règle du projet "ne devine pas".
+
+## Décision 066 — Fix 4 colonnes QRT : diagnostic préalable a écarté 2 des 4, 2 vrais fixes appliqués
+
+CONTEXTE : le prompt demandait de corriger 4 templates signalés "colonne
+inconnue" (S.28.01.01, S.28.02.01, S.25.01.21, S.23.01.22). Exécution
+différée à 19h00 sur demande explicite de l'utilisateur (attente via
+`Monitor`, re-armée 3 fois jusqu'à l'heure demandée), puis lancée
+automatiquement sans confirmation, comme prescrit.
+
+DIAGNOSTIC PRÉALABLE (avant tout correctif — 2 des 4 templates se sont
+révélés être de FAUX signaux, pas de vrais manques de colonne) :
+
+1. **S.28.01.01 (MCR solo) : PAS un problème.** Testé directement sur
+   MACSF (`extract_qrt_native` + dictionnaire synthétique déjà en place) :
+   R0400 "Minimum de capital requis" = 109 959, extrait CORRECTEMENT sous
+   C0070 — la colonne déjà connue. Vérifié aussi qu'aucun des 4 documents
+   flaggés (AFI, Cardif RD, Sogécap, MACSF) n'a `mcr` dans sa liste de
+   KPIs NULL : le signal "colonne_inconnue" concernait des lignes
+   (R0010-R0350, répartition non-vie) qu'AUCUN KPI n'utilise — du bruit
+   de diagnostic, pas un vrai manque. **Aucune variante ajoutée.**
+
+2. **S.28.02.01 (MCR composite, CNP) : PAS un problème de colonne non
+   plus.** Vérifié en relisant directement la page 98 de CNP : le
+   tableau s'arrête à R0200, la ligne R0400 (MCR final) est sur la
+   PAGE 99 — une page de CONTINUATION que `classify_pages()` ne tague
+   jamais comme faisant partie de S.28.02.01 (le titre du template ne
+   se répète pas). C'est le même angle mort déjà documenté 3 fois
+   (Décisions 059, 060, 061) — un vrai fix nécessiterait de faire lire au
+   diagnostic la page suivante pour tout template multi-pages, un
+   changement d'architecture, pas l'ajout d'une variante de colonne.
+   **Aucune variante ajoutée** (le mapping a déjà la bonne colonne C0130,
+   vérifiée Décision 059 — ce n'est pas elle le problème).
+
+3. **S.25.01.21 (SCR formule standard) : vrai problème, corrigé.**
+   Vérifié sur Cardif Assurance Vie (page 13, texte brut) : les 6
+   modules de risque (R0010-R0070) utilisent la colonne **C0040** — une
+   4e variante de colonne pour ce concept (après C0040 groupe/solo
+   standard AXA, C0110 CNP, C0090 MACSF). Risque opérationnel (R0130) et
+   SCR final (R0220) utilisent **C0100**. 8 nouvelles variantes ajoutées
+   à `kpi_qrt_mapping.py`.
+
+4. **S.23.01.22 (fonds propres groupe) : vrai problème, corrigé —
+   découverte plus profonde qu'une simple colonne.** Vérifié sur
+   Sogécap (page 40) : le tableau est TITRÉ "S.23.01.22" (suffixe
+   groupe) mais utilise les CODES DE LIGNE SOLO (R0580/R0600/R0620/
+   R0640/R0540, pas R0680/R0690/R0610/R0650/R0660 attendus pour un
+   groupe) — pas juste une colonne différente, un schéma de
+   numérotation entièrement différent sous un même titre. 9 nouvelles
+   variantes ajoutées (`col="C0010"`, comme pour un document solo),
+   explicitement annotées comme un cas Sogécap précis, pas une règle
+   groupe générale.
+
+RÉSULTAT (batch 14 documents) :
+
+| Fichier | Avant | Après |
+|---|---|---|
+| **Cardif Assurance Vie** | 13/20 | **19/20** (+6, ne manque que scr_operationnel) |
+| **Cardif risques divers** | 13/20 | **19/20** (+6) |
+| **Sogécap** | 4/20 | **13/20** (+9 — ratio_scr/ratio_mcr/scr_total/mcr/fonds_propres_eligibles+4 tiers) |
+| AFI | 13/20 | 13/20 (inchangé, cf. point 1 — pas un problème de colonne) |
+| CNP (diagnostic générique) | 10/20 | 10/20 (inchangé, cf. point 2 — angle mort de continuation) |
+| Groupama/MACSF/Covéa/etc. | — | inchangés |
+
+Sogécap garde 7 KPIs NULL (les modules SCR détaillés) — pour une raison
+DIFFÉRENTE et non investiguée ici : son `scr_method` ressort "inconnu"
+(aucun template S.25.01 détecté sur ce document du tout), hors périmètre
+de "fix colonnes".
+
+**Pipelines réels (`extract_kpis*.py`, pas le diagnostic générique)
+retestés : Groupama 22/22, CNP 21/22, MACSF 21/22 — strictement
+identiques à la référence, 0 régression.**
+
+LEÇON MÉTHODOLOGIQUE : sur 4 signaux "colonne inconnue" fournis par le
+diagnostic automatique, seuls 2 étaient de vrais manques de colonne — 2
+étaient du bruit (une ligne non utilisée par les KPIs, une page de
+continuation non lue). Vérifier CHAQUE signal contre le vrai document
+et contre la liste réelle des KPIs NULL avant de corriger reste
+indispensable — un correctif appliqué aveuglément sur les 4 aurait
+gaspillé la moitié de l'effort sans gagner un seul KPI.
