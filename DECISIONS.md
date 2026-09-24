@@ -4782,3 +4782,73 @@ Cardif Vie 19→20/20, Sogécap 13→20/20, CNP 10→20/20, Allianz 2→6/20
 
 FIN DE SESSION : les 6 tâches ont été traitées dans l'ordre prescrit ;
 aucune tâche hors de cette liste n'a été entamée.
+
+## Décision 075 — Session "résoudre tous les problèmes restants" : bilan final
+
+CONTEXTE : session autonome longue, 6 tâches séquentielles sans
+confirmation, commit après chaque tâche réussie, règle absolue de ne
+jamais toucher `resultat_technique` (NULL acté, Décision 051).
+
+| # | Tâche | Statut | KPIs avant → après (diagnostic générique) | Détail |
+|---|-------|--------|---------------------------------------------|--------|
+| 1 | Cardif RD, dernier KPI manquant | **Déjà résolu** | 20/20 → 20/20 (aucun changement nécessaire) | Effet de bord du fix Cardif Vie de la session précédente (même colonne C0040 partagée par les 2 entités Cardif). Aucun commit. |
+| 2 | AFV, fix template SCR | **Faite (partielle, limite confirmée)** | AFV 13/20 → 16/20, AFI 13/20 → 16/20 | 3 des 7 sous-modules SCR séparables (`S.25.05.21`/R0310,R0480,R0060). Les 4 autres (marché+contrepartie fusionnés en R0070, vie+santé fusionnés en R0400) sont irréductibles — le template modèle interne ne publie pas ce niveau de détail. Décision 072, commit `308ee54`. |
+| 3 | ARE, diagnostic complet | **Faite (diagnostic)** | 0/0 (inchangé, hors périmètre confirmé) | Le document N'EST PAS un extrait tronqué : sa propre table des matières liste exactement les 3 tableaux présents. Nomenclature française nationale (RC/RP), pas EIOPA S.xx — écart architectural réel, pas un bug. Aucun commit (rien à corriger). |
+| 4 | AFI, mode libellé | **Faite (limite confirmée 2e fois)** | 16/20 (inchangé) | Testé empiriquement : aucun des 4 labels français (marché/contrepartie/vie/santé) n'existe nulle part sur la page, ni en français ni en anglais — la donnée n'est jamais imprimée séparément, quel que soit le mode d'extraction. Aucun commit (rien à corriger, confirmation seulement). |
+| 5 | Covéa, primes/sinistres en mode libellé | **Faite** | 14/20 → 16/20 | 2 bugs racine corrigés : `classifier_lignes()` ne gardait que la 1re valeur/ligne (colonnes larges perdues) ; libellés identiques répétés dans 3 sections de la même page (ambiguïté résolue par `extraire_section()`). Valeurs vérifiées par calcul manuel indépendant avant intégration. Décision 073, commit `2ceff21`. |
+| 6 | MAIF, PaddleOCR sur 8 pages image | **Faite — chemin alternatif sans OCR, meilleur résultat** | 0/20 → 13/20 | Découverte que les pages narratives natives 106-108 ("Gestion du capital") contiennent déjà, en texte propre, le détail SCR/MCR/ratios/fonds propres — aucun OCR nécessaire pour 13 KPIs. PaddleOCR non tenté (inutile pour ce résultat). Décision 074, commit `3d45ffd`. |
+
+RÉGRESSION : vérifiée après chaque tâche. Stable du début à la fin de
+la session sur les 3 pipelines de référence dédiés :
+**Groupama 21/22, CNP 21/22, MACSF 21/22** (1 seul NULL chacun =
+`resultat_technique`, jamais touché, conforme à la Décision 051).
+
+### Tableau final — tous les PDF de data/ (diagnostic générique, 20 KPIs)
+
+| Fichier | Avant cette session | Après cette session |
+|---|---|---|
+| afv-annexes-2025-etats-quantitatifs.pdf | 13/20 | 16/20 |
+| Annexe-QRT-Publics-AFI-2025-ok.pdf | 13/20 | 16/20 |
+| are-annexes-2025-etats-quantitatifs.pdf | 0/0 | 0/0 (hors périmètre confirmé) |
+| Cardif-Assurance-Vie – Annexes-2025.pdf | 20/20 | 20/20 |
+| cardif-assurances-risques-divers – annexes-2025.pdf | 20/20 | 20/20 |
+| en-Allianz-Group-SFCR-2024.pdf | 6/20 | 6/20 (non ciblé cette session) |
+| Groupe-Credit-Agricole-Assurances – SFCR-2025.pdf | 20/20 | 20/20 |
+| rapport-solvabilite-maif-2025.pdf | 0/20 | 13/20 |
+| Rapport_de_solvabilite_2025_Sogécap_01.pdf | 20/20 | 20/20 |
+| RAPPORT_SFCR_MACSF_prevoyance_2025.pdf | 20/20 | 20/20 |
+| SFCR_2024_Groupe-Groupama.pdf | 11/20 | 11/20 (non ciblé cette session) |
+| SFCR_2025_Groupe-Groupama.pdf | 9/20 | 9/20 (non ciblé cette session — le pipeline dédié `extract_kpis.py`, avec PaddleOCR, reste à 21/22, cf. Décision 070) |
+| sfcr_cnp_assurances_2025.pdf | 20/20 | 20/20 |
+| sfcr_covea_2025.pdf | 14/20 | 16/20 |
+
+### Problèmes VRAIMENT irréductibles (limite architecturale, pas un bug)
+
+1. **AFV + AFI — 4 sous-modules SCR fusionnés** (`scr_marche`,
+   `scr_contrepartie`, `scr_souscription_vie`, `scr_souscription_sante`) :
+   le template `S.25.05.21` (modèle interne partiel/complet) publie
+   "Total market and credit risk" (R0070) et "Total Life and Health
+   underwriting risk" (R0400) comme des sous-totaux FUSIONNÉS — la
+   donnée séparée n'existe nulle part dans le document, testé sur 2
+   documents indépendants et confirmé par recherche de libellé
+   (Décisions 070, 072, 073bis/074-équivalent pour AFI).
+2. **ARE — nomenclature hors EIOPA** : document complet (vérifié via sa
+   propre table des matières) utilisant les "États C/P" français
+   nationaux (`RC.02.01`, `RP.05.01.01`, `RP.42.03.01`), jamais les
+   codes `S.xx.xx.xx`. Supporter cette famille de codes demanderait une
+   architecture de mapping entièrement séparée.
+3. **MAIF — fonds_propres_t1_r/t2/t3** : colonnes vides (ni "0" ni "-")
+   sur la ligne totale de `S.23.01.01` — ambigu entre "vraiment zéro"
+   et "non imprimé", laissé NULL par prudence plutôt que deviné.
+4. **MAIF — best_estimate/marge_risque/primes_acquises_brutes/charge_sinistres** :
+   le tableau `S.05.01.02` de MAIF n'imprime AUCUNE colonne "Total"
+   (contrairement à Covéa) — une sommation manuelle sur ~9 colonnes de
+   ligne d'activité sans total de contrôle imprimé serait un risque
+   d'erreur silencieuse non résolu dans cette session.
+5. **Allianz + Groupama SFCR 2024 — non ciblés cette session**, restent
+   respectivement à 6/20 et 11/20 dans le diagnostic générique (hors
+   liste des 6 tâches demandées).
+
+FIN DE SESSION : les 6 tâches ont été traitées dans l'ordre prescrit ;
+aucune tâche hors de cette liste n'a été entamée ; `resultat_technique`
+n'a jamais été touché.
