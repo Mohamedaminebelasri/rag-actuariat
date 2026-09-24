@@ -106,6 +106,14 @@ def classify_pages(pdf_path):
     doc = fitz.open(str(pdf_path))
     annexe_index = build_annexe_index(doc)
     classification = []
+    # Décision 069 : template de la dernière page "qrt" immédiatement
+    # précédente (dans l'ordre du document), utilisé pour détecter les
+    # pages de CONTINUATION dont le titre de template ne se répète pas
+    # (ex. CNP p.99 : suite de S.28.02.01, aucune mention de "S.28.02.01"
+    # sur la page, seulement des codes R0xxx isolés). Réinitialisé dès
+    # qu'une page ne qualifie pas comme continuation, pour ne pas chaîner
+    # au-delà de la section QRT réelle.
+    template_precedent = None
 
     for i in range(doc.page_count):
         page_no = i + 1
@@ -140,14 +148,40 @@ def classify_pages(pdf_path):
         elif m_annexe is not None and m_annexe in annexe_index:
             page_type, template_id = "qrt", annexe_index[m_annexe]
             resolution = f"résolu via index des annexes (Annexe {m_annexe})"
+        elif template_precedent is not None and sum(1 for l in lignes if ROW_CODE_RE.match(l.strip())) >= 2:
+            page_type, template_id = "qrt", template_precedent
+            resolution = (f"page de continuation détectée : aucun titre de template, "
+                          f"mais codes R0xxx isolés + template précédent {template_precedent} (Décision 069)")
         else:
             page_type, template_id = "narratif", None
+
+        template_precedent = template_id if page_type == "qrt" else None
 
         classification.append({
             "page": page_no, "type": page_type, "texte": texte,
             "template_id": template_id, "n_caracteres": len(texte),
             "resolution": resolution,
         })
+
+        # Décision 068 : une page QRT peut contenir la fin d'un template ET
+        # le début du suivant (ex. Sogécap p.40 : "S.23.01.22 (SUITE)" puis
+        # "S.25.01.21" plus bas sur la même page physique). m_direct ne
+        # retourne que le PREMIER code trouvé ; si un 2e code (distinct du
+        # premier) apparaît sur la même page "qrt", on ajoute une entrée
+        # supplémentaire pointant vers cette même page pour ce 2e template,
+        # afin que process_qrt()/le diagnostic essaient aussi d'y extraire
+        # les codes R0xxx propres à ce 2e template (ancrage par regex de
+        # ligne, indépendant du texte qui précède sur la page).
+        if page_type == "qrt":
+            autres_codes = [c for c in dict.fromkeys(QRT_CODE_RE.findall(texte)) if c != template_id]
+            for code in autres_codes:
+                classification.append({
+                    "page": page_no, "type": "qrt", "texte": texte,
+                    "template_id": code, "n_caracteres": len(texte),
+                    "resolution": "2e template détecté sur la même page physique (Décision 068)",
+                })
+            if autres_codes:
+                template_precedent = autres_codes[-1]
 
     doc.close()
     return classification
