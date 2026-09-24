@@ -287,9 +287,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0130", "col": "C0090", "libelle_attendu": "Risque opérationnel",
          "variante": "solo, formule standard, colonne C0080 (net, taxonomie MACSF)",
          "verifie_contre": "MACSF prévoyance 2025 (extraction réelle)"},
-        {"template": "S.25.01.21", "row": "R0130", "col": "C0100", "libelle_attendu": "Risque opérationnel",
-         "variante": "solo, formule standard, colonne C0100 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0100, ni C0090 ni C0110)",
-         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0130", "col": "C0040", "libelle_attendu": "Risque opérationnel",
+         "variante": "solo, formule standard, colonne C0040 (correction Décision 067 : la colonne C0100 déclarée initialement était erronée — vérification directe montre C0040, cohérent avec scr_diversification sur le même document)",
+         "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle, re-vérifiée)"},
     ],
     "scr_diversification": [
         {"template": "S.25.01.22", "row": "R0060", "col": "C0040", "libelle_attendu": "Diversification",
