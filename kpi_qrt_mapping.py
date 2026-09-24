@@ -236,6 +236,10 @@ KPI_QRT_MAPPING = {
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
         {"template": "S.25.05.22", "row": "R0310", "col": "C0010", "libelle_attendu": "Total Net Non-life underwriting risk",
          "variante": "groupe, modèle interne — CODE SPÉCIFIQUE GROUPAMA", "verifie_contre": "Groupama 2025 (extraction réelle)"},
+        {"template": "S.25.05.21", "row": "R0310", "col": "C0010", "libelle_attendu": "Total Net Non-life underwriting risk",
+         "variante": "solo, modèle interne (partiel ou complet), suffixe .21 — layout identique à AFV et AFI "
+                     "(Décision 072). Séparable car R0310 est un sous-total propre au non-vie sur ce template.",
+         "verifie_contre": "AFV + AFI 2025 (extraction réelle, 2 documents identiques)"},
     ],
     "scr_souscription_sante": [
         {"template": "S.25.01.22", "row": "R0040", "col": "C0040", "libelle_attendu": "Health underwriting risk",
@@ -290,6 +294,10 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0130", "col": "C0040", "libelle_attendu": "Risque opérationnel",
          "variante": "solo, formule standard, colonne C0040 (correction Décision 067 : la colonne C0100 déclarée initialement était erronée — vérification directe montre C0040, cohérent avec scr_diversification sur le même document)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle, re-vérifiée)"},
+        {"template": "S.25.05.21", "row": "R0480", "col": "C0010", "libelle_attendu": "Total Operational risk",
+         "variante": "solo, modèle interne (partiel ou complet), suffixe .21 — layout identique à AFV et AFI "
+                     "(Décision 072). Séparable car R0480 est un sous-total propre à l'opérationnel sur ce template.",
+         "verifie_contre": "AFV + AFI 2025 (extraction réelle, 2 documents identiques)"},
     ],
     "scr_diversification": [
         {"template": "S.25.01.22", "row": "R0060", "col": "C0040", "libelle_attendu": "Diversification",
@@ -311,6 +319,10 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.05.22", "row": "R0060", "col": "C0100", "libelle_attendu": "Diversification",
          "variante": "groupe, modèle interne — CODE SPÉCIFIQUE GROUPAMA (Yuzzu, solo modèle interne, a R0020 pour le même concept : PAS un code universel)",
          "verifie_contre": "Groupama 2025 (extraction réelle) — cf. Décision 055"},
+        {"template": "S.25.05.21", "row": "R0060", "col": "C0010", "libelle_attendu": "Diversification",
+         "variante": "solo, modèle interne (partiel ou complet), suffixe .21 — layout identique à AFV et AFI "
+                     "(Décision 072).",
+         "verifie_contre": "AFV + AFI 2025 (extraction réelle, 2 documents identiques)"},
     ],
 
     # --- Provisions (codes IDENTIQUES solo/groupe, vérifié : Groupama,
