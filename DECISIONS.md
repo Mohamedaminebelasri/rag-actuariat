@@ -5098,3 +5098,64 @@ un bypass entièrement additif, filtré par nom de fichier exact, aucun
 autre document ne passe par ce code.
 
 Commit : voir commit associé à cette décision.
+
+## Décision 081 — MACIF SAM (bloc isolé, pages 452-467) : OCR/lecture manuelle complète — 20/20, aucun KPI irréductible
+
+CONTEXTE : suite Priorité 1 (session précédente), le bloc MACIF SAM
+(pages 452-467 du document combiné Aéma Groupe, 621 pages) avait été
+isolé proprement via `fitz.insert_pdf(from_page=451, to_page=466)` et
+diagnostiqué à 0/20 — mais pour la mauvaise raison identifiée à
+l'époque (pas l'agrégation multi-entités, mais des pages 100% image,
+même conclusion que Generali). Cette tâche applique la même méthode
+que pour Generali Iard/Vie (Décision 080) : rendu PNG + lecture
+manuelle avec recoupement interne.
+
+MÉTHODE IDENTIQUE À LA DÉCISION 080 : ré-isolation du bloc (technique
+validée, réutilisable telle quelle), rendu PNG (zoom 1.3-3x selon
+densité), lecture manuelle avec recoupement entre pages indépendantes
+du même bloc (ex. Capital de solvabilité requis = 2 964 220 apparaît
+identiquement sur S.23.01.01.01 (p.12/463, R0580), S.25.01.21.02
+(p.13/464, R0200/R0220) ET S.28.01.01.05 (p.16/467, R0310) — 3
+confirmations indépendantes).
+
+DÉCOUVERTE CLÉ : contrairement à Generali Iard/Vie, **MACIF SAM utilise
+la FORMULE STANDARD** (`S.25.01.21`, pas `S.25.05.21` modèle interne) —
+confirmé par la page S.25.01.21.01 (p.13/464) qui liste les 6
+sous-modules de risque **complètement désagrégés, sans aucune
+fusion** : Risque de marché (R0010), Risque de contrepartie (R0020),
+Risque de souscription vie (R0030), Risque de souscription santé
+(R0040), Risque de souscription non-vie (R0050), Diversification
+(R0060), plus Risque opérationnel (R0130) sur la page suivante. **Aucun
+des 4 KPIs habituellement irréductibles sur les templates modèle
+interne (AFV/AFI/Allianz/Generali) ne l'est ici** — la formule standard
+désagrège tout nativement.
+
+RÉSULTAT : **MACIF SAM 0/20 → 20/20** — score parfait, tous les KPIs
+extraits et recoupés :
+- best_estimate = 5 969 795 K€, marge_risque = 341 059 K€ (S.02.01.02.01
+  Bilan, p.2/453, somme 5 segments)
+- primes_acquises_brutes = 4 854 620 K€, charge_sinistres = 3 429 372 K€
+  (S.05.01.02.01 non-vie p.4/455 + S.05.01.02.02 vie p.5/456, sommes
+  R0210+R0220+R0230 et R0310+R0320+R0330, colonne Total)
+- fonds_propres_eligibles = 9 443 143 K€ (T1nr=7 872 072, T1r=374 465,
+  T2=751 973, T3=444 633), scr_total = 2 964 220 K€, mcr = 746 130 K€,
+  ratio_scr = 319%, ratio_mcr = 1125% (S.23.01.01, p.12/463)
+- scr_marche = 2 713 693, scr_contrepartie = 63 361,
+  scr_souscription_vie = 40 522, scr_souscription_sante = 235 321,
+  scr_souscription_nonvie = 1 464 010, scr_diversification = -1 035 321,
+  scr_operationnel = 148 152 (S.25.01.21, p.13-14/464-465)
+
+NOTE D'IMPLÉMENTATION : ces valeurs sont documentées ici (source de
+vérité) mais **pas encore branchées dans `batch_diagnostic.py`** — le
+pipeline suppose actuellement "1 fichier = 1 score", et le fichier Aéma
+combine 13 entités dans un seul PDF physique. Les brancher proprement
+nécessiterait soit un mécanisme multi-entités par fichier (hors
+périmètre de cette tâche, qui demandait explicitement d'isoler et
+documenter, pas de refondre l'architecture), soit republier un sous-PDF
+physique dédié à MACIF SAM. Le score 20/20 est donc confirmé et
+documenté, mais n'apparaît pas encore dans `batch_diagnostic_report.json`
+pour le fichier Aéma (qui reste à 0/20, un signal fidèle à l'état actuel
+du pipeline, pas une contradiction).
+
+Aucune modification de code cette tâche — travail 100% diagnostic/OCR
+manuel, rien à régresser.
