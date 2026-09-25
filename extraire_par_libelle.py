@@ -86,6 +86,16 @@ def classifier_lignes(texte_page):
             buffer_label.append(ligne_stripped)
             peut_etendre = False
     return [(label, valeurs) for label, valeurs in paires]
+    # Décision 079 (tentative abandonnée) : un essai de réattacher un "-"
+    # isolé (signe détaché) à la magnitude adjacente a été tenté ici pour
+    # BPCE IARD (scr_diversification), puis IMMÉDIATEMENT ANNULÉ — testé
+    # sur Covéa, où il a corrompu scr_total (15 058 209 -> -15 058 209,
+    # une valeur impossible) : sur S.22.01.22, un "-" adjacent à une
+    # magnitude signifie parfois une CELLULE VOISINE VIDE, pas un signe
+    # détaché — ambiguïté non résoluble sans connaître la vraie position
+    # de colonne, que classifier_lignes() ne suit pas. Régression réelle
+    # détectée avant commit, fix annulé conformément à la règle "zéro
+    # régression". scr_diversification reste NULL pour BPCE IARD.
 
 
 def extraire_section(texte_page, debut, fin=None):

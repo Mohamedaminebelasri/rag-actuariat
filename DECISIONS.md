@@ -4975,3 +4975,67 @@ RÉSULTAT : Pacifica 4/20 → **20/20**. Aucune régression détectée nulle
 part.
 
 Commit : voir commit associé à cette décision.
+
+## Décision 079 — BPCE IARD : whitelist libellé (0/20 → 13/20), fix de signe détaché tenté puis annulé (régression réelle détectée)
+
+CONTEXTE : BPCE IARD (`bpcea-iard-sfcr-2025.pdf`), mode `libelles_francais`,
+n'avait jamais été vérifié visuellement ni ajouté à `DOCUMENTS_LIBELLE_VERIFIES`.
+
+VÉRIFICATION VISUELLE (rendu image des pages S.25.01.01 et S.23.01.01,
+comme fait pour MAIF/Covéa) : vrais tableaux QRT structurés, formule
+standard, aucun code R0xxx/C0xxx. Ajouté à `DOCUMENTS_LIBELLE_VERIFIES`.
+
+RÉSULTAT IMMÉDIAT avec les labels déjà connus (MAIF/Covéa) : **0/20 →
+14/20** sans aucun ajout de label — `scr_marche`, `scr_contrepartie`,
+`scr_souscription_vie/nonvie/sante`, `scr_operationnel`, `scr_total`,
+`mcr`, `ratio_scr`, `ratio_mcr`, `fonds_propres_eligibles`,
+`best_estimate`, `marge_risque` tous corrects (vérifiés contre l'image
+rendue et par cohérence arithmétique : somme des 6 sous-modules SCR +
+diversification = capital de solvabilité requis de base).
+
+BUG DÉTECTÉ ET CORRIGÉ PARTIELLEMENT : `scr_diversification` extrait à
++196 476 alors que le vrai signe est négatif (preuve arithmétique :
+163214+82866+1311+68682+526509-196476 = 646106 ≈ 646105, le total
+imprimé — la version positive ne colle pas). Cause : la page imprime le
+signe "-" et la magnitude "196 476" sur 2 LIGNES DE TEXTE SÉPARÉES ;
+`classifier_lignes()` les accumule comme 2 valeurs indépendantes
+([196476.0, 0.0, 196476.0, 0.0]) au lieu d'un seul nombre négatif.
+
+TENTATIVE DE FIX GÉNÉRIQUE, TESTÉE, PUIS **ANNULÉE** : une fonction
+`_appliquer_signes_detaches()` a été ajoutée à `classifier_lignes()`
+pour ré-attacher un "-" isolé à la magnitude adjacente. Testée
+immédiatement contre Covéa/MAIF (déjà fonctionnels) AVANT tout commit,
+conformément à la règle "zéro régression, même code partagé" — **a
+cassé Covéa** : sur sa page S.22.01.22 (mesures de mesures long terme),
+la ligne "Capital de solvabilité requis" a la forme
+`[15058209, "-", "-", 82817, "-"]` où les "-" sont des CELLULES VOISINES
+VIDES (colonnes sans rapport), pas des signes détachés — le fix a
+transformé `scr_total` de +15 058 209 (correct) en -15 058 209 (valeur
+impossible, un SCR ne peut jamais être négatif). Ambiguïté non
+résoluble sans connaître la vraie position de colonne, que
+`classifier_lignes()` ne suit pas structurellement. **Fix retiré
+immédiatement**, `extraire_par_libelle.py` restauré à l'identique
+d'avant cette tentative.
+
+GESTION DE LA VALEUR CONNUE COMME FAUSSE : plutôt que de laisser
+`scr_diversification` afficher +196 476 (faux) pour BPCE IARD, ajout
+d'un mécanisme d'exclusion explicite et documenté
+(`DOCUMENTS_KPI_LIBELLE_NON_FIABLE` dans `batch_diagnostic.py`) — force
+ce KPI précis à NULL pour ce document précis, avec la raison consignée
+dans les "problèmes" du diagnostic (`libelle_valeur_non_fiable`).
+Mécanisme strictement additif et filtré par nom de fichier : aucun
+autre document n'est affecté.
+
+RÉSULTAT FINAL : BPCE IARD **0/20 → 13/20**, `scr_diversification`
+honnêtement NULL plutôt que faux. Restent NULL : `scr_diversification`
+(signe détaché, cf. ci-dessus), `fonds_propres_t1_nr/t1_r/t2/t3`
+(labels pas encore ajoutés — la ligne existe et est lisible en page 77,
+mais non traité par manque de temps dans cette tâche),
+`primes_acquises_brutes`/`charge_sinistres` (tableau S.05.01.02 non
+investigué dans cette tâche).
+
+**Régression vérifiée sur les 16 documents déjà traités** (au-delà de
+Covéa/MAIF, vérification valeur par valeur en plus du comptage) : tous
+strictement identiques à avant cette tâche.
+
+Commit : voir commit associé à cette décision.

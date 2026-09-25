@@ -169,6 +169,11 @@ def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_li
 DOCUMENTS_LIBELLE_VERIFIES = {
     "rapport-solvabilite-maif-2025.pdf", "rapport-solvabilite-maif-2025 (1).pdf",
     "sfcr_covea_2025.pdf",
+    # Décision 079 : vérifié visuellement (rendu image des pages S.25.01.01
+    # et S.23.01.01) — vrais tableaux QRT structurés en libellé français,
+    # aucun code R0xxx/C0xxx, formule standard (pas de fusion de sous-
+    # modules, contrairement à MAIF/Covéa qui ont des labels comparables).
+    "bpcea-iard-sfcr-2025.pdf",
 }
 
 # Décision 070 : documents pour lesquels le pipeline RÉEL dédié
@@ -181,6 +186,22 @@ DOCUMENTS_LIBELLE_VERIFIES = {
 # pipeline dédié résout réellement les KPIs concernés (ne pas deviner).
 DOCUMENTS_IMAGE_RESOLUE_PAR_PIPELINE_REEL = {
     "SFCR_2025_Groupe-Groupama.pdf": "extract_kpis.py résout les 5 KPIs SCR via picture_75.png (PaddleOCR + relecture manuelle, Décision antérieure) — voir DECISIONS.md",
+}
+
+# Décision 079 : KPIs qu'un signal "OK" du mode libellé rapporterait à
+# tort pour certains documents — le libellé matche bien, mais la valeur
+# elle-même est fausse (signe détaché, cf. tentative de fix annulée
+# dans extraire_par_libelle.py). Forcés NULL explicitement après la
+# résolution générique plutôt que de laisser passer une valeur connue
+# comme incorrecte : "jamais deviner" prime sur "afficher un chiffre".
+DOCUMENTS_KPI_LIBELLE_NON_FIABLE = {
+    "bpcea-iard-sfcr-2025.pdf": {
+        "scr_diversification": "signe négatif détaché du nombre sur la page S.22.01.01 "
+                                "(\"-\" puis \"196 476\" sur 2 lignes séparées) — la valeur extraite "
+                                "serait +196476 alors que la vraie valeur est -196476 (vérifié par "
+                                "cohérence arithmétique contre le capital de base). Un fix générique "
+                                "testé et annulé (régression sur Covéa scr_total). Cf. Décision 079.",
+    },
 }
 
 
@@ -376,8 +397,16 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
                         resultat["kpis_via_libelle"].append({"kpi": kpi_name, "libelle": lbl, "valeur": v})
                         resultat["kpis_null"].remove(kpi_name)
             texte_toutes_pages_qrt = "\n".join(p["texte"] for p in pages_qrt)
+            kpis_non_fiables = DOCUMENTS_KPI_LIBELLE_NON_FIABLE.get(pdf_path.name, {})
             encore_null = []
             for kpi_name in resultat["kpis_null"]:
+                if kpi_name in kpis_non_fiables:
+                    resultat["problemes"].append({
+                        "type": "libelle_valeur_non_fiable",
+                        "detail": f"{kpi_name} : {kpis_non_fiables[kpi_name]}",
+                    })
+                    encore_null.append(kpi_name)
+                    continue
                 labels = KPI_LABELS_FR.get(kpi_name)
                 if not labels:
                     encore_null.append(kpi_name)
