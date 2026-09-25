@@ -354,7 +354,36 @@ ENTITES_KPIS = {
         "scr_diversification": (-1261906999.0, 589, "S.25.01.21.01/R0060"),
         "scr_operationnel": (149464706.0, 589, "S.25.01.21.02/R0130"),
     },
-    # 2 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
+    "Abeille Epargne Retraite": {
+        # Pages 593-602 (Décision 085). Entité 100% vie (pas de
+        # S.05.01.02.01 non-vie dans ce bloc). Recoupements exacts :
+        # R1000(p594)=R0700(p599)=1 603 300 394 ; provisions_techniques=
+        # best_estimate+marge_risque=R0600+R0690(p594)=25 858 853 587
+        # (exact) ; R0100(p600)=somme(R0010..R0070)=2 655 593 691 (exact) ;
+        # R0220=R0100+R0130+R0140+R0150=438 900 677≈R0580(p599)=
+        # 438 900 678 (±1 arrondi).
+        "best_estimate": (25498195478.0, 594, "S.02.01.02.01 Bilan, somme 2 lignes BE (R0670+R0710)"),
+        "marge_risque": (360658109.0, 594, "S.02.01.02.01 Bilan, somme 2 lignes MR (R0680+R0720)"),
+        "primes_acquises_brutes": (1262145906.0, 595, "S.05.01.02.02 (vie, seule activité), R1510/Total"),
+        "charge_sinistres": (1769662909.0, 595, "S.05.01.02.02 (vie, seule activité), R1610/Total"),
+        "fonds_propres_eligibles": (1729978700.0, 599, "S.23.01.01.01/R0540/Total"),
+        "fonds_propres_t1_nr": (1595590117.0, 599, "S.23.01.01.01/R0540/Niveau1 non restreint"),
+        "fonds_propres_t1_r": (0.0, 599, "S.23.01.01.01/R0540/Niveau1 restreint"),
+        "fonds_propres_t2": (134388583.0, 599, "S.23.01.01.01/R0540/Niveau2"),
+        "fonds_propres_t3": (0.0, 599, "S.23.01.01.01/R0540/Niveau3"),
+        "scr_total": (438900678.0, 599, "S.23.01.01.01/R0580 — confirmé p.600 (S.25.01.21.02/R0220, ±1 arrondi)"),
+        "mcr": (197505305.0, 599, "S.23.01.01.01/R0600"),
+        "ratio_scr": (394.0, 599, "S.23.01.01.01/R0620"),
+        "ratio_mcr": (828.0, 599, "S.23.01.01.01/R0640"),
+        "scr_marche": (1843661370.0, 600, "S.25.01.21.01/R0010"),
+        "scr_contrepartie": (37618176.0, 600, "S.25.01.21.01/R0020"),
+        "scr_souscription_vie": (1488812239.0, 600, "S.25.01.21.01/R0030"),
+        "scr_souscription_sante": (0.0, 600, "S.25.01.21.01/R0040"),
+        "scr_souscription_nonvie": (0.0, 600, "S.25.01.21.01/R0050"),
+        "scr_diversification": (-714498094.0, 600, "S.25.01.21.01/R0060"),
+        "scr_operationnel": (84890604.0, 600, "S.25.01.21.02/R0130"),
+    },
+    # 1 entité restante : bornes connues (ENTITES_BORNES ci-dessus),
     # extraction manuelle pas encore faite. Ne PAS deviner de valeurs —
     # absence délibérée de ces clés, traitée comme "non traité" par
     # calculer_score() ci-dessous, jamais comme un score de 0/20 (ce qui
