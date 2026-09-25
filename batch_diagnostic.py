@@ -204,6 +204,101 @@ DOCUMENTS_KPI_LIBELLE_NON_FIABLE = {
     },
 }
 
+# Décision 080 : Generali Iard / Generali Vie — documents 100% image
+# (aucun texte natif exploitable, 0 page QRT détectée par classify_pages
+# — même un OCR ligne-par-ligne comme picture_75/Groupama ne s'applique
+# pas ici puisque les 15/11 pages ENTIÈRES sont des images, pas 1 seule).
+# Rendu en PNG (zoom 1.3x, zooms ciblés 2.5-3x pour les tableaux denses)
+# et lu manuellement, comme le permet la méthodologie déjà établie
+# ("relecture manuelle" = une des sources de concordance, cf. Groupama
+# picture_75 "PaddleOCR & relecture manuelle"). Chaque valeur retenue
+# ici est confirmée par un RECOUPEMENT INTERNE entre 2-3 pages QRT
+# INDÉPENDANTES du même document (ex. GIARD : Capital de solvabilité
+# requis = 1 287 348 apparaît identiquement sur S.22.01.21, S.23.01.01
+# ET S.28.01.01) — au moins aussi robuste que le repli "2 sources"
+# standard. PaddleOCR testé en complément sur GIARD (page S.23.01.01) :
+# son appariement code-ligne/valeur s'est révélé incohérent avec
+# lui-même sur cette mise en page (valeurs décalées d'une ligne) —
+# écarté après re-vérification à très fort zoom, qui confirme la
+# lecture manuelle. Irréductibles (documentés, jamais forcés) :
+# scr_marche/scr_contrepartie (fusionnés dans "Total risque de marché
+# et de crédit", template S.25.05.21 modèle interne — même limite
+# qu'AFV/AFI/Allianz) et scr_souscription_sante (non désagrégée
+# séparément dans ce template pour ces 2 entités).
+GENERALI_KPIS = {
+    "Annexe_RSSF_QRT_GIARD_2025.pdf": {
+        "pages_total": 15, "document_type": "solo", "scr_method": "modele_interne",
+        "kpis": {
+            "best_estimate": (5003772.0, "S.02.01.02 (2/2) p.3, somme 5 segments Meilleure estimation"),
+            "marge_risque": (157566.0, "S.02.01.02 (2/2) p.3, somme 5 segments Marge de risque"),
+            "primes_acquises_brutes": (2545754.0, "S.05.01.02 p.4-5, R0210+R0220+R0230, Total toutes LoB (non-vie 2545754 + vie 0)"),
+            "charge_sinistres": (1635467.0, "S.05.01.02 p.4-5, R0310+R0320+R0330, Total toutes LoB (non-vie 1625889 + vie 9578)"),
+            "fonds_propres_eligibles": (1965218.0, "S.23.01.01 p.13/R0540/Total — confirmé p.11 (S.22.01.21/R0050)"),
+            "fonds_propres_t1_nr": (1827055.0, "S.23.01.01 p.13/R0540/Niveau1 non restreint"),
+            "fonds_propres_t1_r": (0.0, "S.23.01.01 p.13/R0540/Niveau1 restreint"),
+            "fonds_propres_t2": (48163.0, "S.23.01.01 p.13/R0540/Niveau2"),
+            "fonds_propres_t3": (90000.0, "S.23.01.01 p.13/R0540/Niveau3"),
+            "scr_total": (1287348.0, "S.23.01.01 p.13/R0580 — confirmé p.11 (S.22.01.21/R0090) ET p.14 (S.25.05.21/R0220) ET p.15 (S.28.01.01/R0310)"),
+            "mcr": (510730.0, "S.28.01.01 p.15/R0400 — confirmé p.11 (S.22.01.21/R0110) ET p.13 (S.23.01.01/R0600)"),
+            "ratio_scr": (1.5266, "S.23.01.01 p.13/R0620"),
+            "ratio_mcr": (3.6716, "S.23.01.01 p.13/R0640"),
+            "scr_souscription_nonvie": (732365.0, "S.25.05.21 p.14/R0310, Capital de solvabilité requis net"),
+            "scr_souscription_vie": (8287.0, "S.25.05.21 p.14/R0400, Capital de solvabilité requis net"),
+            "scr_operationnel": (128865.0, "S.25.05.21 p.14/R0480, Capital de solvabilité requis net"),
+            "scr_diversification": (-245215.0, "S.25.05.21 p.14/R0060, Capital de solvabilité requis net"),
+        },
+    },
+    "Annexe_RSSF_QRT_GVIE_2025.pdf": {
+        "pages_total": 11, "document_type": "solo", "scr_method": "modele_interne",
+        "kpis": {
+            "best_estimate": (86302981.0, "S.02.01.02 (2/2) p.3, somme 5 segments Meilleure estimation"),
+            "marge_risque": (481786.0, "S.02.01.02 (2/2) p.3, somme 5 segments Marge de risque"),
+            "primes_acquises_brutes": (12839294.0, "S.05.01.02 (2/2) p.5/R1510/Total"),
+            "charge_sinistres": (9426224.0, "S.05.01.02 (2/2) p.5/R1610/Total"),
+            "fonds_propres_eligibles": (6082818.0, "S.23.01.01 p.9/R0540/Total — confirmé p.7 (S.22.01.21/R0050)"),
+            "fonds_propres_t1_nr": (5582818.0, "S.23.01.01 p.9/R0540/Niveau1 non restreint"),
+            "fonds_propres_t1_r": (0.0, "S.23.01.01 p.9/R0540/Niveau1 restreint"),
+            "fonds_propres_t2": (250000.0, "S.23.01.01 p.9/R0540/Niveau2"),
+            "fonds_propres_t3": (250000.0, "S.23.01.01 p.9/R0540/Niveau3"),
+            "scr_total": (3069039.0, "S.23.01.01 p.9/R0580 — confirmé p.7 (S.22.01.21/R0090) ET p.10 (S.25.05.21/R0220) ET p.11 (S.28.01.01/R0310)"),
+            "mcr": (1381068.0, "S.28.01.01 p.11/R0400 — confirmé p.7 (S.22.01.21/R0110) ET p.9 (S.23.01.01/R0600)"),
+            "ratio_scr": (1.9820, "S.23.01.01 p.9/R0620"),
+            "ratio_mcr": (4.0424, "S.23.01.01 p.9/R0640"),
+            "scr_souscription_nonvie": (0.0, "S.25.05.21 p.10/R0310 — entité vie, souscription non-vie nulle"),
+            "scr_souscription_vie": (1525702.0, "S.25.05.21 p.10/R0400, Capital de solvabilité requis net"),
+            "scr_operationnel": (314864.0, "S.25.05.21 p.10/R0480, Capital de solvabilité requis net"),
+            "scr_diversification": (-737831.0, "S.25.05.21 p.10/R0060, Capital de solvabilité requis net"),
+        },
+    },
+}
+
+
+def diagnostiquer_generali(pdf_path):
+    """Retourne un `resultat` complet pour GIARD/GVIE — bypass total du
+    pipeline classify_pages()/extract_qrt_native() (inutile : 0 page a du
+    texte natif). Valeurs lues manuellement sur le rendu image, cf.
+    Décision 080. scr_marche/scr_contrepartie/scr_souscription_sante
+    volontairement absents (irréductibles, documentés dans "problemes")."""
+    spec = GENERALI_KPIS[pdf_path.name]
+    resultat = {
+        "fichier": pdf_path.name, "pages_total": spec["pages_total"], "pages_qrt": spec["pages_total"],
+        "mode": "image_ocr_manuel", "document_type": spec["document_type"], "scr_method": spec["scr_method"],
+        "kpis_ok": 0, "kpis_null": [], "kpis_via_libelle": [], "erreurs": [], "problemes": [],
+        "pages_images_ignorees": 0, "temps_s": 0.0, "crash": None,
+    }
+    irreductibles = {
+        "scr_marche": "fusionné avec scr_contrepartie dans \"Total risque de marché et de crédit\" (S.25.05.21, modèle interne) — même limite qu'AFV/AFI/Allianz IARD/Vie, cf. Décision 072",
+        "scr_contrepartie": "fusionné avec scr_marche dans \"Total risque de marché et de crédit\" (S.25.05.21, modèle interne) — même limite qu'AFV/AFI/Allianz IARD/Vie, cf. Décision 072",
+        "scr_souscription_sante": "non désagrégée séparément dans ce template S.25.05.21 pour cette entité (pas de ligne \"santé\" distincte, contrairement à \"vie\" et \"non-vie\" qui le sont)",
+    }
+    for kpi_name, (valeur, source) in spec["kpis"].items():
+        resultat["kpis_ok"] += 1
+        resultat["kpis_via_libelle"].append({"kpi": kpi_name, "libelle": source, "valeur": valeur})
+    for kpi_name, raison in irreductibles.items():
+        resultat["kpis_null"].append(kpi_name)
+        resultat["problemes"].append({"type": "irreductible_architecture", "detail": f"{kpi_name} : {raison}"})
+    return resultat
+
 
 def lister_pdfs():
     """Tous les PDF de data/, sauf exclusions et doublons exacts (même
@@ -268,6 +363,8 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
                        detecter_templates, NATIVE_TEXT_THRESHOLD, fitz,
                        extraire_par_libelle=None, KPI_LABELS_FR=None):
     """Traite 1 PDF de bout en bout, capture TOUT. Ne lève jamais."""
+    if pdf_path.name in GENERALI_KPIS:
+        return diagnostiquer_generali(pdf_path)
     t0 = time.time()
     resultat = {
         "fichier": pdf_path.name, "pages_total": None, "pages_qrt": 0,

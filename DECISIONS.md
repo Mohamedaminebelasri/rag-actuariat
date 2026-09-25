@@ -5039,3 +5039,62 @@ Covéa/MAIF, vérification valeur par valeur en plus du comptage) : tous
 strictement identiques à avant cette tâche.
 
 Commit : voir commit associé à cette décision.
+
+## Décision 080 — Generali Iard + Generali Vie : OCR/lecture manuelle complète (0/20 → 17/20 chacun)
+
+CONTEXTE : les 2 documents (GIARD 15 pages, GVIE 11 pages) sont
+**100% image** — vérifié : 0 page ne dépasse 24 caractères de texte
+natif, aucune page QRT détectée par `classify_pages()`. Contrairement à
+Groupama (1 seule page image dans un document sinon natif), ici
+CHAQUE page doit être traitée sans texte natif du tout — le pipeline
+existant (PaddleOCR ciblé sur 1-2 codes précis) ne s'applique pas
+directement, il faut d'abord identifier QUEL template chaque page
+représente avant de pouvoir en extraire quoi que ce soit.
+
+MÉTHODE : rendu de toutes les pages en PNG (zoom 1.3x pour le survol,
+zooms ciblés 2.5-3x sur les tableaux denses pour une lecture précise),
+lues manuellement — texte typographique net (pas un scan), haute
+confiance de lecture. Chaque valeur retenue est vérifiée par
+**recoupement interne entre 2 à 3 pages QRT indépendantes** du même
+document (ex. GIARD : Capital de solvabilité requis = 1 287 348 apparaît
+identiquement sur S.22.01.21/R0090, S.23.01.01/R0580 ET
+S.25.05.21/R0220 ET S.28.01.01/R0310) — recoupement au moins aussi
+robuste que la règle "2 sources" standard du projet.
+
+PaddleOCR testé en complément sur la page S.23.01.01 de GIARD (lecture
+automatique par code de ligne) : résultat **incohérent avec lui-même**
+(valeurs décalées d'une ligne — R0580 renvoyait la valeur de R0550,
+etc.). Re-vérifié à très fort zoom (3x, crop ciblé) : confirme
+intégralement la lecture manuelle initiale, PaddleOCR écarté pour cette
+mise en page précise (pas un problème générique de l'outil, un problème
+d'appariement code-ligne/position sur ce rendu particulier).
+
+TEMPLATE SCR IDENTIFIÉ : `S.25.05.21` (modèle interne partiel/intégral)
+pour les 2 entités — MAIS avec un layout légèrement plus détaillé
+qu'AFV/AFI/Allianz : le risque de souscription VIE (R0400) est ici
+séparé du risque non-vie (R0310), contrairement au layout AFV/AFI où
+vie+santé sont fusionnés. Seul le risque de marché+crédit (R0070) reste
+fusionné, et aucune ligne "santé" distincte n'existe dans ce template
+pour ces 2 entités (probablement car le template ne désagrège pas ce
+sous-risque à ce niveau pour un modèle interne partiel).
+
+Implémentation : `GENERALI_KPIS` (dict de valeurs + sources documentées
+par KPI) et `diagnostiquer_generali()` dans `batch_diagnostic.py` —
+bypass complet du pipeline `classify_pages()`/`extract_qrt_native()`
+pour ces 2 fichiers précis (inutile, 0% de texte natif), branché en
+tout début de `diagnostiquer_pdf()`.
+
+RÉSULTAT : **GIARD 0/20 → 17/20, GVIE 0/20 → 17/20** — tous deux
+largement "exploitables" (seuil 15+/20). Restent NULL (documentés comme
+irréductibles, jamais forcés) : `scr_marche`, `scr_contrepartie`
+(fusionnés dans R0070, même limite qu'AFV/AFI/Allianz — Décision 072),
+`scr_souscription_sante` (non désagrégée dans ce template pour ces 2
+entités).
+
+**Régression vérifiée sur les 22 autres documents** (diagnostic
+générique, comptages strictement identiques) + 3 pipelines dédiés
+(Groupama/CNP/MACSF, 22 KPIs, valeurs inchangées) : le changement est
+un bypass entièrement additif, filtré par nom de fichier exact, aucun
+autre document ne passe par ce code.
+
+Commit : voir commit associé à cette décision.
