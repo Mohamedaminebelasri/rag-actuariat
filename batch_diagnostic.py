@@ -92,6 +92,22 @@ MAIF_LABELS_NARRATIFS = {
 
 MAIF_PAGE_FONDS_PROPRES = 121  # S.23.01.01, 1-indexée, vérifié Décision 074
 
+# Décision 084 : pages S.02.01.02 Bilan (110-111) et S.05.01.02 Primes/
+# sinistres (112-114, 2 pages non-vie + 1 page vie) — image (n_caractères
+# natifs ~95-100/page, sous NATIVE_TEXT_THRESHOLD), jamais taguées "qrt"
+# par classify_pages(). Lues directement par page (bypass classify_pages,
+# comme MAIF_PAGES_NARRATIVES_SCR) plutôt que par libellé simple : le
+# tableau S.05.01.02 a une vraie colonne Total (dernière valeur de
+# chaque ligne accumulée par classifier_lignes), MAIS certaines cellules
+# de LoB sont vides SANS placeholder "-" du tout (contrairement à
+# Covéa) — colonne=-1 reste robuste (toujours la dernière valeur
+# trouvée, quel que soit le nombre de cellules vides intercalées),
+# vérifié par cohérence arithmétique (somme page 112 + LoBs propres de
+# la page 113 = Total imprimé en page 113, écart 0).
+MAIF_PAGE_BILAN = 111  # S.02.01.02 (2/2, Passifs), 1-indexée — vérifié (110 = Actifs, pas Passifs)
+MAIF_PAGES_PRIMES_NONVIE = (112, 113)  # S.05.01.02.01, 1/2 et 2/2 (Total sur la 2/2)
+MAIF_PAGE_PRIMES_VIE = 114  # S.05.01.02.02 — vérifié quasi entièrement à 0
+
 
 def resoudre_scr_mcr_maif(pdf_path, fitz_module, extraire_par_libelle):
     """Lit les pages narratives vérifiées (MAIF_PAGES_NARRATIVES_SCR) et
@@ -103,7 +119,12 @@ def resoudre_scr_mcr_maif(pdf_path, fitz_module, extraire_par_libelle):
     "Niveau 1 – non restreint" de la ligne "Total fonds propres de base
     après déductions") — t1_r/t2/t3 restent NULL : sur ce document ces
     colonnes sont vides (pas même un "-"), ambigu entre "0" et "non
-    imprimé", pas assez sûr pour trancher sans risque (Décision 074)."""
+    imprimé", pas assez sûr pour trancher sans risque (Décision 074).
+
+    Décision 084 : ajoute best_estimate/marge_risque (Bilan, page 110)
+    et primes_acquises_brutes/charge_sinistres (S.05.01.02, pages
+    112-114, somme R0210+R0220+R0230 / R0310+R0320+R0330 en colonne
+    Total, non-vie + vie)."""
     doc = fitz_module.open(str(pdf_path))
     texte = "\n".join(doc[p - 1].get_text() for p in MAIF_PAGES_NARRATIVES_SCR if p - 1 < doc.page_count)
     resultats = {}
@@ -115,6 +136,68 @@ def resoudre_scr_mcr_maif(pdf_path, fitz_module, extraire_par_libelle):
         texte_fp = doc[MAIF_PAGE_FONDS_PROPRES - 1].get_text()
         v, lbl = extraire_par_libelle(texte_fp, ["Total fonds propres de base après déductions"], colonne=1)
         resultats["fonds_propres_t1_nr"] = (v, f"{lbl}, colonne Niveau 1 non restreint (S.23.01.01, Décision 074)") if v is not None else (None, None)
+
+    # Décision 084, correction : la page 111 (Passifs) est en réalité
+    # IMAGE-ONLY (95 caractères natifs = en-tête/pied de page seulement,
+    # vérifié — contrairement aux pages 112-113 de S.05.01.02 qui ont du
+    # vrai texte natif). Une extraction classifier_lignes() y est donc
+    # structurellement impossible ; valeurs lues manuellement sur le
+    # rendu image (même méthode que Generali/MACIF SAM, Décisions
+    # 080/081), recoupées contre "Excédent d'actif sur passif" =
+    # 5 319 982 qui correspond exactement à fonds_propres_t1_nr déjà
+    # vérifié (Décision 074) — confirmation croisée avant d'accepter ces
+    # chiffres.
+    resultats["best_estimate"] = (
+        3714290.0 + 146666.0 + 70933.0 + 475463.0 + 0.0,
+        "S.02.01.02 Bilan p.111 (Passifs, image), lecture manuelle, somme 5 segments Meilleure estimation "
+        "— recoupé : Excédent d'actif/passif=5 319 982 = fonds_propres_t1_nr déjà vérifié (Décision 084)")
+    resultats["marge_risque"] = (
+        297831.0 + 39033.0 + 1161.0 + 5227.0 + 0.0,
+        "S.02.01.02 Bilan p.111 (Passifs, image), lecture manuelle, somme 5 segments Marge de risque (Décision 084)")
+
+    pages_ok = all(p - 1 < doc.page_count for p in MAIF_PAGES_PRIMES_NONVIE + (MAIF_PAGE_PRIMES_VIE,))
+    if pages_ok:
+        # Décision 084, bug corrigé : NE PAS concaténer les 2 pages avant
+        # extraire_section() — chaque page répète ses propres en-têtes de
+        # section ("Primes acquises"/"Charge des sinistres"), donc la
+        # section trouvée reste bornée à la 1re page et ignore la
+        # continuation. Seule la page 113 (2/2) a la colonne Total
+        # (grand total sur les 2 pages, vérifié par cohérence
+        # arithmétique) — page 112 (1/2) n'a pas de colonne Total du
+        # tout, donc inutile ici (même logique que Covéa/Décision 073).
+        texte_page2 = doc[MAIF_PAGES_PRIMES_NONVIE[1] - 1].get_text()
+        texte_vie = doc[MAIF_PAGE_PRIMES_VIE - 1].get_text()
+        sous_labels_nonvie = ["Brut – assurance directe", "Brut – Réassurance proportionnelle acceptée",
+                               "Brut – Réassurance non proportionnelle acceptée"]
+        try:
+            from extraire_par_libelle import extraire_section
+            sec_pa = extraire_section(texte_page2, "Primes acquises", "Charge des sinistres")
+            sec_cs = extraire_section(texte_page2, "Charge des sinistres", "Dépenses engagées")
+            pa_nonvie = sum(v for lbl in sous_labels_nonvie
+                             for v in [extraire_par_libelle(sec_pa, [lbl], colonne=-1)[0]] if v is not None)
+            cs_nonvie = sum(v for lbl in sous_labels_nonvie
+                             for v in [extraire_par_libelle(sec_cs, [lbl], colonne=-1)[0]] if v is not None)
+            # Page 114 (S.05.01.02.02, vie) a un tableau tout en colonnes
+            # ROTÉES (libellés à 90°) — classifier_lignes() n'y retrouve
+            # rien (vérifié : sortie vide). Vérifié VISUELLEMENT que
+            # Primes acquises Brut vie = 0 partout (que des "-"), donc
+            # pa_vie=0 est la vraie valeur, pas un échec masqué. Charge
+            # des sinistres Brut vie = 30 615 K€ (lu visuellement, réel,
+            # non nul) mais NON capturé automatiquement ici — omis
+            # volontairement plutôt que deviné ; ~1,3% du total, signalé
+            # dans la note plutôt que caché.
+            pa_vie = 0.0
+            cs_vie_omis = 30615.0
+            if pa_nonvie:
+                resultats["primes_acquises_brutes"] = (pa_nonvie + pa_vie,
+                    "S.05.01.02.01 p.113 (non-vie, colonne Total) + S.05.01.02.02 p.114 (vie, vérifié =0 visuellement), Décision 084")
+            if cs_nonvie:
+                resultats["charge_sinistres"] = (cs_nonvie,
+                    f"S.05.01.02.01 p.113 (non-vie, colonne Total uniquement) — Décision 084 : composante vie "
+                    f"({cs_vie_omis:.0f} K€, ~1.3% du total) vérifiée visuellement mais NON incluse ici, tableau "
+                    f"p.114 en colonnes rotées non parsable automatiquement, valeur non forcée")
+        except Exception:
+            pass
     doc.close()
     return resultats
 

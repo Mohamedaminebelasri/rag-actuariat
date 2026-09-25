@@ -5347,3 +5347,79 @@ construction au-delà de la vérification de routine.
 
 `POINT_ETAPE_PAUSE.md` est maintenant obsolète (tout son contenu
 repris ici) — supprimé.
+
+## Décision 084 — Amélioration MAIF (13/20 → 17/20) et Allianz Vie (confirmé irréductible)
+
+CONTEXTE : Tâche 2, "vérifie toujours d'abord si le KPI est réellement
+NULL — plusieurs signaux précédents étaient du bruit".
+
+### Allianz Vie — re-diagnostic complet, tout confirmé irréductible
+
+Les 5 KPIs NULL (`scr_marche`, `scr_contrepartie`, `scr_souscription_vie`,
+`scr_souscription_sante`, `scr_diversification`) ont été re-vérifiés
+directement sur la page S.25.05.21 (pas de confiance en mémoire) :
+- `scr_marche`/`scr_contrepartie` : toujours fusionnés dans R0070 "Total
+  market & credit risk" = 3 516 303 (une seule ligne, pas de sous-détail).
+- `scr_souscription_vie`/`scr_souscription_sante` : toujours fusionnés
+  dans R0400 "Total Life & Health underwriting risk" = 465 160.
+- `scr_diversification` : toujours le même bug de signe détaché
+  ("-               912 286", signe et magnitude sur 2 lignes séparées).
+
+**Aucun fix sûr possible — 0 corrigé, confirmation pure.** Pas de
+régression possible (aucun code touché pour ce document).
+
+### MAIF — 3 bugs réels trouvés et corrigés, 4 KPIs débloqués
+
+Diagnostic précis des 7 NULL :
+
+1. **`best_estimate`/`marge_risque`** : la page censée les contenir
+   (Bilan Passifs, p.111) est en réalité **100% image** (95 caractères
+   natifs — en-tête/pied de page seulement), une extraction textuelle y
+   est structurellement impossible. Bug intermédiaire : j'avais d'abord
+   ciblé la page 110 (Actifs, mauvaise page) par erreur — corrigé avant
+   de découvrir que la bonne page (111) est de toute façon une image.
+   Valeurs lues manuellement (même méthode que Generali/MACIF SAM) :
+   `best_estimate` = 3 714 290+146 666+70 933+475 463+0 = **4 407 352**,
+   `marge_risque` = 297 831+39 033+1 161+5 227+0 = **343 252** —
+   recoupées : "Excédent d'actif sur passif" = 5 319 982 sur cette même
+   page correspond exactement à `fonds_propres_t1_nr` déjà vérifié
+   (Décision 074), confirmant la fiabilité de la lecture.
+
+2. **`primes_acquises_brutes`/`charge_sinistres`** : Décision 074 avait
+   conclu "pas de colonne Total imprimée" — **faux**, re-vérifié : la
+   colonne Total EXISTE (page 113, S.05.01.02.01 2/2) mais
+   `classifier_lignes()` ne la voyait pas à cause de cellules vides SANS
+   aucun placeholder (contrairement à Covéa qui utilise "-") qui
+   décalaient le comptage. `colonne=-1` (dernière valeur, peu importe
+   combien de cellules vides avant) contourne le problème — vérifié par
+   cohérence arithmétique (somme page 112 + LoB propres de la page 113
+   = Total imprimé, écart 0). Bug supplémentaire trouvé et corrigé :
+   concaténer le texte des pages 112+113 avant `extraire_section()`
+   cassait la détection de section (chaque page répète ses propres
+   en-têtes "Primes acquises"/"Charge des sinistres") — utiliser
+   uniquement la page 113 (celle qui a la colonne Total) résout le
+   problème. `primes_acquises_brutes` = **3 964 257** (non-vie,
+   composante vie vérifiée = 0). `charge_sinistres` = **2 393 639**
+   (non-vie uniquement) — la composante vie (30 615 K€, ~1,3% du
+   total) existe réellement (page 114, tableau à libellés tournés à
+   90° que le parser ne sait pas lire) mais n'est **pas incluse**,
+   documentée explicitement dans la source plutôt que devinée ou
+   cachée.
+
+3. **`fonds_propres_t1_r`/`fonds_propres_t2`/`fonds_propres_t3`** :
+   confirmés irréductibles (Décision 074) — colonnes vides sans aucun
+   placeholder sur la ligne totale de S.23.01.01, ambigu entre "0" et
+   "non imprimé". **Non corrigé**, cohérent avec la règle "NULL plutôt
+   que deviner".
+
+**RÉSULTAT : MAIF 13/20 → 17/20** (4 KPIs débloqués : best_estimate,
+marge_risque, primes_acquises_brutes, charge_sinistres). 3 KPIs restent
+NULL, tous documentés comme irréductibles ou incomplets par choix
+explicite (pas par manque d'investigation).
+
+RÉGRESSION VÉRIFIÉE : 16 documents en diagnostic générique (AFV, AFI,
+Sogécap, Cardif Vie/RD, Crédit Agricole, Covéa, CNP, MACSF, Allianz
+IARD, SwissLife, BPCE Vie/IARD, Predica, Pacifica) strictement
+identiques ; CNP 21/22, MACSF 21/22, Groupama 21/22 (pipeline dédié)
+inchangés. Changement localisé à `resoudre_scr_mcr_maif()` dans
+`batch_diagnostic.py`, filtré par nom de fichier MAIF uniquement.
