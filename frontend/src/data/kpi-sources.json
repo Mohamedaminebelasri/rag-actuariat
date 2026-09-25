@@ -1,0 +1,733 @@
+{
+  "Groupama": {
+    "ratio_scr": {
+      "value": 274.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "ratio_mcr": {
+      "value": 379.28000000000003,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "scr_total": {
+      "value": 6020.977,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.2"
+    },
+    "mcr": {
+      "value": 3840.84,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.2"
+    },
+    "fonds_propres_eligibles": {
+      "value": 16481.186,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 13329.149,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t1_r": {
+      "value": 601.315,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t2": {
+      "value": 2068.905,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t3": {
+      "value": 481.817,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.1"
+    },
+    "best_estimate": {
+      "value": 69035.1,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 79,
+      "source_chapter": "D.2"
+    },
+    "marge_risque": {
+      "value": 2384.339,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 79,
+      "source_chapter": "D.2"
+    },
+    "provisions_techniques": {
+      "value": 71419.439,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 79,
+      "source_chapter": "D.2"
+    },
+    "primes_acquises_brutes": {
+      "value": 39062.337,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 80,
+      "source_chapter": "A.2"
+    },
+    "charge_sinistres": {
+      "value": 27949.854,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 80,
+      "source_chapter": "A.2"
+    },
+    "scr_operationnel": {
+      "value": 677.423,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 75,
+      "source_chapter": "E.2"
+    },
+    "scr_marche": {
+      "value": 4675.236,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 75,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_sante": {
+      "value": 1271.055,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 75,
+      "source_chapter": "E.2"
+    },
+    "scr_contrepartie": {
+      "value": 785.108,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 75,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_vie": {
+      "value": 1455.724,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 75,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_nonvie": {
+      "value": 2474.794,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 85,
+      "source_chapter": "E.2"
+    },
+    "scr_diversification": {
+      "value": -4612.403,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 87,
+      "source_chapter": "E.2"
+    }
+  },
+  "CNP Assurances": {
+    "ratio_scr": {
+      "value": 258.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "ratio_mcr": {
+      "value": 505.99999999999994,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "scr_total": {
+      "value": 14256.819,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "mcr": {
+      "value": 6415.569,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "fonds_propres_eligibles": {
+      "value": 36778.134,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 28605.491,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t1_r": {
+      "value": 2605.979,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t2": {
+      "value": 4379.844,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t3": {
+      "value": 1186.82,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "best_estimate": {
+      "value": 277208.17,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "D.2"
+    },
+    "marge_risque": {
+      "value": 3740.671,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "D.2"
+    },
+    "provisions_techniques": {
+      "value": 280948.84099999996,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "D.2"
+    },
+    "primes_acquises_brutes": {
+      "value": 22238.963,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "A.2"
+    },
+    "charge_sinistres": {
+      "value": 20072.454,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "A.2"
+    },
+    "scr_operationnel": {
+      "value": 1065.8,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_marche": {
+      "value": 34424.16,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_sante": {
+      "value": 1854.639,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_contrepartie": {
+      "value": 1267.072,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_vie": {
+      "value": 12986.854,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_nonvie": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_diversification": {
+      "value": -9821.131,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    }
+  },
+  "MACSF prévoyance": {
+    "ratio_scr": {
+      "value": 521.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "ratio_mcr": {
+      "value": 2084.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "scr_total": {
+      "value": 439.837,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "mcr": {
+      "value": 109.959,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "fonds_propres_eligibles": {
+      "value": 2291.367,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 2291.367,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t1_r": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t2": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "fonds_propres_t3": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.1"
+    },
+    "best_estimate": {
+      "value": 88.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "D.2"
+    },
+    "marge_risque": {
+      "value": 14.38,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "D.2"
+    },
+    "provisions_techniques": {
+      "value": 102.38,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "D.2"
+    },
+    "primes_acquises_brutes": {
+      "value": 42.599,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "A.2"
+    },
+    "charge_sinistres": {
+      "value": 14.986,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "A.2"
+    },
+    "scr_operationnel": {
+      "value": 1.704,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_marche": {
+      "value": 497.952,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_sante": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_contrepartie": {
+      "value": 3.875,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_vie": {
+      "value": 15.313,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_souscription_nonvie": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    },
+    "scr_diversification": {
+      "value": 14.137,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": null,
+      "source_chapter": "E.2"
+    }
+  },
+  "MACIF SAM": {
+    "best_estimate": {
+      "value": 5969.795,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 453,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Meilleure estimation"
+    },
+    "marge_risque": {
+      "value": 341.059,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 453,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Marge de risque"
+    },
+    "primes_acquises_brutes": {
+      "value": 4854.62,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 455,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total"
+    },
+    "charge_sinistres": {
+      "value": 3429.372,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 455,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0310+R0320+R0330 (non-vie) + R1610 (vie), colonne Total"
+    },
+    "fonds_propres_eligibles": {
+      "value": 9443.143,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Total"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 7872.072,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau1 non restreint"
+    },
+    "fonds_propres_t1_r": {
+      "value": 374.465,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau1 restreint"
+    },
+    "fonds_propres_t2": {
+      "value": 751.973,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau2"
+    },
+    "fonds_propres_t3": {
+      "value": 444.633,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau3"
+    },
+    "scr_total": {
+      "value": 2964.22,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0580 — confirmé p.464 (S.25.01.21.02/R0220) et p.467 (S.28.01.01.05/R0310)"
+    },
+    "mcr": {
+      "value": 746.13,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0600 — confirmé p.467 (S.28.01.01.05/R0400)"
+    },
+    "ratio_scr": {
+      "value": 319.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0620"
+    },
+    "ratio_mcr": {
+      "value": 1125.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 463,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0640"
+    },
+    "scr_marche": {
+      "value": 2713.693,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 464,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0010"
+    },
+    "scr_contrepartie": {
+      "value": 63.361,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 464,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0020"
+    },
+    "scr_souscription_vie": {
+      "value": 40.522,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 464,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0030"
+    },
+    "scr_souscription_sante": {
+      "value": 235.321,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 464,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0040"
+    },
+    "scr_souscription_nonvie": {
+      "value": 1464.01,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 464,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0050"
+    },
+    "scr_diversification": {
+      "value": -1035.321,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 464,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0060"
+    },
+    "scr_operationnel": {
+      "value": 148.152,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 465,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.02/R0130"
+    }
+  },
+  "Aema Groupe": {
+    "best_estimate": {
+      "value": 105865.186,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 440,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Meilleure estimation"
+    },
+    "marge_risque": {
+      "value": 2260.715,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 440,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Marge de risque"
+    },
+    "primes_acquises_brutes": {
+      "value": 18552.02,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 442,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total"
+    },
+    "charge_sinistres": {
+      "value": 15035.231,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 442,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0310+R0320+R0330 (non-vie) + R1610 (vie), colonne Total"
+    },
+    "fonds_propres_eligibles": {
+      "value": 12860.966,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Total (y compris autres secteurs financiers)"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 10741.242,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau1 non restreint"
+    },
+    "fonds_propres_t1_r": {
+      "value": 374.466,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau1 restreint"
+    },
+    "fonds_propres_t2": {
+      "value": 1259.99,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau2"
+    },
+    "fonds_propres_t3": {
+      "value": 485.268,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau3"
+    },
+    "scr_total": {
+      "value": 6063.105,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0680 — confirmé p.444 (S.22.01.22.01/R0090) et p.448 (S.25.01.22.02/R0220 et R0570)"
+    },
+    "mcr": {
+      "value": 2836.823,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0610 — confirmé p.448 (S.25.01.22.02/R0470)"
+    },
+    "ratio_scr": {
+      "value": 212.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0690"
+    },
+    "ratio_mcr": {
+      "value": 390.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 446,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0650"
+    },
+    "scr_marche": {
+      "value": 10837.399,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0010"
+    },
+    "scr_contrepartie": {
+      "value": 264.007,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0020"
+    },
+    "scr_souscription_vie": {
+      "value": 6245.084,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0030"
+    },
+    "scr_souscription_sante": {
+      "value": 590.138,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0040"
+    },
+    "scr_souscription_nonvie": {
+      "value": 1706.195,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0050"
+    },
+    "scr_diversification": {
+      "value": -5127.701,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0060"
+    },
+    "scr_operationnel": {
+      "value": 586.048,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 448,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.02/R0130"
+    }
+  }
+}
