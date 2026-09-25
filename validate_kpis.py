@@ -83,7 +83,7 @@ def r0570_eligibles_mcr():
     raise RuntimeError("S.23.01.22.01/R0570 introuvable")
 
 
-def executer_controles(kpis):
+def executer_controles(kpis, company_name):
     """Retourne une liste de dicts {check_name, expected_value,
     computed_value, passed, details}."""
     controles = []
@@ -122,26 +122,35 @@ def executer_controles(kpis):
     ajouter("ratio_scr_recalcule", ratio_scr, round(ratio_recalcule, 2), ecart_pct <= TOLERANCE_PCT_RATIO,
              f"fonds_propres_eligibles/scr_total×100 = {ratio_recalcule:.4f}% vs ratio_scr publié={ratio_scr:.2f}%, écart={ecart_pct:.4f}%")
 
-    # --- 4. ratio_mcr recalculé ---
+    # --- 4. ratio_mcr recalculé — UNIQUEMENT Groupama : r0570_eligibles_mcr()
+    # lit un chemin corpus_final.json codé en dur (Groupama), donc appliquer
+    # ce contrôle à une autre entreprise mélangerait le numérateur de
+    # Groupama avec le mcr d'une autre société — un nombre inventé, pas un
+    # vrai contrôle. Skippé proprement (pas inséré) pour toute autre société,
+    # plutôt que de produire un résultat trompeur.
     mcr, _ = kpis["mcr"]
-    ratio_mcr, _ = kpis["ratio_mcr"]
-    fp_mcr = r0570_eligibles_mcr()
-    ratio_mcr_recalcule = fp_mcr / mcr * 100
-    ecart_pct = abs(ratio_mcr_recalcule - ratio_mcr) / ratio_mcr * 100
-    ajouter("ratio_mcr_recalcule", ratio_mcr, round(ratio_mcr_recalcule, 2), ecart_pct <= TOLERANCE_PCT_RATIO,
-             f"R0570(eligibles MCR)/mcr×100 = {ratio_mcr_recalcule:.4f}% vs ratio_mcr publié={ratio_mcr:.2f}%, écart={ecart_pct:.4f}%")
+    if company_name == "Groupama":
+        ratio_mcr, _ = kpis["ratio_mcr"]
+        fp_mcr = r0570_eligibles_mcr()
+        ratio_mcr_recalcule = fp_mcr / mcr * 100
+        ecart_pct = abs(ratio_mcr_recalcule - ratio_mcr) / ratio_mcr * 100
+        ajouter("ratio_mcr_recalcule", ratio_mcr, round(ratio_mcr_recalcule, 2), ecart_pct <= TOLERANCE_PCT_RATIO,
+                 f"R0570(eligibles MCR)/mcr×100 = {ratio_mcr_recalcule:.4f}% vs ratio_mcr publié={ratio_mcr:.2f}%, écart={ecart_pct:.4f}%")
 
     # --- 5. mcr < scr_total (invariant de base, PAS le corridor 25-45% solo) ---
     ajouter("mcr_inferieur_scr_total", None, mcr - scr_total, mcr < scr_total,
              f"mcr={mcr:.2f} M€ doit être < scr_total={scr_total:.2f} M€ (invariant Solvabilité II de base, "
              "pas le corridor 25-45% de l'art. 129, défini pour le solo — non affirmé ici pour le groupe)")
 
-    # --- 6/7. Croisements déjà faits à l'extraction, persistés ici ---
-    ajouter("scr_total_croise_S23_S25", 6_020_977 / 1000, scr_total, abs(scr_total - 6_020_977 / 1000) <= TOLERANCE_ABS_IDENTITE,
-             "S.23.01.22.01/R0680 vs S.25.05.22.02/R0220 (codé en dur, cf. Décision 051) — déjà croisés à l'extraction")
-    scr_nonvie, _ = kpis["scr_souscription_nonvie"]
-    ajouter("scr_nonvie_croise_QRT_image", 2_474_794 / 1000, scr_nonvie, abs(scr_nonvie - 2_474_794 / 1000) <= TOLERANCE_ABS_IDENTITE,
-             "S.25.05.22.01/R0310 vs relecture manuelle vérifiée picture_75.png — déjà croisés à l'extraction")
+    # --- 6/7. Croisements déjà faits à l'extraction, persistés ici — valeurs
+    # de référence codées en dur pour Groupama (cf. Décision 051), non
+    # applicables ailleurs : skippés proprement pour toute autre société.
+    if company_name == "Groupama":
+        ajouter("scr_total_croise_S23_S25", 6_020_977 / 1000, scr_total, abs(scr_total - 6_020_977 / 1000) <= TOLERANCE_ABS_IDENTITE,
+                 "S.23.01.22.01/R0680 vs S.25.05.22.02/R0220 (codé en dur, cf. Décision 051) — déjà croisés à l'extraction")
+        scr_nonvie, _ = kpis["scr_souscription_nonvie"]
+        ajouter("scr_nonvie_croise_QRT_image", 2_474_794 / 1000, scr_nonvie, abs(scr_nonvie - 2_474_794 / 1000) <= TOLERANCE_ABS_IDENTITE,
+                 "S.25.05.22.01/R0310 vs relecture manuelle vérifiée picture_75.png — déjà croisés à l'extraction")
 
     # --- 8. Signe de chaque KPI non-NULL ---
     defs_par_nom = {d["kpi_name"]: d for d in KPI_DEFINITIONS}
@@ -225,7 +234,7 @@ def main():
         print(f">>> ARRÊT — aucun KPI trouvé pour ({args.company}, {args.year}). Lance extract_kpis.py d'abord.")
         return
 
-    controles = executer_controles(kpis) + executer_completude(conn, company_id, args.year)
+    controles = executer_controles(kpis, args.company) + executer_completude(conn, company_id, args.year)
     inserer_controles(conn, company_id, args.year, controles)
     marquer_valides(conn, company_id, args.year, controles)
     conn.close()

@@ -5423,3 +5423,75 @@ IARD, SwissLife, BPCE Vie/IARD, Predica, Pacifica) strictement
 identiques ; CNP 21/22, MACSF 21/22, Groupama 21/22 (pipeline dédié)
 inchangés. Changement localisé à `resoudre_scr_mcr_maif()` dans
 `batch_diagnostic.py`, filtré par nom de fichier MAIF uniquement.
+
+## Décision 085 — Extraction réelle Predica, insertion dans kpis.db
+
+CONTEXTE : Predica (PREDICA-–-SFCR-2025.pdf, dans data/ depuis un moment)
+n'avait jamais été passée dans un pipeline d'insertion réel — seul
+`batch_diagnostic.py` l'avait testée en diagnostic générique (20/20,
+mode `codes_eiopa`, 0 NULL, 0 erreur, cf. `batch_diagnostic_report.json`).
+Aucun `corpus_final.json` Docling n'existe pour ce document (jamais
+parsé) — contrairement à Groupama/CNP/MACSF.
+
+EXTRACTION : nouveau `extract_kpis_predica.py`, sur le modèle de
+`extract_kpis_cnp.py` (réutilise les fonctions génériques
+`resoudre_variantes_qrt`/`valeur_principale` d'`extract_kpis.py`), mais
+le corpus est construit À LA VOLÉE via `classify_pages()` +
+`extract_qrt_native()` (`ingest.py`) — exactement le mécanisme interne de
+`diagnostiquer_pdf()`, dont les valeurs résolues sont ici capturées et
+insérées plutôt que seulement comptées. Document 100% texte natif
+(`scr_method="formule_standard"`) : aucune lecture d'image/PaddleOCR/
+Gemini nécessaire, contrairement à Groupama.
+
+**BUG RÉEL TROUVÉ ET CORRIGÉ — `scr_diversification`** : la valeur brute
+lue pour S.25.01.21/R0060 était `475` (0,475 M€), manifestement fausse
+(un bénéfice de diversification de moins de 500€ sur ~48 Md€ de risques
+SCR sommés est impossible). Cause : le texte source page 71 porte
+`(10 475 550)` — notation comptable parenthèses-négatif — mais
+`NUMERIC_FRAGMENT_RE` (`ingest.py`) ne matche que des fragments purement
+numériques ; les fragments `(10` et `550)` sont rejetés, seul le
+fragment médian `475` est retenu. Même bug confirmé sur R0140/R0150 de
+la même page (non utilisés par aucun KPI mappé, donc sans impact).
+Valeur corrigée manuellement à **-10 475,55 M€**, vérifiée par 2 moyens
+indépendants : lecture directe du texte PDF brut (`(10 475 550)`) ET
+recoupement arithmétique EXACT (R0100 - somme(R0010..R0050) =
+37 866 516 - 48 342 066 = -10 475 550, à l'euro près). Correction
+appliquée UNIQUEMENT dans `extract_kpis_predica.py` (override documenté,
+même discipline que les relectures manuelles Generali/MACIF SAM/Aéma
+Groupe) — `ingest.py` n'a PAS été modifié : le bug est générique
+(notation parenthèses-négatif) et pourrait affecter d'autres documents,
+mais le corriger dans le parser partagé est hors du périmètre de cette
+tâche et exigerait sa propre régression complète sur tous les documents
+déjà extraits.
+
+**BUG RÉEL TROUVÉ ET CORRIGÉ — `validate_kpis.py` jamais généralisé** :
+les contrôles 4 (`ratio_mcr_recalcule`), 6 et 7 (croisements QRT/image)
+étaient codés en dur pour Groupama — `r0570_eligibles_mcr()` lit
+toujours `test_markdrop/output_structure_brute/corpus_final.json`
+(Groupama) quelle que soit l'entreprise passée en `--company`, et les
+contrôles 6/7 comparent à des valeurs Groupama codées en dur. Vérifié :
+`validate_kpis.py` n'avait, dans les faits, JAMAIS tourné sur CNP/MACSF
+malgré leurs scripts d'extraction dédiés (aucune ligne dans
+`validation_checks` pour elles). Lancer ces 3 contrôles pour Predica
+aurait mélangé le numérateur MCR de Groupama avec le MCR de Predica —
+un chiffre inventé, pas un vrai contrôle. `executer_controles()` prend
+maintenant `company_name` et n'exécute ces 3 contrôles QUE pour
+Groupama (skippés proprement pour toute autre société, jamais insérés
+avec un résultat trompeur). RÉGRESSION VÉRIFIÉE : Groupama toujours
+30/30, valeurs identiques avant/après le changement.
+
+**RÉSULTAT : Predica — 22 KPIs insérés (21 valeurs, 1 NULL
+`resultat_technique`, cohérent avec Groupama/CNP), 25/27 contrôles
+actuariels applicables passés** (27 = 30 - les 3 contrôles Groupama-
+only skippés). Les 2 échecs restants (`signe_fonds_propres_t3`,
+`signe_scr_souscription_nonvie`) sont des FAUX SIGNAUX : les 2 valeurs
+sont légitimement 0,00 (Predica n'a pas d'activité non-vie ni de tier 3
+de fonds propres de base) mais le contrôle de signe `"positive"` exige
+`valeur > 0` strictement — limitation connue de `validate_kpis.py`
+(devrait accepter `>= 0`), pas une erreur d'extraction. Non corrigé ici
+(changerait le comportement pour toutes les entreprises déjà validées,
+hors périmètre de cette tâche).
+
+RÉGRESSION VÉRIFIÉE : Groupama (22 KPIs, 30/30 contrôles), CNP
+Assurances (22 KPIs), MACSF prévoyance (22 KPIs) — comptes et
+`ratio_scr` strictement inchangés après l'insertion de Predica.
