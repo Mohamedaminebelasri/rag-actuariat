@@ -5659,3 +5659,106 @@ t1_r/t2/t3 légitimement à 0,00, rejetés par le contrôle de signe
 `ratio_scr_recalcule` et `fonds_propres_eligibles_somme_tiers` passent
 tous les deux — confirmation indépendante supplémentaire que les 2
 corrections manuelles sont exactes.
+
+## Décision 089 — Bilan de session : 4 tâches, top 15 recompté, régression vérifiée
+
+CONTEXTE : session longue autonome, 4 tâches séquentielles (commit
+après chaque étape réussie) : (1) les 11 entités Aéma restantes,
+(2) BPCE IARD sans casser Covéa, (3) AG2R La Mondiale, diagnostic +
+traitement, (4) MGEN, diagnostic + traitement. Voir Décisions 085-088
+pour le détail complet de chaque tâche — ce bilan consolide l'état
+final.
+
+### Tâche 1 — Aéma Groupe : 13/13 entités désormais complètes
+
+11 entités extraites par lecture manuelle sur rendu image (Macif Vie,
+Macif Santé Prévoyance, Thémis, Macifilia, Aésio Mutuelle, MNPAF, MMJ,
+Nuoma, Abeille Vie, Abeille Épargne Retraite, Abeille IARD & Santé),
+chacune avec recoupements arithmétiques internes vérifiés (excédent
+actif/passif, SCR de base = somme des 7 composantes, SCR final).
+Complétude corrigée pour les 13 entités (provisions_techniques +
+resultat_technique ajoutés automatiquement, manquaient depuis Décision
+083). **13/13 entités, 22/22 KPIs chacune** (1 seul NULL :
+resultat_technique). 2 cas légitimes de MCR > SCR (plancher absolu,
+Thémis/Macifilia) et 1 charge_sinistres négative vérifiée (Macifilia,
+reprise de provision) documentés, pas des erreurs.
+
+### Tâche 2 — BPCE IARD : 13/20 → 14/20, zéro régression Covéa
+
+Fix scopé par nom de fichier (`resoudre_scr_diversification_bpce_iard`)
+au lieu du fix générique annulé en Décision 079. Analyse du blocage :
+un "-" isolé dans `classifier_lignes()` est structurellement ambigu
+entre signe détaché (BPCE IARD) et cellule voisine vide (Covéa) sans
+suivi de position de colonne. Solution : aucune modification de code
+partagé, donc zéro risque par construction — vérifié Covéa 16/20 et
+MAIF 17/20 inchangés.
+
+### Tâche 3 — AG2R La Mondiale : 9 entités découvertes, texte natif
+
+`classify_pages()` sur 288 pages → 9 entités (SGAM AG2R LA MONDIALE,
+AG2R Prévoyance, Arpège Prévoyance, Prima, AG.Mut, VIASANTÉ Mutuelle,
+La Mondiale, La Mondiale Europartner, La Mondiale Partenaire).
+Contrairement à Aéma, document texte natif — extraction automatisée
+(`ag2r_entites.py`, même mécanisme que `extract_kpis_predica.py`), pas
+de lecture manuelle. Bug de texte tourné 90° trouvé et corrigé sur
+S.05.01.02 (primes/sinistres), sans toucher le code partagé. **9
+entités, 22/22 KPIs chacune** (1 NULL sauf l'entité consolidée, 4 NULL).
+
+### Tâche 4 — MGEN : extraction réelle, 21/22
+
+Document simple, texte natif, un seul bloc QRT (`extract_kpis_mgen.py`).
+2 bugs parser réels trouvés et corrigés par overrides scopés (fonds
+propres éligibles mal assignées ; signe négatif séparé par une espace
+fine U+2009) — tous deux vérifiés par recoupement arithmétique exact.
+`validate_kpis.py` : 24/27 (3 faux signaux connus).
+
+### État final de kpis.db
+
+**27 sociétés**, toutes à 22/22 KPIs (structure complète), la quasi-
+totalité avec 1 seul NULL (`resultat_technique`) :
+Groupama, CNP Assurances, MACSF prévoyance, MGEN, Predica (pipeline
+dédié/texte natif) ; les 13 entités Aéma Groupe ; les 9 entités AG2R
+La Mondiale.
+
+### Régression vérifiée (Groupama, CNP, MACSF, Predica, Pacifica, SwissLife)
+
+- **Groupama, CNP Assurances, MACSF prévoyance, Predica** : lignes,
+  `ratio_scr` et `scr_total` en base strictement identiques à avant
+  cette session (requête directe sur `kpis.db`).
+- **Pacifica, SwissLife** : jamais insérées dans `kpis.db` (testées
+  uniquement via `batch_diagnostic.py`, pas de pipeline dédié) — leur
+  "régression" se vérifie sur le score diagnostic : les deux restent à
+  **20/20**, inchangé.
+- `batch_diagnostic.py` relancé sur tous les PDF de `data/` :
+  **Covéa 16/20** (inchangé), **MAIF 17/20** (inchangé), **BPCE IARD
+  14/20** (amélioré, cf. Tâche 2), **CNP 20/20**, **Pacifica 20/20**,
+  **Predica 20/20** (tous inchangés). Note : le diagnostic générique
+  sous-évalue Groupama (9/20, cf. Décision 070 — pipeline dédié résout
+  bien plus via PaddleOCR/Gemini, 21/22 réel) et MGEN de la même
+  façon (16/20 générique vs 21/22 réel, mêmes overrides scopés non vus
+  par le diagnostic générique) — signal attendu, pas une régression.
+- Nettoyage : les 20 fichiers `_entite_*.pdf` temporaires (isolation
+  Aéma/AG2R, régénérables via `extraire_entite()`) supprimés de
+  `data/` après usage — ils polluaient le diagnostic générique en
+  étant scannés comme des documents à part entière.
+
+### Couverture du top 15 du marché français — recomptage
+
+| Groupe parent | Statut avant cette session | Statut après |
+|---|---|---|
+| CNP, Crédit Agricole, BNP Paribas, Société Générale, Covéa, Groupama, AXA, BPCE, Allianz, Generali, SwissLife (11 groupes) | Exploitable | Inchangé, exploitable |
+| MACIF/Aéma | "Exploitable en pratique" (2/13 entités, pas en pipeline) | **13/13 entités, pleinement exploitable** |
+| MAIF | Partiel (17/20, hors scope cette session) | Inchangé (17/20) |
+| AG2R La Mondiale | **Non testé** | **Exploitable (nouveau, 9 entités)** |
+| MGEN | **Non testé** | **Exploitable (nouveau, 21/22)** |
+
+**Avant cette session : 11 groupes pleinement automatisés + 1 en
+pratique (Aéma partiel) + 1 partiel (MAIF) + 2 non testés (AG2R, MGEN)
+= 12/15 exploitables en pratique.**
+
+**Après cette session : 14/15 groupes exploitables** (les 11
+inchangés + Aéma désormais complet + AG2R nouveau + MGEN nouveau) —
+seul MAIF reste "partiel" (17/20, pas 20/20, hors périmètre de cette
+session). Progression de **+2 groupes nouvellement couverts** (AG2R,
+MGEN) et **1 groupe passé de partiel à complet** (Aéma/MACIF) en une
+session.
