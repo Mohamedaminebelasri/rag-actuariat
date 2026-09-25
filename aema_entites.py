@@ -296,7 +296,34 @@ ENTITES_KPIS = {
         "scr_diversification": (-6449855.0, 560, "S.25.01.21.01/R0060"),
         "scr_operationnel": (2120701.0, 560, "S.25.01.21.02/R0130"),
     },
-    # 4 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
+    "Nuoma": {
+        # Pages 564-576 (Décision 085). Entité 100% non-vie/santé (pas de
+        # S.05.01.02.02 vie). Recoupements exacts : R1000(p565)=R0700
+        # (p572)=61 363 350 ; R0510(p565)=R0580+R0590=6 691 737≈6 691 738
+        # (±1) ; R0100(p573)=somme(R0010..R0070)=20 956 141 ; R0220=
+        # R0100+R0130+R0150=20 812 242=R0580(p572), exact.
+        "best_estimate": (5730487.0, 565, "S.02.01.02.01 Bilan, R0580 seul (santé similaire non-vie)"),
+        "marge_risque": (961250.0, 565, "S.02.01.02.01 Bilan, R0590 seul"),
+        "primes_acquises_brutes": (57945849.0, 567, "S.05.01.02.01 (non-vie, seule activité), R0210/Total"),
+        "charge_sinistres": (50072108.0, 567, "S.05.01.02.01 (non-vie, seule activité), R0310/Total"),
+        "fonds_propres_eligibles": (61363350.0, 572, "S.23.01.01.01/R0540/Total"),
+        "fonds_propres_t1_nr": (61363350.0, 572, "S.23.01.01.01/R0540/Niveau1 non restreint"),
+        "fonds_propres_t1_r": (0.0, 572, "S.23.01.01.01/R0540/Niveau1 restreint"),
+        "fonds_propres_t2": (0.0, 572, "S.23.01.01.01/R0540/Niveau2"),
+        "fonds_propres_t3": (0.0, 572, "S.23.01.01.01/R0540/Niveau3"),
+        "scr_total": (20812242.0, 572, "S.23.01.01.01/R0580 — confirmé p.573 (S.25.01.21.02/R0220, exact)"),
+        "mcr": (5203060.0, 572, "S.23.01.01.01/R0600"),
+        "ratio_scr": (295.0, 572, "S.23.01.01.01/R0620"),
+        "ratio_mcr": (1179.0, 572, "S.23.01.01.01/R0640"),
+        "scr_marche": (13974262.0, 573, "S.25.01.21.01/R0010"),
+        "scr_contrepartie": (885065.0, 573, "S.25.01.21.01/R0020"),
+        "scr_souscription_vie": (0.0, 573, "S.25.01.21.01/R0030"),
+        "scr_souscription_sante": (12119069.0, 573, "S.25.01.21.01/R0040"),
+        "scr_souscription_nonvie": (0.0, 573, "S.25.01.21.01/R0050"),
+        "scr_diversification": (-6022255.0, 573, "S.25.01.21.01/R0060"),
+        "scr_operationnel": (1738375.0, 573, "S.25.01.21.02/R0130"),
+    },
+    # 3 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
     # extraction manuelle pas encore faite. Ne PAS deviner de valeurs —
     # absence délibérée de ces clés, traitée comme "non traité" par
     # calculer_score() ci-dessous, jamais comme un score de 0/20 (ce qui
