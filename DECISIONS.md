@@ -5264,3 +5264,86 @@ d'accepter un chiffre faux pour gagner un KPI.
 
 FIN DE SESSION — comme demandé, aucune nouvelle tâche n'est commencée
 au-delà de ces 6.
+
+## Décision 083 — Intégration multi-entités Aéma : pipeline généralisé, 2/13 entités extraites et branchées dans kpis.db
+
+CONTEXTE : session "Intégrer MACIF au pipeline + améliorer MAIF et
+Allianz Vie", Tâche 1. Interrompue une fois en cours de route (pause
+connexion utilisateur, cf. `POINT_ETAPE_PAUSE.md`, désormais obsolète —
+tout son contenu est repris et complété ici), reprise et menée à un
+point d'arrêt honnête.
+
+GÉNÉRALISATION DEMANDÉE : `extraire_entite(pdf_path, page_debut,
+page_fin, nom_entite=None, out_dir=None)` ajoutée dans
+`test_markdrop/ingest.py` — isole `[page_debut, page_fin]` en sous-PDF
+autonome via `fitz.insert_pdf`, généralise la technique déjà validée
+sur MACIF SAM (Décision 081) et Generali (Décision 080). Testée sur
+les 13 entités : **confirmation automatisée que les 13 sont 100%
+image** (0/20 via le pipeline standard `diagnostiquer_pdf`, mode
+`libelles_francais` partout) — y compris MACIF SAM elle-même, dont
+l'extraction de la Décision 081 était donc déjà, en réalité, une
+lecture manuelle sur rendu image, pas du texte natif.
+
+TRAVAIL RÉALISÉ CETTE SESSION : lecture manuelle + recoupement interne
+(même méthode que Décision 080/081) sur **Aéma Groupe** (la
+consolidée, pages 439-451), en plus de MACIF SAM déjà faite. Les 2
+utilisent la **formule standard** (`S.25.01.22`/`S.25.01.21`) — tous
+les sous-modules SCR sont désagrégés nativement, aucun KPI
+irréductible pour ces 2 entités (contrairement aux templates modèle
+interne de Generali). Chaque grand chiffre recoupé sur ≥2 pages
+indépendantes avant d'être retenu (ex. Aéma Groupe : SCR = 6 063 105 K€
+confirmé sur S.22.01.22, S.23.01.22 ET S.25.01.22 — 3 pages
+indépendantes).
+
+**RÉSULTAT : MACIF SAM 20/20, Aéma Groupe 20/20** — détail complet des
+valeurs et sources dans `aema_entites.py` (nouveau module dédié).
+
+INSERTION EN BASE : `aema_entites.inserer_entite_en_base()` crée une
+société séparée par entité dans `kpis.db` (`companies.type =
+"mutuelle (Aéma Groupe)"`), avec une note explicite dans
+`kpis.source_chapter` indiquant la provenance ("Document combiné 'Aéma
+Groupe...' (621p), entité isolée pages X-Y, extraction manuelle sur
+rendu image"). Conversion K€→M€ (÷1000) appliquée à l'insertion,
+cohérente avec la convention déjà utilisée par `extract_kpis.py` —
+vérifiée : `best_estimate` MACIF SAM stocké à 5969.795 M€ = 5 969 795 K€
+lu sur la page. Les ratios (déjà en points de %) ne sont pas divisés.
+**2 sociétés créées** (`MACIF SAM` id=44, `Aema Groupe` id=45), 20 KPIs
+chacune.
+
+**PORTÉE RÉELLE VS. DEMANDÉE — honnêteté sur le périmètre** : la tâche
+demandait les 13 entités. **2 sur 13 sont faites et vérifiées** ; les
+**11 autres ne le sont pas** — chacune nécessite la même lecture
+manuelle complète (rendu PNG multi-pages + recoupement), estimée à
+15-20 minutes par entité sur la base de l'expérience Generali/MACIF
+SAM/Aéma Groupe, soit plusieurs heures de travail pour les 11
+restantes. Aller plus vite en devinant des valeurs ou en généralisant
+sans lecture réelle violerait la règle "NULL plutôt que deviner" —
+non fait. Les bornes de page des 11 entités restantes sont déjà dans
+`aema_entites.ENTITES_BORNES`, prêtes à être traitées avec exactement
+la même méthode (voir `afficher_scores()` qui liste leur statut
+"Non traité (bornes connues, à faire)") :
+
+| Entité | Pages | Statut |
+|---|---|---|
+| Macif Vie | 468-478 | Non traité |
+| Macif Santé Prévoyance | 479-493 | Non traité |
+| Thémis | 494-507 | Non traité |
+| Macifilia | 508-522 | Non traité |
+| Aésio Mutuelle | 523-538 | Non traité |
+| MNPAF | 539-550 | Non traité |
+| MMJ | 551-563 | Non traité |
+| Nuoma | 564-576 | Non traité |
+| Abeille Vie | 577-592 | Non traité |
+| Abeille Épargne Retraite | 593-602 | Non traité |
+| Abeille IARD & Santé | 603-621 | Non traité |
+
+RÉGRESSION VÉRIFIÉE (demandée explicitement) : Groupama (pipeline
+dédié, 22 KPIs), CNP (21/22), MACSF (21/22), Pacifica (20/20), SwissLife
+(20/20) — tous strictement identiques. Le travail de cette tâche est
+entièrement additif (nouveau module `aema_entites.py`, nouvelle
+fonction dans `ingest.py`, 2 nouvelles lignes dans `companies`) —
+aucun code partagé existant modifié, risque de régression nul par
+construction au-delà de la vérification de routine.
+
+`POINT_ETAPE_PAUSE.md` est maintenant obsolète (tout son contenu
+repris ici) — supprimé.
