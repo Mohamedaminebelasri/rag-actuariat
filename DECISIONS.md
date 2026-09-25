@@ -4929,3 +4929,49 @@ BPCE Vie 20/20, Predica 20/20 — tous strictement identiques à avant le
 fix. Aucune régression.
 
 Commit : voir commit associé à cette décision.
+
+## Décision 078 — Fix Pacifica : tolérance de repli directionnelle dans extract_qrt_native() (4/20 → 20/20)
+
+CONTEXTE : Pacifica (formule standard, `codes_eiopa`) n'avait que 4/20
+KPIs alors que Predica (même groupe Crédit Agricole, même mode) est à
+20/20. Diagnostic précédent : sur Pacifica, la valeur d'une ligne est
+imprimée ~6.6pt AU-DESSUS du code de ligne R0xxx (pas sur la même ligne
+de base), contre un alignement parfait sur Predica — vérifié mot par
+mot (`page.get_text("words")`). `extract_qrt_native()` exige
+`abs(y0 - ry0) <= LINE_TOLERANCE_PT` (1.5pt) pour associer une valeur à
+une ligne : ce décalage fait échouer l'appariement pour la quasi-
+totalité des lignes du document.
+
+FIX — conçu pour un risque de régression minimal sur du code partagé
+par TOUS les documents :
+1. La tolérance stricte (1.5pt, symétrique) reste le chemin PRINCIPAL,
+   inchangé.
+2. Un repli (`LIGNE_REPLI_TOLERANCE_HAUT_PT = 8.0`) ne se déclenche QUE
+   si la tolérance stricte n'a trouvé AUCUN fragment numérique pour
+   cette ligne précise — donc jamais sur une ligne déjà correctement
+   appariée sur un document qui fonctionne déjà.
+3. Le repli est ASYMÉTRIQUE (vers le haut uniquement, jamais vers le
+   bas/ligne suivante) — sur Pacifica les lignes sont espacées de ~15pt
+   ; un repli symétrique large aurait risqué de chevaucher la ligne
+   suivante et de lui voler sa valeur. Une fenêtre dirigée vers le haut
+   seulement (8pt, au-delà des 6.6pt observés) ne touche jamais le
+   territoire de la ligne du dessous.
+
+VÉRIFICATION AVANT COMMIT (exigée par la tâche — "zéro régression sur
+TOUS les documents déjà traités, pas seulement les 3 habituels") :
+- **16 documents en diagnostic générique** (AFV, AFI, Sogécap, Cardif
+  Vie, Cardif RD, Crédit Agricole, Covéa, CNP, MACSF, MAIF, Allianz
+  IARD, Allianz Vie, SwissLife, BPCE Vie, Predica, Pacifica) : scores
+  ET listes de KPIs NULL strictement identiques à avant le fix, sauf
+  Pacifica (4/20 → 20/20, l'objectif).
+- **3 pipelines dédiés** (Groupama, CNP, MACSF, 22 KPIs) : non
+  seulement les scores (21/22 chacun) mais **les valeurs numériques
+  extraites elles-mêmes** comparées une à une contre les runs
+  précédents de cette session — identiques au chiffre près (ex. CNP
+  best_estimate = 277 208.17 M€, Groupama scr_total = 6 020.98 M€,
+  inchangés).
+
+RÉSULTAT : Pacifica 4/20 → **20/20**. Aucune régression détectée nulle
+part.
+
+Commit : voir commit associé à cette décision.

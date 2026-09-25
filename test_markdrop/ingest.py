@@ -78,6 +78,18 @@ NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$|^-$")
 # jamais fusionné avec un nombre à plus de MERGE_GAP_PT.
 MERGE_GAP_PT = 5.0
 LINE_TOLERANCE_PT = 1.5
+# Décision 078 : repli DIRECTIONNEL, utilisé UNIQUEMENT si la tolérance
+# stricte (LINE_TOLERANCE_PT) ne trouve AUCUN fragment numérique pour une
+# ligne — ne s'active donc jamais sur une ligne déjà correctement
+# appariée, zéro risque de régression sur tout document déjà
+# fonctionnel. Corrige le décalage trouvé sur Pacifica : la valeur y est
+# systématiquement ~6.6pt AU-DESSUS du code de ligne (pas sur la même
+# ligne de base). Fenêtre asymétrique VERS LE HAUT seulement (jamais
+# vers le bas, la ligne suivante) pour ne pas risquer de récupérer la
+# valeur d'une autre ligne sur un tableau à lignes rapprochées (~15pt
+# d'écart typique — un repli symétrique large aurait chevauché la ligne
+# du dessous).
+LIGNE_REPLI_TOLERANCE_HAUT_PT = 8.0
 RASTER_ZOOM = 4.0
 ROTATION_RATIO_THRESHOLD = 1.0  # h/w de l'image intégrée la plus grande
 
@@ -483,14 +495,26 @@ def extract_qrt_native(page, sheet_dict, sheet_key):
         if t not in rows_by_code:
             rows_by_code[t] = (x0, y0, x1, y1)
 
-    resultat = {}
-    for code, (rx0, ry0, rx1, ry1) in sorted(rows_by_code.items()):
+    def _fragments_numeriques(rx1, ry0, tolerance_bas, tolerance_haut):
         frags = []
         for x0, y0, x1, y1, t in words:
-            if x0 <= rx1 or abs(y0 - ry0) > LINE_TOLERANCE_PT:
+            if x0 <= rx1:
+                continue
+            dy = y0 - ry0
+            if not (-tolerance_haut <= dy <= tolerance_bas):
                 continue
             if NUMERIC_FRAGMENT_RE.match(t):
                 frags.append((x0, x1, t))
+        return frags
+
+    resultat = {}
+    for code, (rx0, ry0, rx1, ry1) in sorted(rows_by_code.items()):
+        frags = _fragments_numeriques(rx1, ry0, LINE_TOLERANCE_PT, LINE_TOLERANCE_PT)
+        if not frags:
+            # Repli Décision 078 — voir commentaire de
+            # LIGNE_REPLI_TOLERANCE_HAUT_PT : uniquement si la tolérance
+            # stricte n'a RIEN trouvé pour cette ligne précise.
+            frags = _fragments_numeriques(rx1, ry0, LINE_TOLERANCE_PT, LIGNE_REPLI_TOLERANCE_HAUT_PT)
         merged = merge_numeric_fragments(frags)
         valeurs = {}
         for x_centre, text in merged:
