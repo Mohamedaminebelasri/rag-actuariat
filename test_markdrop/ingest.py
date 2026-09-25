@@ -95,8 +95,41 @@ ROTATION_RATIO_THRESHOLD = 1.0  # h/w de l'image intégrée la plus grande
 
 
 # ============================================================
-# ÉTAPE 1 — TRIAGE
+# ISOLATION D'ENTITÉ (Décision 081/083) — documents combinés multi-entités
 # ============================================================
+
+def extraire_entite(pdf_path, page_debut, page_fin, nom_entite=None, out_dir=None):
+    """Isole les pages [page_debut, page_fin] (1-indexées, inclusives)
+    d'un PDF combiné multi-entités en un sous-PDF physique autonome —
+    généralisation de la technique validée sur MACIF SAM (Décision 081,
+    fitz.insert_pdf) et Generali (Décision 080). Utile pour tout document
+    "rapport unique" regroupant plusieurs entités juridiques (ex. Aéma
+    Groupe) que l'architecture actuelle (1 fichier = 1 score) ne peut
+    pas traiter directement.
+
+    Retourne le chemin du sous-PDF créé. `out_dir` par défaut : même
+    dossier que `pdf_path`, préfixé `_entite_`."""
+    import re as _re
+    from pathlib import Path as _Path
+
+    pdf_path = _Path(pdf_path)
+    doc = fitz.open(str(pdf_path))
+    if not (1 <= page_debut <= page_fin <= doc.page_count):
+        doc.close()
+        raise ValueError(f"Bornes invalides : [{page_debut}, {page_fin}] hors de [1, {doc.page_count}]")
+
+    sous_doc = fitz.open()
+    sous_doc.insert_pdf(doc, from_page=page_debut - 1, to_page=page_fin - 1)
+    doc.close()
+
+    out_dir = _Path(out_dir) if out_dir else pdf_path.parent
+    out_dir.mkdir(parents=True, exist_ok=True)
+    slug = _re.sub(r"[^A-Za-z0-9]+", "_", nom_entite or f"p{page_debut}-{page_fin}").strip("_")
+    out_path = out_dir / f"_entite_{slug}.pdf"
+    sous_doc.save(str(out_path))
+    sous_doc.close()
+    return out_path
+
 
 def build_annexe_index(doc):
     """Parse la page 'ANNEXES – QRT PUBLICS' (index Annexe N -> code EIOPA),
