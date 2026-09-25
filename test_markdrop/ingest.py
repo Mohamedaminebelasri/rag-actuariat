@@ -125,8 +125,18 @@ def classify_pages(pdf_path):
         ratio_dot_leader = (n_dot_leader / len(lignes)) if lignes else 0
         est_sommaire_b = ratio_dot_leader > 0.5
 
+        # Décision 077 : compter les codes DISTINCTS par TEMPLATE DE BASE
+        # (10 premiers caractères, ex. "S.05.01.02"), pas par chaîne brute.
+        # Bug trouvé sur Allianz Vie p.84 : la page QRT réelle de
+        # S.05.01.02 cite elle-même ses propres sous-sections
+        # "S.05.01.02.01" et "S.05.01.02.02" — 3 chaînes distinctes du
+        # MÊME template, faussement comptées comme un sommaire/index
+        # (>=3 codes distincts) et donc exclue à tort. Un vrai sommaire
+        # liste plusieurs templates DIFFÉRENTS (bases distinctes) ; une
+        # page QRT réelle ne cite que les sous-sections d'un seul.
         codes_distincts = set(QRT_CODE_RE.findall(texte))
-        est_index_qrt = len(codes_distincts) >= 3
+        codes_base_distincts = {c[:10] for c in codes_distincts}
+        est_index_qrt = len(codes_base_distincts) >= 3
 
         m_direct = QRT_CODE_RE.search(texte)
         m_annexe = None
@@ -141,7 +151,7 @@ def classify_pages(pdf_path):
             page_type, template_id = "sommaire", None
         elif est_index_qrt:
             page_type, template_id = "sommaire", None
-            resolution = f"index QRT détecté ({len(codes_distincts)} codes S.XX.XX.XX distincts) — page exclue, pas un template"
+            resolution = f"index QRT détecté ({len(codes_base_distincts)} templates de base distincts) — page exclue, pas un template"
         elif m_direct:
             page_type, template_id = "qrt", m_direct.group(0)[:10]
             resolution = "code trouvé directement dans le texte natif"

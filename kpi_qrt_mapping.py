@@ -194,6 +194,12 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0010", "col": "C0040", "libelle_attendu": "Risque de marché",
          "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0010", "col": "C0100", "libelle_attendu": "Risque de marché",
+         "variante": "solo, formule standard, colonne C0100 (5e variante — SwissLife : l'en-tête imprimé affiche "
+                     "C0110, mais la valeur extraite se positionne systématiquement en C0100 ; valeur vérifiée "
+                     "correcte par lecture manuelle, décalage de colonne propre à l'extraction positionnelle sur "
+                     "ce document, cf. Décision 076)",
+         "verifie_contre": "SwissLife Assurance et Patrimoine 2025 (extraction réelle)"},
         # Modèle interne (S.25.02-S.25.05) : PAS de code fixe universel
         # (constat Groupama vs Yuzzu, cf. docstring) — résolution par
         # libellé uniquement, via picture narrative ou lecture QRT label-
@@ -216,6 +222,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0030", "col": "C0040", "libelle_attendu": "Risque de souscription en vie",
          "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0030", "col": "C0100", "libelle_attendu": "Risque de souscription en vie",
+         "variante": "solo, formule standard, colonne C0100 (5e variante — décalage d'extraction SwissLife, cf. Décision 076, même cas que scr_marche)",
+         "verifie_contre": "SwissLife Assurance et Patrimoine 2025 (extraction réelle)"},
     ],
     "scr_souscription_nonvie": [
         {"template": "S.25.01.22", "row": "R0050", "col": "C0040", "libelle_attendu": "Non-life underwriting risk",
@@ -258,6 +267,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0040", "col": "C0040", "libelle_attendu": "Risque de souscription en santé",
          "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0040", "col": "C0100", "libelle_attendu": "Risque de souscription en santé",
+         "variante": "solo, formule standard, colonne C0100 (5e variante — décalage d'extraction SwissLife, cf. Décision 076, même cas que scr_marche)",
+         "verifie_contre": "SwissLife Assurance et Patrimoine 2025 (extraction réelle)"},
     ],
     "scr_contrepartie": [
         {"template": "S.25.01.22", "row": "R0020", "col": "C0040", "libelle_attendu": "Counterparty default risk",
@@ -276,6 +288,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0020", "col": "C0040", "libelle_attendu": "Risque de défaut de la contrepartie",
          "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0020", "col": "C0100", "libelle_attendu": "Risque de défaut de la contrepartie",
+         "variante": "solo, formule standard, colonne C0100 (5e variante — décalage d'extraction SwissLife, cf. Décision 076, même cas que scr_marche)",
+         "verifie_contre": "SwissLife Assurance et Patrimoine 2025 (extraction réelle)"},
     ],
     "scr_operationnel": [
         {"template": "S.25.01.22", "row": "R0130", "col": "C0100", "libelle_attendu": "Operational risk",
@@ -294,6 +309,11 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0130", "col": "C0040", "libelle_attendu": "Risque opérationnel",
          "variante": "solo, formule standard, colonne C0040 (correction Décision 067 : la colonne C0100 déclarée initialement était erronée — vérification directe montre C0040, cohérent avec scr_diversification sur le même document)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle, re-vérifiée)"},
+        {"template": "S.25.01.21", "row": "R0130", "col": "C0100", "libelle_attendu": "Risque opérationnel",
+         "variante": "solo, formule standard, colonne C0100 (6e variante — NE PAS confondre avec Décision 067 : "
+                     "ici C0100 est bien la colonne réelle chez SwissLife, en-tête imprimé C0110 mais décalage "
+                     "d'extraction positionnel, cf. Décision 076, même cas que scr_marche)",
+         "verifie_contre": "SwissLife Assurance et Patrimoine 2025 (extraction réelle)"},
         {"template": "S.25.05.21", "row": "R0480", "col": "C0010", "libelle_attendu": "Total Operational risk",
          "variante": "solo, modèle interne (partiel ou complet), suffixe .21 — layout identique à AFV et AFI "
                      "(Décision 072). Séparable car R0480 est un sous-total propre à l'opérationnel sur ce template.",
@@ -316,6 +336,9 @@ KPI_QRT_MAPPING = {
         {"template": "S.25.01.21", "row": "R0060", "col": "C0040", "libelle_attendu": "Diversification",
          "variante": "solo, formule standard, colonne C0040 (4e variante de colonne pour ce concept — Cardif Assurance Vie utilise C0040, ni C0090 ni C0110)",
          "verifie_contre": "Cardif Assurance Vie 2025 (extraction réelle)"},
+        {"template": "S.25.01.21", "row": "R0060", "col": "C0100", "libelle_attendu": "Diversification",
+         "variante": "solo, formule standard, colonne C0100 (5e variante — décalage d'extraction SwissLife, cf. Décision 076, même cas que scr_marche)",
+         "verifie_contre": "SwissLife Assurance et Patrimoine 2025 (extraction réelle)"},
         {"template": "S.25.05.22", "row": "R0060", "col": "C0100", "libelle_attendu": "Diversification",
          "variante": "groupe, modèle interne — CODE SPÉCIFIQUE GROUPAMA (Yuzzu, solo modèle interne, a R0020 pour le même concept : PAS un code universel)",
          "verifie_contre": "Groupama 2025 (extraction réelle) — cf. Décision 055"},

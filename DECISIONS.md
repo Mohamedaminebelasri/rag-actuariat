@@ -4852,3 +4852,80 @@ la session sur les 3 pipelines de référence dédiés :
 FIN DE SESSION : les 6 tâches ont été traitées dans l'ordre prescrit ;
 aucune tâche hors de cette liste n'a été entamée ; `resultat_technique`
 n'a jamais été touché.
+
+## Décision 076 — Fix SwissLife : 6 variantes C0100 sur S.25.01.21 (14/20 → 20/20)
+
+CONTEXTE : SwissLife (formule standard, `S.25.01.21`) avait ses 6 sous-
+modules SCR restants NULL (`scr_marche`, `scr_contrepartie`,
+`scr_souscription_vie`, `scr_souscription_sante`, `scr_operationnel`,
+`scr_diversification`).
+
+DIAGNOSTIC : l'en-tête imprimé sur la page annonce la colonne `C0110`
+pour ces lignes (R0010/R0020/R0030/R0040/R0060/R0130), mais
+l'extraction positionnelle (`extract_qrt_native`) place systématiquement
+les valeurs sous `C0100` — vérifié valeur par valeur contre une lecture
+manuelle de la page (2 851 424 / 158 169 / 983 224 / 13 206 / -711 488 /
+105 322, tous exacts). Seule la ligne R0050 (non-vie, déjà résolue)
+atterrit sous C0110. Décalage de colonne propre à l'extraction sur ce
+document, pas une erreur de lecture des valeurs elles-mêmes.
+
+FIX : ajout d'une 5e/6e variante `col="C0100"` pour les 6 KPIs
+concernés sur `S.25.01.21`, verifie_contre SwissLife. Distinct du cas
+Cardif Vie (Décision 067, où C0100 était la mauvaise réponse) : ici
+C0100 est la colonne réellement extraite et vérifiée juste pour ce
+document — noté explicitement dans le commentaire du mapping pour ne
+pas confondre les deux cas à l'avenir.
+
+RÉSULTAT : SwissLife 14/20 → **20/20**.
+
+## Décision 077 — Fix classify_pages() : faux positif "index QRT" sur une page à sous-sections (Allianz Vie 13/20 → 15/20)
+
+CONTEXTE : Allianz Vie avait `primes_acquises_brutes` et
+`charge_sinistres` NULL alors qu'aucune page `S.05.01.02` n'apparaissait
+dans les pages QRT détectées.
+
+DIAGNOSTIC : la page 84 contient bien le tableau complet S.05.01.02
+(R1510 Primes acquises Brut, R1610 Charge des sinistres Brut, colonne
+Total C0300 présente et lisible) — mais `classify_pages()` la classait
+"sommaire" (page d'index exclue), car son heuristique `est_index_qrt`
+compte les codes `S.xx.xx.xx` DISTINCTS sur la page et exclut dès qu'il
+y en a ≥3. Cette page cite "S.05.01.02", "S.05.01.02.01" et
+"S.05.01.02.02" (3 chaînes distinctes) — mais ce sont les
+SOUS-SECTIONS du MÊME tableau, pas 3 templates différents comme sur une
+vraie page de sommaire.
+
+FIX : `est_index_qrt` compte désormais les codes distincts par TEMPLATE
+DE BASE (10 premiers caractères, ex. "S.05.01.02"), pas par chaîne
+brute. Une vraie page de sommaire liste toujours plusieurs templates de
+base différents ; une page QRT réelle ne cite que les sous-sections
+d'un seul.
+
+RÉSULTAT : Allianz Vie 13/20 → **15/20** (primes_acquises_brutes et
+charge_sinistres récupérés). Effet de bord positif identique sur la
+page 83 (S.04.05.21, non utilisé par nos KPIs, mais confirme que le fix
+fonctionne au-delà du cas isolé).
+
+RESTE NULL sur Allianz Vie (5 KPIs, diagnostiqué précisément, non
+corrigé) :
+- `scr_marche` + `scr_contrepartie` : fusionnés dans R0070 "Total
+  market & credit risk" du template `S.25.05.21` (modèle interne) —
+  irréductible par construction, même limite qu'AFV/AFI/Allianz IARD
+  (Décision 072).
+- `scr_souscription_vie` + `scr_souscription_sante` : fusionnés dans
+  R0400 "Total Life & Health underwriting risk" — même limite.
+- `scr_diversification` : même bug que sur Allianz IARD (session
+  précédente) — le signe négatif de la valeur ("-               912 286")
+  est physiquement détaché du nombre sur la page et mal attribué par
+  `extract_qrt_native` à une colonne différente. Ajouter une variante de
+  colonne stockerait la valeur en POSITIF (faux). Non corrigé —
+  nécessiterait un fix du tokenizer partagé, plus risqué, documenté
+  comme limite pour une session dédiée future.
+
+**Régression vérifiée sur 15 documents (au-delà des 3 habituels, comme
+demandé)** : Groupama 21/22 (pipeline dédié), CNP 21/22, MACSF 21/22,
+AFV 16/20, AFI 16/20, Sogécap 20/20, Cardif Vie 20/20, Cardif RD 20/20,
+Crédit Agricole 20/20, Covéa 16/20, MAIF 13/20, Allianz IARD 15/20,
+BPCE Vie 20/20, Predica 20/20 — tous strictement identiques à avant le
+fix. Aucune régression.
+
+Commit : voir commit associé à cette décision.
