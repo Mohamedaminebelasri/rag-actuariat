@@ -177,7 +177,40 @@ ENTITES_KPIS = {
         "scr_diversification": (-283.0, 504, "S.25.01.21.01/R0060"),
         "scr_operationnel": (58.0, 504, "S.25.01.21.02/R0130"),
     },
-    # 8 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
+    "Macifilia": {
+        # Pages 508-522 (Décision 085). Pas de S.05.01.02.02 (vie) dans
+        # ce bloc bien que le bilan porte une petite composante vie
+        # (R0670/R0680) — provisions sans primes cette année (portefeuille
+        # en run-off), cohérent, pas une anomalie. charge_sinistres brute
+        # = -939 552 K€ (NÉGATIF, vérifié : Part réassureurs=0 donc Net=
+        # Brut, valeur source, pas une erreur de lecture) — probable
+        # reprise de provision importante sur ce petit véhicule technique.
+        # MCR(4000)>SCR(1932) — plancher absolu, comme Thémis. Recoupements
+        # exacts : R1000(p509)=R0700(p518)=18 411 ; provisions_techniques=
+        # best_estimate+marge_risque=R0510+R0600(p509)=11 474 ; R0100(p519)
+        # =somme(R0010..R0070)=1632 ; R0220=R0100+R0130=1932=R0580(p518).
+        "best_estimate": (11424.0, 509, "S.02.01.02.01 Bilan, somme 2 lignes non-nulles BE (R0540 non-vie + R0670 vie, sans primes cette année)"),
+        "marge_risque": (50.0, 509, "S.02.01.02.01 Bilan, somme 2 lignes MR (R0550+R0680)"),
+        "primes_acquises_brutes": (5554.0, 511, "S.05.01.02.01 (non-vie, seule activité avec primes), R0210/Total"),
+        "charge_sinistres": (-939552.0, 511, "S.05.01.02.01, R0310/Total — NÉGATIF, vérifié (reprise de provision probable, pas une erreur)"),
+        "fonds_propres_eligibles": (18411.0, 518, "S.23.01.01.01/R0540/Total"),
+        "fonds_propres_t1_nr": (18411.0, 518, "S.23.01.01.01/R0540/Niveau1 non restreint"),
+        "fonds_propres_t1_r": (0.0, 518, "S.23.01.01.01/R0540/Niveau1 restreint"),
+        "fonds_propres_t2": (0.0, 518, "S.23.01.01.01/R0540/Niveau2"),
+        "fonds_propres_t3": (0.0, 518, "S.23.01.01.01/R0540/Niveau3"),
+        "scr_total": (1932.0, 518, "S.23.01.01.01/R0580 — confirmé p.519 (S.25.01.21.02/R0220)"),
+        "mcr": (4000.0, 518, "S.23.01.01.01/R0600 — plancher absolu MCR (> SCR), cas légitime pour petite entité"),
+        "ratio_scr": (953.0, 518, "S.23.01.01.01/R0620"),
+        "ratio_mcr": (460.0, 518, "S.23.01.01.01/R0640"),
+        "scr_marche": (1596.0, 519, "S.25.01.21.01/R0010"),
+        "scr_contrepartie": (38.0, 519, "S.25.01.21.01/R0020"),
+        "scr_souscription_vie": (0.0, 519, "S.25.01.21.01/R0030"),
+        "scr_souscription_sante": (0.0, 519, "S.25.01.21.01/R0040"),
+        "scr_souscription_nonvie": (91.0, 519, "S.25.01.21.01/R0050"),
+        "scr_diversification": (-93.0, 519, "S.25.01.21.01/R0060"),
+        "scr_operationnel": (300.0, 519, "S.25.01.21.02/R0130"),
+    },
+    # 7 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
     # extraction manuelle pas encore faite. Ne PAS deviner de valeurs —
     # absence délibérée de ces clés, traitée comme "non traité" par
     # calculer_score() ci-dessous, jamais comme un score de 0/20 (ce qui
