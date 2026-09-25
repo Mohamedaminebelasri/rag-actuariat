@@ -5762,3 +5762,128 @@ seul MAIF reste "partiel" (17/20, pas 20/20, hors périmètre de cette
 session). Progression de **+2 groupes nouvellement couverts** (AG2R,
 MGEN) et **1 groupe passé de partiel à complet** (Aéma/MACIF) en une
 session.
+
+## Décision 090 — validate_kpis.py généralisé aux 27 sociétés
+
+CONTEXTE : 24 des 27 sociétés de `kpis.db` n'avaient jamais eu leurs
+KPIs passés dans `validate_kpis.py` — pas par doute sur leurs données,
+mais parce que 3 de ses contrôles restaient codés en dur pour Groupama
+(cf. Décision 086) et le contrôle de signe rejetait à tort les zéros
+légitimes.
+
+### Les 3 contrôles codés en dur (identifiés)
+
+1. **`ratio_mcr_recalcule`** — recalcule `ratio_mcr` à partir d'un
+   numérateur (fonds propres éligibles pour le MCR, R0570) lu
+   directement dans `corpus_final.json`, un fichier Docling qui
+   n'existe QUE pour Groupama. Ce numérateur n'est PAS un des 22 KPIs
+   stockés (concept différent de `fonds_propres_eligibles`, qui est
+   l'éligibilité SCR/R0540).
+2. **`scr_total_croise_S23_S25`** — compare `scr_total` à une valeur
+   fixe (6 020 977 K€) vérifiée manuellement pour Groupama (Décision
+   051) en croisant 2 pages QRT différentes.
+3. **`scr_nonvie_croise_QRT_image`** — même principe pour
+   `scr_souscription_nonvie` (2 474 794 K€, relecture manuelle
+   picture_75.png).
+
+### Généralisation tentée puis rejetée pour #2/#3
+
+Avant d'adopter une solution, une généralisation générique a été
+testée empiriquement : `scr_total ≈ somme(scr_marche+scr_contrepartie+
+scr_souscription_vie+santé+nonvie+scr_diversification+scr_operationnel)`,
+calculable pour N'IMPORTE QUELLE société depuis `kpis.db` seul (sans
+fichier externe). **Rejetée après test** : l'écart dépasse 20-280% y
+compris sur des sociétés parfaitement extraites — MACIF SAM (22%,
+pourtant triple-vérifiée p.464/467, Décision 083), Predica (281%), CNP
+(193%), Aéma Groupe (149%). Cause : le SCR final inclut des
+ajustements LAC DT/LAC TP (capacité d'absorption des pertes par les
+impôts différés/les provisions techniques) souvent très matériels,
+JAMAIS capturés dans les 22 KPIs stockés. Adopter cette identité
+aurait produit une majorité de faux échecs — contraire à la règle
+"jamais un signal trompeur". Les 3 contrôles restent donc scopés à
+Groupama, mais réécrits en REGISTRES extensibles
+(`SOURCES_MCR_INDEPENDANTES`, `CROISEMENTS_GROUPAMA`) plutôt qu'un
+`if company_name == "Groupama"` littéral — une future société avec une
+vraie source indépendante capturée s'y ajouterait sans toucher la
+logique de contrôle.
+
+### Autres corrections généralisées
+
+- **Signe** : `positive` accepte désormais `>= 0` (pas `> 0`),
+  `negative` accepte `<= 0` — plusieurs sociétés ont légitimement des
+  tiers de fonds propres ou composantes SCR à exactement 0,00.
+- **Garde NULL** : chaque contrôle arithmétique (1, 2, 3, 4, 5) est
+  SKIPPÉ proprement (rien inséré, jamais un crash ni un calcul sur
+  `None`) si un des KPIs qu'il utilise est NULL pour cette société —
+  via une fonction `valeurs()` dédiée.
+- `completude_null_attendu` (exactement 1 NULL = `resultat_technique`)
+  **volontairement NON assoupli** — un vrai signal de complétude, pas
+  un faux positif (cf. ci-dessous).
+- Nouveau flag `--all` (`valider_societe()` factorisée depuis `main()`)
+  pour lancer sur toutes les sociétés de `companies` en un seul appel.
+
+### Test de non-régression (étape 3) — AVANT le rollout complet
+
+Groupama, Predica, MGEN relancés isolément : **Groupama 30/30**
+(identique bit à bit) ; **Predica 25/27 → 27/27** et **MGEN 24/27 →
+27/27** — amélioration ATTENDUE (les faux signaux zéro corrigés),
+mêmes dénominateurs qu'avant (aucun contrôle ajouté/retiré pour ces 3),
+confirmant zéro régression.
+
+### Rollout sur les 27 sociétés — 1 bug réel trouvé (pré-existant, hors session)
+
+**BUG RÉEL TROUVÉ ET CORRIGÉ — MACSF prévoyance/scr_diversification** :
+stocké à tort à **+14,14 M€** (positif — impossible par construction,
+la diversification est toujours un bénéfice ≤0) au lieu de **-14,14
+M€**. Bug pré-existant (extraction d'une session antérieure à
+celle-ci, jamais re-vérifié depuis). Cause : même famille que BPCE
+IARD/Predica/MGEN (Décisions 085/086/088) — signe "-" détaché, mal
+assigné à une colonne `C0100`/"Value" distincte au lieu d'être
+attaché à la magnitude en `C0090`. Vérifié par cohérence arithmétique
+EXACTE contre `test_markdrop/output_macsf/corpus_final.json` :
+R0100 (SCR de base) = 497 952+3 875+15 313+0+0**-14 137**+0 = **503
+003**, quasi-identique au R0100 imprimé (503 004, écart 1 = arrondi)
+— la version positive (531 277) ne colle pas du tout. Valeur corrigée
+directement en base (`kpis.db`), `source_chapter` mis à jour avec la
+justification complète.
+
+**RÉSULTAT FINAL — 27/27 sociétés testées :**
+
+| Société | Contrôles passés / applicables | Échecs réels (hors faux signaux zéro) |
+|---|---|---|
+| Groupama | 30/30 | — |
+| CNP Assurances | 27/27 | — |
+| MACSF prévoyance | 27/27 | — (corrigée cette tâche) |
+| Predica | 27/27 | — |
+| MGEN | 27/27 | — |
+| Aema Groupe | 27/27 | — |
+| MACIF SAM | 27/27 | — |
+| Macif Vie | 27/27 | — |
+| Macif Sante Prevoyance | 27/27 | — |
+| Themis | 26/27 | `mcr_inferieur_scr_total` — plancher absolu MCR, légitime (Décision 085) |
+| Macifilia | 25/27 | `mcr_inferieur_scr_total` — plancher absolu MCR, légitime (Décision 085) |
+| Aesio Mutuelle | 27/27 | — |
+| MNPAF | 27/27 | — |
+| MMJ | 27/27 | — |
+| Nuoma | 27/27 | — |
+| Abeille Vie | 27/27 | — |
+| Abeille Epargne Retraite | 27/27 | — |
+| Abeille IARD Sante | 27/27 | — |
+| SGAM AG2R LA MONDIALE | 21/22 | `completude_null_attendu` — 4 NULL, mapping groupe incomplet, légitime (Décision 087) |
+| AG2R Prevoyance | 25/26 | `completude_null_attendu` — 2 NULL (scr_souscription_nonvie), légitime (Décision 087) |
+| Arpege Prevoyance | 27/27 | — |
+| Prima | 27/27 | — |
+| AG.Mut | 27/27 | — |
+| VIASANTE Mutuelle | 27/27 | — |
+| La Mondiale | 27/27 | — |
+| La Mondiale Europartner | 27/27 | — |
+| La Mondiale Partenaire | 27/27 | — |
+
+**Sur 27 sociétés, 4 "échecs réels" — les 4 sont des cas déjà
+documentés dans des Décisions antérieures (085/087), pas de nouveaux
+bugs** — sauf la correction MACSF elle-même (trouvée PAR cette tâche
+de généralisation, pas dans son résultat final).
+
+RÉGRESSION VÉRIFIÉE : Groupama 30/30 inchangé ; Predica/MGEN passés à
+27/27 (amélioration attendue, faux signaux corrigés, pas une
+régression).
