@@ -210,7 +210,38 @@ ENTITES_KPIS = {
         "scr_diversification": (-93.0, 519, "S.25.01.21.01/R0060"),
         "scr_operationnel": (300.0, 519, "S.25.01.21.02/R0130"),
     },
-    # 7 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
+    "Aesio Mutuelle": {
+        # Pages 523-538 (Décision 085). Plus grande entité traitée à ce
+        # jour après Aéma Groupe/MACIF SAM. Mixte vie+non-vie+santé,
+        # utilise le "Simplifications - life catastrophe risk" sur R0030
+        # (formule standard simplifiée, pas un modèle interne). Recoupements
+        # exacts : R1000(p524)=R0700(p534)=1 840 228 925 ; provisions_
+        # techniques=best_estimate+marge_risque=R0510+R0600(p524)=
+        # 601 102 714 (±1 arrondi) ; R0100(p535)=somme(R0010..R0070)=
+        # 618 525 459 ; R0220=R0100+R0130+R0140=680 657 827≈R0580(p534,
+        # ±1 arrondi).
+        "best_estimate": (534971909.0, 524, "S.02.01.02.01 Bilan, somme 3 lignes BE (R0580+R0630+R0670)"),
+        "marge_risque": (66130806.0, 524, "S.02.01.02.01 Bilan, somme 3 lignes MR (R0590+R0640+R0680)"),
+        "primes_acquises_brutes": (1773403021.0, 526, "S.05.01.02.01(non-vie,R0210/Total=1707564110,p.526)+S.05.01.02.02(vie,R1510/Total=65838911,p.527)"),
+        "charge_sinistres": (1325929044.0, 526, "S.05.01.02.01(non-vie,R0310/Total=1289307027,p.526)+S.05.01.02.02(vie,R1610/Total=36622017,p.527)"),
+        "fonds_propres_eligibles": (1840228925.0, 534, "S.23.01.01.01/R0540/Total"),
+        "fonds_propres_t1_nr": (1840228925.0, 534, "S.23.01.01.01/R0540/Niveau1 non restreint"),
+        "fonds_propres_t1_r": (0.0, 534, "S.23.01.01.01/R0540/Niveau1 restreint"),
+        "fonds_propres_t2": (0.0, 534, "S.23.01.01.01/R0540/Niveau2"),
+        "fonds_propres_t3": (0.0, 534, "S.23.01.01.01/R0540/Niveau3"),
+        "scr_total": (680657826.0, 534, "S.23.01.01.01/R0580 — confirmé p.535 (S.25.01.21.02/R0220, ±1 arrondi)"),
+        "mcr": (170164457.0, 534, "S.23.01.01.01/R0600"),
+        "ratio_scr": (270.0, 534, "S.23.01.01.01/R0620"),
+        "ratio_mcr": (1081.0, 534, "S.23.01.01.01/R0640"),
+        "scr_marche": (308698424.0, 535, "S.25.01.21.01/R0010"),
+        "scr_contrepartie": (57851994.0, 535, "S.25.01.21.01/R0020"),
+        "scr_souscription_vie": (30920506.0, 535, "S.25.01.21.01/R0030 (Simplification life catastrophe risk)"),
+        "scr_souscription_sante": (428129823.0, 535, "S.25.01.21.01/R0040"),
+        "scr_souscription_nonvie": (0.0, 535, "S.25.01.21.01/R0050"),
+        "scr_diversification": (-207075288.0, 535, "S.25.01.21.01/R0060"),
+        "scr_operationnel": (63580291.0, 535, "S.25.01.21.02/R0130"),
+    },
+    # 6 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
     # extraction manuelle pas encore faite. Ne PAS deviner de valeurs —
     # absence délibérée de ces clés, traitée comme "non traité" par
     # calculer_score() ci-dessous, jamais comme un score de 0/20 (ce qui
