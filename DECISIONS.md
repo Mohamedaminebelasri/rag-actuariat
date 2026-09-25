@@ -5610,3 +5610,52 @@ RÉGRESSION : aucun risque structurel (nouveau module dédié, aucun code
 partagé modifié) — non re-vérifié explicitement ici, couvert par la
 vérification de régression globale en fin de session (batch_diagnostic
 + requête directe sur les sociétés pipeline dédié).
+
+## Décision 088 — MGEN : extraction réelle, 2 bugs parser trouvés et corrigés (21/22)
+
+CONTEXTE : `MGEN_SFCR_2025.pdf`, document simple, un seul bloc QRT
+(pages 46-55), confirmé texte natif solo/formule standard. Même
+mécanisme que `extract_kpis_predica.py` (`extract_kpis_mgen.py`,
+Décision 085).
+
+**BUG RÉEL TROUVÉ ET CORRIGÉ — fonds_propres_eligibles à 0,00** :
+`extract_qrt_native()` donnait "-" (0,0) pour S.23.01.01/R0540 (Total
+des fonds propres éligibles pour couvrir le SCR) sur les 5 colonnes,
+alors que le texte brut page 53 montre clairement R0540 = 3 441 361 /
+3 441 361 / - / - / -. Vérifié par 2 recoupements indépendants sur la
+même page : R0290 (Total fonds propres de base après déductions) =
+3 441 361 (déjà lu correctement) et R0700 (Excédent d'actif sur passif,
+sous-tableau réserve de réconciliation) = 3 441 361 — 3 sources
+concordent exactement. Confirme aussi le ratio_scr publié (236%) :
+3 441 361/1 460 979 = 235,55% ≈ 236%.
+
+**BUG RÉEL TROUVÉ ET CORRIGÉ — scr_diversification à +0,16 au lieu de
+-452 163** : le texte brut page 54 montre `R0060 ... "- 452 163"`
+— signe négatif séparé de la magnitude par une ESPACE FINE (U+2009,
+`THIN SPACE`), pas une espace normale — `NUMERIC_FRAGMENT_RE` ne
+reconnaît pas ce caractère comme faisant partie du même token, cause
+distincte du bug BPCE IARD (Décision 086, magnitude-puis-signe) et du
+bug Predica (Décision 085, notation parenthèses). Vérifié par
+recoupement arithmétique EXACT : R0100 (SCR de base) = somme(R0010..
+R0070) = 789 578+69 440+70 433+939 219+1 267-452 163+792 = **1 418 566**,
+qui correspond EXACTEMENT au R0100 imprimé — et R0100+R0130+R0140+R0150
+= 1 418 566+99 604+0-57 191 = **1 460 979** = scr_total déjà extrait
+correctement (3e recoupement indépendant).
+
+Les 2 corrections sont des overrides SCOPÉS à `extract_kpis_mgen.py`
+(condition sur la valeur suspecte détectée, jamais un changement dans
+`extract_qrt_native()`/`ingest.py` partagés) — même discipline que
+Predica/BPCE IARD : zéro risque de régression sur les autres documents.
+Les 7 autres composantes SCR (scr_marche, scr_contrepartie,
+scr_souscription_vie/santé/non-vie, scr_operationnel) ET
+best_estimate/marge_risque/primes/sinistres ont TOUS été revérifiés
+manuellement contre le texte brut et sont corrects sans modification.
+
+RÉSULTAT : **21/22 KPIs** (seul `resultat_technique` NULL, par
+construction). `validate_kpis.py --company MGEN` : **24/27 contrôles
+passés** — les 3 échecs sont les faux signaux connus (fonds_propres_
+t1_r/t2/t3 légitimement à 0,00, rejetés par le contrôle de signe
+`"positive"` trop strict, cf. Décision 085/Predica), pas des erreurs.
+`ratio_scr_recalcule` et `fonds_propres_eligibles_somme_tiers` passent
+tous les deux — confirmation indépendante supplémentaire que les 2
+corrections manuelles sont exactes.
