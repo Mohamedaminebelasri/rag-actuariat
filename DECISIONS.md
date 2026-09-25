@@ -5548,3 +5548,65 @@ toujours 16/20**, `scr_diversification` toujours -10 324 898 (identique
 à avant) — zéro impact, confirmé en isolant le test sur les 2
 documents. **MAIF toujours 17/20** (3e document partageant
 `classifier_lignes()`/`extraire_par_libelle()`), également inchangé.
+
+## Décision 087 — AG2R La Mondiale : 9 entités découvertes et extraites (document combiné, texte natif)
+
+CONTEXTE : `AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf` (288 pages) avait des
+templates QRT qui se répètent à plusieurs endroits — signe d'un
+document combiné multi-entités, comme Aéma Groupe.
+
+CARTOGRAPHIE : `classify_pages()` sur les 288 pages → 9 blocs QRT
+contigus : (122-134), (139-157), (159-177), (179-196), (198-215),
+(217-235), (237-254), (256-271), (273-286). Chaque bloc précédé d'une
+page "Identification de l'entreprise" portant le nom juridique,
+vérifié pour les 9 : **SGAM AG2R LA MONDIALE** (entité consolidée),
+**AG2R Prévoyance**, **Arpège Prévoyance**, **Prima**, **AG.Mut**,
+**VIASANTÉ Mutuelle**, **La Mondiale**, **La Mondiale Europartner**,
+**La Mondiale Partenaire**.
+
+DIFFÉRENCE MAJEURE AVEC AÉMA : ce document est confirmé **texte natif**
+(`detecter_templates` → `mode="codes_eiopa"`, `scr_method=
+"formule_standard"`) — contrairement à Aéma (100% image). Chaque entité
+isolée via `extraire_entite()` (déjà existante, `ingest.py`) est donc
+extraite par le MÊME mécanisme que `extract_kpis_predica.py`
+(`classify_pages`+`extract_qrt_native` construit un corpus à la volée,
+`resoudre_variantes_qrt` le résout) — pas de lecture manuelle. Nouveau
+module `ag2r_entites.py`.
+
+**BUG RÉEL TROUVÉ ET CORRIGÉ — primes_acquises_brutes/charge_sinistres
+à 0,00 pour les 9 entités** : les pages S.05.01.02 de ce document
+utilisent du texte natif TOURNÉ 90° (vérifié : `span['dir'] = (0.0,
+-1.0)` sur PyMuPDF, au lieu de `(1.0, 0.0)` horizontal) — même famille
+de limite que MAIF page 114 (Décision 084, "colonnes rotées non
+parsable automatiquement"), mais ici touchant TOUTES les entités du
+document. `extract_qrt_native()` suppose un texte horizontal (position
+x croissante = colonne suivante) et ne trouve AUCUNE valeur sur ces
+pages (`valeurs={}` pour toutes les lignes), silencieusement — sans
+vérification, cela aurait inséré 0,00 (une valeur fausse et trompeuse,
+pas un NULL honnête) pour les 9 entités.
+
+Corrigé SANS toucher `extract_qrt_native()` ni `classifier_lignes()`
+(zéro risque de régression sur les autres documents) : sur du texte
+tourné, PyMuPDF imprime chaque valeur sur SA PROPRE LIGNE — exactement
+le pattern que `classifier_lignes()` (Décision 073, déjà utilisée pour
+MAIF/Covéa) sait déjà accumuler. `resoudre_primes_sinistres_ag2r()`
+appelle `classifier_lignes()` directement sur le texte brut de chaque
+page S.05.01.02, cherche les lignes dont le libellé normalisé se
+termine par un code R0210/R0220/R0230/R1510 (primes) ou
+R0310/R0320/R0330/R1610 (sinistres), et prend la DERNIÈRE valeur
+(colonne Total). Vérifié sur AG2R Prévoyance : R0210 Total = 2 339 198
+= 1 343 253+995 945+0×10, exact. Résultats plausibles sur les 9
+entités (ratio primes/best_estimate cohérent partout, pas de zéro
+suspect) — voir `ag2r_extraction.log`.
+
+RÉSULTAT : **9 entités insérées, 22/22 KPIs chacune** (structure
+complète), 1 seul NULL chacune (`resultat_technique`, NULL par
+construction) sauf SGAM AG2R LA MONDIALE (entité consolidée, 4 NULL :
+`fonds_propres_t3`, `scr_souscription_nonvie`, `scr_diversification`,
+`resultat_technique` — mapping groupe moins complet que solo pour ces
+lignes, non forcé).
+
+RÉGRESSION : aucun risque structurel (nouveau module dédié, aucun code
+partagé modifié) — non re-vérifié explicitement ici, couvert par la
+vérification de régression globale en fin de session (batch_diagnostic
++ requête directe sur les sociétés pipeline dédié).
