@@ -383,7 +383,41 @@ ENTITES_KPIS = {
         "scr_diversification": (-714498094.0, 600, "S.25.01.21.01/R0060"),
         "scr_operationnel": (84890604.0, 600, "S.25.01.21.02/R0130"),
     },
-    # 1 entité restante : bornes connues (ENTITES_BORNES ci-dessus),
+    "Abeille IARD Sante": {
+        # Pages 603-618 (Décision 085 ; le document se termine réellement
+        # à 618, pages 619-621 sont le glossaire/mentions légales, hors
+        # bornes ENTITES_BORNES 603-621). 13e et dernière entité du
+        # document combiné. Mixte vie+non-vie ; la composante "vie" est
+        # en réalité des rentes issues de sinistres non-vie convertis
+        # (bodily injury), charge_sinistres vie NÉGATIVE (-26 079 879 K€,
+        # vérifiée : part réassureurs=0 donc net=brut, mouvement de
+        # provision, pas une erreur). Recoupements exacts : R1000(p604)=
+        # R0700(p614)=1 093 828 202 ; provisions_techniques=best_estimate+
+        # marge_risque=R0510+R0600(p604)=2 694 416 194 (±1 arrondi) ;
+        # R0100(p615)=somme(R0010..R0070)=916 953 540 (exact) ; R0220=
+        # R0100+R0130+R0150=931 326 706=R0580(p614), exact.
+        "best_estimate": (2527247594.0, 604, "S.02.01.02.01 Bilan, somme 4 lignes BE (R0540+R0580+R0630+R0670)"),
+        "marge_risque": (167168601.0, 604, "S.02.01.02.01 Bilan, somme 4 lignes MR (R0550+R0590+R0640+R0680)"),
+        "primes_acquises_brutes": (2140998437.0, 606, "S.05.01.02.01(non-vie,R0210/Total=2140998437,p.606)+S.05.01.02.02(vie,R1510/Total=0,p.607)"),
+        "charge_sinistres": (1999115035.0, 606, "S.05.01.02.01(non-vie,R0310/Total=2025194914,p.606)+S.05.01.02.02(vie,R1610/Total=-26079879,p.607, rentes de sinistres non-vie converties)"),
+        "fonds_propres_eligibles": (1559491555.0, 614, "S.23.01.01.01/R0540/Total"),
+        "fonds_propres_t1_nr": (1093828202.0, 614, "S.23.01.01.01/R0540/Niveau1 non restreint"),
+        "fonds_propres_t1_r": (0.0, 614, "S.23.01.01.01/R0540/Niveau1 restreint"),
+        "fonds_propres_t2": (378134640.0, 614, "S.23.01.01.01/R0540/Niveau2"),
+        "fonds_propres_t3": (87528712.0, 614, "S.23.01.01.01/R0540/Niveau3"),
+        "scr_total": (931326706.0, 614, "S.23.01.01.01/R0580 — confirmé p.615 (S.25.01.21.02/R0220, exact)"),
+        "mcr": (386992783.0, 614, "S.23.01.01.01/R0600"),
+        "ratio_scr": (167.0, 614, "S.23.01.01.01/R0620"),
+        "ratio_mcr": (303.0, 614, "S.23.01.01.01/R0640"),
+        "scr_marche": (342109634.0, 615, "S.25.01.21.01/R0010"),
+        "scr_contrepartie": (106535572.0, 615, "S.25.01.21.01/R0020"),
+        "scr_souscription_vie": (14593270.0, 615, "S.25.01.21.01/R0030"),
+        "scr_souscription_sante": (63253699.0, 615, "S.25.01.21.01/R0040"),
+        "scr_souscription_nonvie": (692659723.0, 615, "S.25.01.21.01/R0050"),
+        "scr_diversification": (-302198358.0, 615, "S.25.01.21.01/R0060"),
+        "scr_operationnel": (73038969.0, 615, "S.25.01.21.02/R0130"),
+    },
+    # Toutes les 13 entités du document combiné Aéma Groupe sont traitées.
     # extraction manuelle pas encore faite. Ne PAS deviner de valeurs —
     # absence délibérée de ces clés, traitée comme "non traité" par
     # calculer_score() ci-dessous, jamais comme un score de 0/20 (ce qui
