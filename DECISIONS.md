@@ -5159,3 +5159,108 @@ du pipeline, pas une contradiction).
 
 Aucune modification de code cette tâche — travail 100% diagnostic/OCR
 manuel, rien à régresser.
+
+## Décision 082 — Bilan final, session nocturne autonome (Tâches 0-5)
+
+CONTEXTE : session nocturne longue, 6 tâches séquentielles (Tâche 0 :
+SwissLife+Allianz Vie déjà en cours à l'interruption ; Tâches 1-5 :
+Pacifica, BPCE IARD, Generali Iard/Vie, MACIF SAM, ce bilan), commit
+après chaque tâche réussie, attente automatique si tokens épuisés (non
+nécessaire ici), règle absolue "NULL plutôt que deviner".
+
+### Tableau final — diagnostic générique (/20), tous les PDF de data/
+
+| # | Fichier | Groupe | KPIs | Statut |
+|---|---|---|---|---|
+| 1 | Aema-Groupe (fichier combiné, 621p) | Aéma/MACIF | 0/20 | Non exploitable tel quel (13 entités mélangées) |
+| — | ↳ MACIF SAM (bloc isolé p.452-467) | MACIF | **20/20** | Exploitable — documenté, pas encore automatisé (Décision 081) |
+| 2 | AFV (AXA France Vie) | AXA | 16/20 | Exploitable |
+| 3 | AFI (AXA France IARD) | AXA | 16/20 | Exploitable |
+| 4 | ARE (AXA Retraite Entreprise) | AXA | 0/0 | Hors périmètre (nomenclature nationale) |
+| 5 | Generali Iard | Generali | **17/20** | Exploitable (nouveau) |
+| 6 | Generali Vie | Generali | **17/20** | Exploitable (nouveau) |
+| 7 | BPCE Vie | BPCE | 20/20 | Exploitable |
+| 8 | BPCE IARD | BPCE | 13/20 | Partiel |
+| 9 | Cardif Vie | BNP Paribas | 20/20 | Exploitable |
+| 10 | Cardif RD | BNP Paribas | 20/20 | Exploitable |
+| 11 | Allianz Group 2024 (international) | Allianz | 6/20 | Faible |
+| 12 | Allianz IARD | Allianz | 15/20 | Exploitable |
+| 13 | Allianz Vie | Allianz | 15/20 | Exploitable |
+| 14 | Crédit Agricole Assurances | Crédit Agricole | 20/20 | Exploitable |
+| 15 | Pacifica | Crédit Agricole | **20/20** | Exploitable (corrigé cette session) |
+| 16 | Predica | Crédit Agricole | 20/20 | Exploitable |
+| 17 | MAIF | MAIF | 13/20 | Partiel |
+| 18 | Sogécap | Société Générale | 20/20 | Exploitable |
+| 19 | MACSF | MACSF | 20/20 (21/22 dédié) | Exploitable |
+| 20 | Groupama 2024 | Groupama | 11/20 | Partiel |
+| 21 | Groupama 2025 | Groupama | 9/20 (**21/22 pipeline dédié**) | Exploitable (pipeline réel) |
+| 22 | CNP Assurances | CNP | 20/20 (21/22 dédié) | Exploitable |
+| 23 | Covéa | Covéa | 16/20 | Exploitable |
+| 24 | SwissLife | SwissLife | **20/20** | Exploitable (corrigé cette session) |
+
+### Comparaison au top 15 du marché français
+
+| Groupe parent | Testé ? | Meilleur score | Statut |
+|---|---|---|---|
+| CNP Assurances | Oui | 21/22 | **Exploitable** |
+| Crédit Agricole | Oui | 20/20 (×3 entités) | **Exploitable** |
+| BNP Paribas (Cardif) | Oui | 20/20 (×2) | **Exploitable** |
+| Société Générale (Sogécap) | Oui | 20/20 | **Exploitable** |
+| Covéa | Oui | 16/20 | **Exploitable** |
+| Groupama | Oui | 21/22 (dédié) | **Exploitable** |
+| AXA | Oui | 16/20 | **Exploitable** |
+| BPCE | Oui | 20/20 (BPCE Vie) | **Exploitable** |
+| Allianz | Oui | 15/20 (×2) | **Exploitable** |
+| Generali | Oui | 17/20 (×2) | **Exploitable (nouveau)** |
+| SwissLife | Oui | 20/20 | **Exploitable (nouveau, corrigé)** |
+| MACIF/Aéma | Oui (partiel) | 20/20 (MACIF SAM, non automatisé) | Exploitable en pratique, pas en pipeline |
+| MAIF | Oui | 13/20 | Partiel |
+| AG2R La Mondiale | **Non** | — | Non testé |
+| MGEN | **Non** | — | Non testé |
+
+### Réponse mise à jour : combien de groupes exploitables ?
+
+**11 groupes sur 15 sont pleinement exploitables (15+/20) dans le
+pipeline automatisé** — CNP, Crédit Agricole, BNP Paribas, Société
+Générale, Covéa, Groupama, AXA, BPCE, Allianz, Generali, SwissLife.
+C'est **+3 par rapport au dernier bilan** (8/15) : Generali (nouveau,
+Décision 080), SwissLife (corrigé, Décision 076), et BPCE confirmé via
+BPCE Vie.
+
+**MACIF est un cas à part** : son entité principale (MACIF SAM) est
+elle aussi à 20/20, mais uniquement documentée manuellement (Décision
+081) — pas encore intégrée au pipeline automatisé car le fichier source
+combine 13 entités juridiques et l'architecture actuelle suppose "1
+fichier = 1 score". Si on la compte, **12 groupes sur 15** sont
+exploitables en pratique.
+
+Seuls **2 groupes restent non testés** (aucun PDF dans `data/`) : AG2R
+La Mondiale et MGEN. MAIF reste partiel (13/20, tableau S.05.01.02 sans
+colonne Total imprimée, cf. Décision 074).
+
+Compte tenu des parts de marché déjà établies (bilan précédent : top 8
+groupes ≈ 70% du marché à eux seuls, top 15 probablement 80-85%+) — la
+couverture RÉELLE du pipeline a nettement progressé cette session,
+passant d'environ 70% (8 groupes exploitables) à une couverture
+substantiellement plus large avec l'ajout de Generali (24,9 Md€, un des
+plus gros acteurs du marché) et la confirmation de BPCE/SwissLife.
+
+### Récapitulatif des 6 tâches de la session nocturne
+
+| Tâche | Statut | Résultat |
+|---|---|---|
+| 0 — SwissLife + Allianz Vie | Faite | SwissLife 14→20/20 ; Allianz Vie 13→15/20 (classify_pages fix + limite architecturale documentée) |
+| 1 — Pacifica, décalage géométrique | Faite | 4→20/20, tolérance de repli directionnelle, zéro régression sur 16 documents |
+| 2 — BPCE IARD, libellé | Faite | 0→13/20, whitelist + fix de signe tenté PUIS annulé après régression détectée sur Covéa |
+| 3 — Generali Iard/Vie, OCR complet | Faite | 0→17/20 chacun, lecture manuelle + recoupement interne (PaddleOCR écarté après désaccord) |
+| 4 — MACIF SAM, bloc isolé | Faite | 0→20/20, documenté (pas encore automatisé) |
+| 5 — Bilan final | Faite | ce document |
+
+`resultat_technique` n'a jamais été touché (Décision 051). Toutes les
+tâches ont respecté la règle "NULL plutôt que deviner" — 2 tentatives
+de fix ont été testées puis explicitement annulées après avoir détecté
+une régression réelle (BPCE IARD sign-fix sur Covéa), plutôt que
+d'accepter un chiffre faux pour gagner un KPI.
+
+FIN DE SESSION — comme demandé, aucune nouvelle tâche n'est commencée
+au-delà de ces 6.
