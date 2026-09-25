@@ -5495,3 +5495,56 @@ hors périmètre de cette tâche).
 RÉGRESSION VÉRIFIÉE : Groupama (22 KPIs, 30/30 contrôles), CNP
 Assurances (22 KPIs), MACSF prévoyance (22 KPIs) — comptes et
 `ratio_scr` strictement inchangés après l'insertion de Predica.
+
+## Décision 086 — BPCE IARD : fix scr_diversification sans casser Covéa (13/20 → 14/20)
+
+CONTEXTE : Décision 079 avait tenté un fix générique du bug de signe
+détaché (`_appliquer_signes_detaches()` dans `classifier_lignes()`,
+`extraire_par_libelle.py`) pour corriger `scr_diversification` de BPCE
+IARD (lu +196 476 au lieu de -196 476), mais l'avait annulé après avoir
+cassé `scr_total` de Covéa (transformé en -15 058 209, valeur
+impossible).
+
+RÉ-ANALYSE DU BLOCAGE : le fix générique opère sur la sortie de
+`classifier_lignes()` — une liste de fragments texte SANS position de
+colonne conservée. Un "-" isolé y est structurellement AMBIGU entre 2
+cas : (1) un signe négatif détaché de sa magnitude (BPCE IARD, page 78,
+ligne "Diversification" : tokens `["196 476", "-", "196 476", "-"]`,
+magnitude PUIS signe, pour les 2 colonnes net/brut) et (2) une cellule
+voisine vide, convention EIOPA "non applicable" (Covéa, page S.22.01.22,
+ligne "Capital de solvabilité requis" : `[15058209, "-", "-", 82817,
+"-"]`, où les "-" sont de VRAIES colonnes sans rapport, pas des signes).
+Une fois réduits à une liste plate de tokens, ces 2 cas sont
+indiscernables sans réintroduire le suivi de position (x,y) à travers
+tout `classifier_lignes()` — changement bien plus large que ce bug
+précis, hors périmètre ici.
+
+SOLUTION RETENUE : `resoudre_scr_diversification_bpce_iard()`
+(`batch_diagnostic.py`), scoped par nom de fichier exact
+(`bpcea-iard-sfcr-2025.pdf`), même pattern que
+`resoudre_scr_mcr_maif()`/`resoudre_primes_sinistres_covea()` — lit
+directement le texte brut de la page 78 (S.25.01.01), localise la ligne
+"Diversification", vérifie STRICTEMENT que les 4 tokens suivants ont la
+forme exacte `[magnitude, "-", magnitude, "-"]` (2 magnitudes
+identiques) avant d'accepter — retourne `None` (jamais une valeur
+devinée) si la page a changé de forme. Ne touche AUCUN code partagé
+(`classifier_lignes()`/`extraire_par_libelle()` restent identiques à
+avant Décision 079) : risque de régression nul par construction, pas
+seulement vérifié.
+
+`DOCUMENTS_KPI_LIBELLE_NON_FIABLE` vidé (l'entrée BPCE IARD/
+scr_diversification n'est plus nécessaire — le KPI est maintenant
+résolu correctement avant que ce mécanisme d'exclusion s'applique).
+
+RÉSULTAT : **BPCE IARD 13/20 → 14/20** (`scr_diversification` =
+-196 476 K€, vérifié par cohérence arithmétique contre le capital de
+base : 163214+82866+1311+68682+526509-196476 = 646106 ≈ 646105 imprimé,
+écart 1 K€ = arrondi source). Restent NULL (non traités ici, hors
+scope) : `fonds_propres_t1_nr/t1_r/t2/t3`, `primes_acquises_brutes`,
+`charge_sinistres`.
+
+RÉGRESSION VÉRIFIÉE (le point critique de cette tâche) : **Covéa
+toujours 16/20**, `scr_diversification` toujours -10 324 898 (identique
+à avant) — zéro impact, confirmé en isolant le test sur les 2
+documents. **MAIF toujours 17/20** (3e document partageant
+`classifier_lignes()`/`extraire_par_libelle()`), également inchangé.

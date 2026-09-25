@@ -238,6 +238,64 @@ def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_li
         resultats[kpi_name] = (total, f"somme {len(details)} sous-ligne(s) Brut, colonne Total (Décision 073)") if trouve else (None, None)
     return resultats
 
+
+BPCE_IARD_PAGE_SCR = 78  # S.25.01.01, 1-indexée — ligne "Diversification" au signe détaché
+
+
+def resoudre_scr_diversification_bpce_iard(pdf_path, fitz_module):
+    """Décision 085 : re-tentative du fix de signe détaché pour BPCE IARD
+    (Décision 079), cette fois-ci SPÉCIFIQUE au fichier plutôt que dans
+    classifier_lignes() partagé (dont la modification avait cassé Covéa —
+    cf. analyse ci-dessous). Lit directement le texte brut de la page
+    S.25.01.01 (page 78) et cherche la ligne "Diversification", dont les 4
+    tokens suivants (vérifié, Décision 079/085) sont
+    ["196 476", "-", "196 476", "-"] — magnitude PUIS signe, pour CHACUNE
+    des 2 colonnes (net, brut), au lieu du signe attendu avant la
+    magnitude. Structure vérifiée strictement (4 tokens, magnitudes
+    identiques, 2 signes "-") avant d'accepter — retourne None si la page
+    a changé de forme plutôt que de deviner.
+
+    POURQUOI PAS UN FIX DANS classifier_lignes() (analyse du blocage
+    précédent, Décision 079) : le fix générique `_appliquer_signes_
+    detaches()` avait cassé Covéa parce qu'il ne peut PAS distinguer,
+    dans la sortie de classifier_lignes() (liste de fragments texte sans
+    position de colonne conservée), un "-" ISOLÉ QUI EST UN SIGNE DÉTACHÉ
+    (le cas BPCE IARD ici) d'un "-" ISOLÉ QUI EST UNE CELLULE VOISINE VIDE
+    (le cas Covéa, S.22.01.22, plusieurs colonnes sans rapport valant
+    "non applicable") — les 2 sont structurellement identiques une fois
+    réduits à une liste de tokens plate. Résoudre cette ambiguïté
+    correctement demanderait de faire suivre la position de colonne (x,y)
+    à travers tout classifier_lignes(), un changement bien plus large que
+    ce bug précis. Une fonction scoped par nom de fichier (comme
+    resoudre_scr_mcr_maif/resoudre_primes_sinistres_covea) évite ce risque
+    structurel : elle ne touche AUCUN code partagé, donc ZÉRO risque de
+    régression sur Covéa/MAIF ou tout autre document, par construction."""
+    doc = fitz_module.open(str(pdf_path))
+    if BPCE_IARD_PAGE_SCR - 1 >= doc.page_count:
+        doc.close()
+        return None
+    texte = doc[BPCE_IARD_PAGE_SCR - 1].get_text()
+    doc.close()
+
+    lignes = [l.strip() for l in texte.split("\n") if l.strip()]
+    idx = next((i for i, l in enumerate(lignes) if l == "Diversification"), None)
+    if idx is None or idx + 4 >= len(lignes):
+        return None
+
+    suivants = lignes[idx + 1:idx + 5]
+    if len(suivants) != 4 or suivants[1] != "-" or suivants[3] != "-" or suivants[0] != suivants[2]:
+        return None  # forme inattendue — page changée, ne pas deviner
+    try:
+        magnitude = float(suivants[0].replace(" ", "").replace(",", "."))
+    except ValueError:
+        return None
+
+    return -magnitude, (f"S.25.01.01 p.{BPCE_IARD_PAGE_SCR}, ligne \"Diversification\" — signe \"-\" détaché "
+                         f"de la magnitude {suivants[0]} (2 colonnes net/brut identiques), ré-attaché après "
+                         f"vérification stricte de la forme exacte des 4 tokens (Décision 085, fix scoped "
+                         f"par nom de fichier, cf. Décision 079 pour l'analyse du fix générique annulé)")
+
+
 # Documents VÉRIFIÉS VISUELLEMENT (rendu image + lecture du texte brut,
 # cf. session de diagnostic visuel) comme contenant de vrais tableaux QRT
 # complets malgré l'absence de code R0xxx/C0xxx. SEULS ces documents
@@ -273,19 +331,15 @@ DOCUMENTS_IMAGE_RESOLUE_PAR_PIPELINE_REEL = {
 
 # Décision 079 : KPIs qu'un signal "OK" du mode libellé rapporterait à
 # tort pour certains documents — le libellé matche bien, mais la valeur
-# elle-même est fausse (signe détaché, cf. tentative de fix annulée
-# dans extraire_par_libelle.py). Forcés NULL explicitement après la
-# résolution générique plutôt que de laisser passer une valeur connue
+# elle-même est fausse (signe détaché). Forcés NULL explicitement après
+# la résolution générique plutôt que de laisser passer une valeur connue
 # comme incorrecte : "jamais deviner" prime sur "afficher un chiffre".
-DOCUMENTS_KPI_LIBELLE_NON_FIABLE = {
-    "bpcea-iard-sfcr-2025.pdf": {
-        "scr_diversification": "signe négatif détaché du nombre sur la page S.22.01.01 "
-                                "(\"-\" puis \"196 476\" sur 2 lignes séparées) — la valeur extraite "
-                                "serait +196476 alors que la vraie valeur est -196476 (vérifié par "
-                                "cohérence arithmétique contre le capital de base). Un fix générique "
-                                "testé et annulé (régression sur Covéa scr_total). Cf. Décision 079.",
-    },
-}
+# BPCE IARD/scr_diversification retiré d'ici en Décision 085 : résolu
+# par un fix scoped par nom de fichier (resoudre_scr_diversification_
+# bpce_iard, appelé avant que ce mécanisme d'exclusion ne s'applique) —
+# voir Décision 079 pour l'analyse du fix générique annulé (régression
+# Covéa) et Décision 085 pour la solution finale, spécifique au fichier.
+DOCUMENTS_KPI_LIBELLE_NON_FIABLE = {}
 
 # Décision 080 : Generali Iard / Generali Vie — documents 100% image
 # (aucun texte natif exploitable, 0 page QRT détectée par classify_pages
@@ -576,6 +630,13 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
                         resultat["kpis_ok"] += 1
                         resultat["kpis_via_libelle"].append({"kpi": kpi_name, "libelle": lbl, "valeur": v})
                         resultat["kpis_null"].remove(kpi_name)
+            if pdf_path.name == "bpcea-iard-sfcr-2025.pdf" and "scr_diversification" in resultat["kpis_null"]:
+                bpce_res = resoudre_scr_diversification_bpce_iard(pdf_path, fitz)
+                if bpce_res is not None:
+                    v, lbl = bpce_res
+                    resultat["kpis_ok"] += 1
+                    resultat["kpis_via_libelle"].append({"kpi": "scr_diversification", "libelle": lbl, "valeur": v})
+                    resultat["kpis_null"].remove("scr_diversification")
             texte_toutes_pages_qrt = "\n".join(p["texte"] for p in pages_qrt)
             kpis_non_fiables = DOCUMENTS_KPI_LIBELLE_NON_FIABLE.get(pdf_path.name, {})
             encore_null = []
