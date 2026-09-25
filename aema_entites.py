@@ -117,7 +117,36 @@ ENTITES_KPIS = {
         "scr_diversification": (-1009039.0, 476, "S.25.01.21.01/R0060"),
         "scr_operationnel": (113265.0, 476, "S.25.01.21.02/R0130"),
     },
-    # 10 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
+    "Macif Sante Prevoyance": {
+        # Pages 479-493 (Décision 085). Entité mixte vie+non-vie —
+        # primes/sinistres = somme S.05.01.02.01(non-vie,p.481-482,
+        # R0210/R0310 Total C0200) + S.05.01.02.02(vie,p.483,R1510/R1610
+        # Total C0300). Recoupements exacts : R1000(p480)=R0700(p490)=
+        # 948 561 ; provisions_techniques=best_estimate+marge_risque=
+        # R0510+R0600+R0690(p480)=650 734 ; R0100(p491)=somme(R0010..
+        # R0070)=332 593 ; R0220=R0100+R0130+R0140+R0150=366 181=R0580(p490).
+        "best_estimate": (592695.0, 480, "S.02.01.02.01 Bilan, somme 4 lignes non-nulles Meilleure estimation (R0580+R0630+R0670)"),
+        "marge_risque": (58039.0, 480, "S.02.01.02.01 Bilan, somme 3 lignes Marge de risque (R0590+R0640+R0680)"),
+        "primes_acquises_brutes": (1181586.0, 481, "S.05.01.02.01(non-vie,R0210/Total=896062,p.482)+S.05.01.02.02(vie,R1510/Total=285524,p.483)"),
+        "charge_sinistres": (777528.0, 481, "S.05.01.02.01(non-vie,R0310/Total=656058,p.482)+S.05.01.02.02(vie,R1610/Total=121470,p.483)"),
+        "fonds_propres_eligibles": (948561.0, 490, "S.23.01.01.01/R0540/Total"),
+        "fonds_propres_t1_nr": (948561.0, 490, "S.23.01.01.01/R0540/Niveau1 non restreint"),
+        "fonds_propres_t1_r": (0.0, 490, "S.23.01.01.01/R0540/Niveau1 restreint"),
+        "fonds_propres_t2": (0.0, 490, "S.23.01.01.01/R0540/Niveau2"),
+        "fonds_propres_t3": (0.0, 490, "S.23.01.01.01/R0540/Niveau3"),
+        "scr_total": (366181.0, 490, "S.23.01.01.01/R0580 — confirmé p.491 (S.25.01.21.02/R0220)"),
+        "mcr": (92022.0, 490, "S.23.01.01.01/R0600"),
+        "ratio_scr": (259.0, 490, "S.23.01.01.01/R0620"),
+        "ratio_mcr": (1031.0, 490, "S.23.01.01.01/R0640"),
+        "scr_marche": (183553.0, 491, "S.25.01.21.01/R0010"),
+        "scr_contrepartie": (12382.0, 491, "S.25.01.21.01/R0020"),
+        "scr_souscription_vie": (61988.0, 491, "S.25.01.21.01/R0030"),
+        "scr_souscription_sante": (199866.0, 491, "S.25.01.21.01/R0040"),
+        "scr_souscription_nonvie": (0.0, 491, "S.25.01.21.01/R0050"),
+        "scr_diversification": (-125196.0, 491, "S.25.01.21.01/R0060"),
+        "scr_operationnel": (38266.0, 491, "S.25.01.21.02/R0130"),
+    },
+    # 9 entités restantes : bornes connues (ENTITES_BORNES ci-dessus),
     # extraction manuelle pas encore faite. Ne PAS deviner de valeurs —
     # absence délibérée de ces clés, traitée comme "non traité" par
     # calculer_score() ci-dessous, jamais comme un score de 0/20 (ce qui
