@@ -6699,3 +6699,16 @@ Identités vérifiées exactes : `T1nr+T1r+T2+T3` = 11 254,37 =
 
 `validate_kpis.py --company "Cardif Assurance Vie"` : **46/46**. 22
 KPIs, 21 valeurs, 1 NULL (`resultat_technique`).
+
+## Décision 098 — Cardif Assurances Risques Divers intégrée (31e société), K€ confirmé correct
+
+Même méthode que Cardif Assurance Vie (Décision 097) : document texte
+natif, `codes_eiopa`, `solo`, K€ testé et confirmé AVANT insertion
+(`ratio_scr` recalculé 145,76% vs 146,00% publié, écart normal
+d'arrondi). Identité `T1nr+T1r+T2+T3` = 617,81 = `fonds_propres_
+eligibles` exacte. Magnitudes plausibles pour une entité IARD (plus
+petite que l'entité Vie du même groupe, cohérent) : SCR=423,85 M€,
+fonds propres=617,81 M€, primes=1 006,82 M€.
+
+`validate_kpis.py --company "Cardif Assurances Risques Divers"` :
+**46/46**. 22 KPIs, 21 valeurs, 1 NULL (`resultat_technique`).
