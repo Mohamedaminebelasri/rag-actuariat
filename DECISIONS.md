@@ -6169,3 +6169,186 @@ du fix générique, cf. limite assumée ci-dessus).
 | Merge `phase2-metadonnees-multidoc` | Déjà fait avant cette session (`1cba307`) — rien à merger |
 | Ingestion CNP dans le RAG conversationnel (Qdrant) | Bloquée proprement à l'étape `fix_unnumbered_levels.py` — diagnostiquée, travail Docling conservé, script dédié à écrire (non deviné) |
 | État des lieux DECISIONS.md | Cette entrée |
+
+## Décision 093 — Généralisation à 4 nouvelles sociétés : 2 bugs systémiques trouvés et corrigés (code partagé), 1 régression évitée, Crédit Agricole Assurances intégrée
+
+CONTEXTE : tâche demandée — généraliser le pipeline KPI à Allianz Vie,
+MAIF, Covéa, Crédit Agricole Assurances (groupe combiné), dans cet
+ordre. L'objectif explicite de l'utilisateur : voir si le système
+généralise ou révèle des bugs inédits. **Réponse : les deux** — la
+généralisation a immédiatement révélé un bug systémique touchant
+`primes_acquises_brutes`/`charge_sinistres` sur plusieurs sociétés
+DÉJÀ en base, dont Groupama (la société de référence du projet). Seule
+Crédit Agricole Assurances a été menée à terme dans cette tâche ;
+MAIF/Covéa/Allianz Vie restent à faire (cf. section finale).
+
+### Étape 1 — Crédit Agricole Assurances : diagnostic 20/20 en apparence, mais valeurs fausses
+
+Diagnostic `batch_diagnostic.py` : `codes_eiopa`, `groupe`,
+`formule_standard`, 20/20 (comme Predica/MGEN). `extract_kpis_
+creditagricole.py` construit sur le même modèle que `extract_kpis_
+predica.py`. Premher essai : `primes_acquises_brutes` = **183 334,32
+M€** — implausible (plus que le marché français de l'assurance sur
+une année entière). Investigation immédiate plutôt que d'insérer une
+valeur non vérifiée.
+
+### Étape 2 — Bug A (EN/FR) : le dictionnaire QRT synthétique concatène les libellés
+
+`construire_qrt_dict_synthetique()` (`batch_diagnostic.py`), utilisé
+par tous les `extract_kpis_*.py` SANS `corpus_final.json` dédié
+(Predica, MGEN, AG2R, Crédit Agricole), accumule TOUS les libellés
+connus pour un même code de ligne, séparés par `" | "` — ex.
+`"Premiums earned | Primes acquises"`. `KPI_QRT_MAPPING` déclare une
+variante EN (`"Premiums earned"`) ET une variante FR (`"Primes
+acquises"`) pour le MÊME `(template, row, col)` — sur un document où
+le libellé synthétique combine les deux, LES DEUX variantes matchent
+la MÊME cellule, et l'appelant (`total = sum(v for v,_,_ in
+resultats)`, cumulatif par construction pour primes/sinistres)
+comptait deux fois la même donnée.
+
+### Étape 3 — Bug B (colonne Total) : `col="toutes"` incluait une vraie colonne Total déjà peuplée
+
+Bug distinct, déjà partiellement connu (paramètre `exclure_total`,
+Décision 060, activé uniquement pour CNP) mais jamais généralisé :
+quand un document imprime À LA FOIS les colonnes par ligne d'activité
+ET une colonne "Total" (qui vaut par construction leur somme),
+`sommer_toutes_colonnes(col="toutes")` additionnait tout, doublant le
+résultat. `exclure_total` existait mais n'était PAS activé par défaut
+("comportement historique de Groupama préservé" — analyse montrée
+fausse ci-dessous pour ce KPI précis).
+
+**Vérification que Groupama a RÉELLEMENT le même bug** (pas supposé) :
+inspection directe de `corpus_final.json` — la ligne R0210 (Primes
+acquises Brut, non-vie) a ses 12 colonnes de ligne d'activité PLUS une
+colonne `C0200`/"Total" TOUTES peuplées, `Total = somme exacte des 12
+colonnes` (14 013 513 ≈ 14 013 512 calculé). Le commentaire d'origine
+("Groupama a l'inverse : certaines lignes n'ont de valeur QUE dans la
+colonne Total") ne s'applique à AUCUNE ligne de primes_acquises_brutes/
+charge_sinistres sur le document réel — l'exception documentée en 2024
+ne concernait pas ce KPI précis.
+
+### Étape 4 — Détection par ARITHMÉTIQUE, pas par libellé de colonne
+
+Piège trouvé en corrigeant Bug B avec une détection par libellé
+(`libelle_colonne == "total"`) : ça fonctionne sur le corpus Docling
+(Groupama/CNP/MACSF, qui stocke le texte d'en-tête réel "Total") mais
+PAS sur le corpus texte natif (`extract_qrt_native`, Predica/MGEN/AG2R/
+Crédit Agricole), qui stocke seulement le CODE de colonne ("C0200") —
+zéro effet sur ces documents, régression silencieuse évitée en testant
+avant de valider. **Solution finale : détection par ARITHMÉTIQUE**
+(une cellule dont la valeur == somme des autres cellules de la même
+ligne, tolérance 1 unité pour l'arrondi, UN SEUL candidat accepté pour
+éviter les faux positifs sur des cellules coïncidemment égales ou
+toutes nulles) — fonctionne identiquement sur les 2 conventions de
+corpus, sans dépendre du texte de libellé.
+
+**Piège multi-pages trouvé et corrigé avant de valider** : sur Crédit
+Agricole Assurances, la ligne R0210 est imprimée sur 2 pages physiques
+(9 colonnes p.68, colonnes restantes + Total p.69) — une détection
+arithmétique PAGE PAR PAGE ratait le Total (qui somme des colonnes des
+2 pages, pas seulement de la sienne). Corrigé en accumulant TOUTES les
+cellules de toutes les pages correspondant à un code de ligne AVANT de
+faire la détection.
+
+**Régression trouvée et corrigée avant de valider** : la 1re version
+de la détection globale levait une erreur (`KpiIntrouvable`) dès qu'UNE
+des lignes sommées (ex. R0230, souvent vide — "Réassurance non
+proportionnelle acceptée") n'avait AUCUNE valeur, cassant tout le KPI
+alors que les 2 autres lignes avaient des données (afv, Allianz Vie,
+AG2R groupe consolidé : `primes_acquises_brutes`/`charge_sinistres`
+passaient de résolu à `KpiIntrouvable`, -2 KPIs chacun en diagnostic).
+Corrigé : une ligne trouvée avec le bon libellé mais sans valeur
+contribue 0 (comme avant), ne lève pas d'erreur.
+
+### Étape 5 — Régression réelle trouvée EN COURS DE RÉGRESSION-TEST : MACSF
+
+En re-exécutant `extract_kpis_macsf.py` pour vérifier l'absence de
+régression (étape de discipline standard), découverte que `scr_
+diversification` de MACSF prévoyance est repassé de **-14,14 M€ à
++14,14 M€** — la correction de la Décision 090 avait été appliquée
+**directement en base**, jamais encodée dans le script lui-même
+(seule occurrence de ce type dans tout le projet, vérifié par grep sur
+"corrigée directement en base"). Contrairement à Predica/MGEN (Décision
+091, override retiré car devenu redondant avec le détecteur générique),
+la variante MACSF (signe sur une colonne `C0100` séparée) n'est PAS
+couverte par le détecteur de Décision 091. **Corrigé en 2 temps** :
+override ajouté DANS `extract_kpis_macsf.py` (idempotent — ne
+s'applique que si la valeur résolue est positive, donc sans risque si
+le bug source venait à être corrigé un jour) + valeur re-corrigée en
+base. Leçon retenue : ne plus jamais re-lancer un script d'extraction
+sans avoir vérifié au préalable l'existence d'un override DB-only.
+
+### Étape 6 — Régression-test complet sur les 27 sociétés (avant/après)
+
+- `batch_diagnostic.py` : 22 documents comparables, **KPIs résolus
+  strictement identiques avant/après** sur chacun (vérifié champ par
+  champ, pas juste visuellement).
+- `ag2r_entites.py` (9 entités) : sortie **strictement identique**
+  (`diff` vide) — `primes_acquises_brutes`/`charge_sinistres` de ces
+  entités passent par une fonction dédiée (`resoudre_primes_sinistres_
+  ag2r`, texte tourné à 90°, jamais `resoudre_variantes_qrt`), donc
+  hors périmètre de ce fix par construction ; les autres KPIs (SCR,
+  fonds propres) confirmés inchangés.
+- `validate_kpis.py --all` (27 sociétés) : **721/726 contrôles passés,
+  exactement les mêmes 5 échecs déjà documentés et légitimes** qu'avant
+  cette tâche (AG2R Prévoyance 25/26, SGAM 21/22, Macifilia 25/27,
+  Themis 26/27, Groupama 30/30 inchangé) — zéro nouvel échec, zéro
+  échec disparu.
+
+### Étape 7 — Sociétés déjà en base, valeurs corrigées
+
+| Société | primes_acquises_brutes avant | après (vérifié) | charge_sinistres avant | après (vérifié) |
+|---|---|---|---|---|
+| Groupama | 39 062,34 M€ (×2,00 trop élevé) | **19 531,17 M€** | 27 949,85 M€ | **13 974,93 M€** |
+| Predica | 121 745,81 M€ (×3,95 trop élevé) | **30 799,57 M€** | 83 966,88 M€ | **21 282,94 M€** |
+| MGEN | 12 836,05 M€ (×2,00 trop élevé) | **3 209,01 M€** | 9 514,70 M€ | **2 378,68 M€** |
+| CNP Assurances | 22 238,96 M€ | inchangé (déjà correct — libellé FR unique + `exclure_total` déjà actif) | 20 072,45 M€ | inchangé |
+| MACSF prévoyance | 42,60 M€ | inchangé (déjà correct) | 14,99 M€ | inchangé — `scr_diversification` reconfirmé -14,14 M€ après régression corrigée |
+| Les 9 entités AG2R | — | inchangées (fonction dédiée, hors périmètre du bug) | — | inchangées |
+
+Tous re-validés via `validate_kpis.py` individuellement — 27/27 (30/30
+Groupama) — après mise à jour.
+
+### Étape 8 — Crédit Agricole Assurances intégrée (28e société)
+
+22 KPIs, 21 valeurs, 1 NULL (`resultat_technique`). `primes_acquises_
+brutes`/`charge_sinistres` insérés via override manuel scopé au
+fichier (49 173,00 M€ / 30 255,38 M€, lecture directe de la colonne
+Total imprimée p.69/70) — PAS via `resoudre_variantes_qrt`, à cause
+d'un **3e bug, distinct, non corrigé** : `extract_qrt_native()` ne
+capture AUCUNE valeur pour la ligne R0210/R0220/R0230 sur la page 68
+de ce document, bien que 9 valeurs soient bien imprimées à cet endroit
+(vérifié sur le texte brut) — un bug d'appariement position/colonne
+distinct des bugs A/B, hors périmètre de cette tâche (scopé au fichier,
+documenté dans `extract_kpis_creditagricole.py`, pas deviné ni forcé
+dans le code partagé). `validate_kpis.py` : **27/27**. Cohérence
+croisée vérifiée : `fonds_propres_eligibles/scr_total×100 = 194,50%`
+vs `ratio_scr` publié `195%` (à la limite d'arrondi, cohérent) ;
+`T1nr+T1r+T2+T3 = fonds_propres_eligibles` exact.
+
+### Bilan génériques vs spécifiques (objectif de la session)
+
+| Catégorie | Compte |
+|---|---|
+| Bugs GÉNÉRIQUES trouvés (code partagé, `extract_kpis.py`) | 2 (Bug A dédoublonnage EN/FR, Bug B colonne Total) — corrigés une fois pour toutes, zéro régression sur 27 sociétés |
+| Bugs SPÉCIFIQUES à un document trouvés | 1 (Crédit Agricole Assurances p.68, extraction positionnelle) — non corrigé, scopé |
+| Régression trouvée en testant AVANT de valider (Bug B, détection par libellé) | 1 — corrigée avant intégration (jamais livrée) |
+| Régression trouvée en testant AVANT de valider (empty-values raise) | 1 (afv/Allianz Vie/AG2R groupe) — corrigée avant intégration |
+| Régression réelle DÉJÀ EN BASE, trouvée en re-testant (MACSF) | 1 — corrigée, override ajouté au code pour ne plus jamais la reperdre |
+| Nouvelle société intégrée | Crédit Agricole Assurances (28e, 22/22, 27/27) |
+
+### Reste à faire (hors périmètre de cette tâche, non commencé)
+
+MAIF, Covéa, Allianz Vie — non extraites. Le contexte fourni par
+l'utilisateur (Décisions 077/079/082/084/090) reste le point de départ
+valide : Allianz Vie 15/20 diagnostic, 3 KPIs confirmés irréductibles ;
+MAIF 17/20, fonction `resoudre_scr_mcr_maif()` déjà construite et
+vérifiée (Décision 074/084), prête à être branchée dans un
+`extract_kpis_maif.py` ; Covéa 16/20, `resoudre_primes_sinistres_
+covea()` déjà construite, le reste des KPIs passerait par le repli
+libellé générique (`KPI_LABELS_FR`) déjà utilisé en diagnostic — **à
+revérifier avec la même rigueur que cette tâche** (le bug de cette
+session prouve qu'un score de diagnostic élevé ne garantit PAS des
+valeurs correctes pour primes_acquises_brutes/charge_sinistres — les 2
+KPIs à vérifier en priorité, par recoupement arithmétique direct contre
+le PDF, avant toute insertion).

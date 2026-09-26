@@ -74,6 +74,28 @@ def extraire_tout_macsf():
         else:
             valeurs[kpi_name] = (None, None, "aucune source disponible pour MACSF")
 
+    # Correction manuelle vérifiée — scr_diversification (Décision 090,
+    # ré-appliquée Décision 093 : la 1re correction avait été faite
+    # DIRECTEMENT en base sans patcher ce script, régression réelle
+    # trouvée en le relançant lors de l'audit de Décision 093, qui
+    # écrasait silencieusement la valeur corrigée). Bug : signe "-"
+    # détaché, assigné à une colonne C0100/"Value" séparée au lieu
+    # d'être attaché à la magnitude en C0090 — variante NON couverte par
+    # le détecteur générique de Décision 091 (celui-ci couvre l'espace
+    # fine/les parenthèses/le signe+magnitude adjacents, pas un signe
+    # sur une colonne entièrement distincte). Vérifié par cohérence
+    # arithmétique EXACTE : R0100 (SCR de base) = 497 952+3 875+15 313+
+    # 0+0-14 137+0 = 503 003, quasi identique au R0100 imprimé (503 004,
+    # écart 1 = arrondi) — la version positive (531 277) ne colle pas.
+    if valeurs.get("scr_diversification", (None,))[0] is not None and valeurs["scr_diversification"][0] > 0:
+        v, page, note = valeurs["scr_diversification"]
+        valeurs["scr_diversification"] = (
+            -v, page,
+            f"{note} — signe corrigé manuellement (Décision 090/093) : signe '-' détaché sur colonne C0100 "
+            f"séparée, vérifié par cohérence arithmétique exacte (R0100=503 003 ≈ 503 004 imprimé avec "
+            f"-14 137, la version positive ne colle pas)",
+        )
+
     valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP)")
 
     return valeurs, corpus, templates_presents

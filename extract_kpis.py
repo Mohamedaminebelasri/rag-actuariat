@@ -240,9 +240,49 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
     "(code absent du dictionnaire EIOPA)") — la 1re version levait une
     erreur dès la rencontre du doublon, avant même d'atteindre le bon
     élément. La ligne ENTIÈRE échoue seulement si AUCUN élément n'a le
-    bon libellé pour ce code."""
+    bon libellé pour ce code.
+
+    Décision 093 — EXCLUSION AUTOMATIQUE D'UNE COLONNE "Total" DÈS QU'AU
+    MOINS UNE AUTRE colonne de la même ligne porte une valeur : sinon la
+    colonne Total (qui vaut TOUJOURS la somme des autres colonnes de sa
+    ligne, quand elles existent) est additionnée EN PLUS d'elles,
+    doublant le résultat. Détection PAR ARITHMÉTIQUE (une cellule dont
+    la valeur == somme des autres cellules de la même ligne, tolérance
+    1 unité pour l'arrondi), PAS par libellé de colonne — vérifié que le
+    libellé ne suffit PAS : le corpus Docling (corpus_final.json,
+    Groupama/CNP/MACSF) stocke le texte d'en-tête réel ("Total"), mais
+    le corpus texte natif (extract_qrt_native, Predica/MGEN/AG2R/Crédit
+    Agricole, via le dictionnaire QRT synthétique) stocke seulement le
+    CODE de colonne ("C0200") — une détection par texte "total" ratait
+    silencieusement ce 2e cas. La détection arithmétique fonctionne dans
+    les 2 cas, sans dépendre de la convention de la pipeline. Bug réel
+    confirmé sur 4 sociétés avec recoupement arithmétique exact contre
+    la colonne Total imprimée sur le PDF : Groupama (primes_acquises_
+    brutes stocké 39 062,34 M€ vs réel 19 531,17 M€, ×2,00), Predica
+    (121 745,81 vs 30 799,58 M€, ×3,95 — cumulé avec le bug EN/FR
+    ci-dessous), MGEN, Crédit Agricole Assurances (mêmes ordres de
+    grandeur). AUCUNE régression sur le cas "Groupama a l'inverse"
+    documenté à l'origine du paramètre `exclure_total` (Décision 060) :
+    si une ligne n'a de valeur QUE dans une colonne (aucune autre
+    colonne renseignée en face), aucune cellule ne peut mathématiquement
+    "égaler la somme des autres" (il n'y a pas d'autres), donc rien
+    n'est exclu — la ligne reste incluse, comme avant. `exclure_total=
+    True` reste utilisable pour FORCER l'exclusion de la colonne
+    explicitement libellée "Total" même si l'arithmétique ne tombait pas
+    parfaitement juste (gardé pour compat CNP).
+
+    Détection GLOBALE, pas page par page : une même ligne (ex. R0210)
+    peut être imprimée sur PLUSIEURS pages physiques avec des colonnes
+    de ligne d'activité différentes sur chacune (Crédit Agricole
+    Assurances : 9 colonnes p.68, colonnes restantes + Total p.69) — la
+    colonne Total ne "boucle" alors avec la somme des autres QUE si on
+    les cumule TOUTES, pas seulement celles de sa propre page (vérifié :
+    limiter la détection à une seule page ratait le Total qui somme
+    aussi des colonnes d'une AUTRE page, régression réelle trouvée et
+    corrigée avant d'intégrer ce fix)."""
     total = 0.0
     for code_ligne, libelle_attendu in specs:
+        cellules_toutes = []
         trouve = False
         for e in elements:
             lignes = e["contenu"]["lignes"]
@@ -252,25 +292,37 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
             libelle = row["libelle_officiel"] or ""
             if libelle_attendu.lower() not in libelle.lower():
                 continue
-            # exclure_total (Décision 060) : certains documents (CNP) ont
-            # une colonne "Total" DÉJÀ PEUPLÉE en plus des colonnes par
-            # ligne d'activité (vérifié : C0200 = C0010+C0020+C0030
-            # exactement sur S.05.01.02.01 de CNP) — sommer "toutes les
-            # colonnes" y double-compte. MAIS Groupama (vérifié en
-            # régression réelle, pas supposé) a l'inverse : certaines
-            # lignes n'ont de valeur QUE dans la colonne "Total" (colonnes
-            # par ligne d'activité vides) — l'exclure y donnerait 0,
-            # divisant le résultat par 2. Pas de règle universelle
-            # observée : contrôlé au cas par cas via le paramètre
-            # `exclure_total`, jamais activé par défaut (comportement
-            # historique de Groupama préservé).
-            for cellule in row["valeurs"].values():
-                if exclure_total and (cellule.get("libelle_colonne") or "").strip().lower() == "total":
-                    continue
-                total += _vers_float(cellule["valeur_brute"])
+            # Ligne trouvée avec le bon libellé même si SANS valeur
+            # (cellule vide dans le PDF, ex. "Brut – Réassurance non
+            # proportionnelle acceptée" souvent tout en "-") — contribue
+            # alors 0, ne lève PAS d'erreur (même tolérance que
+            # sommer_cellules_tolerant) : régression réelle trouvée et
+            # corrigée avant d'intégrer la détection globale ci-dessus
+            # (afv/Allianz Vie/AG2R groupe perdaient primes_acquises_
+            # brutes/charge_sinistres en entier à cause d'UNE SEULE des 3
+            # lignes sommées vide, alors que les 2 autres avaient des
+            # valeurs).
             trouve = True
+            cellules_toutes.extend(row["valeurs"].values())
         if not trouve:
             raise KpiIntrouvable(f"{code_ligne} introuvable avec le libellé {libelle_attendu!r} dans aucun élément fourni")
+        montants = [_vers_float(c["valeur_brute"]) for c in cellules_toutes]
+        n = len(montants)
+        somme_totale = sum(montants)
+        # Un seul candidat "= somme des autres" accepté (dégénère sinon :
+        # ex. 2 cellules identiques satisfont TOUTES LES DEUX cette
+        # égalité, ou toutes les cellules valent 0 — jamais un vrai
+        # signal de colonne Total dans ces cas, ne rien exclure).
+        candidats = [i for i, m in enumerate(montants)
+                     if n > 1 and abs(m - (somme_totale - m)) <= 1 and m != 0]
+        exclus = set(candidats) if len(candidats) == 1 else set()
+        if exclure_total:
+            for i, cellule in enumerate(cellules_toutes):
+                if (cellule.get("libelle_colonne") or "").strip().lower() == "total":
+                    exclus.add(i)
+        for i, m in enumerate(montants):
+            if i not in exclus:
+                total += m
     return total
 
 
@@ -286,14 +338,35 @@ def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
     1re) — l'appelant décide : 1re = valeur principale, suivantes =
     croisement, ou somme de toutes si le KPI est cumulatif (primes,
     sinistres — vie + non-vie sont 2 variantes complémentaires, pas des
-    alternatives). Chaque élément : (valeur, template_id_complet, variante_dict)."""
+    alternatives). Chaque élément : (valeur, template_id_complet, variante_dict).
+
+    Décision 093 — DÉDOUBLONNAGE EN/FR : le dictionnaire QRT SYNTHÉTIQUE
+    (construire_qrt_dict_synthetique, utilisé par les extract_kpis_*.py
+    sans corpus_final.json dédié — Predica/MGEN/AG2R/Crédit Agricole)
+    ACCUMULE tous les libellés connus pour un même code de ligne, séparés
+    par " | " (ex. "Premiums earned | Primes acquises"). Une variante EN
+    et une variante FR déclarées séparément dans KPI_QRT_MAPMPING pour le
+    MÊME (template, row, col) matchent alors TOUTES LES DEUX cette même
+    cellule concaténée — sans dédoublonnage, l'appelant qui somme
+    `resultats` (primes_acquises_brutes/charge_sinistres, cumulatifs par
+    construction) comptait deux fois la même donnée. Confirmé sur MGEN
+    (×2 exact, ratio_scr recalculé retombait juste après correction) et
+    Crédit Agricole Assurances (×2 en plus du bug de colonne Total,
+    cf. sommer_toutes_colonnes). Un (template, row, col) déjà résolu
+    n'est donc conservé qu'une seule fois, sur son PREMIER succès dans
+    l'ordre de déclaration du mapping — sans impact sur les variantes
+    GÉNUINEMENT différentes (vie vs non-vie : row différent)."""
     resultats = []
+    vus = set()
     for v in variantes_disponibles(kpi_name, templates_presents):
         template_prefix = v["template"]
         elements = [e for e in corpus if e["template_id"].startswith(template_prefix)]
         if not elements:
             continue
         row, col, libelle = v["row"], v["col"], v["libelle_attendu"]
+        cle_dedup = (template_prefix, tuple(row) if isinstance(row, list) else row, col)
+        if cle_dedup in vus:
+            continue
         try:
             if isinstance(row, list):
                 if col == "toutes":
@@ -306,6 +379,7 @@ def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
             template_id_complet = next(e["template_id"] for e in elements if row in e["contenu"].get("lignes", {})) \
                 if not isinstance(row, list) else elements[0]["template_id"]
             resultats.append((valeur, template_id_complet, v))
+            vus.add(cle_dedup)
         except KpiIntrouvable:
             continue
     return resultats

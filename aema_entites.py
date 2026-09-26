@@ -39,11 +39,39 @@ ENTITES_BORNES = {
     "Abeille IARD Sante": (603, 621),
 }
 
-# Valeurs en K€ BRUT (telles que lues sur la page, devise "KEUR" —
-# converties en M€ uniquement au moment de l'insertion en base, cf.
-# `inserer_entite_en_base`, pour rester auditable contre le PDF).
-# ratio_scr/ratio_mcr sont déjà en points de pourcentage (ex. 212 pour
-# 212%), pas de conversion.
+# Valeurs BRUTES telles que lues sur la page (pour rester auditables
+# contre le PDF) — converties en M€ uniquement au moment de l'insertion
+# en base, cf. `inserer_entite_en_base`. ratio_scr/ratio_mcr sont déjà
+# en points de pourcentage (ex. 212 pour 212%), pas de conversion.
+#
+# Décision 093 — PIÈGE D'UNITÉ RÉEL DÉCOUVERT ET CORRIGÉ : l'hypothèse
+# initiale ("toutes les pages QRT de ce document sont en K€", cohérente
+# avec les sections narratives du groupe, ex. p.15/16/52 "EN MILLIERS
+# D'EUROS") est FAUSSE pour 7 des 13 entités — leurs annexes QRT à elles
+# (S.23.01.01, S.05.01.02, etc., 100% image, aucun texte natif, AUCUNE
+# étiquette d'unité visible sur la page elle-même) sont en réalité en
+# EUROS BRUTS, pas en K€. Découvert en auditant primes_acquises_brutes/
+# charge_sinistres de sociétés nouvellement extraites (Crédit Agricole
+# Assurances) : Aésio Mutuelle montrait un scr_total stocké de
+# 680 657,83 M€ (680 milliards €, impossible) alors que le SCR marché du
+# GROUPE ENTIER (p.66, "ÉVOLUTION DES SCR ET MCR", explicitement en K€)
+# n'est que de 4 301 737 K€ = 4,3 milliards €. Confirmé indépendamment
+# sur Abeille Vie (p.588) : "Capital en actions ordinaires" R0010 =
+# 1 205 528 533 — en K€ ce serait 1 205 milliards € de capital social
+# (impossible), en € bruts c'est 1,2 milliard € (plausible pour cette
+# entité, l'ex-Aviva Vie). Les 6 autres entités déjà en base (MACIF SAM,
+# Macif Vie, Macif Santé Prévoyance, Themis, Macifilia, Aéma Groupe)
+# restent en K€ — vérifié à l'identique (ex. MACIF SAM scr_total
+# 2 964 220 K€ = 2,96 Md€, cohérent avec sa taille réelle ; en € brut ce
+# serait 2,96 M€, bien trop petit) — donc PAS une règle générale du
+# document, un vrai piège par entité. ENTITES_UNITE_EUR_BRUT ci-dessous
+# liste les 7 entités confirmées en € brut ; `inserer_entite_en_base`
+# applique un diviseur ÷1 000 000 pour elles (÷1 000 pour les 6 autres).
+ENTITES_UNITE_EUR_BRUT = {
+    "Aesio Mutuelle", "MNPAF", "MMJ", "Nuoma",
+    "Abeille Vie", "Abeille Epargne Retraite", "Abeille IARD Sante",
+}
+
 ENTITES_KPIS = {
     "MACIF SAM": {
         "best_estimate": (5969795.0, 453, "S.02.01.02.01 Bilan, somme 5 segments Meilleure estimation"),
@@ -467,8 +495,10 @@ def inserer_entite_en_base(nom_entite, db_path="kpis.db", year=2025, company_typ
         raise ValueError(f"{nom_entite!r} pas encore traitée (voir ENTITES_KPIS) — rien à insérer")
 
     pd, pf = ENTITES_BORNES[nom_entite]
+    unite_brute = "euros bruts (Décision 093)" if nom_entite in ENTITES_UNITE_EUR_BRUT else "K€"
     note_origine = (f"Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), "
-                     f"entité isolée pages {pd}-{pf} (extraction manuelle sur rendu image, cf. Décision 083)")
+                     f"entité isolée pages {pd}-{pf} (extraction manuelle sur rendu image, cf. Décision 083 ; "
+                     f"unité source : {unite_brute})")
     defs_par_nom = {d["kpi_name"]: d for d in KPI_DEFINITIONS}
 
     conn = sqlite3.connect(db_path)
@@ -494,13 +524,18 @@ def inserer_entite_en_base(nom_entite, db_path="kpis.db", year=2025, company_typ
         kpis_entite["provisions_techniques"] = (be + rm, page_be, "best_estimate + marge_risque")
     kpis_entite["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP)")
 
+    # Décision 093 : 7 entités ont leurs annexes QRT en euros bruts, pas
+    # en K€ (cf. ENTITES_UNITE_EUR_BRUT ci-dessus) — diviseur ÷1 000 000
+    # au lieu de ÷1 000 pour elles.
+    diviseur_montant = 1_000_000.0 if nom_entite in ENTITES_UNITE_EUR_BRUT else 1000.0
+
     lignes = []
     for kpi_name, (valeur_brute, source_page, note) in kpis_entite.items():
         d = defs_par_nom[kpi_name]
         if valeur_brute is None:
             valeur = None
         else:
-            valeur = valeur_brute if d["unit"] == "pct" else valeur_brute / 1000.0
+            valeur = valeur_brute if d["unit"] == "pct" else valeur_brute / diviseur_montant
         conn.execute(
             """INSERT INTO kpis (company_id, year, category, kpi_name, value, unit, source_page, source_chapter, validated)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
