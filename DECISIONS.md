@@ -5763,6 +5763,45 @@ session). Progression de **+2 groupes nouvellement couverts** (AG2R,
 MGEN) et **1 groupe passé de partiel à complet** (Aéma/MACIF) en une
 session.
 
+### Correction (2026-09-26, Décision 096) — tally 14/15 incohérent, corrigé à 15/15
+
+Incohérence trouvée en auditant ce tally sur demande de l'utilisateur
+(qui avait en tête "Allianz Vie est le groupe partiel", alors que ce
+paragraphe nomme MAIF) : **le seuil "exploitable" n'était pas appliqué
+de façon cohérente**. Dans le même tableau ("11 groupes... inchangé,
+exploitable"), **Covéa (16/20)** et **Allianz (15/20, Allianz IARD ET
+Allianz Vie)** sont comptés "Exploitable" — des scores INFÉRIEURS à
+celui de MAIF (**17/20**), pourtant seul nommé "partiel". Vérifié
+contre les diagnostics réels (`batch_diagnostic_report.json`) et
+`kpis.db` : aucun des 4 (MAIF, Covéa, Allianz IARD, Allianz Vie) n'est
+en réalité inséré dans `kpis.db` — les 4 sont strictement au même
+niveau (diagnostic seul, jamais migré vers une extraction réelle),
+donc rien ne justifie de traiter MAIF différemment des 3 autres.
+
+**Correction : en appliquant le même seuil (≥15/20 = exploitable) de
+façon uniforme, MAIF doit être compté "exploitable" comme Covéa et
+Allianz. Le tally correct est 15/15 groupes exploitables au sens
+diagnostic**, pas 14/15 — MAIF n'a jamais été une exception, c'était
+une incohérence de rédaction dans ce paragraphe (probablement parce
+que "hors périmètre de cette session" a été confondu avec "hors seuil
+d'exploitabilité").
+
+Ceci dit, la phrase "Allianz Vie reste partiel" n'est pas fausse pour
+autant — elle décrit une réalité DIFFÉRENTE et bien réelle : Allianz
+Vie est la SEULE des 4 (MAIF/Covéa/Allianz IARD/Allianz Vie) dont
+l'incomplétude a été explicitement confirmée comme **architecturalement
+irréductible** (Décision 084 : `scr_marche`/`scr_contrepartie` fusionnés
+dans une seule ligne QRT R0070, `scr_souscription_vie`/`sante` fusionnés
+dans R0400, `scr_diversification` bloqué par un bug de signe propre à ce
+document — 3 KPIs qui ne seront JAMAIS résolus avec ce document, quel
+que soit l'effort). MAIF et Covéa, eux, ont des gaps documentés comme
+"incomplets" mais pas tous formellement qualifiés d'irréductibles au
+même degré de certitude. **"14/15 groupes, MAIF seul partiel" (tally
+global) était incohérent et corrigé à 15/15 ; "Allianz Vie a le seul
+gap confirmé architecturalement permanent" (une affirmation différente,
+au niveau de l'entité, pas du tally) reste vraie et n'a jamais été
+contredite.**
+
 ## Décision 090 — validate_kpis.py généralisé aux 27 sociétés
 
 CONTEXTE : 24 des 27 sociétés de `kpis.db` n'avaient jamais eu leurs
