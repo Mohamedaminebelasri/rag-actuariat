@@ -117,15 +117,15 @@ dédié.
 
 ## 8. L'application — ce que vous voyez à l'écran
 
-- **`sfcr_app/sfcr_app.py`** — L'application elle-même : l'interface qui
-  reçoit la question, appelle les étapes précédentes dans l'ordre, et
-  affiche la réponse.
-- **`sfcr_app/seed_historique_2025.json`** — Les échanges de démonstration
-  déjà présents dans l'historique du workspace SFCR 2025 à l'ouverture de
-  l'application (de vraies réponses, obtenues en faisant tourner le
-  système, pas écrites à la main).
-- **`rxconfig.py`** — La configuration technique de base de l'application
-  (son nom, son port).
+L'interface ne vit plus dans ce dossier `test_markdrop/` — elle a été
+migrée vers `frontend/` (Next.js) et l'ancienne interface Reflex
+(`sfcr_app/`) a été supprimée. Voir `frontend/src/app/{chat,analyse,
+documents}` pour les 3 onglets. **Le chat n'est pas encore branché aux
+étapes ci-dessus** (aucun appel backend) — seul l'onglet Analyse affiche
+des données (100% mock pour l'instant, `frontend/src/data/analyse-demo.ts`).
+Un futur backend devra appeler `fusion_reranking.py` (recherche + fusion
+des 4 collections) puis `generation.py` (écriture de la réponse citée) pour
+rendre le chat fonctionnel.
 
 ## 9. Données et questions-tests
 
