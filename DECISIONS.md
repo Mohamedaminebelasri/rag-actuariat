@@ -6712,3 +6712,51 @@ fonds propres=617,81 M€, primes=1 006,82 M€.
 
 `validate_kpis.py --company "Cardif Assurances Risques Divers"` :
 **46/46**. 22 KPIs, 21 valeurs, 1 NULL (`resultat_technique`).
+
+## Décision 099 — MAIF intégrée (32e société), 18/22 KPIs, 2 bugs de conversion trouvés dans resoudre_scr_mcr_maif()
+
+Contrairement à Predica/MGEN/Crédit Agricole/Sogécap/Cardif (texte
+natif `codes_eiopa`), MAIF est en mode `libelles_francais` (pas de code
+R/C standard) — passe par `resoudre_scr_mcr_maif()` (`batch_diagnostic.py`,
+Décision 074/084), déjà construite et vérifiée manuellement page par
+page pour le diagnostic (17/20). Réutilisée ici SANS relecture des
+pages sources (aucune nouvelle valeur devinée, uniquement les résultats
+déjà éprouvés par cette fonction, capturés et insérés plutôt que
+seulement comptés).
+
+### 2 bugs de conversion trouvés en insérant (la fonction sert au diagnostic, jamais convertie en M€ jusqu'ici)
+
+`resoudre_scr_mcr_maif()` retourne des valeurs BRUTES telles que lues
+sur la page, jamais converties (suffisant pour un diagnostic qui ne
+fait que compter les KPIs non-NULL) :
+1. **Montants en K€, jamais divisés** : `scr_total` brut = 2 344 989 —
+   confondu avec des M€ aurait donné 2,3 milliards de milliards.
+   Vérifié par cohérence : `fonds_propres_eligibles/scr_total×100` =
+   5 329 707/2 344 989×100 = **227,28%**, quasi identique au
+   `ratio_scr` brut lu (2,27, cf. point 2) ×100 = 227% — confirme K€,
+   PAS le bug euros-bruts de Sogécap (Décision 096), un bug différent
+   (simple oubli de conversion, pas une erreur de la source).
+2. **Ratios en fraction décimale, jamais ×100** : `ratio_scr` brut lu
+   = 2,27 (signifie 227%, pas 2,27%) — confirmé par le même
+   recoupement ci-dessus.
+
+Corrigé dans `extract_kpis_maif.py` (÷1000 pour les montants, ×100
+pour les 2 ratios) — **PAS dans `resoudre_scr_mcr_maif()` elle-même**,
+qui reste inchangée pour ne rien casser dans son usage diagnostic
+existant (`batch_diagnostic.py`, 17/20 sur MAIF).
+
+### Irréductibles confirmés, restent NULL (Décision 074, aucune nouvelle tentative)
+
+`fonds_propres_t1_r`/`t2`/`t3` : colonnes vides sans placeholder sur
+S.23.01.01 p.121, ambigu 0 vs non-imprimé. `charge_sinistres` exclut
+la composante vie (30 615 K€, ~1,3% du total, tableau p.114 en
+colonnes rotées non parsable) — documenté explicitement dans la note,
+pas caché.
+
+### Vérification
+
+`ratio_scr` recalculé 227,28% vs 227,00% publié (écart normal). 18/22
+KPIs remplis. `validate_kpis.py --company MAIF` : **37/38** — le seul
+échec (`completude_null_attendu`, 4 NULL au lieu d'1) est le signal de
+complétude ATTENDU (même famille que SGAM/AG2R Prévoyance, Décision
+087), pas un bug.
