@@ -26,6 +26,8 @@ if str(PARENT_DIR) not in sys.path:
 import fusion_reranking as fr  # noqa: E402
 import generation as gen  # noqa: E402
 import chemins_visuels as cv  # noqa: E402
+from sfcr_app.analyse.page import page_analyse  # noqa: E402
+from sfcr_app.analyse.theme import GOOGLE_FONTS_STYLESHEET  # noqa: E402
 
 NOM_PROJET = "Iconcilio"
 EXEMPLE_QUESTION = "Depuis quand le règlement DORA s'applique-t-il au Groupe Groupama ?"
@@ -321,6 +323,13 @@ DOCUMENTS = [
         "vue": "sfcr2024",
         "disponible": True,
     },
+    {
+        "nom": "Analyse",
+        "description": "20 KPIs par rapport SFCR — analyse individuelle et comparaison multi-assureurs",
+        "statut": "Disponible",
+        "vue": "analyse",
+        "disponible": True,
+    },
 ]
 
 
@@ -361,6 +370,7 @@ def barre_laterale() -> rx.Component:
                 item_nav("Solvabilité II", "solva2", sous_titre="Bientôt disponible"),
                 item_nav("SFCR Groupama 2025", "sfcr2025"),
                 item_nav("SFCR Groupama 2024", "sfcr2024"),
+                item_nav("Analyse", "analyse"),
                 spacing="1",
                 width="100%",
                 padding_x="0.6em",
@@ -797,6 +807,7 @@ def contenu_principal() -> rx.Component:
         ("solva2", page_solva2()),
         ("sfcr2025", page_sfcr("2025", State.historique_2025)),
         ("sfcr2024", page_sfcr("2024", State.historique_2024)),
+        ("analyse", page_analyse()),
         page_accueil(),
     )
 
@@ -822,5 +833,6 @@ app = rx.App(
     style={
         "font_family": "'Georgia', 'Iowan Old Style', serif",
     },
+    stylesheets=[GOOGLE_FONTS_STYLESHEET],
 )
 app.add_page(index, title=NOM_PROJET)
