@@ -6677,3 +6677,25 @@ Leçon retenue : le contrôle de magnitude (Décision 095, écrit la
 veille pour un problème déjà résolu) a immédiatement attrapé ce
 3e bug en conditions réelles, sur une société entièrement nouvelle —
 validation empirique de son utilité au-delà des tests rétroactifs.
+
+## Décision 097 — Cardif Assurance Vie intégrée (30e société), K€ confirmé correct
+
+Même méthode que Sogécap (Décision 096), mais résultat différent :
+document texte natif, `codes_eiopa`, `solo`, 20/20 diagnostic.
+`DIVISEUR_MONTANT` testé d'abord à 1000 (K€, comportement par défaut)
+**avant** toute insertion, par précaution après la découverte Sogécap —
+`ratio_scr` recalculé (`fonds_propres_eligibles/scr_total×100` =
+170,24%) contre `ratio_scr` publié (170,00%) : écart 0,24%, dans la
+tolérance normale d'arrondi, **confirme K€ correct, pas de bug
+d'unité ici**. Fichier source purement annexes QRT (pas de section
+narrative "(En millions/milliers d'euros)" disponible pour recoupement
+indépendant supplémentaire) — le recalcul du ratio reste la
+vérification la plus fiable disponible sur ce document, comme déjà
+pratiqué pour plusieurs entités Aéma sans narrative dédiée.
+
+Identités vérifiées exactes : `T1nr+T1r+T2+T3` = 11 254,37 =
+`fonds_propres_eligibles` ; `best_estimate+marge_risque` = 175 844,60
+= `provisions_techniques`.
+
+`validate_kpis.py --company "Cardif Assurance Vie"` : **46/46**. 22
+KPIs, 21 valeurs, 1 NULL (`resultat_technique`).
