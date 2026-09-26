@@ -6503,3 +6503,73 @@ intégralement cédée à un réassureur est économiquement cohérent
 la part réassureur suit à l'identique). Note en base mise à jour de
 "probable" à "confirmé" (`kpis.db`, `source_chapter`). Aucune valeur
 modifiée — seule la note de confiance change.
+
+## Décision 095 — Nouveau contrôle de magnitude dans validate_kpis.py (contrôle 10)
+
+CONTEXTE : les bugs ×1000 (Décision 094, 7 entités Aéma) et ×2/×3,95
+(Décision 093, Groupama/Predica/MGEN) sont restés invisibles à TOUS les
+contrôles de `validate_kpis.py` pendant potentiellement plusieurs
+sessions — non par manque de contrôles, mais parce que les contrôles
+1-4 sont tous des RATIOS entre 2 KPIs de la MÊME société : une erreur
+qui affecte les 2 KPIs dans les mêmes proportions (ex. `fonds_propres_
+eligibles` et `scr_total` tous les deux ×1000) laisse le ratio recalculé
+inchangé — `ratio_scr_recalcule` passait EXACTEMENT pour les 7 entités
+Aéma malgré des valeurs absolues 1000× trop grandes (vérifié : 270,38%
+recalculé vs 270% publié, Aésio, avant ET après correction — le
+contrôle ne voyait rien passer d'un état à l'autre). Aucun contrôle
+existant ne regardait une valeur ABSOLUE.
+
+### Seuils retenus — mesurés, pas devinés
+
+Deux catégories, avec une marge ~2-3× au-dessus du maximum RÉEL observé
+sur les 28 sociétés en base (requête directe `MAX(ABS(value))` par
+KPI, pas une estimation) :
+
+| Catégorie | KPIs concernés | Max réel mesuré | Plafond retenu |
+|---|---|---|---|
+| Montants standard | scr_total, mcr, fonds_propres_* (4 tiers + éligibles), primes_acquises_brutes, charge_sinistres, scr_marche/contrepartie/souscription_vie/sante/nonvie/diversification/operationnel | 49 173 M€ (primes_acquises_brutes, Crédit Agricole Assurances) | **100 000 M€** |
+| Provisions actuarielles | best_estimate, marge_risque, provisions_techniques | 283 474 M€ (provisions_techniques, CNP Assurances) | **1 000 000 M€** |
+
+Le PIB français (~2 800 Md€), suggéré comme référence de départ, a été
+**explicitement écarté** pour la catégorie "montants standard" : à ce
+niveau, il n'aurait PAS détecté le bug ×1000 sur `scr_total` des
+entités Aéma (valeurs 438 900 à 1 997 457 M€, toutes sous 2 800 000
+M€) — un seuil calé sur l'échelle réelle des KPIs concernés, pas sur
+une limite macroéconomique abstraite, est le seul qui détecte
+effectivement ce type de bug.
+
+### Vérification — 3 axes
+
+1. **Zéro faux positif sur les 28 sociétés en base** : `validate_kpis.py
+   --all` relancé après ajout du contrôle — exactement les 5 échecs déjà
+   connus et légitimes (AG2R Prévoyance, SGAM, Macifilia ×2, Themis),
+   aucun nouvel échec `magnitude_*`.
+2. **Test rétroactif contre les bugs réels déjà corrigés** (valeurs
+   historiques réinjectées directement dans `executer_controles()`,
+   sans toucher `kpis.db`) :
+   - Aésio Mutuelle, `scr_total` = 680 657,83 M€ (avant fix Décision
+     094) → **détecté** (magnitude_scr_total, dépasse 100 000 M€).
+   - Predica, `primes_acquises_brutes` = 121 745,81 M€ (avant fix
+     Décision 093) → **détecté**.
+   - Groupama, `primes_acquises_brutes` = 39 062,34 M€ (avant fix
+     Décision 093) → **NON détecté** (39 062 < 100 000).
+3. Confirme la limite assumée et documentée dans le docstring du
+   fichier : un facteur ×2 à ×4 sur un KPI déjà petit (le cas
+   Groupama/MGEN) reste indétectable par un plafond simple, quel que
+   soit le seuil choisi tant qu'il reste au-dessus du maximum réel
+   plausible — un seuil plus bas aurait produit des faux positifs sur
+   Crédit Agricole Assurances (primes_acquises_brutes = 49 173 M€,
+   légitime). Ce contrôle attrape spécifiquement la classe de bug la
+   plus grave (erreur d'ordre de grandeur, ×100 et plus), pas tous les
+   bugs de valeur — un filet de sécurité supplémentaire, pas un
+   remplacement des recoupements arithmétiques au cas par cas.
+
+### Implémentation
+
+`validate_kpis.py` : registre `SEUILS_MAGNITUDE` (dict KPI → plafond
+M€, construit depuis `KPIS_MONTANT_STANDARD`/`KPIS_MONTANT_PROVISIONS`
+plutôt que des valeurs codées en dur par KPI), nouvelle boucle dans
+`executer_controles()` (contrôle 10) — 1 contrôle `magnitude_{kpi_name}`
+par KPI en M€ non-NULL ayant un plafond enregistré. Skippé proprement
+pour les KPIs en `pct` (ratio_scr/ratio_mcr, jamais concernés par une
+erreur d'unité de montant) et pour tout KPI NULL.

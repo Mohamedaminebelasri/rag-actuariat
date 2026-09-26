@@ -68,6 +68,24 @@ valeur ou un nom d'entreprise codé en dur) sauf mention contraire ci-dessous :
    NON assoupli (Décision 090) : certaines sociétés (ex. SGAM AG2R LA
    MONDIALE, 4 NULL) échoueront légitimement ici — c'est un vrai signal
    de complétude (documenté Décision 087), pas un faux positif à cacher.
+10. Magnitude (Décision 095) — 1 contrôle par KPI en M€ non-NULL : la
+    valeur absolue ne dépasse pas un plafond conservateur selon sa
+    catégorie (cf. SEUILS_MAGNITUDE). Objectif : détecter les bugs
+    d'ordre de grandeur (unité confondue, double-comptage) qui restaient
+    invisibles à TOUS les contrôles ci-dessus — les contrôles 1-4 sont
+    des RATIOS entre 2 KPIs de la MÊME société (une erreur qui affecte
+    les 2 KPIs dans les mêmes proportions passe inaperçue, cf. Décision
+    094 : le bug ×1000 des 7 entités Aéma préservait exactement
+    ratio_scr/ratio_mcr recalculés, donc les contrôles 3/4 passaient).
+    Seuils choisis avec une marge large (~2-3×) au-dessus du maximum
+    RÉEL actuellement observé sur les 28 sociétés (cf. Décision 095 pour
+    le détail des maximums mesurés) — pas une limite théorique abstraite
+    (le PIB français, ~2 800 Md€, est trop large pour la plupart des
+    KPIs : n'aurait pas détecté le bug ×1000 sur scr_total des entités
+    Aéma, resté sous ce seuil). PAS un contrôle magique : un facteur ×2
+    à ×4 sur un KPI déjà petit (ex. Groupama/MGEN primes_acquises_
+    brutes, Décision 093) reste indétectable par un simple plafond —
+    limite assumée, documentée, pas cachée.
 
     python validate_kpis.py [--company Groupama] [--year 2025]
     python validate_kpis.py --all   # toutes les sociétés de companies
@@ -145,6 +163,38 @@ CROISEMENTS_GROUPAMA = {
         "scr_total": (6_020_977 / 1000, "S.23.01.22.01/R0680 vs S.25.05.22.02/R0220 (codé en dur, cf. Décision 051) — déjà croisés à l'extraction"),
         "scr_souscription_nonvie": (2_474_794 / 1000, "S.25.05.22.01/R0310 vs relecture manuelle vérifiée picture_75.png — déjà croisés à l'extraction"),
     },
+}
+
+
+# Décision 095 — plafonds de magnitude, en M€, par catégorie de KPI.
+# Choisis avec une marge ~2-3× au-dessus du maximum RÉEL mesuré sur les 28
+# sociétés en base au moment de l'écriture de ce contrôle (vérifié par
+# requête directe sur kpis.db, pas deviné) :
+#   - SCR/MCR/fonds propres/primes/sinistres/composantes SCR : max réel
+#     49 173 M€ (primes_acquises_brutes, Crédit Agricole Assurances,
+#     groupe) -> plafond 100 000 M€.
+#   - best_estimate/marge_risque/provisions_techniques : structurellement
+#     bien plus grands (provisions actuarielles vie, pas des flux annuels)
+#     — max réel 283 474 M€ (provisions_techniques, CNP Assurances) ->
+#     plafond 1 000 000 M€ (1 000 Md€), un ordre de grandeur au-dessus,
+#     encore loin sous le PIB français (~2 800 Md€) pour ne jamais
+#     confondre un vrai grand assureur avec un bug d'unité.
+PLAFOND_MONTANT_STANDARD = 100_000.0  # M€
+PLAFOND_MONTANT_PROVISIONS = 1_000_000.0  # M€
+
+KPIS_MONTANT_STANDARD = {
+    "scr_total", "mcr", "fonds_propres_eligibles", "fonds_propres_t1_nr",
+    "fonds_propres_t1_r", "fonds_propres_t2", "fonds_propres_t3",
+    "primes_acquises_brutes", "charge_sinistres",
+    "scr_marche", "scr_contrepartie", "scr_souscription_vie",
+    "scr_souscription_sante", "scr_souscription_nonvie",
+    "scr_diversification", "scr_operationnel",
+}
+KPIS_MONTANT_PROVISIONS = {"best_estimate", "marge_risque", "provisions_techniques"}
+
+SEUILS_MAGNITUDE = {
+    **{k: PLAFOND_MONTANT_STANDARD for k in KPIS_MONTANT_STANDARD},
+    **{k: PLAFOND_MONTANT_PROVISIONS for k in KPIS_MONTANT_PROVISIONS},
 }
 
 
@@ -254,6 +304,19 @@ def executer_controles(kpis, company_name):
             passe = True
         ajouter(f"signe_{kpi_name}", signe_attendu, valeur, passe,
                 f"valeur={valeur:.2f} {unite}, signe attendu={signe_attendu!r}")
+
+    # --- 10. Magnitude (Décision 095) — cf. commentaire en tête de fichier
+    # pour la justification des seuils et la limite assumée (ne détecte
+    # pas un facteur ×2-4 sur un KPI déjà petit).
+    for kpi_name, (valeur, unite) in kpis.items():
+        if valeur is None or unite != "M€":
+            continue
+        plafond = SEUILS_MAGNITUDE.get(kpi_name)
+        if plafond is None:
+            continue
+        passe = abs(valeur) <= plafond
+        ajouter(f"magnitude_{kpi_name}", plafond, valeur, passe,
+                f"|{valeur:,.2f}| M€ doit être ≤ {plafond:,.0f} M€ (plafond {'provisions' if kpi_name in KPIS_MONTANT_PROVISIONS else 'standard'}, Décision 095)")
 
     return controles
 
