@@ -6481,3 +6481,25 @@ est un ordre de grandeur exact (×1000, pas une valeur approximative),
 rendant toute confusion impossible, et (b) la cohérence du ratio_scr
 recalculé retombe systématiquement à ±0,5% du publié sur les 7
 entités, un signal fort qu'une coïncidence n'expliquerait pas.
+
+### Addendum (2026-09-26) — Macifilia/charge_sinistres : "probable" reclassé "confirmé"
+
+Hors périmètre du bug ×1000 ci-dessus (Macifilia fait partie des 6
+entités Aéma correctement en K€, cf. Décision 093), mais vérifié le
+même jour : `charge_sinistres` = -939,552 M€ était noté "reprise de
+provision **probable**, pas une erreur" depuis son extraction initiale
+(Décision 083), jamais recoupé formellement. Relecture directe du
+rendu image de la page 511 (S.05.01.02.01, Macifilia) : la valeur
+**-939 552** (colonne Total, ligne "Charge des sinistres — Brut —
+assurance directe", R0310) est confirmée pixel par pixel, exactement
+celle en base. Cohérence interne exacte trouvée en même temps que
+la vérification : R0340 (Part des réassureurs, même ligne) affiche
+**la même valeur** -939 552, donnant R0400 (Net) = 0 — cette ligne
+d'activité est intégralement réassurée (100% cédée), tout comme
+`primes_acquises_brutes` sur la même page (R0210/Total = 5 554,
+R0300 Net = 0 également). Un signe négatif sur une charge de sinistres
+intégralement cédée à un réassureur est économiquement cohérent
+(reprise nette d'une provision antérieure, sans impact net puisque
+la part réassureur suit à l'identique). Note en base mise à jour de
+"probable" à "confirmé" (`kpis.db`, `source_chapter`). Aucune valeur
+modifiée — seule la note de confiance change.
