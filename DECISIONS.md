@@ -6011,3 +6011,161 @@ CNP) ne sont couverts que par le filet de sécurité arithmétique
 rétroactif (Étape 3), pas par une correction automatique à la source —
 un choix assumé pour ne pas répéter la régression Covéa de Décision
 079.
+
+## Décision 092 — État des lieux de session + tentative d'ingestion RAG CNP Assurances (diagnostiquée, bloquée proprement)
+
+Session enchaînant automatiquement : commit interface Reflex → Décision
+091 (bug de signe) → merge phase2-metadonnees-multidoc → ingestion CNP
+dans le RAG conversationnel. Bilan des 3 dernières tâches.
+
+### 1. Interface Reflex "Analyse" (onglet, `test_markdrop/sfcr_app/analyse/`)
+
+Committée (`c83d3ef`). 5 phases livrées : squelette, analyse
+individuelle, analyse comparative, graphiques (décomposition SCR,
+radar, barres), alertes/benchmark/export CSV. **Compile** (`reflex
+compile --dry` → Success) mais **non vérifiée visuellement** :
+`reflex run` (dev ET prod) échoue de façon reproductible sur un bug
+upstream de `@react-router/dev` ("restartWithMergedOptions() was
+called...") indépendant du code ajouté ici — confirmé en isolant le
+port, `NODE_OPTIONS`, et en supprimant/régénérant `.web/` entièrement.
+Corrigible en installant WSL (recommandation de l'outil), délibérément
+NON fait : changement système, hors périmètre autorisé. **À faire par
+l'utilisateur** : soit installer WSL et relancer `reflex run --env
+prod` pour valider visuellement l'onglet avant mise en production,
+soit tester directement sur la VM Oracle Cloud (Linux, pas ce bug).
+
+### 2. Branche `phase2-metadonnees-multidoc`
+
+Vérifiée : **n'existe plus, ni en local ni sur `origin`**
+(`git branch -a` / `git ls-remote --heads origin` : seul `master`
+présent). `git log --all --grep` retrouve le commit `1cba307 Merge
+branch 'phase2-metadonnees-multidoc'`, déjà un ancêtre de `master`
+(vérifié via `git merge-base --is-ancestor`). **Conclusion : déjà
+mergée et supprimée, aucune action nécessaire.**
+
+### 3. Ingestion CNP Assurances dans le RAG conversationnel (Qdrant) — BLOQUÉE, diagnostiquée
+
+**Constat de départ** : `output_cnp/corpus_final.json` (existant avant
+cette session) ne couvre QUE les 9 pages QRT en texte natif, utilisé
+uniquement par `extract_kpis_cnp.py` pour peupler `kpis.db`. **Aucun
+chunk narratif, tableau ou image de CNP n'était présent dans les 4
+collections Qdrant** (vérifié par requête directe : `texte`/
+`tableaux`/`images`/`qrt` ne contiennent que des points `company_name
+= "Groupama"` ou `None` [ingestion 2024 pré-Décision 046, sans
+métadonnées Phase 2] — zéro point CNP).
+
+**Tentative** : lancement de `run_pipeline.py --pdf
+data/sfcr_cnp_assurances_2025.pdf --company "CNP Assurances" --type
+SA --year 2025 --work-dir output_cnp_full --salt-ids
+--verifier-delta-uniquement` (bloc narratif complet, 12 étapes).
+
+**Progression réelle avant blocage** :
+- `extract_raw_structure.py` : conversion Docling complète, 2072
+  items extraits (948,9s), `structure_brute.json` écrit.
+- `save_docling_document.py` : 2e conversion Docling indépendante
+  (938,5s — le coût documenté de "chaque script reconvertit
+  séparément"), `docling_document_complet.json` écrit (5,6 Mo).
+- `fix_heading_levels.py`, `filter_fake_headers.py`,
+  `retype_bullet_headers.py`, `final_corrections.py` : passés sans
+  erreur (chacun < 0,3s — ces 4 scripts n'ont pas de garde-fou
+  bloquant sur liste blanche, contrairement au suivant).
+- `fix_unnumbered_levels.py` : **ARRÊT PROPRE, comportement voulu du
+  script** (cf. son propre docstring : "s'arrête et le signale
+  explicitement, plutôt que d'appliquer une règle générique qui
+  devinerait"). `structure_finale_v4.json` non écrit → tout le reste
+  du bloc narratif (10 étapes restantes) et le bloc QRT/indexation
+  n'ont pas pu s'exécuter.
+
+**Cause racine identifiée (pas une supposition — comptage exact sur
+les 362 cas signalés)** : la convention de numérotation des titres de
+CNP diffère structurellement de celle de Groupama, sur laquelle
+`MOTIF_NUMEROTATION` (`^([A-Z])((?:\.\d+)*)\.?\s`, dans
+`fix_heading_levels.py`) et la liste blanche de
+`fix_unnumbered_levels.py` (18 cas, un seul document) ont été
+construits :
+
+| Catégorie | Effectif | Exemple CNP | Pourquoi ça ne matche pas `MOTIF_NUMEROTATION` |
+|---|---|---|---|
+| Sections de tête lettre+chiffre SANS point | 25 | `A1 Activité`, `B3 Système de gestion des risques`, `E2 Capital de solvabilité requis...` | Regex exige un point après la lettre (`A.`) — CNP écrit `A1`, pas `A.1` |
+| Sous-sections en chiffres nus | 216 | `1. Renseignements de caractère général`, `4.1 Environnement économique et financier` | Regex exige une lettre MAJUSCULE en tête — CNP numérote les sous-niveaux sans répéter la lettre parente |
+| Sous-sous-items lettrés | 6 | `a) Actions propres` | Non couvert par le motif (lettre minuscule + parenthèse) |
+| Titres réellement non numérotés (style narratif propre à CNP) | 115 | `Chiffres clés`, `Une stratégie de développement`, `Notes :` | Légitimement sans numéro — mais 6× plus nombreux que chez Groupama (18 cas au total, tout confondu) |
+
+Chez Groupama, ce même filtre ne remontait que 18 cas au total (dont
+17 volontairement exclus et 1 seul réellement corrigé) — governance
+document avec numérotation quasi-exhaustive `A.`/`A.1.`/`A.1.1.`. Chez
+CNP, c'est la **majorité des 374 section_header H1** qui ne matche
+pas : pas un cas limite à ajouter à une liste blanche, mais un
+**format de numérotation entièrement différent**, comme documenté
+comme risque connu par `run_pipeline.py` lui-même (point 1 de son
+docstring : "sur un 3e document, un 3e script à écrire après
+inspection manuelle, pas une branche automatique") — exactement le
+mécanisme déjà utilisé pour 2024 (`fix_unnumbered_levels_2024.py`,
+liste blanche distincte).
+
+**Décision : ne pas deviner une correction ici.** Construire un
+`fix_unnumbered_levels_cnp.py` (ou généraliser `MOTIF_NUMEROTATION`
+avec un 2e motif alternatif letter+digit-sans-point, strictement
+ADDITIF et re-testé sur Groupama pour zéro régression — cf. la leçon
+de la régression Covéa, Décision 079) demande de vérifier un par un,
+page par page contre le PDF réel, comment traiter au minimum les 25
+sections de tête + 216 sous-sections numérotées (241 cas à
+hiérarchiser correctement, pas à exclure) — travail comparable en
+volume à la construction initiale du pipeline Groupama, pas une
+correction de session. **Non fait ici, volontairement, plutôt que de
+produire une hiérarchie `chemin_hierarchique` fausse qui pollue les
+métadonnées `section`/`chapter` de TOUS les futurs chunks CNP dans
+Qdrant.**
+
+**Travail conservé, réutilisable sans repayer le coût Docling (≈31
+minutes)** : `test_markdrop/output_cnp_full/` contient
+`structure_brute.json`, `docling_document_complet.json`,
+`structure_corrigee.json`, `structure_filtree.json`,
+`structure_finale.json`, `structure_finale_v3.json`. Une prochaine
+session peut reprendre directement à `fix_unnumbered_levels_cnp.py`
+sans relancer `extract_raw_structure.py`/`save_docling_document.py`.
+
+**Prochaine étape concrète recommandée** :
+1. Écrire `fix_unnumbered_levels_cnp.py` : reconnaître le motif
+   `^[A-Z]\d` (25 cas, niveau = niveau racine du document) et le motif
+   `^\d+(\.\d+)*\.?\s` (216 cas, niveau = niveau du dernier
+   section_header letter+digit précédent + profondeur du numéro,
+   même logique que la correction "Epargne retraite" de
+   `fix_unnumbered_levels.py`).
+2. Décider, avec vérification PDF à l'appui (pas une supposition), du
+   traitement des 115 cas "autres" — vraisemblablement tous exclus
+   (niveau inchangé), mais à confirmer qu'aucun n'est un vrai titre de
+   section manqué (ex. couverture, page de garde).
+3. Relancer `run_pipeline.py --skip-narratif` une fois
+   `structure_finale_v4.json` produit à la main... non — en pratique
+   relancer le bloc narratif à partir de `build_leaf_chunks.py` (pas
+   besoin de refaire les 2 conversions Docling ni les 4 scripts déjà
+   passés), avec `--work-dir output_cnp_full`.
+4. Avant l'indexation Qdrant finale (`ingest_qdrant.py`), vérifier le
+   point 3 du docstring de `run_pipeline.py` : `extraire_visuels.py`
+   écrit sous une racine partagée PAR ANNÉE (`<année>/...`) — CNP 2025
+   et Groupama 2025 partagent l'année 2025, collision de chemin
+   possible, à vérifier/corriger avant d'exécuter cette étape (pas
+   rencontré ici puisque le bloc narratif ne l'a jamais atteint).
+
+### 4. État complet de `kpis.db` (rappel, inchangé par cette session sauf Décision 091)
+
+27/27 sociétés dans `companies`, toutes passées par
+`validate_kpis.py --all` (Décision 090) : 23 sociétés à 100% de
+contrôles applicables passés, 4 échecs réels mais tous légitimes et
+déjà documentés (Themis/Macifilia : plancher MCR absolu, Décision
+085 ; SGAM AG2R/AG2R Prévoyance : NULL de mapping groupe incomplet,
+Décision 087). Le bug de signe détaché (Décision 091) a corrigé
+Predica (`scr_diversification` + `charge_sinistres`) et laissé
+inchangées les 25 autres sociétés (déjà correctes ou hors périmètre
+du fix générique, cf. limite assumée ci-dessus).
+
+### Résumé une ligne par tâche chaînée
+
+| Tâche demandée | Statut |
+|---|---|
+| Commit interface Reflex Analyse | Fait (`c83d3ef`) |
+| Bug de signe détaché, scan rétroactif 27 sociétés | Fait (`ca62cd9`, Décision 091) |
+| Merge `phase2-metadonnees-multidoc` | Déjà fait avant cette session (`1cba307`) — rien à merger |
+| Ingestion CNP dans le RAG conversationnel (Qdrant) | Bloquée proprement à l'étape `fix_unnumbered_levels.py` — diagnostiquée, travail Docling conservé, script dédié à écrire (non deviné) |
+| État des lieux DECISIONS.md | Cette entrée |
