@@ -6352,3 +6352,132 @@ session prouve qu'un score de diagnostic élevé ne garantit PAS des
 valeurs correctes pour primes_acquises_brutes/charge_sinistres — les 2
 KPIs à vérifier en priorité, par recoupement arithmétique direct contre
 le PDF, avant toute insertion).
+
+## Décision 094 — 7 entités Aéma Groupe : bug d'unité (€ bruts confondus avec K€), tous les KPIs inflatés ×1000
+
+CONTEXTE : entrée rédigée après coup, à la demande de l'utilisateur —
+ce fix avait été fait et commité (`7788328`, même commit que Décision
+093) mais n'avait jamais eu sa propre entrée DECISIONS.md, seulement
+une mention dans le message de commit et un paragraphe dans Décision
+093. Chronologiquement, ce fix a été fait AVANT le fix EN/FR + colonne
+Total de Décision 093, dans la même session — découvert en auditant
+`primes_acquises_brutes` de Crédit Agricole Assurances, qui a mené à
+vérifier Predica, puis par ricochet toutes les sociétés du projet.
+
+### Constat initial
+
+En vérifiant `scr_total` sur les 27 sociétés alors en base, 4 entités
+montraient des valeurs manifestement impossibles (des centaines de
+milliards à ~2 000 milliards €) : **Abeille Vie, Abeille IARD Santé,
+Aésio Mutuelle, Abeille Épargne Retraite**. 3 autres montraient des
+valeurs plus discrètement suspectes (20 à 34 milliards €, trop élevé
+pour des mutuelles de niche) : **MNPAF, MMJ, Nuoma**.
+
+### Cause racine
+
+`aema_entites.py` (Décision 083, intégration des 13 entités du document
+combiné "Aéma Groupe RAPPORT UNIQUE...", 621 pages, 100% image) suppose
+— dans son propre commentaire d'origine — que **toutes** les valeurs
+lues sur les pages QRT sont en K€ ("Valeurs en K€ BRUT... converties en
+M€ uniquement au moment de l'insertion en base", diviseur ÷1000
+appliqué uniformément dans `inserer_entite_en_base`). Cette hypothèse
+est vraie pour 6 des 13 entités (MACIF SAM, Macif Vie, Macif Santé
+Prévoyance, Themis, Macifilia, Aéma Groupe) mais **fausse pour 7
+d'entre elles** : leurs pages QRT (S.23.01.01, S.05.01.02 — 100% image,
+aucun texte natif, aucune étiquette d'unité visible sur la page
+elle-même) sont en réalité en **euros bruts**, pas en K€. Diviser par
+1000 au lieu de 1 000 000 laissait chaque valeur 1000× trop grande.
+
+Aucune étiquette "En milliers d'euros"/"En euros" n'étant présente sur
+ces pages spécifiques (contrairement aux sections narratives du
+document, qui affichent "EN MILLIERS D'EUROS"), l'erreur n'était pas
+détectable par simple lecture — seul un recoupement d'ordre de grandeur
+contre une source indépendante permettait de la révéler.
+
+### Vérification — par recoupement groupe, PAS par lecture directe de la colonne Total
+
+Contrairement à Groupama/Predica/MGEN (Décision 093), la vérification
+n'a PAS été faite en lisant directement la colonne Total imprimée page
+par page (ces pages sont des images, sans colonne Total séparée à
+extraire de la même façon) — mais par **recoupement arithmétique contre
+des valeurs de contexte indépendantes** :
+
+- **Aésio Mutuelle** : `scr_total` stocké 680 657,83 M€ (680 milliards
+  €, impossible) alors que le SCR marché du GROUPE ENTIER (p.66,
+  section narrative "ÉVOLUTION DES SCR ET MCR", explicitement en K€)
+  n'est que de 4 301 737 K€ = 4,3 milliards € — Aésio (une seule entité
+  parmi 13) ne peut pas avoir un SCR 160× plus grand que TOUT le
+  groupe. Après correction (÷1000 supplémentaire) : 680,66 M€,
+  cohérent.
+- **Abeille Vie** : "Capital en actions ordinaires" (R0010, p.588) =
+  1 205 528 533 — en K€ ce serait 1 205 milliards € de capital social
+  (impossible), en € bruts c'est 1,2 milliard € (plausible pour cette
+  entité, l'ex-Aviva Vie, une des plus grosses du groupe).
+- **MNPAF/MMJ/Nuoma** : SCR corrigés (34,4 / 22,0 / 20,8 M€)
+  cohérents avec des mutuelles de niche (effectifs Air France,
+  personnels...), contre 34,4 / 22,0 / 20,8 **milliards** € avant
+  correction.
+
+Confirmation croisée sur les 7 entités après correction :
+`fonds_propres_eligibles / scr_total × 100` retombe systématiquement à
+quelques centièmes du `ratio_scr` publié sur chaque page (ex. Aésio :
+270,38% calculé vs 270% publié ; Abeille Vie : 254,94% vs 255% ;
+Abeille IARD Santé : 167,47% vs 167% ; MMJ : 227,37% vs 227% ; MNPAF :
+283,39% vs 283% ; Nuoma : 294,85% vs 295%) — cohérence exacte
+recalculée sur les 7, aucune simple supposition.
+
+### Impact — TOUS les KPIs numériques (pas seulement primes/sinistres)
+
+Contrairement aux bugs de Décision 093 (limités à
+`primes_acquises_brutes`/`charge_sinistres`), celui-ci touchait les 20
+KPIs numériques de chaque entité (le diviseur `÷1000` s'applique
+uniformément à tout KPI dont l'unité n'est pas `pct` dans
+`inserer_entite_en_base`) : `scr_total`, `mcr`, `fonds_propres_*`,
+`best_estimate`, `marge_risque`, `provisions_techniques`,
+`primes_acquises_brutes`, `charge_sinistres`, `scr_marche`,
+`scr_contrepartie`, `scr_souscription_vie/sante/nonvie`,
+`scr_diversification`, `scr_operationnel`.
+
+| Société | scr_total avant | scr_total après |
+|---|---|---|
+| Aésio Mutuelle | 680 657,83 M€ | 680,66 M€ |
+| MNPAF | 34 398,84 M€ | 34,40 M€ |
+| MMJ | 22 040,34 M€ | 22,04 M€ |
+| Nuoma | 20 812,24 M€ | 20,81 M€ |
+| Abeille Vie | 1 997 456,96 M€ | 1 997,46 M€ |
+| Abeille Épargne Retraite | 438 900,68 M€ | 438,90 M€ |
+| Abeille IARD Santé | 931 326,71 M€ | 931,33 M€ |
+
+(`primes_acquises_brutes`/`charge_sinistres` avant/après : cf. tableau
+de l'audit post-Décision 093, réponse du 2026-09-26 — mêmes ordres de
+grandeur ×1000.)
+
+### Correction appliquée
+
+- Nouveau registre `ENTITES_UNITE_EUR_BRUT` (`aema_entites.py`) listant
+  explicitement les 7 entités concernées, avec justification complète
+  en commentaire (recoupements ci-dessus).
+- `inserer_entite_en_base()` : diviseur devient `1_000_000.0` pour ces
+  7 entités (au lieu de `1000.0`), déterminé dynamiquement par
+  `nom_entite in ENTITES_UNITE_EUR_BRUT` — les 6 autres entités
+  gardent le comportement d'origine (÷1000), aucune régression
+  possible sur elles par construction (branche de code distincte).
+- `note_origine` (traçabilité en base, colonne `source_chapter`) inclut
+  désormais explicitement l'unité source retenue ("euros bruts
+  (Décision 093)" ou "K€") pour chaque ligne insérée.
+- Les 7 entités ré-insérées via `inserer_entite_en_base()`, `ON
+  CONFLICT DO UPDATE` (idempotent).
+
+### Vérification finale
+
+`validate_kpis.py` relancé individuellement sur les 7 entités après
+correction : **27/27 chacune**. Aucune régression sur les 6 autres
+entités Aéma (branche de code non modifiée pour elles).
+
+Limite assumée : la vérification par recoupement (SCR entité vs SCR
+groupe, capital social) est moins directe qu'une lecture de colonne
+Total page par page — jugée suffisante ici car (a) le facteur d'erreur
+est un ordre de grandeur exact (×1000, pas une valeur approximative),
+rendant toute confusion impossible, et (b) la cohérence du ratio_scr
+recalculé retombe systématiquement à ±0,5% du publié sur les 7
+entités, un signal fort qu'une coïncidence n'expliquerait pas.
