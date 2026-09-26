@@ -6612,3 +6612,68 @@ plutôt que des valeurs codées en dur par KPI), nouvelle boucle dans
 par KPI en M€ non-NULL ayant un plafond enregistré. Skippé proprement
 pour les KPIs en `pct` (ratio_scr/ratio_mcr, jamais concernés par une
 erreur d'unité de montant) et pour tout KPI NULL.
+
+## Décision 096 — Sogécap intégrée (29e société) : 3e occurrence du bug d'unité € bruts/K€
+
+CONTEXTE : extraction de Sogécap (Société Générale Assurances), même
+méthode que Crédit Agricole Assurances (Décision 093) — document texte
+natif, `codes_eiopa`, `groupe`, 20/20 en diagnostic. **Premier essai
+détecté immédiatement par le nouveau contrôle de magnitude (Décision
+095, livré la veille)** : `scr_total` = 4 259 413,63 M€ (4,26
+billions €, impossible), `primes_acquises_brutes` = 17 594 087,40 M€.
+Le ratio_scr recalculé restait cohérent (215,80% = publié), signal
+caractéristique d'un bug d'ÉCHELLE UNIFORME, pas une erreur ponctuelle
+(même signature que Décision 094).
+
+### Diagnostic — même famille de bug que les 7 entités Aéma, sur un document totalement différent
+
+Contrairement à Crédit Agricole Assurances/Predica/MGEN (K€, correct),
+l'annexe QRT de Sogécap est en **euros bruts**. Confirmé sans ambiguïté
+par recoupement contre 2 sections narratives DISTINCTES et
+explicitement libellées "(En millions d'euros)" :
+- Page 29 (E.2) : "Capital de Solvabilité Requis... **4 259 M EUR**" —
+  le brut QRT `R0090`/S.22.01.21 = "4 259 413 627" colle exactement
+  interprété en euros (4 259,41 M€), pas en K€ (aurait donné 4,26
+  billions).
+- Page 29 : "Fonds propres S2 éligibles à la couverture du SCR... **9
+  185 M EUR**" vs brut QRT `R0540`/S.23.01.22 = 9 190,41 M€ (écart
+  0,06%, cohérent).
+- Page 12 (A) : "chiffre d'affaires... **17,5 Md EUR**" / "charge de
+  prestations... **11,5 Md EUR**" vs primes/sinistres QRT calculés
+  17 594,09 / 11 553,01 M€ (écarts <0,6%, cohérents — chiffre
+  d'affaires commercial vs primes acquises QRT ne sont jamais
+  identiques au M€ près, par définition).
+
+Contrairement au bug Aéma (document 100% image, aucun texte natif),
+celui-ci touche un document texte natif normalement bien couvert par
+`resoudre_variantes_qrt()` (déjà corrigé Décision 093) — preuve que
+Décision 093 (dédoublonnage EN/FR + colonne Total) et Décision
+094/096 (unité € bruts/K€) sont des bugs **structurellement
+indépendants**, l'un n'impliquant pas l'autre.
+
+### Correction
+
+`extract_kpis_sogecap.py` : constante `DIVISEUR_MONTANT = 1_000_000`
+(au lieu de `1000` implicite ailleurs) appliquée à TOUS les KPIs de
+montant (SCR/MCR/fonds propres/best_estimate/marge_risque/
+provisions_techniques/primes/sinistres/composantes SCR) — pas
+seulement primes/sinistres comme pour Crédit Agricole Assurances
+(bug différent, cf. Décision 093). ratio_scr/ratio_mcr non affectés
+(dimensionless).
+
+### Vérification
+
+- Cohérence interne exacte après correction :
+  `fonds_propres_eligibles/scr_total×100` = 215,79% vs `ratio_scr`
+  publié 215,80% ; `T1nr+T1r+T2+T3` = 9 190,41 = `fonds_propres_
+  eligibles` exact ; `best_estimate+marge_risque` = 144 531,05 =
+  `provisions_techniques` exact.
+- `validate_kpis.py --company Sogécap` : **46/46 contrôles passés**
+  (dont 16 contrôles de magnitude, Décision 095 — aucun ne s'était
+  déclenché après correction, tous largement sous les plafonds).
+- 22 KPIs, 21 valeurs, 1 NULL (`resultat_technique`, attendu).
+
+Leçon retenue : le contrôle de magnitude (Décision 095, écrit la
+veille pour un problème déjà résolu) a immédiatement attrapé ce
+3e bug en conditions réelles, sur une société entièrement nouvelle —
+validation empirique de son utilité au-delà des tests rétroactifs.
