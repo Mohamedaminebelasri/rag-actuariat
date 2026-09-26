@@ -11,6 +11,13 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    // next-env.d.ts est régénéré automatiquement par Next.js (triple-slash
+    // reference standard, présent dans tous les projets Next) — faux
+    // positif connu de @typescript-eslint/triple-slash-reference avec la
+    // config plate (flat config), sans rapport avec le code applicatif.
+    ignores: ["next-env.d.ts"],
+  },
 ];
 
 export default eslintConfig;
