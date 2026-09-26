@@ -16,7 +16,7 @@ export default function AnalysePage() {
 
   return (
     <div className="h-full overflow-auto">
-      <div className="mx-auto px-6 py-8" style={{ width: "92%", maxWidth: "1500px" }}>
+      <div className="mx-auto px-4 sm:px-6 py-6 sm:py-8" style={{ width: "92%", maxWidth: "1500px" }}>
         <div className="flex items-center mb-2">
           <div>
             <p className="text-xs font-bold tracking-[0.12em] text-accent">SOLVABILITÉ II</p>
@@ -31,15 +31,17 @@ export default function AnalysePage() {
           </p>
         </div>
 
-        <div className="inline-flex gap-1 p-1 bg-surface-secondary rounded-[12px] mb-6">
+        <div className="flex sm:inline-flex gap-1 p-1 bg-surface-secondary rounded-[12px] mb-6 w-full sm:w-auto">
           <OngletNav
             label="Analyse individuelle"
+            court="Individuelle"
             actif={sousOnglet === "individuelle"}
             icone={<FileBarChart className="w-[15px] h-[15px]" />}
             onClick={() => setSousOnglet("individuelle")}
           />
           <OngletNav
             label="Analyse comparative"
+            court="Comparative"
             actif={sousOnglet === "comparative"}
             icone={<Columns3 className="w-[15px] h-[15px]" />}
             onClick={() => setSousOnglet("comparative")}
@@ -54,11 +56,13 @@ export default function AnalysePage() {
 
 function OngletNav({
   label,
+  court,
   actif,
   icone,
   onClick,
 }: {
   label: string;
+  court: string;
   actif: boolean;
   icone: React.ReactNode;
   onClick: () => void;
@@ -67,12 +71,13 @@ function OngletNav({
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-2 px-[1.1em] py-[0.65em] rounded-[8px] text-sm font-medium transition-colors",
+        "flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 sm:px-[1.1em] py-[0.65em] rounded-[8px] text-sm font-medium transition-colors",
         actif ? "text-accent bg-accent-light" : "text-text-secondary hover:bg-surface-hover"
       )}
     >
       {icone}
-      {label}
+      <span className="sm:hidden">{court}</span>
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }

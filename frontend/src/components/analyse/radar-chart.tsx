@@ -7,14 +7,16 @@ import { kpiLabelCourt } from "@/lib/analyse-utils";
 
 const PALETTE = ["#2563eb", "#16a34a", "#d97706", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#65a30d"];
 
-const SIZE = 340;
-const CENTER = SIZE / 2;
-const RAYON = SIZE / 2 - 56;
+const LARGEUR = 480;
+const HAUTEUR = 340;
+const CENTER_X = LARGEUR / 2;
+const CENTER_Y = HAUTEUR / 2;
+const RAYON = HAUTEUR / 2 - 56;
 
 function pointSurAxe(indexAxe: number, nbAxes: number, ratio: number) {
   const angle = (Math.PI * 2 * indexAxe) / nbAxes - Math.PI / 2;
   const r = RAYON * Math.max(0, Math.min(1, ratio));
-  return { x: CENTER + r * Math.cos(angle), y: CENTER + r * Math.sin(angle) };
+  return { x: CENTER_X + r * Math.cos(angle), y: CENTER_Y + r * Math.sin(angle), cos: Math.cos(angle), sin: Math.sin(angle) };
 }
 
 /** Port de radar_comparatif() (charts.py, Reflex) — radar SVG maison
@@ -59,7 +61,7 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
         ))}
       </div>
 
-      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} width="100%" height={SIZE} className="mx-auto block">
+      <svg viewBox={`0 0 ${LARGEUR} ${HAUTEUR}`} width="100%" height={HAUTEUR} className="mx-auto block" role="img" aria-label="Radar comparatif du profil de risque">
         {/* Grille polaire (anneaux concentriques) */}
         {[0.25, 0.5, 0.75, 1].map((f) => (
           <polygon
@@ -76,16 +78,20 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
         {/* Axes + labels */}
         {axesLabels.map((label, i) => {
           const bord = pointSurAxe(i, nbAxes, 1);
-          const labelPt = pointSurAxe(i, nbAxes, 1.18);
+          const labelPt = pointSurAxe(i, nbAxes, 1.12);
+          // Étiquette ancrée vers l'extérieur : jamais par-dessus le polygone.
+          const ancre = labelPt.cos > 0.3 ? "start" : labelPt.cos < -0.3 ? "end" : "middle";
+          const dx = ancre === "start" ? 8 : ancre === "end" ? -8 : 0;
+          const dy = labelPt.sin < -0.3 ? -6 : labelPt.sin > 0.3 ? 12 : 0;
           return (
             <g key={label}>
-              <line x1={CENTER} y1={CENTER} x2={bord.x} y2={bord.y} stroke="var(--border)" strokeWidth={1} />
+              <line x1={CENTER_X} y1={CENTER_Y} x2={bord.x} y2={bord.y} stroke="var(--border)" strokeWidth={1} />
               <text
-                x={labelPt.x}
-                y={labelPt.y}
-                textAnchor="middle"
+                x={labelPt.x + dx}
+                y={labelPt.y + dy}
+                textAnchor={ancre}
                 dominantBaseline="middle"
-                fontSize={11}
+                fontSize={14}
                 fontFamily="var(--font-body)"
                 fill="var(--text-secondary)"
               >

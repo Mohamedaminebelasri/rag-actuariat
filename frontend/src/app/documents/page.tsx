@@ -7,6 +7,7 @@ import {
   Building2,
   FolderClosed,
   ArrowRight,
+  ArrowLeft,
   Info,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -351,7 +352,9 @@ export default function DocumentsPage() {
   return (
     <div className="flex h-full">
       {/* Document tree sidebar */}
-      <div className="w-80 flex-shrink-0 border-r border-border bg-surface overflow-auto">
+      <div
+        className={`${selected ? "hidden md:block" : "block"} w-full md:w-80 md:flex-shrink-0 border-r border-border bg-surface overflow-auto`}
+      >
         <div className="px-4 py-4 border-b border-border">
           <h3 className="font-heading text-lg text-text-primary">Documents</h3>
           <p className="text-xs text-text-tertiary mt-0.5">
@@ -373,8 +376,17 @@ export default function DocumentsPage() {
       </div>
 
       {/* Document content viewer */}
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-4xl mx-auto px-8 py-8">
+      <div className={`${selected ? "block" : "hidden md:block"} flex-1 overflow-auto`}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
+          {selected && (
+            <button
+              onClick={() => setSelected(null)}
+              className="md:hidden mb-4 inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Retour aux chapitres
+            </button>
+          )}
           {!selected && (
             <div className="flex flex-col items-center justify-center h-96 text-center">
               <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center mb-4">

@@ -99,15 +99,29 @@ function kpi(
   return { valeur, variation, variationUnit, chapitreSource: chapitre, pageSource: page, confiance, dateExtraction: "2026-09-25" };
 }
 
+// Filtres "pairs" : deux dimensions qui rendent une comparaison pertinente ou non
+// (une société en modèle interne et une autre en formule standard ne se
+// comparent qu'avec prudence).
+export type TypeSociete = "Vie" | "Non-vie" | "Mixte" | "Mutuelle";
+export type ModeleCapital = "Formule standard" | "Modèle interne";
+export const TYPES_SOCIETE: TypeSociete[] = ["Vie", "Non-vie", "Mixte", "Mutuelle"];
+export const MODELES_CAPITAL: ModeleCapital[] = ["Formule standard", "Modèle interne"];
+
 export type SocieteDemo = {
   annee: number;
+  /** ⚠️ Attribut de démonstration — à remplacer par les vraies métadonnées de kpis.db. */
+  type: TypeSociete;
+  /** ⚠️ Attribut de démonstration — à remplacer par les vraies métadonnées de kpis.db. */
+  modele: ModeleCapital;
   kpis: Record<string, KpiValeur>;
 };
 
 // --- DONNÉES DE DÉMONSTRATION — 5 assureurs mock, aucune valeur réelle ---
-export const DEMO_SFCR: Record<string, SocieteDemo> = {
+const DEMO_BASE: Record<string, SocieteDemo> = {
   Groupama: {
     annee: 2023,
+    type: "Mixte",
+    modele: "Modèle interne",
     kpis: {
       ratio_scr: kpi(267.0, 12.0, "pts", "E.2", 89, "verified"),
       ratio_mcr: kpi(589.0, 8.0, "pts", "E.2", 90, "verified"),
@@ -133,6 +147,8 @@ export const DEMO_SFCR: Record<string, SocieteDemo> = {
   },
   "AXA France": {
     annee: 2023,
+    type: "Mixte",
+    modele: "Modèle interne",
     kpis: {
       ratio_scr: kpi(198.0, -5.0, "pts", "E.2", 91, "extracted"),
       ratio_mcr: kpi(410.0, 3.0, "pts", "E.2", 92, "extracted"),
@@ -158,6 +174,8 @@ export const DEMO_SFCR: Record<string, SocieteDemo> = {
   },
   "CNP Assurances": {
     annee: 2023,
+    type: "Vie",
+    modele: "Formule standard",
     kpis: {
       ratio_scr: kpi(228.0, 6.0, "pts", "E.2", 90, "verified"),
       ratio_mcr: kpi(470.0, 10.0, "pts", "E.2", 91, "extracted"),
@@ -183,6 +201,8 @@ export const DEMO_SFCR: Record<string, SocieteDemo> = {
   },
   Covéa: {
     annee: 2023,
+    type: "Mixte",
+    modele: "Modèle interne",
     kpis: {
       ratio_scr: kpi(305.0, 15.0, "pts", "E.2", 92, "verified"),
       ratio_mcr: kpi(640.0, 20.0, "pts", "E.2", 93, "extracted"),
@@ -208,6 +228,8 @@ export const DEMO_SFCR: Record<string, SocieteDemo> = {
   },
   MACSF: {
     annee: 2023,
+    type: "Mutuelle",
+    modele: "Formule standard",
     kpis: {
       ratio_scr: kpi(521.0, 22.0, "pts", "E.2", 88, "verified"),
       ratio_mcr: kpi(2084.0, 60.0, "pts", "E.2", 89, "extracted"),
@@ -232,6 +254,74 @@ export const DEMO_SFCR: Record<string, SocieteDemo> = {
     },
   },
 };
+
+// --- Sociétés FICTIVES (noms inventés, valeurs générées à partir de quelques
+// paramètres cohérents entre eux) : elles donnent assez de "pairs" pour
+// démontrer le classement, la distribution et les filtres. ---
+type ParamsFictive = {
+  annee: number;
+  type: TypeSociete;
+  modele: ModeleCapital;
+  fp: number; // fonds propres éligibles (Md€)
+  scr: number;
+  mcr: number;
+  partT1: number; // part de Tier 1 dans les fonds propres (0-1)
+  be: number;
+  rm: number;
+  actifs: number;
+  primes: number;
+  sp: number; // ratio S/P (%)
+  poids: [number, number, number, number, number]; // non-vie, vie, marché, contrepartie, opérationnel (somme = 1)
+  divers: number; // effet de diversification (%, négatif)
+  dRatio: number; // variation N-1 du ratio SCR (pts)
+  dSp: number; // variation N-1 du ratio S/P (pts)
+};
+
+const arrondi = (v: number, d = 2) => Math.round(v * 10 ** d) / 10 ** d;
+
+function societeFictive(p: ParamsFictive): SocieteDemo {
+  const somme = p.scr / (1 + p.divers / 100);
+  const [nv, v, m, c, o] = p.poids.map((w) => arrondi(somme * w, 3));
+  const dMd = (x: number) => arrondi(x * 0.03, 3);
+  return {
+    annee: p.annee,
+    type: p.type,
+    modele: p.modele,
+    kpis: {
+      ratio_scr: kpi(arrondi((p.fp / p.scr) * 100, 1), p.dRatio, "pts", "E.2", 60, "verified"),
+      ratio_mcr: kpi(arrondi((p.fp / p.mcr) * 100, 1), arrondi(p.dRatio * 1.5, 1), "pts", "E.2", 61, "verified"),
+      scr_total: kpi(p.scr, dMd(p.scr), "Md€", "E.2", 60, "verified"),
+      mcr: kpi(p.mcr, dMd(p.mcr), "Md€", "E.2", 61, "extracted"),
+      fonds_propres_eligibles: kpi(p.fp, dMd(p.fp), "Md€", "E.1", 58, "verified"),
+      fonds_propres_t1: kpi(arrondi(p.fp * p.partT1), dMd(p.fp * p.partT1), "Md€", "E.1", 58, "extracted"),
+      fonds_propres_t2: kpi(arrondi(p.fp * (1 - p.partT1)), dMd(p.fp * (1 - p.partT1)), "Md€", "E.1", 58, "extracted"),
+      surplus_capital: kpi(arrondi(p.fp - p.scr), dMd(p.fp - p.scr), "Md€", "E.2", 60, "verified"),
+      best_estimate: kpi(p.be, dMd(p.be), "Md€", "D.2", 50, "verified"),
+      marge_risque: kpi(p.rm, dMd(p.rm), "Md€", "D.2", 51, "extracted"),
+      provisions_techniques: kpi(arrondi(p.be + p.rm), dMd(p.be + p.rm), "Md€", "D.2", 50, "verified"),
+      total_actifs: kpi(p.actifs, dMd(p.actifs), "Md€", "D.1", 47, "extracted"),
+      scr_souscription_nonvie: kpi(nv, dMd(nv), "Md€", "C.1", 55, "verified"),
+      scr_souscription_vie: kpi(v, dMd(v), "Md€", "C.1", 55, "extracted"),
+      scr_marche: kpi(m, dMd(m), "Md€", "C.1", 55, "verified"),
+      scr_contrepartie: kpi(c, dMd(c), "Md€", "C.1", 55, "extracted"),
+      scr_operationnel: kpi(o, dMd(o), "Md€", "C.1", 55, "extracted"),
+      diversification: kpi(p.divers, 0.5, "pts", "C.1", 55, "verified"),
+      primes_acquises_brutes: kpi(p.primes, dMd(p.primes), "Md€", "A.1", 9, "verified"),
+      ratio_sp: kpi(p.sp, p.dSp, "pts", "A.1", 11, "extracted"),
+    },
+  };
+}
+
+const DEMO_FICTIVES: Record<string, SocieteDemo> = {
+  "Ponant Assurances": societeFictive({ annee: 2023, type: "Non-vie", modele: "Formule standard", fp: 2.4, scr: 1.3, mcr: 0.45, partT1: 0.92, be: 3.1, rm: 0.12, actifs: 4.8, primes: 2.2, sp: 91, poids: [0.55, 0.02, 0.28, 0.09, 0.06], divers: -22, dRatio: 6, dSp: -1.2 }),
+  "Vallier Mutuelle": societeFictive({ annee: 2023, type: "Mutuelle", modele: "Formule standard", fp: 0.62, scr: 0.38, mcr: 0.14, partT1: 0.97, be: 0.71, rm: 0.03, actifs: 1.05, primes: 0.66, sp: 96, poids: [0.3, 0.05, 0.4, 0.14, 0.11], divers: -18, dRatio: -4, dSp: 1.5 }),
+  "Armorique Vie": societeFictive({ annee: 2023, type: "Vie", modele: "Modèle interne", fp: 5.9, scr: 3.6, mcr: 1.4, partT1: 0.85, be: 41.0, rm: 0.9, actifs: 47.5, primes: 3.4, sp: 78, poids: [0.02, 0.33, 0.5, 0.08, 0.07], divers: -30, dRatio: -12, dSp: -0.5 }),
+  "Néomut": societeFictive({ annee: 2023, type: "Mutuelle", modele: "Formule standard", fp: 0.21, scr: 0.22, mcr: 0.08, partT1: 0.9, be: 0.33, rm: 0.02, actifs: 0.5, primes: 0.29, sp: 104, poids: [0.35, 0.03, 0.38, 0.14, 0.1], divers: -15, dRatio: -9, dSp: 3 }),
+  "Kerlann Vie": societeFictive({ annee: 2023, type: "Vie", modele: "Formule standard", fp: 1.5, scr: 0.82, mcr: 0.31, partT1: 0.8, be: 11.4, rm: 0.3, actifs: 13.2, primes: 0.9, sp: 82, poids: [0.02, 0.3, 0.5, 0.1, 0.08], divers: -27, dRatio: 9, dSp: -1 }),
+  "Sablier Assurances": societeFictive({ annee: 2023, type: "Mixte", modele: "Modèle interne", fp: 9.8, scr: 4.7, mcr: 1.9, partT1: 0.88, be: 52, rm: 1.6, actifs: 63, primes: 9.1, sp: 93, poids: [0.3, 0.18, 0.36, 0.09, 0.07], divers: -33, dRatio: 3, dSp: -0.8 }),
+};
+
+export const DEMO_SFCR: Record<string, SocieteDemo> = { ...DEMO_BASE, ...DEMO_FICTIVES };
 
 export type SfcrDisponible = { id: string; label: string; annee: number; disponible: boolean };
 

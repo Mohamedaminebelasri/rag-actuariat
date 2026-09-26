@@ -1,13 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Users, X } from "lucide-react";
-import { CATEGORIE_LABELS } from "@/lib/analyse-utils";
+import { Download, TriangleAlert, Users, X } from "lucide-react";
+import {
+  CATEGORIE_LABELS,
+  FILTRES_VIDES,
+  avertissementComparabilite,
+  societesFiltrees,
+  type FiltresSocietes,
+} from "@/lib/analyse-utils";
 import { listeSfcrDisponibles } from "@/data/analyse-demo";
 import { ComparativeTable } from "./comparative-table";
 import { RadarComparatif } from "./radar-chart";
 import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
+import { FiltresSocietesBar } from "./filtres-societes";
 import { exporterCsvComparatif } from "@/lib/csv-export";
 
 const MAX_SOCIETES = 8;
@@ -21,9 +28,12 @@ export function ComparativeTab() {
   const [afficherMoyenne, setAfficherMoyenne] = useState(true);
   const [afficherMediane, setAfficherMediane] = useState(true);
   const [afficherSeuil, setAfficherSeuil] = useState(true);
+  const [filtres, setFiltres] = useState<FiltresSocietes>(FILTRES_VIDES);
 
   const sfcrDisponibles = listeSfcrDisponibles();
-  const disponiblesAAjouter = sfcrDisponibles.filter((s) => !societes.includes(s.id));
+  const idsFiltres = societesFiltrees(filtres);
+  const disponiblesAAjouter = sfcrDisponibles.filter((s) => !societes.includes(s.id) && idsFiltres.includes(s.id));
+  const avertissement = avertissementComparabilite(societes);
   const peutComparer = societes.length >= 2;
   const auMaximum = societes.length >= MAX_SOCIETES;
 
@@ -56,7 +66,7 @@ export function ComparativeTab() {
               className="text-sm border border-border rounded-full px-3 py-1.5 bg-surface text-text-secondary font-body"
             >
               <option value="">
-                + Ajouter un assureur
+                {disponiblesAAjouter.length > 0 ? "+ Ajouter un assureur" : "Aucun assureur pour ces filtres"}
               </option>
               {disponiblesAAjouter.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -70,7 +80,24 @@ export function ComparativeTab() {
             {societes.length}/{MAX_SOCIETES} assureurs sélectionnés
           </span>
         </div>
+        <div className="mt-3 pt-3 border-t border-border">
+          <FiltresSocietesBar
+            filtres={filtres}
+            onChange={setFiltres}
+            resume={`${disponiblesAAjouter.length} assureur${disponiblesAAjouter.length > 1 ? "s" : ""} disponible${disponiblesAAjouter.length > 1 ? "s" : ""} à ajouter`}
+          />
+        </div>
       </div>
+
+      {peutComparer && avertissement && (
+        <div
+          role="note"
+          className="flex items-start gap-2 bg-warning-light border border-warning/30 rounded-[10px] px-4 py-2.5 w-full"
+        >
+          <TriangleAlert className="w-[15px] h-[15px] text-warning flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-warning">{avertissement}</p>
+        </div>
+      )}
 
       {!peutComparer ? (
         <div className="flex flex-col items-center justify-center gap-2 w-full" style={{ minHeight: "30vh" }}>

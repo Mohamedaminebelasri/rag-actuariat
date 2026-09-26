@@ -5,6 +5,8 @@ import { CircleCheck, Download, FileSearch, FileText } from "lucide-react";
 import { CATEGORIES, KPI_DEFINITIONS, kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
 import { KpiCard } from "./kpi-card";
 import { ScrBreakdownChart } from "./scr-breakdown-chart";
+import { PositionMarche } from "./position-marche";
+import { LegendeStatuts } from "./legende-statuts";
 import { exporterCsvIndividuel } from "@/lib/csv-export";
 
 /** Port de analyse_individuelle() (individuelle.py, Reflex). */
@@ -23,7 +25,7 @@ export function IndividualTab() {
           <select
             value={societe}
             onChange={(e) => setSociete(e.target.value)}
-            className="flex-1 text-sm border border-border rounded-[var(--radius-md)] px-3 py-2 bg-surface text-text-primary font-body"
+            className="flex-1 min-w-0 text-sm border border-border rounded-[var(--radius-md)] px-3 py-2 bg-surface text-text-primary font-body"
           >
             <option value="">Sélectionnez un rapport SFCR…</option>
             {sfcrDisponibles.map((s) => (
@@ -61,6 +63,9 @@ export function IndividualTab() {
               Exporter (CSV)
             </button>
           </div>
+
+          <PositionMarche key={societe} societe={societe} />
+          <LegendeStatuts />
 
           {CATEGORIES.map((c) => {
             const kpisCategorie = KPI_DEFINITIONS.filter((k) => k.categorie === c.code && kpis[k.id] !== undefined);

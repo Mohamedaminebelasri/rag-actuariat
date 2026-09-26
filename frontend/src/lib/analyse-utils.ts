@@ -3,7 +3,18 @@
  * test_markdrop/sfcr_app/analyse/state.py (Reflex, commit c83d3ef).
  */
 
-import { CATEGORIES, KPI_DEFINITIONS, KPI_IDS_PAR_CATEGORIE, KPI_PAR_ID, kpisSociete, type KpiDefinition } from "@/data/analyse-demo";
+import {
+  CATEGORIES,
+  DEMO_SFCR,
+  KPI_DEFINITIONS,
+  KPI_IDS_PAR_CATEGORIE,
+  KPI_PAR_ID,
+  kpisSociete,
+  toutesLesSocietes,
+  type KpiDefinition,
+  type ModeleCapital,
+  type TypeSociete,
+} from "@/data/analyse-demo";
 
 // Sens de "meilleure valeur" par KPI — utilisé UNIQUEMENT pour la mise en
 // surbrillance meilleur/pire du tableau comparatif. Beaucoup de KPIs en
@@ -64,7 +75,7 @@ export function couleurSeuil(kpiId: string, valeur: number): CouleurSeuil {
 
 export function formatVariation(variation: number, unit: string): string {
   const signe = variation >= 0 ? "+" : "";
-  return `${signe}${variation.toFixed(1)} ${unit}`;
+  return `${signe}${variation.toFixed(unit === "Md€" ? 2 : 1)} ${unit}`;
 }
 
 export function kpiLabelCourt(def: KpiDefinition): string {
@@ -219,4 +230,100 @@ export function trierLignes(lignes: LigneKpi[], colonne: string, ascendant: bool
     if (vb === null) return ascendant ? 1 : -1;
     return ascendant ? va - vb : vb - va;
   });
+}
+
+// ───────────────────────── Idée 1 : statuts (feux) et tendance ─────────────────────────
+
+export type StatutKpi = { couleur: Exclude<CouleurSeuil, "neutre">; libelle: string };
+
+/** Statut « feu tricolore » — uniquement pour les KPIs qui ont un seuil
+ * (ratio SCR, ratio MCR, ratio S/P). Seuils indicatifs de démonstration. */
+export function statutKpi(kpiId: string, valeur: number): StatutKpi | null {
+  const couleur = couleurSeuil(kpiId, valeur);
+  if (couleur === "neutre") return null;
+  const libelles =
+    kpiId === "ratio_sp"
+      ? { success: "Maîtrisé", warning: "Vigilance", danger: "Dégradé" }
+      : { success: "Solide", warning: "Vigilance", danger: "Sous le seuil" };
+  return { couleur, libelle: libelles[couleur] };
+}
+
+export type SentimentVariation = "amelioration" | "degradation" | "stable" | "neutre";
+
+/** La flèche suit le SIGNE de la variation, mais sa COULEUR dépend du sens
+ * « bon/mauvais » du KPI : un ratio S/P qui monte est une dégradation. Les
+ * KPIs sans sens clair (montants liés à la taille) restent neutres. */
+export function sentimentVariation(kpiId: string, variation: number, unite: string): SentimentVariation {
+  const sens = SENS_KPI[kpiId];
+  if (!sens) return "neutre";
+  const seuilStable = unite === "pts" ? 0.5 : 0.01;
+  if (Math.abs(variation) < seuilStable) return "stable";
+  const bon = sens === "higher" ? variation > 0 : variation < 0;
+  return bon ? "amelioration" : "degradation";
+}
+
+// ───────────────────────── Idée 3 : filtres et comparabilité ─────────────────────────
+
+export type FiltresSocietes = { type: TypeSociete | "Tous"; modele: ModeleCapital | "Tous" };
+export const FILTRES_VIDES: FiltresSocietes = { type: "Tous", modele: "Tous" };
+
+export function societesFiltrees(filtres: FiltresSocietes): string[] {
+  return toutesLesSocietes().filter((nom) => {
+    const info = DEMO_SFCR[nom];
+    return (
+      (filtres.type === "Tous" || info.type === filtres.type) &&
+      (filtres.modele === "Tous" || info.modele === filtres.modele)
+    );
+  });
+}
+
+/** Message de prudence quand on compare des sociétés peu comparables. */
+export function avertissementComparabilite(societes: string[]): string | null {
+  const infos = societes.map((s) => DEMO_SFCR[s]).filter(Boolean);
+  const modeles = new Set(infos.map((i) => i.modele));
+  const types = new Set(infos.map((i) => i.type));
+  const messages: string[] = [];
+  if (modeles.size > 1) {
+    messages.push(
+      "Ces assureurs n'utilisent pas le même modèle de capital (formule standard et modèle interne) : leurs SCR et leurs ratios se comparent avec prudence."
+    );
+  }
+  if (types.has("Vie") && types.has("Non-vie")) {
+    messages.push("Activités vie et non-vie mélangées : le ratio S/P et le profil de risque sont peu comparables.");
+  }
+  return messages.length > 0 ? messages.join(" ") : null;
+}
+
+// ───────────────────────── Idée 2 : classement et distribution ─────────────────────────
+
+export const KPIS_CLASSABLES = KPI_DEFINITIONS.filter((k) => SENS_KPI[k.id] !== undefined);
+
+export type PointDistribution = { societe: string; valeur: number };
+
+export type Classement = {
+  rang: number;
+  total: number;
+  /** Part des autres sociétés du groupe qui font moins bien (0-100). */
+  percentile: number;
+  mediane: number;
+  points: PointDistribution[];
+};
+
+/** Rang de `societe` sur `kpiId` parmi `groupe` (la société y est toujours incluse). */
+export function classement(kpiId: string, societe: string, groupe: string[]): Classement | null {
+  const sens = SENS_KPI[kpiId];
+  if (!sens) return null;
+  const noms = groupe.includes(societe) ? groupe : [...groupe, societe];
+  const points: PointDistribution[] = [];
+  for (const nom of noms) {
+    const v = kpisSociete(nom)[kpiId]?.valeur;
+    if (v !== undefined) points.push({ societe: nom, valeur: v });
+  }
+  if (!points.some((p) => p.societe === societe)) return null;
+
+  const triees = [...points].sort((a, b) => (sens === "higher" ? b.valeur - a.valeur : a.valeur - b.valeur));
+  const rang = triees.findIndex((p) => p.societe === societe) + 1;
+  const total = points.length;
+  const percentile = total > 1 ? Math.round(((total - rang) / (total - 1)) * 100) : 100;
+  return { rang, total, percentile, mediane: mediane_(points.map((p) => p.valeur)), points };
 }
