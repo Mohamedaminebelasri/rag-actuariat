@@ -5763,7 +5763,7 @@ session). Progression de **+2 groupes nouvellement couverts** (AG2R,
 MGEN) et **1 groupe passé de partiel à complet** (Aéma/MACIF) en une
 session.
 
-### Correction (2026-09-26, Décision 096) — tally 14/15 incohérent, corrigé à 15/15
+### Correction (2026-09-26) — tally 14/15 incohérent, corrigé à 15/15
 
 Incohérence trouvée en auditant ce tally sur demande de l'utilisateur
 (qui avait en tête "Allianz Vie est le groupe partiel", alors que ce
