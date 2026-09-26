@@ -57,7 +57,20 @@ NATIVE_TEXT_THRESHOLD = 500  # caractères ; seuil observé (QRT image-only : ~2
 
 ROW_CODE_RE = re.compile(r"^R\d{4}$")
 COL_CODE_RE = re.compile(r"^C\d{4}$")
-NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$|^-$")
+# Espaces Unicode invisibles rencontrées entre un signe "-" et sa
+# magnitude comme UN SEUL mot PDF (Décision 088/091, ex. "- 452") —
+# cf. commentaire détaillé sur ESPACES_UNICODE dans extract_kpis.py
+# (même liste, dupliquée ici volontairement : ce module ne dépend pas
+# d'extract_kpis.py pour rester utilisable seul, cf. imports en tête).
+_ESPACES_UNICODE_RE = "    "
+
+NUMERIC_FRAGMENT_RE = re.compile(
+    r"^-?\d+([.,]\d+)?%?$|^%$|^-$"
+    r"|^-[" + _ESPACES_UNICODE_RE + r"]\d+([.,]\d+)?$"          # Décision 091 (MGEN) : "- 452"
+    r"|^\(\d[\d" + _ESPACES_UNICODE_RE + r"]*\)$"                # Décision 091 (Predica) : "(10475550)" un seul mot
+    r"|^\(\d[\d" + _ESPACES_UNICODE_RE + r"]*$"                  # fragment ouvrant : "(10"
+    r"|^\d[\d" + _ESPACES_UNICODE_RE + r"]*\)$"                  # fragment fermant : "550)"
+)
 # Élargi (fix ratios %, cf. DECISIONS.md) : certains documents (MACSF)
 # impriment les ratios directement en pourcentage ("521%", un seul mot
 # PDF) plutôt qu'en décimal brut ("2,74") comme Groupama/CNP — jamais
@@ -76,6 +89,24 @@ NUMERIC_FRAGMENT_RE = re.compile(r"^-?\d+([.,]\d+)?%?$|^%$|^-$")
 # matche le 1er terme de la regex directement ; un "-" isolé loin de tout
 # chiffre (cas ici) reste un fragment séparé après merge_numeric_fragments,
 # jamais fusionné avec un nombre à plus de MERGE_GAP_PT.
+#
+# Décision 091 — 2 termes supplémentaires pour le "bug de signe détaché"
+# (Décisions 085/088, jusque-là corrigées au cas par cas par des
+# overrides scopés par société) : un token "- 452" (signe + espace
+# Unicode invisible + chiffres, UN SEUL mot PDF — vérifié sur MGEN,
+# get_text("words") le confirme) était REJETÉ ici avant (la regex
+# n'autorisait aucun caractère entre "-" et les chiffres), donc
+# silencieusement absent de `frags` — jamais fusionné, jamais vu par
+# _vers_float. Idem pour un fragment "(10"/"550)" (parenthèse ouvrante/
+# fermante collée à des chiffres, notation comptable négative — vérifié
+# sur Predica). Chaque nouveau terme est ANCRÉ sur un caractère ("("",
+# ")", espace Unicode précis) qu'AUCUNE valeur déjà extraite avec succès
+# ne pouvait contenir (sinon elle aurait déjà été rejetée avant Décision
+# 088/091) : zéro risque de faire matcher un mot qui passait déjà,
+# donc zéro risque de régression sur les documents déjà corrects.
+# _vers_float (extract_kpis.py) fait le travail de reconstruction final
+# (retrait des espaces Unicode, parenthèses = négatif) une fois les
+# fragments fusionnés par merge_numeric_fragments.
 MERGE_GAP_PT = 5.0
 LINE_TOLERANCE_PT = 1.5
 # Décision 078 : repli DIRECTIONNEL, utilisé UNIQUEMENT si la tolérance

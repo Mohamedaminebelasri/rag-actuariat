@@ -152,30 +152,14 @@ def extraire_tout_predica():
         else:
             valeurs[kpi_name] = (None, None, "aucune source disponible pour Predica (pas de picture_75 équivalent)")
 
-    # Correction manuelle vérifiée — scr_diversification (Décision, cette
-    # session) : extract_qrt_native() (ingest.py) ne reconnaît pas la
-    # notation comptable "(N N N)" (parenthèses = négatif) — NUMERIC_FRAGMENT_RE
-    # ne matche que des fragments purement numériques, donc "(10" et "550)"
-    # sont rejetés et seul le fragment médian "475" est retenu, lu à tort
-    # comme 475 K€ au lieu de -10 475 550 K€. Confirmé par lecture directe du
-    # texte brut page 71 ("R0060 ... (10 475 550)") ET par recoupement
-    # arithmétique EXACT : R0100 (SCR de base, lu correctement = 37 866 516)
-    # - somme(R0010..R0050 = 25 138 474+319 385+22 372 731+511 476+0 =
-    # 48 342 066) = -10 475 550, à l'euro près. Un même bug affecte R0140/
-    # R0150 sur la même page (non utilisés par aucun KPI mappé, donc sans
-    # impact ici) — bug générique du parser natif, PAS corrigé dans
-    # ingest.py (hors scope de cette tâche, affecterait potentiellement
-    # d'autres documents, nécessiterait sa propre régression complète) ;
-    # uniquement cette valeur, pour ce document, corrigée manuellement ici,
-    # avec la même discipline "jamais deviner, toujours recoupé" que les
-    # extractions manuelles Generali/MACIF SAM/Aéma Groupe.
-    if valeurs["scr_diversification"][0] == 475 / 1000:
-        valeurs["scr_diversification"] = (
-            -10_475_550 / 1000, valeurs["scr_diversification"][1],
-            "S.25.01.21/R0060 — valeur brute lue par erreur \"475\" (parser ne gère pas la notation "
-            "parenthèses-négatif \"(10 475 550)\") ; corrigée manuellement, vérifiée par lecture directe "
-            "du texte PDF ET recoupement arithmétique exact R0100 - somme(R0010..R0050) = -10 475 550",
-        )
+    # scr_diversification : le override manuel (notation "(10 475 550)" mal
+    # gérée par le parser) ajouté à cet endroit lors de l'extraction initiale
+    # n'est plus nécessaire — Décision 091 a corrigé le bug de signe détaché
+    # DIRECTEMENT dans NUMERIC_FRAGMENT_RE (ingest.py) et _vers_float
+    # (extract_kpis.py) : resoudre_variantes_qrt() retourne maintenant
+    # -10 475 550 correctement dès la résolution générique ci-dessus, sans
+    # override. Vérifié : la ligne `if valeurs["scr_diversification"][0]
+    # == 475/1000` ne se déclenche plus (retiré, code mort).
 
     valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP)")
 

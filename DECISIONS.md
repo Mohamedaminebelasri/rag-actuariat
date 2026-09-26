@@ -5887,3 +5887,127 @@ de généralisation, pas dans son résultat final).
 RÉGRESSION VÉRIFIÉE : Groupama 30/30 inchangé ; Predica/MGEN passés à
 27/27 (amélioration attendue, faux signaux corrigés, pas une
 régression).
+
+## Décision 091 — Détection systématique du bug de signe détaché (solution générale)
+
+CONTEXTE : 4 sociétés (Predica, BPCE IARD, MGEN, MACSF) avaient eu le
+même type de bug — un signe négatif séparé de sa magnitude — corrigé
+à chaque fois au cas par cas (Décisions 085/086/088/090). Objectif :
+construire une détection et une correction SYSTÉMATIQUES, pas une
+énième correction manuelle.
+
+### Étape 1 — Les 4 variantes déjà recensées
+
+| Société | Décision | Variante | Pipeline concerné |
+|---|---|---|---|
+| Predica | 085 | Notation comptable entre parenthèses : "(10 475 550)" = -10 475 550. PyMuPDF sépare "(10" et "550)" en 2 mots, tous deux rejetés par NUMERIC_FRAGMENT_RE (aucun ne matche un nombre pur). | extract_qrt_native (ingest.py) |
+| BPCE IARD | 086 | Signe et magnitude sur des tokens séparés, magnitude AVANT le signe : ["196 476", "-", "196 476", "-"] (2 colonnes net/brut). | classifier_lignes/extraire_par_libelle (mode libellés français, PAS extract_qrt_native) |
+| MGEN | 088 | Espace Unicode INVISIBLE entre le signe et la magnitude, dans un SEUL mot PDF : "-[espace fine U+2009]452" — vérifié via page.get_text("words"), PyMuPDF ne scinde pas ce caractère comme un espace normale. | extract_qrt_native (ingest.py) |
+| MACSF | 090 | Signe attaché à une CELLULE/COLONNE différente de la magnitude : C0090="14137", C0100="-" (colonne "Value" distincte) — trouvé dans un corpus pré-construit par un pipeline Docling plus ancien. | Pipeline corpus_final.json historique (pas extract_qrt_native, script de construction du corpus non ré-exécuté) |
+
+Point clé : ces 4 variantes vivent dans 3 pipelines d'extraction
+différents — extract_qrt_native (Predica/MGEN), classifier_lignes
+(BPCE IARD), et l'ancien pipeline Docling (MACSF/Groupama/CNP). Un seul
+fix ne peut pas couvrir les 3 sans un risque de régression majeur — cf.
+Décision 079 (un fix générique dans classifier_lignes avait cassé
+Covéa).
+
+### Étape 2 — Détecteur systématique construit et testé
+
+Fix appliqué aux 2 variantes qui vivent réellement dans
+extract_qrt_native (Predica, MGEN) :
+- NUMERIC_FRAGMENT_RE (ingest.py) étendue avec 4 nouveaux termes,
+  chacun ANCRÉ sur un caractère qu'aucune valeur déjà extraite avec
+  succès ne pouvait contenir (parenthèse ouvrante/fermante, espaces
+  Unicode précis) — donc strictement additif, zéro risque de faire
+  matcher un mot qui matchait déjà autrement.
+- _vers_float (extract_kpis.py) étendue pour reconstruire la valeur
+  finale : retire les espaces Unicode (U+2009/U+00A0/U+202F/U+2007), et
+  traite "(...)" comme négatif.
+- 21 tests unitaires (test_normalisation_signe.py, nouveau fichier)
+  couvrant : reconnaissance des 2 variantes, absence de faux positifs
+  sur du texte non-numérique, ET non-régression stricte sur tous les
+  formats déjà gérés (entier, décimal virgule, pourcentage, tiret
+  EIOPA, négatif collé, espaces milliers ASCII) — tous passent, y
+  compris une reproduction bout-en-bout exacte des bugs Predica/MGEN.
+
+BPCE IARD (classifier_lignes) et MACSF (pipeline Docling ancien) ne
+sont PAS touchés : la généralisation de classifier_lignes a déjà été
+tentée et rejetée en Décision 079 (régression Covéa) ; le pipeline
+Docling ancien n'est plus ré-exécuté pour aucune société active. Ces 2
+restent couverts par leurs fix scopés existants (Décision 086) et par
+le filet de sécurité de l'Étape 3 ci-dessous.
+
+### Étape 3/4 — Scan rétroactif des 27 sociétés + non-régression
+
+Scan direct en base : les 563 valeurs non-NULL des 27 sociétés
+auditées contre le signe attendu (kpi_definitions.py) — 1 seule
+anomalie hors zéro trouvée (Macifilia/charge_sinistres, déjà
+documentée et vérifiée comme légitime, Décision 087).
+
+Screening par ratio (garde-fou plus fin, car un signe déjà correct
+peut cacher une MAGNITUDE tronquée) : |scr_diversification| / somme
+des 5 autres composantes SCR, calculé pour les 25 sociétés avec
+données complètes. Toutes dans une fourchette 13-43%, plausible pour un
+vrai effet de diversification, SAUF MACSF (2,73%, déjà vérifiée exacte
+par recoupement arithmétique en Décision 090) — aucune nouvelle
+anomalie détectée.
+
+Régression réelle : batch_diagnostic.py relancé sur les 25 documents
+réels (hors fragments _entite_* déjà nettoyés) — scores strictement
+identiques avant/après, document par document.
+
+BONUS non anticipé : en ré-exécutant extract_kpis_predica.py après le
+fix pour confirmer que l'override manuel devenait inutile (confirmé :
+resoudre_variantes_qrt retourne directement -10 475 550 sans override),
+une DIFFÉRENCE inattendue est apparue sur charge_sinistres (83 983,72
+-> 83 966,88 M€). Investiguée avant d'être acceptée (jamais une
+différence silencieuse) : le texte brut page 57 contient "(8 420)"
+dans une colonne de la ligne R1610 — un signe détaché NON encore
+trouvé, sur un KPI DIFFÉRENT de scr_diversification. Sous l'ANCIEN
+parser, cette colonne était purement absente de la somme (silencieusement
+traitée comme 0 plutôt que -8 420) ; le nouveau parser l'inclut
+correctement. Vérifié par recoupement exact : 18 089 651+0(ancien,
+colonne rejetée)+2 619 270+20 700 500 = 41 409 421 (ancienne valeur,
+fausse) contre 18 089 651-8 420+2 619 270+20 700 500 = 41 401 001
+(nouvelle valeur, exacte) — la correction du parser révèle et corrige
+une DEUXIÈME instance du même bug, invisible à la détection par signe
+seul puisque charge_sinistres reste positif dans les 2 cas. Ceci valide
+directement la prémisse de la tâche : le bug était bien plus répandu
+que les 4 cas déjà trouvés. AG2R (9 entités) ré-exécuté également :
+aucun changement (aucune notation parenthèses/espace invisible sur ses
+cellules).
+
+Overrides manuels devenus redondants NETTOYÉS (code mort retiré) :
+extract_kpis_predica.py et extract_kpis_mgen.py — le fix général
+résout maintenant scr_diversification correctement sans eux, vérifié
+avant suppression. L'override fonds_propres_eligibles de MGEN reste
+(bug DIFFÉRENT — mauvaise colonne, pas un signe détaché).
+
+### Étape 5 — validate_kpis.py --all après le fix
+
+Identique à avant le fix (Groupama 30/30, Predica/MGEN/MACSF 27/27,
+les 4 mêmes échecs déjà documentés comme légitimes) — zéro régression.
+
+### Étape 6 — Tableau récapitulatif
+
+| Société | Signe détecté avant | Signe après nouveau détecteur | Changé ? | Vérifié arithmétiquement ? |
+|---|---|---|---|---|
+| Predica | positif (bug, Décision 085) | négatif (résolu directement, override retiré) | Oui (déjà corrigé avant cette tâche) | Oui (R0100=somme composantes, exact) |
+| BPCE IARD | positif (bug, Décision 086) | positif (non couvert — pipeline classifier_lignes, fix scopé conservé) | Non re-testé ici (hors kpis.db, jamais inséré) | Oui, en Décision 086 |
+| MGEN | positif (bug, Décision 088) | négatif (résolu directement, override retiré) | Oui (déjà corrigé avant cette tâche) | Oui (R0100=somme composantes, exact) |
+| MACSF prévoyance | positif (bug, Décision 090) | négatif (inchangé par ce fix, déjà corrigé) | Non (déjà bon) | Oui, en Décision 090 |
+| Predica (bonus) | charge_sinistres correct en apparence (positif, mais magnitude fausse) | charge_sinistres corrigé (+16,84 M€, colonne (8 420) incluse) | Oui — nouveau, trouvé par cette tâche | Oui (recoupement exact 41 401 001) |
+| Les 22 autres sociétés (Aéma x13, AG2R x9, CNP, Groupama) | négatif (déjà correct) | négatif (inchangé) | Non | Scan systématique (polarité + ratio), pas de ré-arithmétique individuelle sauf AG2R (9 entités ré-exécutées, 0 changement) |
+
+### Étape 7 — Commit
+
+Commité avec le message demandé.
+
+Limite assumée : la détection reste au niveau texte pour
+extract_qrt_native uniquement (2 des 3 pipelines). BPCE IARD
+(classifier_lignes) et le pipeline Docling historique (MACSF/Groupama/
+CNP) ne sont couverts que par le filet de sécurité arithmétique
+rétroactif (Étape 3), pas par une correction automatique à la source —
+un choix assumé pour ne pas répéter la régression Covéa de Décision
+079.

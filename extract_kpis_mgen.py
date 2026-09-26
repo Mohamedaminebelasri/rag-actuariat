@@ -132,43 +132,31 @@ def extraire_tout_mgen():
         else:
             valeurs[kpi_name] = (None, None, "aucune source disponible pour MGEN (pas de picture_75 équivalent)")
 
-    # Corrections manuelles vérifiées — 2 bugs réels trouvés dans
-    # extract_qrt_native() sur cette page précise (Décision, cette
-    # session), aucun touché dans le code partagé (même discipline que
-    # Predica/BPCE IARD) :
-    #
-    # 1. fonds_propres_eligibles/tiers (S.23.01.01/R0540) : le corpus
-    #    donnait "-" (0.0) pour toutes les colonnes alors que le texte
-    #    brut page 53 montre clairement R0540 = 3 441 361 / 3 441 361 /
-    #    - / - / - (5 colonnes C0010-C0050). Cause probable : plusieurs
-    #    tokens numériques proches en y sur cette ligne, mal réassignés
-    #    par l'appariement colonne-par-proximité. Vérifié par cohérence
-    #    arithmétique : 3 441 361 = R0290 (Total fonds propres de base
-    #    après déductions, déjà lu correctement) = R0700 (Excédent
-    #    d'actif sur passif, réserve de réconciliation) — 3 sources
-    #    indépendantes de la même page concordent exactement. Confirme
-    #    aussi ratio_scr : 3 441 361/1 460 979 = 235,55% ≈ 236% publié.
-    #
-    # 2. scr_diversification (S.25.01.21/R0060) : le corpus donnait
-    #    0,16 (probablement une valeur d'une autre ligne mal capturée)
-    #    alors que le texte brut page 54 montre "R0060 ... - 452 163"
-    #    — signe négatif séparé de la magnitude par une ESPACE FINE
-    #    (U+2009, pas une espace normale), que NUMERIC_FRAGMENT_RE ne
-    #    reconnaît pas comme un seul token. Vérifié par cohérence
-    #    arithmétique EXACTE : R0100 (SCR de base) = somme(R0010..R0070)
-    #    = 789578+69440+70433+939219+1267-452163+792 = 1 418 566, qui
-    #    correspond EXACTEMENT au R0100 imprimé (1 418 566) — et
-    #    R0100+R0130+R0140+R0150 = 1 418 566+99 604+0-57 191=1 460 979 =
-    #    scr_total déjà extrait correctement.
+    # Correction manuelle vérifiée — fonds_propres_eligibles/tiers
+    # (S.23.01.01/R0540) : le corpus donnait "-" (0.0) pour toutes les
+    # colonnes alors que le texte brut page 53 montre clairement R0540 =
+    # 3 441 361 / 3 441 361 / - / - / - (5 colonnes C0010-C0050). Cause
+    # probable : plusieurs tokens numériques proches en y sur cette
+    # ligne, mal réassignés par l'appariement colonne-par-proximité —
+    # bug DIFFÉRENT du signe détaché (Décision 091), non couvert par ce
+    # fix générique, reste un override manuel ici. Vérifié par cohérence
+    # arithmétique : 3 441 361 = R0290 (Total fonds propres de base
+    # après déductions, déjà lu correctement) = R0700 (Excédent d'actif
+    # sur passif, réserve de réconciliation) — 3 sources indépendantes
+    # de la même page concordent exactement. Confirme aussi ratio_scr :
+    # 3 441 361/1 460 979 = 235,55% ≈ 236% publié.
     if valeurs.get("fonds_propres_eligibles", (None,))[0] in (0.0, None):
         valeurs["fonds_propres_eligibles"] = (3441.361, 53, "S.23.01.01/R0540/C0010 — corrigé manuellement, vérifié (= R0290 = R0700, 3 sources concordantes exactement)")
         valeurs["fonds_propres_t1_nr"] = (3441.361, 53, "S.23.01.01/R0540/C0020 — corrigé manuellement, même vérification")
         valeurs["fonds_propres_t1_r"] = (0.0, 53, "S.23.01.01/R0540/C0030 (\"-\") — corrigé manuellement")
         valeurs["fonds_propres_t2"] = (0.0, 53, "S.23.01.01/R0540/C0040 (\"-\") — corrigé manuellement")
         valeurs["fonds_propres_t3"] = (0.0, 53, "S.23.01.01/R0540/C0050 (\"-\") — corrigé manuellement")
-    if abs(valeurs.get("scr_diversification", (0.0,))[0] or 0.0) < 1.0:
-        valeurs["scr_diversification"] = (-452.163, 54, "S.25.01.21/R0060 — signe \"-\" séparé de la magnitude par une espace fine (U+2009), "
-                                                          "corrigé manuellement, vérifié par recoupement arithmétique exact (R0100=somme(R0010..R0070)=1 418 566)")
+    # L'override scr_diversification qui était ici n'est plus nécessaire —
+    # Décision 091 a corrigé ce bug de signe détaché DIRECTEMENT dans
+    # NUMERIC_FRAGMENT_RE (ingest.py) et _vers_float (extract_kpis.py) :
+    # resoudre_variantes_qrt() retourne maintenant -452 163 correctement
+    # dès la résolution générique ci-dessus. Vérifié : le override ne se
+    # déclenchait plus (retiré, code mort).
 
     valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP/Predica)")
 

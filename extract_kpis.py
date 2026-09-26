@@ -77,6 +77,19 @@ class KpiIntrouvable(Exception):
     pass
 
 
+# Décision 091 : caractères espace Unicode rencontrés en pratique dans un
+# nombre PDF, au-delà de l'espace ASCII normale (U+0020) déjà gérée par
+# .replace(" ", "") — liste vérifiée au fur et à mesure des cas RÉELS
+# trouvés (pas une tentative d'exhaustivité Unicode théorique) :
+# U+2009 (espace fine — MGEN, Décision 088), U+00A0 (insécable),
+# U+202F (insécable étroite), U+2007 (chiffre). Les milliers de très
+# nombreux documents déjà extraits avec succès n'utilisent QUE l'espace
+# ASCII normale — cette liste ne peut donc rien casser, elle ajoute
+# seulement des caractères qu'aucune extraction existante ne contenait
+# (sinon elle aurait déjà échoué avant Décision 088).
+ESPACES_UNICODE = "    "
+
+
 def _vers_float(brut):
     """valeur_brute est tantôt une str (ex. extraction native S.23.01,
     "2160259" ou "2,74"), tantôt un int/float JSON natif (ex. certaines
@@ -99,15 +112,38 @@ def _vers_float(brut):
     Niveau2/Niveau3 et S.25.01.21.01/R0040-R0050) : retourne 0.0. Ajout
     tout aussi additif — un "-" seul faisait échouer float() avant (ni
     chiffre ni signe suivi de chiffres), donc aucune cellule déjà
-    extraite avec succès ne pouvait avoir cette valeur brute."""
+    extraite avec succès ne pouvait avoir cette valeur brute.
+
+    Décision 091 — support de 2 variantes du "bug de signe détaché"
+    (Décisions 085/086/088/090, jusque-là corrigées au cas par cas) :
+    - notation comptable entre parenthèses "(10 475 550)" = négatif
+      (Predica, Décision 085) ;
+    - espace Unicode invisible entre le signe et la magnitude, ex.
+      "- 452163" (MGEN, Décision 088) — cf. ESPACES_UNICODE.
+    Les 2 ajouts sont strictement additifs et anchored : ils ne
+    s'activent QUE sur une chaîne qui commence par "(" et finit par ")"
+    (jamais rencontré comme valeur légitime — un nombre positif normal
+    ne porte jamais de parenthèses), ou dont le PREMIER caractère après
+    normalisation des espaces Unicode est "-" (déjà le cas géré avant,
+    juste étendu aux espaces au-delà de l'ASCII). Aucune valeur déjà
+    extraite avec succès ne peut avoir contenu ces caractères (sinon
+    float() aurait déjà échoué avant), donc zéro risque de régression."""
     if isinstance(brut, (int, float)):
         return float(brut)
-    s = str(brut).replace(" ", "").replace(",", ".")
+    s = str(brut)
+    for espace in ESPACES_UNICODE:
+        s = s.replace(espace, "")
+    s = s.replace(" ", "").replace(",", ".")
     if s == "-":
         return 0.0
+    negatif_parentheses = s.startswith("(") and s.endswith(")")
+    if negatif_parentheses:
+        s = s[1:-1]
     if s.endswith("%"):
-        return float(s[:-1]) / 100
-    return float(s)
+        valeur = float(s[:-1]) / 100
+    else:
+        valeur = float(s)
+    return -valeur if negatif_parentheses else valeur
 
 
 def charger_corpus():
