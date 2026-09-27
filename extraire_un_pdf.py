@@ -57,7 +57,49 @@ DB_PATH = BASE_DIR / "kpis.db"
 sys.path.insert(0, str(BASE_DIR))
 sys.path.insert(0, str(BASE_DIR / "test_markdrop"))
 
-DIVISEUR_MONTANT = 1000  # hypothèse K€ par défaut — NON vérifiée (cf. docstring)
+DIVISEUR_MONTANT_DEFAUT = 1000  # K€ — utilisé si l'auto-détection (Décision 107) est ambiguë
+
+
+def detecter_diviseur_montant(raw_scr_total, raw_fonds_propres):
+    """Décide K€ (÷1000) vs € bruts (÷1 000 000) à partir de l'ORDRE DE
+    GRANDEUR des valeurs BRUTES (avant tout diviseur) de scr_total et
+    fonds_propres_eligibles — même méthode que celle qui a RÉELLEMENT
+    permis de détecter le bug historique (Décision 094, recoupement
+    d'ordre de grandeur), pas une heuristique inventée. Une recherche
+    textuelle d'étiquette d'unité a été écartée comme signal primaire :
+    les 7 entités Aéma concernées n'avaient AUCUNE étiquette visible sur
+    leurs pages QRT (confirmé Décision 094) — un texte absent n'aurait
+    rien détecté dans le cas réel qui a motivé ce correctif.
+
+    LIMITE CONNUE (testée rétroactivement sur les 34 sociétés, Décision
+    107) : 31/34 correctement détectées, zéro faux positif. Les 3 échecs
+    (MMJ, MNPAF, Nuoma) sont des cas où les 2 hypothèses restent
+    plausibles au sens large (valeur ni impossible ni évidemment trop
+    petite) — Décision 094 elle-même n'a résolu ces 3 cas précis qu'en
+    recoupant contre le SCR narratif du groupe entier, un signal externe
+    au document, hors de portée d'une détection par magnitude seule.
+    Dans ces cas, retombe sur le défaut K€, explicitement marqué non
+    vérifié — jamais une fausse confiance.
+
+    Retourne (diviseur, unite_str, confiant: bool)."""
+    from validate_kpis import PLAFOND_MONTANT_STANDARD, PLANCHER_MONTANT
+
+    candidats = []
+    for diviseur, unite in ((1000, "K€"), (1_000_000, "euros bruts")):
+        ok = True
+        for raw in (raw_scr_total, raw_fonds_propres):
+            if raw is None:
+                continue
+            m = abs(raw) / diviseur
+            if not (PLANCHER_MONTANT <= m <= PLAFOND_MONTANT_STANDARD):
+                ok = False
+        candidats.append((diviseur, unite, ok))
+
+    plausibles = [c for c in candidats if c[2]]
+    if len(plausibles) == 1:
+        diviseur, unite, _ = plausibles[0]
+        return diviseur, unite, True
+    return DIVISEUR_MONTANT_DEFAUT, "K€", False
 
 
 # ---------------------------------------------------------------------
@@ -190,12 +232,31 @@ def extraire_kpis(corpus, ek, suivi):
         "possible sur un document inédit)...",
     )
 
+    # Décision 107 — auto-détection K€ vs € bruts AVANT tout diviseur,
+    # depuis les valeurs BRUTES de scr_total/fonds_propres_eligibles
+    # (les 2 seuls KPIs toujours significatifs, cf. docstring de
+    # detecter_diviseur_montant). Raw = pas encore divisé.
+    raw_scr_total = None
+    resultats_scr = ek.resoudre_variantes_qrt("scr_total", corpus, templates_presents)
+    if resultats_scr:
+        raw_scr_total = resultats_scr[0][0]
+    raw_fonds_propres = None
+    resultats_fp = ek.resoudre_variantes_qrt("fonds_propres_eligibles", corpus, templates_presents)
+    if resultats_fp:
+        raw_fonds_propres = resultats_fp[0][0]
+
+    diviseur_montant, unite_detectee, confiant = detecter_diviseur_montant(raw_scr_total, raw_fonds_propres)
+    suivi.etape(
+        "appel_modele",
+        f"Unité détectée : {unite_detectee} ({'confiant, ordre de grandeur non ambigu' if confiant else 'AMBIGU, défaut K€ appliqué — non vérifié'})",
+    )
+
     for kpi_name, diviseur, multiplicateur in [
         ("ratio_scr", 1, 100), ("ratio_mcr", 1, 100),
-        ("scr_total", DIVISEUR_MONTANT, 1), ("mcr", DIVISEUR_MONTANT, 1),
-        ("fonds_propres_eligibles", DIVISEUR_MONTANT, 1), ("fonds_propres_t1_nr", DIVISEUR_MONTANT, 1),
-        ("fonds_propres_t1_r", DIVISEUR_MONTANT, 1), ("fonds_propres_t2", DIVISEUR_MONTANT, 1),
-        ("fonds_propres_t3", DIVISEUR_MONTANT, 1),
+        ("scr_total", diviseur_montant, 1), ("mcr", diviseur_montant, 1),
+        ("fonds_propres_eligibles", diviseur_montant, 1), ("fonds_propres_t1_nr", diviseur_montant, 1),
+        ("fonds_propres_t1_r", diviseur_montant, 1), ("fonds_propres_t2", diviseur_montant, 1),
+        ("fonds_propres_t3", diviseur_montant, 1),
     ]:
         resultats = ek.resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
         if not resultats:
@@ -210,7 +271,7 @@ def extraire_kpis(corpus, ek, suivi):
     for kpi_name in ("best_estimate", "marge_risque"):
         try:
             valeur, template_id, variante = ek.valeur_principale(kpi_name, corpus, templates_presents)
-            valeurs[kpi_name] = (valeur / DIVISEUR_MONTANT, _page_source(corpus, template_id), f"{template_id}, mapping")
+            valeurs[kpi_name] = (valeur / diviseur_montant, _page_source(corpus, template_id), f"{template_id}, mapping")
         except ek.KpiIntrouvable as e:
             valeurs[kpi_name] = (None, None, str(e))
 
@@ -235,7 +296,7 @@ def extraire_kpis(corpus, ek, suivi):
         if resultats:
             total = sum(v for v, _t, _var in resultats)
             template_id = resultats[0][1]
-            valeurs[kpi_name] = (total / DIVISEUR_MONTANT, _page_source(corpus, template_id),
+            valeurs[kpi_name] = (total / diviseur_montant, _page_source(corpus, template_id),
                                   f"{template_id}, somme {len(resultats)} variante(s) (mapping)")
         else:
             valeurs[kpi_name] = (None, None, "aucune variante du mapping ne matche")
@@ -246,13 +307,13 @@ def extraire_kpis(corpus, ek, suivi):
         resultats = ek.resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
         if resultats:
             valeur, template_id, variante = resultats[0]
-            valeurs[kpi_name] = (valeur / DIVISEUR_MONTANT, _page_source(corpus, template_id),
+            valeurs[kpi_name] = (valeur / diviseur_montant, _page_source(corpus, template_id),
                                   f"{template_id}/{variante['row']} (mapping)")
         else:
             valeurs[kpi_name] = (None, None, "aucune variante du mapping ne matche (modèle interne possible, non testé automatiquement)")
 
     valeurs["resultat_technique"] = (None, None, "aucun équivalent QRT standardisé (Décision 051)")
-    return valeurs
+    return valeurs, unite_detectee, confiant
 
 
 def deduire_type_activite(valeurs):
@@ -277,17 +338,21 @@ def deduire_type_activite(valeurs):
 # demande explicite : pas de checkpoint humain avant demain matin)
 # ---------------------------------------------------------------------
 
-def inserer_en_base(company_name, year, valeurs, inventaire, kpi_definitions):
+def inserer_en_base(company_name, year, valeurs, inventaire, unite_detectee, confiant, kpi_definitions):
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON")
 
     type_activite = deduire_type_activite(valeurs)
+    unite_source = (
+        f"{unite_detectee} (auto-détecté par magnitude, Décision 107)" if confiant
+        else f"{unite_detectee} (hypothèse par défaut, AMBIGU — magnitude non concluante, non vérifié)"
+    )
     conn.execute(
         """INSERT OR IGNORE INTO companies
            (name, type, country, type_document, scr_method, type_activite, unite_source)
            VALUES (?, 'à déterminer', 'France', ?, ?, ?, ?)""",
         (company_name, inventaire.get("document_type"), inventaire.get("scr_method"),
-         type_activite, "K€ (hypothèse par défaut, NON vérifiée — extraction à chaud sans revue)"),
+         type_activite, unite_source),
     )
     conn.commit()
     company_id = conn.execute("SELECT id FROM companies WHERE name=?", (company_name,)).fetchone()[0]
@@ -364,7 +429,7 @@ def main():
         from kpi_definitions import KPI_DEFINITIONS
 
         corpus, inventaire = construire_corpus(pdf_path, ek, suivi)
-        valeurs = extraire_kpis(corpus, ek, suivi)
+        valeurs, unite_detectee, confiant = extraire_kpis(corpus, ek, suivi)
 
         defs_par_nom = {d["kpi_name"]: d for d in KPI_DEFINITIONS}
         apercu = [
@@ -375,7 +440,9 @@ def main():
         suivi.kpis_maj(apercu)
 
         suivi.etape("ecriture_db", f"Écriture dans kpis.db ({args.societe}, {args.annee})...")
-        _company_id, kpis_pour_job = inserer_en_base(args.societe, args.annee, valeurs, inventaire, KPI_DEFINITIONS)
+        _company_id, kpis_pour_job = inserer_en_base(
+            args.societe, args.annee, valeurs, inventaire, unite_detectee, confiant, KPI_DEFINITIONS
+        )
         suivi.kpis_maj(kpis_pour_job)
 
         suivi.etape("validation", "Exécution des contrôles actuariels (cohérence interne, signes, magnitude)...")

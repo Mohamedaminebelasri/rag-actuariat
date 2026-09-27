@@ -7197,3 +7197,68 @@ Docling/PyMuPDF/PaddleOCR) doit tourner via
 `test_markdrop/.venv/Scripts/python.exe`, PAS le Python système —
 `fitz`/`docling`/`paddleocr` n'y sont pas installés. À communiquer côté
 frontend pour la commande lancée en détaché.
+
+## Décision 107 — GAP 1 : auto-détection d'unité K€/€ bruts + contrôle plancher
+
+CONTEXTE : `extraire_un_pdf.py` (Décision 106) supposait K€ en dur,
+sans aucune vérification — si un PDF réel arrivait en € bruts, tous
+les montants sortiraient ×1000 trop grands, et le contrôle de
+magnitude existant (Décision 095, plafond) ne détecte que les valeurs
+trop GRANDES, jamais trop PETITES.
+
+### Contrôle plancher (`validate_kpis.py`)
+
+Ajouté, symétrique du plafond : `scr_total`/`fonds_propres_eligibles`
+(seuls KPIs toujours strictement significatifs, contrairement à
+`scr_diversification` ou `fonds_propres_t3` souvent proches de 0) < 0,5
+M€ → suspicion d'erreur d'unité ÷1 000 000 au lieu de ÷1000. Testé
+rétroactivement sur les 34 sociétés (`validate_kpis.py --all`) :
+**zéro faux positif** (plus petite valeur réelle : Themis
+scr_total=1,055 M€ — marge ≥2×), 1597 contrôles au total
+(1529 + 68 nouveaux = 34×2), 0 doublon (idempotence Décision 104
+toujours valide).
+
+### Auto-détection (`extraire_un_pdf.py::detecter_diviseur_montant`)
+
+Décide K€ (÷1000) vs € bruts (÷1 000 000) en comparant l'ordre de
+grandeur BRUT (avant tout diviseur) de `scr_total`/
+`fonds_propres_eligibles` contre la plage [0,5 ; 100 000] M€ (mêmes
+seuils plancher/plafond que `validate_kpis.py`, une seule source de
+vérité) — **même méthode que celle qui a réellement permis de détecter
+le bug historique** (Décision 094, recoupement d'ordre de grandeur),
+pas une heuristique inventée. Une recherche textuelle d'étiquette
+d'unité ("(en euros)", "(en milliers d'euros)"...) a été écartée comme
+signal primaire : Décision 094 documente explicitement qu'aucune
+étiquette n'était visible sur les pages QRT des 7 entités Aéma
+concernées — un texte absent n'aurait rien détecté dans le cas réel
+qui motive ce correctif.
+
+**Testé rétroactivement sur les 34 sociétés** (raw reconstruit =
+valeur stockée × diviseur réel connu, Décision 103) :
+**31/34 correctement détectées, zéro faux positif** (aucune société
+K€ n'est jamais mal classée euros-bruts, ni l'inverse — la détection
+retombe sur le défaut K€ en cas de doute, jamais une fausse
+confiance). **3 échecs identifiés et compris** : MMJ, MNPAF, Nuoma —
+leur ordre de grandeur reste plausible sous LES DEUX hypothèses (ni
+impossible ni évidemment trop petit pour un assureur français
+quelconque). Décision 094 elle-même n'a résolu ces 3 cas précis
+qu'en recoupant contre le SCR narratif du GROUPE ENTIER (signal
+externe au document) — hors de portée d'une détection par magnitude
+sur un seul document, non tentée ici (hors périmètre de ce correctif).
+Dans ces 3 cas comme dans tout cas ambigu, `unite_source` reste
+explicitement marqué "AMBIGU... non vérifié", jamais une étiquette
+"détecté" trompeuse.
+
+**Limite additionnelle notée** : pour toute société de taille normale
+ou grande (scr_total réel ≥ 500 M€), les deux hypothèses (K€ et euros
+bruts) tombent techniquement dans la plage [0,5 ; 100 000] M€ une fois
+divisées — la détection retombe donc sur "AMBIGU → K€" même quand K€
+est en réalité la seule interprétation raisonnable. Ce n'est pas un
+défaut fonctionnel (le choix retenu reste le bon dans ces cas, c'est
+la convention majoritaire déjà établie du corpus) mais une limite de
+la façon dont la confiance est rapportée — "AMBIGU" est donc l'issue
+ATTENDUE pour la plupart des grandes sociétés, pas un signe d'échec.
+
+Re-testé end-to-end sur CNP Assurances (comme Décision 106) après
+câblage : 22/22 valeurs identiques aux valeurs déjà vérifiées en base,
+aucune régression.

@@ -197,6 +197,25 @@ SEUILS_MAGNITUDE = {
     **{k: PLAFOND_MONTANT_PROVISIONS for k in KPIS_MONTANT_PROVISIONS},
 }
 
+# Décision 107 — plancher, symétrique du plafond ci-dessus : le plafond
+# détecte une erreur d'unité ÷1000 au lieu de ÷1 000 000 (valeur ×1000
+# trop GRANDE, cas réel Décision 094) mais est aveugle à l'erreur inverse
+# (÷1 000 000 au lieu de ÷1000, valeur ×1000 trop PETITE) — un risque
+# nouveau depuis l'auto-détection d'unité à 2 sens d'extraire_un_pdf.py
+# (une détection qui se trompe dans CE sens produirait un scr_total/
+# fonds_propres_eligibles anormalement bas, jamais vu jusqu'ici car le
+# diviseur était jusqu'alors toujours fixé en dur par société après
+# vérification manuelle). Scopé à seulement 2 KPIs (scr_total,
+# fonds_propres_eligibles) — les 2 seuls TOUJOURS strictement positifs et
+# significatifs pour un assureur réel, contrairement à scr_diversification
+# (peut être proche de 0) ou fonds_propres_t3 (souvent 0 ou absent) qui
+# généreraient de faux positifs. Seuil 0,5 M€ vérifié sans aucun faux
+# positif sur les 34 sociétés actuelles (plus petite valeur réelle :
+# Themis scr_total=1,055 M€, fonds_propres_eligibles=9,428 M€ — marge
+# ≥2× sur le KPI le plus bas, largement plus sur l'autre).
+PLANCHER_MONTANT = 0.5  # M€
+KPIS_MONTANT_PLANCHER = {"scr_total", "fonds_propres_eligibles"}
+
 
 def executer_controles(kpis, company_name):
     """Retourne une liste de dicts {check_name, expected_value,
@@ -317,6 +336,21 @@ def executer_controles(kpis, company_name):
         passe = abs(valeur) <= plafond
         ajouter(f"magnitude_{kpi_name}", plafond, valeur, passe,
                 f"|{valeur:,.2f}| M€ doit être ≤ {plafond:,.0f} M€ (plafond {'provisions' if kpi_name in KPIS_MONTANT_PROVISIONS else 'standard'}, Décision 095)")
+
+    # --- 11. Magnitude plancher (Décision 107) — symétrique du contrôle
+    # 10 ci-dessus, cf. commentaire en tête de fichier (SEUILS_MAGNITUDE
+    # détecte ÷1000 au lieu de ÷1M ; ce contrôle détecte l'erreur inverse).
+    for kpi_name in KPIS_MONTANT_PLANCHER:
+        paire = kpis.get(kpi_name)
+        if paire is None or paire[0] is None:
+            continue
+        valeur, unite = paire
+        if unite != "M€":
+            continue
+        passe = abs(valeur) >= PLANCHER_MONTANT
+        ajouter(f"plancher_{kpi_name}", PLANCHER_MONTANT, valeur, passe,
+                f"|{valeur:,.4f}| M€ doit être ≥ {PLANCHER_MONTANT} M€ (plancher, suspicion d'erreur "
+                f"d'unité ÷1 000 000 au lieu de ÷1000 sinon, Décision 107)")
 
     return controles
 
