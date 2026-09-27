@@ -1,0 +1,12 @@
+Groupama|groupe|modele_interne (partiel ou complet — non distinguable automatiquement)
+CNP Assurances|solo|formule_standard
+MACSF prévoyance|solo|formule_standard
+Predica|solo|formule_standard
+MGEN|solo|formule_standard
+Crédit Agricole Assurances|groupe|formule_standard
+Sogécap|groupe|formule_standard
+Cardif Assurance Vie|solo|formule_standard
+Cardif Assurances Risques Divers|solo|formule_standard
+MAIF|solo|inconnu
+Covéa|groupe|formule_standard
+Allianz Vie|inconnu|modele_interne (partiel ou complet — non distinguable automatiquement)

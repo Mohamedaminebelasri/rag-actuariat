@@ -6933,3 +6933,64 @@ future extraction réelle (mêmes méthodes déjà éprouvées : native texte
 `codes_eiopa` pour BPCE Vie/Generali/SwissLife probablement, à
 re-diagnostiquer avant extraction — ne pas supposer le mode sans
 vérifier, cf. leçon Sogécap/Décision 096), non commencée à ce jour.
+
+## Décision 103 — Métadonnées `type_document`/`scr_method`/`type_activite`/`unite_source` sur `companies`
+
+CONTEXTE : la table `companies` (`id, name, type, country`) manquait de
+métadonnées que le pipeline connaît déjà de façon éparse (résultat de
+`detecter_templates()`, décisions d'unité 094/096), utiles pour un
+futur dashboard comparatif (filtrage par type d'activité, méthode SCR,
+etc.) sans devoir re-parser 34 scripts d'extraction à chaque fois.
+
+4 colonnes TEXT ajoutées par `ALTER TABLE` (script `populate_company_metadata.py`,
+idempotent — vérifie `PRAGMA table_info` avant d'ajouter) et remplies
+pour les 34 sociétés, **jamais devinées** :
+
+- **`type_document`** (solo/groupe) et **`scr_method`**
+  (formule_standard/modele_interne_partiel/modele_interne_complet) :
+  - 12 sociétés à PDF autonome → `detecter_templates()` **ré-exécuté
+    en direct** cette session (pas repris d'une décision ancienne),
+    résultat brut dans `metadata_diagnostic.txt`. Cas particulier
+    **Allianz Vie** : `detecter_templates()` renvoie `document_type=
+    "inconnu"` (classification auto ambiguë sur ce PDF) — recoupé avec
+    le template EIOPA réellement utilisé lors de l'extraction
+    (Décision 101, S.23.01.01 = code solo, vs S.23.01.22 pour un
+    groupe) → stocké `"solo"`, évidence directe, pas une supposition.
+  - 22 entités AG2R (9)/Aéma (13), extraites depuis un document
+    combiné (pas de PDF autonome à re-diagnostiquer) → reprises des
+    décisions déjà vérifiées (081/083/087) : `formule_standard` pour
+    les 22 ; `groupe` uniquement pour SGAM AG2R LA MONDIALE et Aema
+    Groupe (entités consolidées), `solo` pour les 20 autres.
+  - **MAIF** : `scr_method` laissé **NULL** — mode `libelles_francais`,
+    non détectable automatiquement, et aucune source fiable alternative
+    trouvée. Seule valeur NULL sur les 34×2 champs.
+
+- **`type_activite`** (Vie/Non-vie/Mixte/Mutuelle) : déduit par requête
+  directe sur `kpis` (année 2025) selon la règle demandée —
+  `scr_souscription_vie` ET `scr_souscription_nonvie` > 0 → Mixte ;
+  vie seul → Vie ; non-vie seul → Non-vie ; ni l'un ni l'autre positif
+  → Mutuelle (mutuelles/prévoyance santé pures, ex. Macifilia/Themis/
+  Prima/AG.Mut/MMJ/MNPAF/Nuoma). Résultat sur les 34 : 17 Vie, 9 Mixte,
+  5 Mutuelle, 3 Non-vie, 0 NULL.
+  - **Override documenté pour Allianz Vie** : la règle KPI dérivait à
+    tort "Mutuelle", car `scr_souscription_vie` est NULL (fusionné avec
+    `scr_souscription_sante` dans une seule ligne QRT modèle interne —
+    irréductible, Décision 084/101) alors que `scr_souscription_nonvie`
+    vaut 0. Le document source lui-même le dément sans ambiguïté (page
+    84, dump `allianzvie_p84_dump.txt` : *"S.05.01.02.01 - Non-vie...
+    Non applicable"*, seule la colonne Vie porte des primes) — la
+    société s'appelle d'ailleurs "Allianz **Vie**". Conformément à la
+    consigne "déduis-le des KPIs... ou depuis le PDF si l'info est plus
+    fiable", override ciblé et documenté dans le code
+    (`TYPE_ACTIVITE_OVERRIDES`) → stocké `"Vie"`. Aucun autre override
+    appliqué : les 33 autres sociétés suivent la règle KPI brute sans
+    intervention manuelle.
+
+- **`unite_source`** (K€ / euros bruts) : connu précisément par les bugs
+  déjà corrigés (Décisions 094/096) — 7 entités Aéma (Aesio Mutuelle,
+  MNPAF, MMJ, Nuoma, Abeille Vie, Abeille Epargne Retraite, Abeille
+  IARD Santé) + Sogécap = 8 sociétés en euros bruts ; les 26 autres en
+  K€ (convention majoritaire du corpus).
+
+RÉSULTAT : `ALTER TABLE companies ADD COLUMN` ×4, 34/34 sociétés
+remplies, 1 seul NULL (MAIF/scr_method), 0 valeur devinée.
