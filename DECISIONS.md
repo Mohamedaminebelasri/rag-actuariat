@@ -7071,3 +7071,33 @@ ré-exécution (comparer `COUNT(*)` vs `COUNT(DISTINCT ...)` avant/après
 un second run) — ce bug est passé inaperçu plusieurs sessions car
 aucune fonction ne plantait ni ne renvoyait un résultat visiblement
 faux, juste gonflé.
+
+## Décision 105 — Export JSON de kpis.db (export_kpis_json.py / kpis_export.json)
+
+CONTEXTE : l'onglet Analyse de l'interface (développée ailleurs,
+migration Next.js) consomme actuellement des données de démonstration
+inventées (`frontend/src/data/analyse-demo.ts`). `kpis_export.json`
+est un premier pas vers leur remplacement par les vraies données de
+`kpis.db` — **l'interface elle-même n'est pas modifiée par cette
+tâche**, seul le JSON est produit.
+
+`export_kpis_json.py` (lecture seule, via `KpiService`, aucune
+dépendance RAG/Qdrant) génère `kpis_export.json` à la racine, avec :
+- `generated_at` (ISO 8601, UTC) et `year` (2025).
+- `companies` : les 34 sociétés, chacune avec ses métadonnées
+  (`type_document`, `scr_method`, `type_activite`, `unite_source` —
+  Décision 103) et ses 22 KPIs (`value`, `unit`, `validated`) —
+  toujours les 22 clés présentes même si `value` est NULL, pour un
+  accès direct côté frontend sans vérification d'existence de clé.
+- `corpus_stats` : moyenne/médiane/min/max par KPI (via
+  `get_corpus_stats`, déjà vérifié Décision 104), sur les sociétés qui
+  l'ont en base avec une valeur non-NULL.
+
+VÉRIFICATION : 34 sociétés, 748 lignes KPI (34×22, cohérent), 428
+validées, 22 KPIs avec statistiques corpus. Contrôles ponctuels
+manuels : `ratio_scr` corpus_stats identique au résultat déjà vérifié
+en Décision 104 (moyenne 298.26, médiane 233.5, min 144.0, max 953.0) ;
+Allianz Vie → `type_activite="Vie"` (override Décision 103) présent
+dans l'export ; MAIF → `scr_method=None` (NULL) présent tel quel, pas
+substitué par une valeur inventée ; encodage UTF-8 du fichier vérifié
+directement (`€` présent correctement, pas d'échappement cassé).
