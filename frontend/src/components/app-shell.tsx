@@ -6,6 +6,7 @@ import {
   MessageSquare,
   BarChart3,
   FileText,
+  Database,
   Shield,
   Sun,
   Moon,
@@ -25,6 +26,13 @@ const tabs = [
     href: "/analyse",
     icon: BarChart3,
     description: "Dashboard & KPIs comparatifs",
+  },
+  {
+    label: "Base de données",
+    labelCourt: "Données",
+    href: "/base-donnees",
+    icon: Database,
+    description: "Tous les KPIs extraits, par société",
   },
   {
     label: "Documents",
@@ -172,7 +180,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
             >
               <tab.icon className="w-5 h-5" />
-              {tab.label}
+              <span className="text-center leading-tight">
+                {"labelCourt" in tab && tab.labelCourt ? tab.labelCourt : tab.label}
+              </span>
             </Link>
           );
         })}
