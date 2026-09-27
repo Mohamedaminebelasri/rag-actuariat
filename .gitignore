@@ -10,7 +10,21 @@ __pycache__/
 
 # logs et scripts jetables
 *_output.txt
-scratch_*.py
+scratch_*
+*.log
+*_dump.txt
+runtime.log
+batch_diagnostic_report.json
+frontend/diagnostic.txt
+
+# artefacts de test OCR jetables (test_markdrop/)
+test_markdrop/paddle_ocr_*.json
+test_markdrop/page87_*.png
+test_markdrop/*_p5*.png
+test_markdrop/*_p6*.png
+test_markdrop/output_cnp/
+test_markdrop/output_cnp_full/
+test_markdrop/output_macsf/
 
 # config locale Claude Code
 .claude/
