@@ -214,11 +214,18 @@ class KpiService:
 
     def get_validation_report(self, company_name, year):
         """Rapport complet : résumé agrégé + détail de chaque contrôle
-        (combine validation_summary + get_validation_checks en 1 appel)."""
-        return {
-            "summary": self.validation_summary(company_name, year),
-            "checks": self.get_validation_checks(company_name, year),
-        }
+        (combine validation_summary + get_validation_checks en 1 appel).
+        GRACIEUX sur une entreprise absente (Décision 104 — validation_summary
+        et get_validation_checks sont STRICTES et lèvent KpiIntrouvable,
+        contrairement au reste des alias Phase 3.6 ci-dessus ; cette méthode
+        s'y attrape pour respecter le contrat documenté en tête de section)."""
+        try:
+            return {
+                "summary": self.validation_summary(company_name, year),
+                "checks": self.get_validation_checks(company_name, year),
+            }
+        except KpiIntrouvable:
+            return {"summary": {"n_checks": 0, "n_passed": 0, "n_failed": 0, "checks_echoues": []}, "checks": []}
 
 
 if __name__ == "__main__":

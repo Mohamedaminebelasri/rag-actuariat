@@ -338,6 +338,14 @@ def executer_completude(conn, company_id, year):
 
 
 def inserer_controles(conn, company_id, year, controles):
+    # Décision 104 — sans ce DELETE, chaque ré-exécution de validate_kpis.py
+    # (--all ou --company) ACCUMULE indéfiniment des lignes en doublon dans
+    # validation_checks (aucune contrainte unique en base) : constaté sur
+    # les 34 sociétés, de 144 à 695 lignes pour 36-49 check_name distincts
+    # réels — n_checks devenait un artefact du nombre de ré-exécutions, pas
+    # un état réel. Purge (company_id, year) avant d'insérer les contrôles
+    # frais de cette exécution, la rendant idempotente.
+    conn.execute("DELETE FROM validation_checks WHERE company_id=? AND year=?", (company_id, year))
     for c in controles:
         conn.execute(
             """INSERT INTO validation_checks (company_id, year, check_name, expected_value, computed_value, passed, details)

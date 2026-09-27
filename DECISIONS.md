@@ -6994,3 +6994,80 @@ pour les 34 sociétés, **jamais devinées** :
 
 RÉSULTAT : `ALTER TABLE companies ADD COLUMN` ×4, 34/34 sociétés
 remplies, 1 seul NULL (MAIF/scr_method), 0 valeur devinée.
+
+## Décision 104 — Vérification kpi_service.py (34 sociétés) : 2 bugs trouvés et corrigés
+
+CONTEXTE : test systématique des 5 fonctions de requête exposées par
+`kpi_service.py` (`get_kpis`, `get_kpi`, `compare_kpis`,
+`get_corpus_stats`, `get_validation_report`) contre les 34 sociétés
+réellement en base — script de vérification exécuté en session, pas
+de suite de tests automatisée dédiée à ce jour.
+
+### Résultats des tests demandés
+
+- `get_kpis("Groupama"/"Sogécap"/"MAIF", 2025)` : 22 KPIs chacune,
+  21/21/18 valeurs non-NULL respectivement (cohérent avec les
+  irréductibles déjà documentés de chaque société). OK.
+- `compare_kpis("ratio_scr", 2025)` sur les 34 : 34 valeurs, 0 `None`
+  — `ratio_scr` est effectivement rempli pour toutes. OK.
+- `get_corpus_stats("ratio_scr", 2025)` : n=34, moyenne=298.26,
+  médiane=233.5, min=144.0 (Themis), max=953.0 (Macifilia) — moyenne
+  tirée vers le haut par quelques petites mutuelles à SCR faible
+  (Macifilia), cohérent, pas d'anomalie de calcul.
+- `get_validation_report("Macifilia", 2025)` : **anomalie trouvée**
+  (détaillée ci-dessous), corrigée, puis re-testée OK : 46/46 checks,
+  2 échecs réels (`mcr_inferieur_scr_total`, `signe_charge_sinistres`
+  — cohérent avec les échecs déjà connus/attendus sur cette société).
+
+### Bug 1 — `validation_checks` accumulait des doublons à chaque ré-exécution de `validate_kpis.py`
+
+`inserer_controles()` (validate_kpis.py) faisait un `INSERT` simple
+sans purge préalable, et la table n'a aucune contrainte unique sur
+(company_id, year, check_name). Chaque ré-exécution de
+`validate_kpis.py --all`/`--company` (fréquentes cette session, pour
+re-tester après chaque correction) **ajoutait** des lignes au lieu de
+les remplacer. Constaté sur les 34 sociétés : de 144 à 695 lignes en
+base pour seulement 36 à 49 `check_name` distincts réels (facteur
+×2 à ×14). Conséquence directe : `get_validation_report`/
+`validation_summary` retournaient un `n_checks` gonflé et une liste
+`checks_echoues` avec des doublons — ne reflétait PAS l'état réel de
+`kpis.db`, sans jamais planter (d'où la difficulté à le repérer sans
+comparer explicitly `COUNT(*)` vs `COUNT(DISTINCT check_name)`).
+
+**Corrections appliquées** :
+1. `inserer_controles()` : ajout d'un `DELETE FROM validation_checks
+   WHERE company_id=? AND year=?` avant la boucle d'insertion — rend
+   l'exécution idempotente, plus aucune accumulation possible.
+2. Nettoyage ponctuel des 13262 lignes déjà accumulées en base : pour
+   chaque (company_id, year, check_name), conservation de la ligne
+   `MAX(id)` uniquement (= résultat de la dernière exécution réelle),
+   suppression des 11733 doublons plus anciens. Résultat : 1529 lignes
+   — coïncide exactement avec le total déjà documenté dans
+   `PIPELINE_EXTRACTION_KPIs.md` ("1521/1529, 99.5%"), confirmant que
+   le nettoyage retombe bien sur l'état réel et non sur un chiffre
+   inventé.
+
+### Bug 2 — `get_validation_report` n'était pas gracieux sur une société inconnue (contredit son propre contrat documenté)
+
+Le commentaire de section (kpi_service.py, "Phase 3.6") promet que ces
+alias sont "GRACIEUX sur une entreprise absente (dict/liste vide,
+jamais une exception)", et `get_kpis` le respecte bien. Mais
+`get_validation_report` appelle en interne `validation_summary()` et
+`get_validation_checks()` — deux méthodes plus anciennes, STRICTES,
+qui lèvent `KpiIntrouvable` — sans les intercepter : testé sur une
+société absente de `companies`, `get_validation_report` plantait avec
+une exception non gérée au lieu de retourner un rapport vide.
+**Corrigé** par un `try/except KpiIntrouvable` retournant
+`{"summary": {n_checks:0, n_passed:0, n_failed:0, checks_echoues:[]},
+"checks": []}`, conforme au contrat documenté. `get_kpi` (méthode
+ancienne, non listée dans les alias Phase 3.6) reste volontairement
+stricte — comportement voulu, pas un bug.
+
+### Règle retenue
+
+Toute future modification touchant l'insertion dans une table sans
+contrainte unique doit explicitement vérifier l'idempotence d'une
+ré-exécution (comparer `COUNT(*)` vs `COUNT(DISTINCT ...)` avant/après
+un second run) — ce bug est passé inaperçu plusieurs sessions car
+aucune fonction ne plantait ni ne renvoyait un résultat visiblement
+faux, juste gonflé.
