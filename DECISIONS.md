@@ -6819,3 +6819,71 @@ son propre libellé direct) — NULL plutôt que deviné, pas une tentative
 (`completude_null_attendu`, 5 NULL) est le signal de complétude
 attendu (4 tiers + resultat_technique), pas un bug. 17/22 KPIs
 remplis.
+
+## Décision 101 — Allianz Vie intégrée (34e société), 16/22 KPIs, irréductibles re-confirmés + 4e bug positionnel trouvé
+
+Mode `codes_eiopa` (comme Predica/Sogécap/Cardif), `document_type=
+"solo"`, `scr_method="modele_interne"`. K€ confirmé correct par
+recoupement (`ratio_scr` recalculé 192,32% vs 192,00% publié).
+
+### Les 3 irréductibles de Décision 084 — RE-vérifiés directement sur le document, pas supposés
+
+- `scr_marche`/`scr_contrepartie` : `resoudre_variantes_qrt()` retourne
+  **0 variante** pour ces 2 KPIs — confirmé toujours fusionnés dans une
+  seule ligne du template modèle interne (`S.25.05.21`, "Total market &
+  credit risk"), aucune ligne séparée pour les décomposer.
+- `scr_souscription_vie`/`scr_souscription_sante` : idem, fusionnés.
+- `scr_diversification` : **re-confirmé** en lisant directement la page
+  90 (`S.25.05.21`) — `R0060 "Diversification"` = `"-               912
+  286"`, signe et magnitude toujours séparés par un grand espacement
+  (même famille que BPCE IARD/Predica/MGEN/MACSF, Décision 091), mais
+  cette variante précise (magnitude et signe comme 2 TOKENS distincts
+  très espacés sur la même ligne, pas juste une espace fine adjacente
+  ou des parenthèses) n'est PAS couverte par le détecteur générique de
+  Décision 091 — cohérent avec le choix déjà documenté de ne PAS
+  généraliser ce cas précis dans le code partagé (Décision 085 : un fix
+  générique de ce type avait cassé Covéa). Laissé NULL, comme prévu par
+  la tâche demandée — aucune tentative de nouveau fix scopé ici (hors
+  périmètre explicite de cette tâche).
+
+### 4e occurrence du bug positionnel (Décision 093, page "Crédit Agricole")
+
+`primes_acquises_brutes`/`charge_sinistres` : `extract_qrt_native()`
+trouve le libellé de la ligne R1510/R1610 (p.84, S.05.01.02.02) mais
+**capture zéro valeur**, alors que 9 valeurs sont bien imprimées en
+texte natif (vérifié : R1510 = "1 864 213 / 1 295 378 / 2 266 284 / - /
+- / - / 285 192 / 268 714 / **5 979 782**"). Même bug positionnel,
+distinct des bugs A/B, déjà rencontré sur Crédit Agricole Assurances
+(Décision 093) et maintenant sur un 2e document — pas encore
+généralisé/corrigé dans le code partagé (occurrence trop rare, 2
+documents sur 34, scoping par fichier reste le choix le plus sûr pour
+l'instant). Non-vie explicitement "Non applicable" sur ce document
+(assureur vie pur) — seule la composante vie compte. Valeurs lues
+manuellement sur la colonne Total (C0300) : primes = 5 979,78 M€,
+sinistres = 5 619,11 M€.
+
+### Vérification
+
+`validate_kpis.py --company "Allianz Vie"` : **35/36** — seul échec
+(`completude_null_attendu`, 6 NULL) est le signal de complétude
+attendu (5 KPIs irréductibles + resultat_technique), pas un bug.
+16/22 KPIs remplis — le plus bas des 6 sociétés ajoutées dans cette
+tâche, cohérent avec son score diagnostic déjà le plus bas (15/20).
+
+### Bilan génériques vs spécifiques (les 6 sociétés de cette tâche)
+
+| Société | Bugs génériques (déjà connus) | Bugs/limites spécifiques au document |
+|---|---|---|
+| Sogécap | — | Bug d'unité € bruts/K€ (3e occurrence, Décision 096) |
+| Cardif Assurance Vie | — | Aucun (K€ confirmé correct du 1er coup) |
+| Cardif Assurances Risques Divers | — | Aucun |
+| MAIF | 2 bugs de conversion dans `resoudre_scr_mcr_maif()` (jamais adaptée pour l'insertion) | 3 tiers de fonds propres irréductibles (déjà connus, Décision 074) |
+| Covéa | Mêmes 2 bugs de conversion que MAIF | 1 vrai bug de matching (`scr_operationnel`, label fusionné) + 4 tiers non couverts par `KPI_LABELS_FR` |
+| Allianz Vie | — | 3 irréductibles re-confirmés (Décision 084) + 4e occurrence du bug positionnel de Décision 093 |
+
+**3 sur 6 sociétés ont révélé un problème JAMAIS rencontré avant cette
+tâche** (Sogécap : nouveau document en € bruts ; Covéa : nouveau bug de
+matching ; Allianz Vie : 2e occurrence confirmée d'un bug déjà vu 1
+seule fois) — confirme que le score de diagnostic (/20) ne garantit
+JAMAIS la fiabilité en l'absence de vérification arithmétique
+individuelle, cohérent avec la leçon déjà tirée en Décision 093.
