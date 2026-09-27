@@ -36,9 +36,16 @@ BASE_DIR = Path(__file__).parent
 # module. Migrer vers S3 = remplacer RACINE_VISUELS par un préfixe de clé
 # de bucket ; chemin_relatif_* ci-dessous ne change pas. Racine PARTAGÉE
 # entre années (visuels/2025/... et visuels/2024/... cohabitent sous la
-# même RACINE_VISUELS) — c'est la convention voulue, pas un chemin à
-# dupliquer par document.
-RACINE_VISUELS = BASE_DIR / "output_structure_brute" / "visuels"
+# même RACINE_VISUELS) — c'est la convention voulue pour UN MÊME émetteur,
+# PAS entre émetteurs différents (cf. Décision 048, point 3 du docstring de
+# run_pipeline.py) : 2 entreprises publiant toutes deux un SFCR 2025
+# entreraient en collision de nom de fichier (self_ref/numérotation Docling
+# repartant de 0 par document). SFCR_OUTPUT_DIR_OVERRIDE (même mécanisme
+# que PAGE_MIN_QRT_OVERRIDE ci-dessous) permet d'isoler un émetteur dans son
+# propre dossier de travail sans toucher au défaut Groupama.
+_RACINE_OUTPUT = Path(os.environ["SFCR_OUTPUT_DIR_OVERRIDE"]) if os.environ.get("SFCR_OUTPUT_DIR_OVERRIDE") \
+    else BASE_DIR / "output_structure_brute"
+RACINE_VISUELS = _RACINE_OUTPUT / "visuels"
 
 # Identique à build_sections.PAGE_MIN_QRT (même limite documentaire, même
 # besoin de surcharge par document — cf. son commentaire) : 77 sur

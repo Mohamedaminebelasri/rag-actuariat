@@ -77,6 +77,7 @@ Prérequis :
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -92,13 +93,17 @@ from build_index_visuels import charger_occurrences_narratives, resoudre_chemin_
 from correction_fusion_caisses import appliquer_correction
 
 BASE_DIR = Path(__file__).parent
-CHUNKS_PROPRES_JSON = BASE_DIR / "output_structure_brute" / "chunks_propres.json"
-DOCLING_DOCUMENT_JSON = BASE_DIR / "output_structure_brute" / "docling_document_complet.json"
-DOSSIER_SORTIE = BASE_DIR / "output_structure_brute"
+# SFCR_OUTPUT_DIR_OVERRIDE / SFCR_ANNEE_OVERRIDE : même mécanisme que
+# chemins_visuels.RACINE_VISUELS (cf. son commentaire, Décision 048) —
+# isole un émetteur différent de Groupama sans toucher au défaut.
+DOSSIER_SORTIE = Path(os.environ["SFCR_OUTPUT_DIR_OVERRIDE"]) if os.environ.get("SFCR_OUTPUT_DIR_OVERRIDE") \
+    else BASE_DIR / "output_structure_brute"
+CHUNKS_PROPRES_JSON = DOSSIER_SORTIE / "chunks_propres.json"
+DOCLING_DOCUMENT_JSON = DOSSIER_SORTIE / "docling_document_complet.json"
 INDEX_TEXTE_SORTIE = DOSSIER_SORTIE / "index_texte_bge.json"
 INDEX_TABLEAUX_TEXTE_SORTIE = DOSSIER_SORTIE / "index_tableaux_texte_bge.json"
 
-ANNEE_DOCUMENT = 2025  # même convention que build_index_visuels.py
+ANNEE_DOCUMENT = int(os.environ.get("SFCR_ANNEE_OVERRIDE", 2025))  # même convention que build_index_visuels.py
 MODELE_BGE = "Shitao/bge-m3"  # miroir safetensors, cf. src/index.py + Décision 004
 DIMENSION_ATTENDUE = 1024  # vérifié sur https://huggingface.co/BAAI/bge-m3
 TAILLE_LOT = 8  # même valeur que BATCH_SIZE dans src/index.py
