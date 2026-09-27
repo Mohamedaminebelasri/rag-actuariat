@@ -262,8 +262,8 @@ function DetailSociete({ societe }: { societe: Societe }) {
       <div className="flex items-start gap-2 border border-dashed border-border rounded-[10px] px-4 py-3 mt-8 text-text-tertiary">
         <Clock className="w-[15px] h-[15px] flex-shrink-0 mt-0.5" />
         <p className="text-xs">
-          Cliquez sur une valeur pour ouvrir l&apos;onglet Documents à la page source. La visualisation du PDF
-          lui-même reste à intégrer — pour l&apos;instant, seul le repérage de la page est affiché.
+          Cliquez sur une valeur pour ouvrir directement le PDF source à la bonne page dans l&apos;onglet Documents
+          (fonctionne uniquement en local).
         </p>
       </div>
     </div>

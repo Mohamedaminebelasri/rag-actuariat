@@ -1,131 +1,36 @@
 "use client";
 
-import {
-  ChevronRight,
-  ChevronDown,
-  FileText,
-  Building2,
-  FolderClosed,
-  ArrowRight,
-  ArrowLeft,
-  Info,
-} from "lucide-react";
+import { FileText, Building2, ArrowLeft, Sparkles, AlertTriangle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import kpiSources from "@/data/kpi-sources.json";
 import { DONNEES_EXTRAITES, estNouvelleSociete, societesTriees } from "@/lib/donnees-extraites-utils";
+import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 
-// Un nœud "narrative" est une sous-section de chapitre SFCR (A.1, B.3,
-// C.7, ...) dont le contenu textuel n'a jamais été extrait — seuls les
-// KPIs des annexes QRT l'ont été. Un nœud "qrt" est le PDF QRT source,
-// déjà exploitable. "chapter"/"company" sont des nœuds de regroupement
-// sans contenu propre (dépliables uniquement).
-type NodeType = "company" | "chapter" | "narrative" | "qrt";
+/**
+ * Onglet Documents — visualiseur PDF, une société = une ligne dans la
+ * sidebar, un clic ouvre le PDF de cette société dans un lecteur intégré
+ * (iframe pointant vers /api/pdf/<fichier>). Fini l'arborescence
+ * dépliable A/B/C/D/E vide : on va directement au document.
+ *
+ * Arrivée depuis Base de données avec ?company=X&kpi=Y : le PDF de X est
+ * ouvert et on saute directement à la page source du KPI (#page=N, géré
+ * nativement par le viewer PDF du navigateur).
+ *
+ * Fonctionne uniquement en local (npm run dev sur le PC) : les PDF sont
+ * dans rag-actuariat/data/, jamais déployés sur Vercel.
+ */
 
-type TreeNode = {
-  label: string;
-  type: NodeType;
-  children?: TreeNode[];
-  pageCount?: number;
-  nouvelle?: boolean;
+type KpiSource = {
+  value: number;
+  unit: string;
+  year: number;
+  source_page: number | null;
+  source_chapter: string | null;
 };
+type KpiSources = Record<string, Record<string, KpiSource>>;
+const typedKpiSources = kpiSources as KpiSources;
 
-// Sous-arbre détaillé (A à E + Annexes QRT) pour Groupama : seul le SFCR
-// Groupama a fait l'objet d'une décomposition chapitre par chapitre lors
-// du travail v2. Les autres sociétés n'ont que leurs KPIs QRT extraits,
-// donc juste un nœud "Annexes QRT" pointable.
-const sousArbreGroupama: TreeNode[] = [
-  {
-    label: "A. Activité et résultats",
-    type: "chapter",
-    children: [
-      { label: "A.1 Activité", type: "narrative" },
-      { label: "A.2 Résultats de souscription", type: "narrative" },
-      { label: "A.3 Résultats des investissements", type: "narrative" },
-      { label: "A.4 Résultats des autres activités", type: "narrative" },
-      { label: "A.5 Autres informations", type: "narrative" },
-    ],
-  },
-  {
-    label: "B. Système de gouvernance",
-    type: "chapter",
-    children: [
-      { label: "B.1 Informations générales", type: "narrative" },
-      { label: "B.2 Compétences et honorabilité", type: "narrative" },
-      { label: "B.3 Système de gestion des risques", type: "narrative" },
-      { label: "B.4 ORSA", type: "narrative" },
-      { label: "B.5 Contrôle interne", type: "narrative" },
-      { label: "B.6 Fonction d'audit interne", type: "narrative" },
-      { label: "B.7 Fonction actuarielle", type: "narrative" },
-      { label: "B.8 Sous-traitance", type: "narrative" },
-    ],
-  },
-  {
-    label: "C. Profil de risque",
-    type: "chapter",
-    children: [
-      { label: "C.1 Risque de souscription", type: "narrative" },
-      { label: "C.2 Risque de marché", type: "narrative" },
-      { label: "C.3 Risque de crédit", type: "narrative" },
-      { label: "C.4 Risque de liquidité", type: "narrative" },
-      { label: "C.5 Risque opérationnel", type: "narrative" },
-      { label: "C.6 Autres risques importants", type: "narrative" },
-      { label: "C.7 Autres informations", type: "narrative" },
-    ],
-  },
-  {
-    label: "D. Valorisation à des fins de solvabilité",
-    type: "chapter",
-    children: [
-      { label: "D.1 Actifs", type: "narrative" },
-      { label: "D.2 Provisions techniques", type: "narrative" },
-      { label: "D.3 Autres passifs", type: "narrative" },
-      { label: "D.4 Méthodes de valorisation alternatives", type: "narrative" },
-    ],
-  },
-  {
-    label: "E. Gestion du capital",
-    type: "chapter",
-    children: [
-      { label: "E.1 Fonds propres", type: "narrative" },
-      { label: "E.2 SCR et MCR", type: "narrative" },
-      { label: "E.3 Durée du modèle interne", type: "narrative" },
-      { label: "E.4 Non-conformité", type: "narrative" },
-    ],
-  },
-  { label: "Annexes QRT", type: "qrt", pageCount: 15 },
-];
-
-/** Construit l'arborescence complète : Groupama en premier (sous-arbre
- * détaillé A-E + QRT), puis chaque autre société de kpis.db avec un seul
- * enfant "Annexes QRT" qui ouvre la vue de source (page indiquée par
- * source_page du KPI cliqué). Les sociétés ajoutées à chaud portent
- * `nouvelle: true` pour être décorées d'un badge dans l'arbre. */
-function construireArbre(): TreeNode[] {
-  const arbre: TreeNode[] = [];
-  const societes = societesTriees();
-  // Groupama en tête si présent
-  const groupama = societes.find((s) => s.name === "Groupama");
-  if (groupama) {
-    arbre.push({ label: "Groupama", type: "company", children: sousArbreGroupama });
-  }
-  for (const s of societes) {
-    if (s.name === "Groupama") continue;
-    arbre.push({
-      label: s.name,
-      type: "company",
-      nouvelle: estNouvelleSociete(s.name),
-      children: [{ label: "Annexes QRT", type: "qrt" }],
-    });
-  }
-  return arbre;
-}
-
-const sfcrTree: TreeNode[] = construireArbre();
-
-// Association KPI -> libellé lisible, pour le message "vous cherchiez
-// peut-être : ...". Tenue à part de kpi-sources.json (qui vient tel
-// quel de kpis.db) pour ne pas mélanger données et présentation.
 const KPI_LABELS: Record<string, string> = {
   ratio_scr: "Ratio SCR",
   ratio_mcr: "Ratio MCR",
@@ -135,341 +40,202 @@ const KPI_LABELS: Record<string, string> = {
   mcr: "MCR",
 };
 
-type KpiSource = {
-  value: number;
-  unit: string;
-  year: number;
-  source_page: number | null;
-  source_chapter: string | null;
-};
-
-type KpiSources = Record<string, Record<string, KpiSource>>;
-
-const typedKpiSources = kpiSources as KpiSources;
-
-/** Résout la page source d'un KPI pour une société : d'abord dans
- * kpi-sources.json (données Groupama historiquement enrichies), sinon
- * dans donnees-extraites.json (les 34 sociétés + nouvelles à chaud).
- * Retourne null si le KPI ou la société sont inconnus. */
+/** Résout la page source d'un KPI : essaie kpi-sources.json (Groupama)
+ * puis retombe sur donnees-extraites.json (les 34 sociétés). */
 function pageSourceKpi(company: string, kpi: string): number | null {
   const via1 = typedKpiSources[company]?.[kpi]?.source_page ?? null;
   if (via1) return via1;
-  const via2 = DONNEES_EXTRAITES.kpisParSociete[company]?.[kpi]?.pageSource ?? null;
-  return via2 ?? null;
-}
-
-type SelectedNode = {
-  node: TreeNode;
-  company: string;
-  path: string[];
-};
-
-function findQrtNodeForCompany(company: string): TreeNode | null {
-  const companyNode = sfcrTree.find((n) => n.label === company);
-  const qrt = companyNode?.children?.find((n) => n.type === "qrt");
-  return qrt ?? null;
-}
-
-function TreeItem({
-  node,
-  company,
-  path,
-  depth = 0,
-  selectedPath,
-  onSelect,
-}: {
-  node: TreeNode;
-  company: string;
-  path: string[];
-  depth?: number;
-  selectedPath: string[] | null;
-  onSelect: (sel: SelectedNode) => void;
-}) {
-  // Sociétés (depth 0) : toutes fermées par défaut sauf Groupama, sinon la
-  // liste des 34 SFCR déroulés d'un coup rend l'arbre illisible.
-  // Chapitres A-E de Groupama (depth 1 sous Groupama) : ouverts.
-  const [isOpen, setIsOpen] = useState(depth === 1 || (depth === 0 && node.label === "Groupama"));
-  // Ouvre automatiquement la société ciblée quand on arrive avec
-  // ?company=X (clic depuis Base de données) : sinon le noeud QRT
-  // sélectionné serait "invisible" sous une société fermée.
-  useEffect(() => {
-    if (depth === 0 && selectedPath && selectedPath[0] === node.label) setIsOpen(true);
-  }, [selectedPath, depth, node.label]);
-  const hasChildren = !!node.children && node.children.length > 0;
-  const currentPath = [...path, node.label];
-  const isSelected =
-    !!selectedPath &&
-    selectedPath.length === currentPath.length &&
-    selectedPath.every((p, i) => p === currentPath[i]);
-
-  const handleClick = () => {
-    if (hasChildren) {
-      setIsOpen(!isOpen);
-    }
-    if (node.type === "narrative" || node.type === "qrt") {
-      onSelect({ node, company, path: currentPath });
-    }
-  };
-
-  return (
-    <div>
-      <button
-        onClick={handleClick}
-        className={cn(
-          "w-full flex items-center gap-2 px-3 py-2 text-sm rounded-[var(--radius-sm)] hover:bg-surface-hover transition-colors text-left",
-          depth === 0 && "font-medium text-text-primary",
-          depth > 0 && "text-text-secondary",
-          isSelected && "bg-accent-light text-accent font-medium"
-        )}
-        style={{ paddingLeft: `${depth * 16 + 12}px` }}
-      >
-        {hasChildren ? (
-          isOpen ? (
-            <ChevronDown className="w-3.5 h-3.5 text-text-tertiary flex-shrink-0" />
-          ) : (
-            <ChevronRight className="w-3.5 h-3.5 text-text-tertiary flex-shrink-0" />
-          )
-        ) : node.type === "qrt" ? (
-          <FolderClosed className="w-3.5 h-3.5 text-text-tertiary flex-shrink-0" />
-        ) : (
-          <FileText className="w-3.5 h-3.5 text-text-tertiary flex-shrink-0" />
-        )}
-        {depth === 0 && (
-          <Building2 className="w-4 h-4 text-accent flex-shrink-0" />
-        )}
-        <span className="flex-1 truncate">{node.label}</span>
-        {node.nouvelle && (
-          <span
-            title="Société ajoutée à chaud — extraction automatique, aucun KPI vérifié à la main."
-            className="text-[9px] font-medium uppercase tracking-wide text-warning bg-warning-light px-1.5 py-0.5 rounded"
-          >
-            Nouveau
-          </span>
-        )}
-        {node.pageCount && (
-          <span className="text-[10px] text-text-tertiary bg-surface-secondary px-1.5 py-0.5 rounded">
-            {node.pageCount}p
-          </span>
-        )}
-      </button>
-      {hasChildren && isOpen && (
-        <div>
-          {node.children!.map((child, i) => (
-            <TreeItem
-              key={i}
-              node={child}
-              company={company}
-              path={currentPath}
-              depth={depth + 1}
-              selectedPath={selectedPath}
-              onSelect={onSelect}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function NarrativeEmptyState({
-  selected,
-  onNavigateToQrt,
-}: {
-  selected: SelectedNode;
-  onNavigateToQrt: () => void;
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center h-96 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center mb-4">
-        <Info className="w-7 h-7 text-text-tertiary" />
-      </div>
-      <h3 className="font-heading text-xl text-text-primary mb-2">
-        {selected.node.label}
-      </h3>
-      <p className="text-sm text-text-secondary max-w-sm mb-1">
-        Cette section n&apos;est pas encore traitée.
-      </p>
-      <p className="text-xs text-text-tertiary max-w-sm mb-6">
-        Le contenu narratif des chapitres SFCR (A à E) n&apos;a pas été
-        extrait — seuls les KPIs des annexes QRT le sont, pour{" "}
-        {selected.company}.
-      </p>
-      <button
-        onClick={onNavigateToQrt}
-        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] bg-accent text-accent-foreground text-sm font-medium hover:opacity-90 transition-opacity"
-      >
-        Voir les Annexes QRT
-        <ArrowRight className="w-4 h-4" />
-      </button>
-    </div>
-  );
-}
-
-function QrtView({
-  selected,
-  targetPage,
-  targetKpi,
-}: {
-  selected: SelectedNode;
-  targetPage: number | null;
-  targetKpi: string | null;
-}) {
-  const kpiLabel = targetKpi ? KPI_LABELS[targetKpi] ?? targetKpi : null;
-  return (
-    <div className="flex flex-col items-center justify-center h-96 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-accent-light flex items-center justify-center mb-4">
-        <FolderClosed className="w-7 h-7 text-accent" />
-      </div>
-      <h3 className="font-heading text-xl text-text-primary mb-2">
-        {selected.node.label} — {selected.company}
-      </h3>
-      {targetPage ? (
-        <p className="text-sm text-text-secondary max-w-md mb-1">
-          {kpiLabel ? (
-            <>
-              Donnée recherchée : <strong>{kpiLabel}</strong> — page{" "}
-              <strong>{targetPage}</strong> du PDF source.
-            </>
-          ) : (
-            <>Page {targetPage} du PDF source.</>
-          )}
-        </p>
-      ) : (
-        <p className="text-sm text-text-secondary max-w-sm mb-1">
-          {selected.node.pageCount} pages — tableaux QRT (S.02, S.05,
-          S.23, S.25, S.28...) déjà extraits et vérifiés.
-        </p>
-      )}
-      <p className="text-xs text-text-tertiary max-w-sm mt-4">
-        Visualisation du PDF source à intégrer ici.
-      </p>
-    </div>
-  );
+  return DONNEES_EXTRAITES.kpisParSociete[company]?.[kpi]?.pageSource ?? null;
 }
 
 export default function DocumentsPage() {
-  const [selected, setSelected] = useState<SelectedNode | null>(null);
-  const [targetPage, setTargetPage] = useState<number | null>(null);
-  const [targetKpi, setTargetKpi] = useState<string | null>(null);
+  const societes = useMemo(() => societesTriees(), []);
+  const [societeSelectionnee, setSocieteSelectionnee] = useState<string | null>(null);
+  const [pageCible, setPageCible] = useState<number | null>(null);
+  const [kpiCible, setKpiCible] = useState<string | null>(null);
+  const [recherche, setRecherche] = useState("");
 
-  // Arrivée depuis un autre onglet (ex. Analyse) avec ?company=...&kpi=...
-  // -> saute directement sur le nœud Annexes QRT de la bonne entreprise,
-  // à la bonne page si connue via kpis.db (source_page). Lu directement
-  // depuis window.location plutôt que useSearchParams() : ce hook
-  // nécessite un <Suspense>, et sur ce projet l'effet qui en dépend ne
-  // se déclenchait pas de façon fiable au chargement direct de l'URL
-  // (?company=...&kpi=...) — reproduit en dev, y compris après un vrai
-  // F5, indépendamment du outil de navigation utilisé pour tester.
-  // window.location.search en lecture directe est plus simple et fiable
-  // ici, au prix de ne pas re-déclencher sur un changement de query
-  // string SANS démontage du composant (cas marginal : navigation
-  // client Documents -> Documents avec juste ?kpi= différent).
+  // Arrivée avec ?company=X[&kpi=Y] : on ouvre directement le PDF de X
+  // à la bonne page si un KPI est ciblé.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const company = params.get("company");
     const kpi = params.get("kpi");
     if (!company) return;
-
-    const qrtNode = findQrtNodeForCompany(company);
-    if (!qrtNode) return;
-
-    setSelected({ node: qrtNode, company, path: [company, qrtNode.label] });
+    setSocieteSelectionnee(company);
     if (kpi) {
-      setTargetKpi(kpi);
-      setTargetPage(pageSourceKpi(company, kpi));
+      setKpiCible(kpi);
+      setPageCible(pageSourceKpi(company, kpi));
     }
   }, []);
 
-  const selectedPath = useMemo(() => selected?.path ?? null, [selected]);
+  const societesFiltrees = useMemo(() => {
+    const q = recherche.trim().toLowerCase();
+    if (!q) return societes;
+    return societes.filter((s) => s.name.toLowerCase().includes(q));
+  }, [societes, recherche]);
 
-  const handleSelect = (sel: SelectedNode) => {
-    setSelected(sel);
-    if (sel.node.type !== "qrt") {
-      setTargetPage(null);
-      setTargetKpi(null);
-    }
-  };
+  const pdfSociete = societeSelectionnee ? PDF_PAR_SOCIETE[societeSelectionnee] : null;
+  const urlPdf = pdfSociete
+    ? `/api/pdf/${encodeURIComponent(pdfSociete)}${pageCible ? `#page=${pageCible}` : ""}`
+    : null;
 
-  const handleNavigateToQrt = () => {
-    if (!selected) return;
-    const qrtNode = findQrtNodeForCompany(selected.company);
-    if (!qrtNode) return;
-    setSelected({
-      node: qrtNode,
-      company: selected.company,
-      path: [selected.company, qrtNode.label],
-    });
-    setTargetPage(null);
-    setTargetKpi(null);
+  const selectionner = (nom: string) => {
+    setSocieteSelectionnee(nom);
+    // Nouvelle société sélectionnée = on remet à zéro le KPI ciblé,
+    // sinon la page cible resterait "collée" d'une visite précédente.
+    setPageCible(null);
+    setKpiCible(null);
   };
 
   return (
     <div className="flex h-full">
-      {/* Document tree sidebar */}
+      {/* Sidebar : liste plate des sociétés */}
       <div
-        className={`${selected ? "hidden md:block" : "block"} w-full md:w-80 md:flex-shrink-0 border-r border-border bg-surface overflow-auto`}
+        className={cn(
+          "w-full md:w-80 md:flex-shrink-0 border-r border-border bg-surface overflow-auto",
+          societeSelectionnee ? "hidden md:block" : "block"
+        )}
       >
         <div className="px-4 py-4 border-b border-border">
           <h3 className="font-heading text-lg text-text-primary">Documents</h3>
           <p className="text-xs text-text-tertiary mt-0.5">
-            Navigation par chapitre SFCR
+            {societes.length} rapports SFCR — cliquez pour ouvrir
           </p>
+          <input
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+            placeholder="Rechercher une société..."
+            className="mt-3 w-full text-sm border border-border rounded-[var(--radius-md)] px-3 py-1.5 bg-surface text-text-primary"
+          />
         </div>
         <div className="py-2">
-          {sfcrTree.map((node, i) => (
-            <TreeItem
-              key={i}
-              node={node}
-              company={node.label}
-              path={[]}
-              selectedPath={selectedPath}
-              onSelect={handleSelect}
-            />
-          ))}
+          {societesFiltrees.length === 0 && (
+            <p className="text-xs text-text-tertiary px-4 py-3">Aucune société ne correspond.</p>
+          )}
+          {societesFiltrees.map((s) => {
+            const actif = societeSelectionnee === s.name;
+            const nouvelle = estNouvelleSociete(s.name);
+            const aUnPdf = !!PDF_PAR_SOCIETE[s.name];
+            return (
+              <button
+                key={s.id}
+                onClick={() => selectionner(s.name)}
+                className={cn(
+                  "w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left transition-colors",
+                  actif
+                    ? "bg-accent-light text-accent font-medium"
+                    : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"
+                )}
+              >
+                <Building2 className={cn("w-4 h-4 flex-shrink-0", actif ? "text-accent" : "text-text-tertiary")} />
+                <span className="flex-1 truncate">{s.name}</span>
+                {nouvelle && (
+                  <span
+                    title="Société ajoutée à chaud — extraction automatique, à vérifier."
+                    className="text-[9px] font-medium uppercase tracking-wide text-warning bg-warning-light px-1.5 py-0.5 rounded flex-shrink-0"
+                  >
+                    Nouveau
+                  </span>
+                )}
+                {!aUnPdf && (
+                  <span
+                    title="Aucun PDF associé pour cette société."
+                    className="text-[9px] font-medium uppercase tracking-wide text-text-tertiary bg-surface-secondary px-1.5 py-0.5 rounded flex-shrink-0"
+                  >
+                    Sans PDF
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Document content viewer */}
-      <div className={`${selected ? "block" : "hidden md:block"} flex-1 overflow-auto`}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
-          {selected && (
-            <button
-              onClick={() => setSelected(null)}
-              className="md:hidden mb-4 inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Retour aux chapitres
-            </button>
-          )}
-          {!selected && (
-            <div className="flex flex-col items-center justify-center h-96 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center mb-4">
-                <FileText className="w-7 h-7 text-text-tertiary" />
+      {/* Zone principale : viewer PDF */}
+      <div className={cn("flex-1 flex flex-col min-h-0", societeSelectionnee ? "block" : "hidden md:flex")}>
+        {societeSelectionnee ? (
+          <>
+            <div className="border-b border-border bg-surface px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <button
+                  onClick={() => setSocieteSelectionnee(null)}
+                  className="md:hidden inline-flex items-center gap-1 text-sm text-accent hover:underline flex-shrink-0"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <FileText className="w-4 h-4 text-accent flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-text-primary truncate">{societeSelectionnee}</p>
+                  {kpiCible && pageCible && (
+                    <p className="text-[11px] text-text-tertiary truncate">
+                      {KPI_LABELS[kpiCible] ?? kpiCible} — page {pageCible}
+                    </p>
+                  )}
+                </div>
               </div>
-              <h3 className="font-heading text-xl text-text-primary mb-2">
-                Sélectionnez un chapitre
-              </h3>
-              <p className="text-sm text-text-secondary max-w-sm">
-                Choisissez un chapitre dans l&apos;arborescence pour afficher
-                son contenu extrait avec les tableaux de données associés.
-              </p>
+              {estNouvelleSociete(societeSelectionnee) && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-warning bg-warning-light px-2 py-0.5 rounded flex-shrink-0">
+                  <Sparkles className="w-3 h-3" /> Nouveau — à vérifier
+                </span>
+              )}
             </div>
-          )}
-          {selected && selected.node.type === "narrative" && (
-            <NarrativeEmptyState
-              selected={selected}
-              onNavigateToQrt={handleNavigateToQrt}
-            />
-          )}
-          {selected && selected.node.type === "qrt" && (
-            <QrtView
-              selected={selected}
-              targetPage={targetPage}
-              targetKpi={targetKpi}
-            />
-          )}
-        </div>
+
+            {urlPdf ? (
+              // iframe : le lecteur PDF natif du navigateur gère #page=N,
+              // le zoom, la recherche. Rien à installer côté frontend.
+              // key : force le remount quand la société OU la page change,
+              // pour que le #page=N soit bien pris en compte (les navigateurs
+              // n'appliquent pas toujours un changement de fragment sur une
+              // iframe déjà chargée).
+              <iframe
+                key={urlPdf}
+                src={urlPdf}
+                title={`PDF SFCR de ${societeSelectionnee}`}
+                className="flex-1 w-full bg-surface-secondary"
+              />
+            ) : (
+              <PdfIndisponible societe={societeSelectionnee} />
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-center px-6">
+            <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center mb-4">
+              <FileText className="w-7 h-7 text-text-tertiary" />
+            </div>
+            <h3 className="font-heading text-xl text-text-primary mb-2">Sélectionnez un document</h3>
+            <p className="text-sm text-text-secondary max-w-sm">
+              Choisissez une société dans la liste pour ouvrir son rapport SFCR.
+            </p>
+            <p className="text-xs text-text-tertiary max-w-sm mt-3">
+              Fonctionne uniquement quand le site tourne en local sur votre PC — les PDF sont dans le dossier data/,
+              qui n&apos;est pas déployé en ligne.
+            </p>
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+/** Écran affiché quand la société n'a pas de PDF associé (nouvelle
+ * société ajoutée à chaud dont le fichier n'a pas encore de mapping,
+ * ou fichier manquant sur disque). */
+function PdfIndisponible({ societe }: { societe: string }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+      <div className="w-14 h-14 rounded-2xl bg-warning-light flex items-center justify-center mb-4">
+        <AlertTriangle className="w-7 h-7 text-warning" />
+      </div>
+      <h3 className="font-heading text-xl text-text-primary mb-2">PDF indisponible</h3>
+      <p className="text-sm text-text-secondary max-w-md">
+        Aucun fichier PDF n&apos;est associé à <strong>{societe}</strong> dans le mapping actuel.
+      </p>
+      <p className="text-xs text-text-tertiary max-w-md mt-3">
+        Si cette société vient d&apos;être ajoutée via l&apos;onglet Upload, le PDF est bien dans data/ mais le mapping
+        automatique (nom société → nom de fichier) n&apos;a pas encore été mis à jour. À corriger dans
+        src/lib/pdf-par-societe.ts.
+      </p>
     </div>
   );
 }
