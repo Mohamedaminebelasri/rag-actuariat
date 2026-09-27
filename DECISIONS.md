@@ -6760,3 +6760,62 @@ KPIs remplis. `validate_kpis.py --company MAIF` : **37/38** — le seul
 échec (`completude_null_attendu`, 4 NULL au lieu d'1) est le signal de
 complétude ATTENDU (même famille que SGAM/AG2R Prévoyance, Décision
 087), pas un bug.
+
+## Décision 100 — Covéa intégrée (33e société), 17/22 KPIs, 1 vrai bug de matching trouvé et corrigé (scopé)
+
+Mode `libelles_francais` comme MAIF — **aucun** KPI ne passe par
+`resoudre_variantes_qrt()` (pas de code R/C sur ce document), tous
+via le repli libellé : `primes_acquises_brutes`/`charge_sinistres`
+via `resoudre_primes_sinistres_covea()` (Décision 073, dédiée), le
+reste via `extraire_par_libelle()` générique + `KPI_LABELS_FR` —
+reproduction exacte du mécanisme de `diagnostiquer_pdf()` (16/20 en
+diagnostic), CAPTURÉ ici plutôt que seulement compté. **Aucun code
+partagé touché** (rappel Décision 079 : un fix générique avait cassé
+Covéa, régression annulée — ce script n'ajoute qu'un fichier
+d'extraction, ne modifie ni `classifier_lignes()` ni
+`extraire_par_libelle()`).
+
+### Mêmes 2 bugs de conversion que MAIF (Décision 099), corrigés pareil
+
+`ratio_scr`/`ratio_mcr` en fraction décimale (2,21/5,11 -> ×100 = 221%/
+511%) ; montants en K€ jamais divisés. Vérifié : `ratio_scr` recalculé
+220,82% vs 221,00% publié (écart normal) ; `ratio_mcr` recalculé
+513,23% vs 511,00% publié (écart un peu plus large mais attendu —
+le numérateur MCR-éligible diffère du numérateur SCR-éligible utilisé
+ici par approximation, cf. limite déjà documentée Décision 090 pour
+`ratio_mcr_recalcule`, jamais généralisée pour cette même raison).
+
+### 1 vrai bug trouvé : `scr_operationnel` matchait le mauvais libellé fusionné
+
+`extraire_par_libelle()` (jamais modifiée) a retourné **-2 677 K€**
+pour "Risque opérationnel" — signe et magnitude incohérents (ce KPI
+est toujours positif par construction, et les autres composantes SCR
+de ce document vont de 695 à 12 077 M€). Investigation : le libellé
+"Risque opérationnel" apparaît 3 fois dans le texte concaténé des
+pages QRT, dont 2 fois comme SUFFIXE d'un label fusionné avec 2
+AUTRES lignes sans rapport ("Capacité d'absorption des pertes des
+impôts différés / Capital de solvabilité requis de base / Risque
+opérationnel", collées en un seul "libellé" par `classifier_lignes()`
+faute d'une ligne 100% numérique pour les séparer) — la fonction
+(repli suffixe, cf. Décision 064) retient la 1re occurrence trouvée,
+pas la bonne. La 3e occurrence — "Calcul du capital de solvabilité
+requis **C0100** Risque opérationnel" = 1 058 463 K€ — porte un vrai
+code de colonne EIOPA et une magnitude cohérente avec les autres
+composantes. **Retenue par override scopé au fichier**
+(`extract_kpis_covea.py`, jamais dans le code partagé), documenté en
+base avec l'analyse complète.
+
+### Irréductibles, restent NULL
+
+`fonds_propres_t1_nr`/`t1_r`/`t2`/`t3` : aucun libellé connu pour ces
+4 KPIs dans `KPI_LABELS_FR` sur ce document (jamais construits en
+session précédente, contrairement à `fonds_propres_eligibles` qui a
+son propre libellé direct) — NULL plutôt que deviné, pas une tentative
+échouée mais un gap de couverture déjà présent avant cette tâche.
+
+### Vérification
+
+`validate_kpis.py --company Covéa` : **35/36** — seul échec
+(`completude_null_attendu`, 5 NULL) est le signal de complétude
+attendu (4 tiers + resultat_technique), pas un bug. 17/22 KPIs
+remplis.
