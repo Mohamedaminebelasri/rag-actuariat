@@ -8,11 +8,10 @@ import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-uti
 /**
  * Une ligne = un KPI réellement extrait pour une société.
  *
- * Lien vers la source : l'onglet Documents ne sait aujourd'hui naviguer
- * que jusqu'à Groupama (seule société de son arborescence de démonstration
- * — voir sfcrTree dans documents/page.tsx). Pour ne pas proposer un lien
- * mort sur les 33 autres sociétés, la carte n'est cliquable QUE pour
- * Groupama ; ailleurs, chapitre/page restent affichés en texte seul.
+ * Lien vers la source : l'onglet Documents accueille maintenant les 34
+ * sociétés (nœud "Annexes QRT" par société — voir sfcrTree dans
+ * documents/page.tsx) plus les sociétés ajoutées à chaud. La carte est
+ * donc cliquable dès qu'on a un pageSource, indépendamment de la société.
  */
 export function KpiLigne({
   id,
@@ -30,21 +29,25 @@ export function KpiLigne({
     kpi.chapitreSource && kpi.pageSource
       ? `${kpi.chapitreSource}, p. ${kpi.pageSource}`
       : kpi.chapitreSource ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
-  const lienActif = societe === "Groupama";
+  const lienActif = kpi.pageSource != null;
 
   const contenu = (
     <>
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm text-text-secondary leading-snug">{label}</p>
         <span
-          title={kpi.valide ? "Recoupé automatiquement (triple validation)" : "Extrait par IA, non recoupé"}
+          title={
+            kpi.valide
+              ? "Recoupé automatiquement (triple validation)"
+              : "Extrait automatiquement, à vérifier manuellement"
+          }
           className={cn(
             "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium flex-shrink-0",
             kpi.valide ? "text-success bg-success-light" : "text-warning bg-warning-light"
           )}
         >
           {kpi.valide ? <ShieldCheck className="w-2.5 h-2.5" /> : <Sparkles className="w-2.5 h-2.5" />}
-          {kpi.valide ? "Vérifié" : "Extrait"}
+          {kpi.valide ? "Vérifié" : "À vérifier"}
         </span>
       </div>
       <p className="font-mono text-xl font-bold text-text-primary mt-1">

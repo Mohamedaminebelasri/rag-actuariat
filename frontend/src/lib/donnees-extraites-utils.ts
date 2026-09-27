@@ -141,6 +141,21 @@ export function couvertureKpis(nomSociete: string): Couverture {
   };
 }
 
+/** Une société est marquée "Nouveau" (= ajoutée à chaud via l'onglet
+ * Upload, jamais relue à la main) si AUCUN de ses KPIs n'a `valide: true`.
+ *
+ * Vérifié sur la base actuelle (34 sociétés au 27/09/2026) : toutes les
+ * sociétés déjà relues manuellement ont au moins un KPI validé, donc ce
+ * critère n'a jamais de faux positif. Le script d'extraction à chaud
+ * (extraire_un_pdf.py, Décision 106) force validated=0 sur tous les KPIs
+ * insérés, donc une nouvelle société est exactement dans ce cas.
+ */
+export function estNouvelleSociete(nomSociete: string): boolean {
+  const kpis = Object.values(kpisDe(nomSociete));
+  if (kpis.length === 0) return false; // société sans KPI extrait : pas "nouvelle", juste vide
+  return kpis.every((k) => !k.valide);
+}
+
 export const STATS_GLOBALES = {
   nbSocietes: DONNEES_EXTRAITES.societes.length,
   nbKpis: Object.values(DONNEES_EXTRAITES.kpisParSociete).reduce((acc, k) => acc + Object.keys(k).length, 0),

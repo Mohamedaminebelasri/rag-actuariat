@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   UploadCloud,
   FileText,
@@ -8,10 +8,12 @@ import {
   AlertTriangle,
   Loader2,
   Pencil,
+  Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Etape = "depot" | "confirmation" | "envoi" | "succes" | "erreur";
+type Etape = "depot" | "confirmation" | "envoi" | "extraction" | "resultats" | "erreur";
 
 type SuggestionApi = {
   suggestion: string;
@@ -20,14 +22,47 @@ type SuggestionApi = {
   tailleOctets: number;
 };
 
+type KpiExtrait = {
+  kpi_name: string;
+  value: number;
+  unit: string;
+  category: string;
+  source_page: number;
+  source_chapter: string;
+  validated: boolean;
+};
+
+type EtatJob = {
+  ok: boolean;
+  statut?: "en_cours" | "termine" | "erreur";
+  etape?: string;
+  message?: string | null;
+  societe?: string;
+  annee?: number;
+  kpis?: KpiExtrait[];
+  erreur?: string | null;
+};
+
+const LIBELLES_ETAPES: Record<string, string> = {
+  demarrage: "Lancement de l'extraction…",
+  extraction_pdf: "Lecture du PDF (Docling)…",
+  appel_modele: "Appel du modèle d'extraction…",
+  validation: "Validation des chiffres extraits…",
+  ecriture_db: "Enregistrement des résultats…",
+};
+
 /**
- * Onglet "Ajouter un PDF" — étape 1 du circuit d'ingestion : le fondateur
- * dépose un PDF, on lui propose un titre (extrait de la page 1, ou à
- * défaut le nom de fichier nettoyé), il confirme ou renomme, puis le PDF
- * est enregistré dans data/ sous ce titre.
+ * Onglet "Ajouter un PDF" — circuit complet : le fondateur dépose un PDF,
+ * on lui propose un titre (extrait de la page 1, ou à défaut le nom de
+ * fichier nettoyé), il confirme ou renomme, précise la société et l'année
+ * du rapport. Le PDF est alors enregistré dans data/, puis l'extraction
+ * des KPIs est déclenchée en arrière-plan (script Python côté backend) et
+ * suivie ici par polling jusqu'au résultat.
  *
- * L'extraction des KPIs par le modèle est une étape séparée, volontairement
- * pas déclenchée ici — voir la note en bas de page.
+ * Société + année sont saisies à la main (plutôt que devinées) pour
+ * fiabiliser l'extraction sur un PDF inconnu du système. Les KPIs obtenus
+ * restent marqués "à vérifier" tant qu'ils n'ont pas de validation
+ * manuelle (validated=false côté kpis.db).
  *
  * Ne fonctionne qu'en local (npm run dev / next start sur le PC) : l'API
  * d'enregistrement écrit sur le disque, ce qui n'est pas possible sur le
@@ -39,10 +74,21 @@ export default function UploadPage() {
   const [suggestion, setSuggestion] = useState<SuggestionApi | null>(null);
   const [titre, setTitre] = useState("");
   const [enRenommage, setEnRenommage] = useState(false);
+  const [societe, setSociete] = useState("");
+  const [annee, setAnnee] = useState("");
   const [messageErreur, setMessageErreur] = useState("");
   const [nomEnregistre, setNomEnregistre] = useState("");
   const [glisseActif, setGlisseActif] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [etapeExtraction, setEtapeExtraction] = useState("");
+  const [kpisExtraits, setKpisExtraits] = useState<KpiExtrait[]>([]);
+  const [societeResultat, setSocieteResultat] = useState("");
+  const [anneeResultat, setAnneeResultat] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const minuteur = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const anneeValide = /^(19|20)\d{2}$/.test(annee.trim());
+  const formulaireValide = titre.trim().length >= 3 && societe.trim().length >= 2 && anneeValide;
 
   const analyserFichier = useCallback(async (f: File) => {
     if (!f.name.toLowerCase().endsWith(".pdf") && f.type !== "application/pdf") {
@@ -68,22 +114,92 @@ export default function UploadPage() {
   }, []);
 
   const confirmer = useCallback(async () => {
-    if (!fichier || titre.trim().length < 3) return;
+    if (!fichier || !formulaireValide) return;
     setEtape("envoi");
     try {
       const forme = new FormData();
       forme.append("pdf", fichier);
       forme.append("titre", titre.trim());
+      forme.append("societe", societe.trim());
+      forme.append("annee", annee.trim());
       const reponse = await fetch("/api/upload-pdf", { method: "POST", body: forme });
       const donnees = await reponse.json();
       if (!reponse.ok || !donnees.ok) throw new Error(donnees.erreur ?? "Échec de l'enregistrement.");
       setNomEnregistre(donnees.nomFichier);
-      setEtape("succes");
+
+      // Le PDF est enregistré : on enchaîne aussitôt sur le déclenchement de
+      // l'extraction (en arrière-plan, suivi ensuite par polling).
+      const reponseExtraction = await fetch("/api/lancer-extraction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chemin: donnees.chemin,
+          nomFichier: donnees.nomFichier,
+          societe: donnees.societe,
+          annee: donnees.annee,
+        }),
+      });
+      const donneesExtraction = await reponseExtraction.json();
+      if (!reponseExtraction.ok || !donneesExtraction.ok) {
+        throw new Error(
+          donneesExtraction.erreur ?? "Le PDF est enregistré, mais l'extraction n'a pas pu démarrer."
+        );
+      }
+      setJobId(donneesExtraction.jobId);
+      setEtapeExtraction("demarrage");
+      setEtape("extraction");
     } catch (err) {
       setMessageErreur(err instanceof Error ? err.message : "Échec de l'enregistrement.");
       setEtape("erreur");
     }
-  }, [fichier, titre]);
+  }, [fichier, titre, societe, annee, formulaireValide]);
+
+  // Suivi de l'extraction en cours : on relit le statut du job toutes les
+  // 2,5s tant qu'il n'est pas terminé (ou en erreur).
+  useEffect(() => {
+    if (etape !== "extraction" || !jobId) return;
+    let annule = false;
+
+    const interroger = async () => {
+      try {
+        const reponse = await fetch(`/api/extraction-statut/${jobId}`);
+        const donnees = (await reponse.json()) as EtatJob;
+        if (annule) return;
+
+        if (!reponse.ok || !donnees.ok) {
+          setMessageErreur(donnees.erreur ?? "Suivi de l'extraction impossible.");
+          setEtape("erreur");
+          return;
+        }
+        setEtapeExtraction(donnees.etape ?? "");
+
+        if (donnees.statut === "termine") {
+          setKpisExtraits(donnees.kpis ?? []);
+          setSocieteResultat(donnees.societe ?? societe);
+          setAnneeResultat(donnees.annee ?? Number(annee));
+          setEtape("resultats");
+          return;
+        }
+        if (donnees.statut === "erreur") {
+          setMessageErreur(donnees.erreur ?? "L'extraction a échoué.");
+          setEtape("erreur");
+          return;
+        }
+        minuteur.current = setTimeout(interroger, 2500);
+      } catch (err) {
+        if (annule) return;
+        setMessageErreur(err instanceof Error ? err.message : "Suivi de l'extraction impossible.");
+        setEtape("erreur");
+      }
+    };
+
+    interroger();
+    return () => {
+      annule = true;
+      if (minuteur.current) clearTimeout(minuteur.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape, jobId]);
 
   const reinitialiser = () => {
     setEtape("depot");
@@ -91,8 +207,15 @@ export default function UploadPage() {
     setSuggestion(null);
     setTitre("");
     setEnRenommage(false);
+    setSociete("");
+    setAnnee("");
     setMessageErreur("");
     setNomEnregistre("");
+    setJobId(null);
+    setEtapeExtraction("");
+    setKpisExtraits([]);
+    setSocieteResultat("");
+    setAnneeResultat(null);
   };
 
   const onDrop = (e: React.DragEvent) => {
@@ -112,8 +235,8 @@ export default function UploadPage() {
           </div>
         </div>
         <p className="text-sm text-text-secondary mb-6">
-          Déposez un rapport SFCR : nous proposons un titre à partir du document, vous confirmez ou renommez,
-          puis il est enregistré dans notre base. L&apos;extraction des chiffres KPI se fera dans une étape séparée, plus tard.
+          Déposez un rapport SFCR : nous proposons un titre à partir du document, vous confirmez ou renommez et
+          précisez la société et l&apos;année, puis le modèle extrait automatiquement les KPIs.
         </p>
 
         {/* Étape 1 : dépôt */}
@@ -196,10 +319,36 @@ export default function UploadPage() {
               />
             )}
 
+            <div className="grid grid-cols-2 gap-4 mt-5">
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">Société</label>
+                <input
+                  value={societe}
+                  onChange={(e) => setSociete(e.target.value)}
+                  placeholder="Ex. Groupama"
+                  className="w-full text-sm text-text-primary bg-surface-secondary border border-border rounded-[var(--radius-md)] px-3 py-2.5 outline-none focus:border-accent"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">Année du rapport</label>
+                <input
+                  value={annee}
+                  onChange={(e) => setAnnee(e.target.value.replace(/[^\d]/g, "").slice(0, 4))}
+                  placeholder="Ex. 2025"
+                  inputMode="numeric"
+                  className="w-full text-sm text-text-primary bg-surface-secondary border border-border rounded-[var(--radius-md)] px-3 py-2.5 outline-none focus:border-accent"
+                />
+              </div>
+            </div>
+            {(societe.trim().length > 0 && societe.trim().length < 2) ||
+            (annee.trim().length === 4 && !anneeValide) ? (
+              <p className="text-xs text-danger mt-2">Vérifiez le nom de la société et l&apos;année (ex. 2025).</p>
+            ) : null}
+
             <div className="flex items-center gap-3 mt-6">
               <button
                 onClick={confirmer}
-                disabled={titre.trim().length < 3}
+                disabled={!formulaireValide}
                 className="px-4 py-2 rounded-[var(--radius-md)] bg-accent text-accent-foreground text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-accent-hover transition-colors"
               >
                 Confirmer et enregistrer
@@ -214,16 +363,74 @@ export default function UploadPage() {
           </div>
         )}
 
-        {/* Succès */}
-        {etape === "succes" && (
-          <div className="flex flex-col items-center justify-center gap-3 border border-success/30 bg-success-light rounded-[var(--radius-lg)] px-6 py-16">
-            <CheckCircle2 className="w-10 h-10 text-success" />
-            <p className="text-sm font-medium text-success text-center">
-              PDF enregistré sous « {nomEnregistre} »
+        {/* Extraction en cours */}
+        {etape === "extraction" && (
+          <div className="flex flex-col items-center justify-center gap-3 border border-border rounded-[var(--radius-lg)] px-6 py-16 bg-surface">
+            <Loader2 className="w-8 h-8 text-accent animate-spin" />
+            <p className="text-sm font-medium text-text-primary">
+              {LIBELLES_ETAPES[etapeExtraction] ?? "Extraction en cours…"}
             </p>
+            <p className="text-xs text-text-tertiary">
+              PDF enregistré sous « {nomEnregistre} » — le modèle traite le document, ça peut prendre quelques minutes.
+            </p>
+          </div>
+        )}
+
+        {/* Résultats de l'extraction */}
+        {etape === "resultats" && (
+          <div className="border border-border rounded-[var(--radius-lg)] bg-surface p-6">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0" />
+                <p className="text-sm font-medium text-text-primary">
+                  {societeResultat} {anneeResultat ? `— ${anneeResultat}` : ""}
+                </p>
+                <span className="text-[10px] font-bold uppercase tracking-wide text-accent bg-accent-light px-1.5 py-0.5 rounded">
+                  Nouveau
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2 bg-warning-light border border-warning/30 rounded-[10px] px-3 py-2 mb-4">
+              <ShieldAlert className="w-[15px] h-[15px] text-warning flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-warning">
+                Extraction automatique — ces chiffres n&apos;ont pas encore été vérifiés manuellement.
+              </p>
+            </div>
+
+            {kpisExtraits.length === 0 ? (
+              <p className="text-sm text-text-secondary">Aucun KPI n&apos;a pu être extrait de ce document.</p>
+            ) : (
+              <div className="space-y-2">
+                {kpisExtraits.map((kpi) => (
+                  <div
+                    key={kpi.kpi_name}
+                    className="flex items-center justify-between gap-3 bg-surface-secondary border border-border rounded-[var(--radius-md)] px-3 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-text-primary truncate">{kpi.kpi_name}</p>
+                      <p className="text-[11px] text-text-tertiary">
+                        page {kpi.source_page} · chapitre {kpi.source_chapter}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="font-mono text-sm text-text-primary">
+                        {kpi.value} {kpi.unit}
+                      </span>
+                      {!kpi.validated && (
+                        <span className="flex items-center gap-1 text-[10px] text-warning bg-warning-light px-1.5 py-0.5 rounded">
+                          <Sparkles className="w-3 h-3" /> à vérifier
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <button
               onClick={reinitialiser}
-              className="mt-2 px-4 py-2 rounded-[var(--radius-md)] bg-accent text-accent-foreground text-sm font-medium hover:bg-accent-hover transition-colors"
+              className="mt-6 px-4 py-2 rounded-[var(--radius-md)] bg-accent text-accent-foreground text-sm font-medium hover:bg-accent-hover transition-colors"
             >
               Ajouter un autre PDF
             </button>
@@ -247,8 +454,9 @@ export default function UploadPage() {
         <div className="flex items-start gap-2 bg-warning-light border border-warning/30 rounded-[10px] px-4 py-2.5 w-full mt-8">
           <AlertTriangle className="w-[15px] h-[15px] text-warning flex-shrink-0 mt-0.5" />
           <p className="text-xs text-warning">
-            Fonctionne uniquement en local (le PDF est écrit sur le disque du PC) — pas sur la version en ligne.
-            Étape suivante, séparée et pas encore construite : l&apos;extraction automatique des chiffres KPI par le modèle.
+            Fonctionne uniquement en local (le PDF est écrit sur le disque du PC, et le modèle d&apos;extraction y
+            tourne aussi) — pas sur la version en ligne. Les résultats d&apos;une extraction automatique restent
+            « à vérifier » tant qu&apos;ils n&apos;ont pas été validés manuellement.
           </p>
         </div>
       </div>

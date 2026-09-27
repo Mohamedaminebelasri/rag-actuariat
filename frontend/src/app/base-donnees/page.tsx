@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Database, Download, Search, ShieldCheck, Clock } from "lucide-react";
+import { Database, Download, Search, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KpiLigne } from "@/components/donnees/kpi-ligne";
 import {
@@ -11,6 +11,7 @@ import {
   KPI_LABELS_REELS,
   STATS_GLOBALES,
   couvertureKpis,
+  estNouvelleSociete,
   exporterCsvSociete,
   groupesDisponibles,
   kpisDe,
@@ -123,11 +124,16 @@ export default function BaseDonneesPage() {
                 className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-2 bg-surface text-text-primary font-body min-w-0"
               >
                 <option value="">Sélectionnez un document SFCR...</option>
-                {documents.map((s) => (
-                  <option key={s.id} value={s.name}>
-                    {groupe === GROUPE_TOUS && s.groupe ? `${s.name} (${s.groupe})` : s.name}
-                  </option>
-                ))}
+                {documents.map((s) => {
+                  const nouvelle = estNouvelleSociete(s.name);
+                  const suffixeGroupe = groupe === GROUPE_TOUS && s.groupe ? ` (${s.groupe})` : "";
+                  const suffixeNouveau = nouvelle ? " — Nouveau" : "";
+                  return (
+                    <option key={s.id} value={s.name}>
+                      {s.name}{suffixeGroupe}{suffixeNouveau}
+                    </option>
+                  );
+                })}
               </select>
               {documents.length === 0 && (
                 <p className="text-xs text-warning mt-0.5">Aucune société ne correspond à ces filtres.</p>
@@ -168,6 +174,7 @@ function DetailSociete({ societe }: { societe: Societe }) {
   const kpis = kpisDe(societe.name);
   const couverture = couvertureKpis(societe.name);
   const annee = Object.values(kpis)[0]?.annee;
+  const nouvelle = estNouvelleSociete(societe.name);
 
   return (
     <div>
@@ -175,6 +182,14 @@ function DetailSociete({ societe }: { societe: Societe }) {
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-heading text-2xl text-text-primary">{societe.name}</h3>
+            {nouvelle && (
+              <span
+                title="Société ajoutée à chaud via l'onglet Upload — aucun KPI n'a encore été vérifié manuellement."
+                className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-warning-light text-warning"
+              >
+                <Sparkles className="w-3 h-3" /> Nouveau
+              </span>
+            )}
             <span className="text-[11px] px-2 py-0.5 rounded-full bg-surface-secondary text-text-secondary capitalize">
               {societe.type}
             </span>
@@ -187,8 +202,17 @@ function DetailSociete({ societe }: { societe: Societe }) {
           <p className="text-xs text-text-tertiary mt-1">
             {societe.country}
             {annee ? ` · SFCR exercice ${annee}` : ""} ·{" "}
-            <span className={cn(couverture.valides === couverture.total ? "text-success" : "text-text-tertiary")}>
-              {couverture.extraits}/{couverture.total} KPIs extraits, {couverture.valides} vérifiés
+            <span
+              className={cn(
+                nouvelle
+                  ? "text-warning"
+                  : couverture.valides === couverture.total
+                    ? "text-success"
+                    : "text-text-tertiary"
+              )}
+            >
+              {couverture.extraits}/{couverture.total} KPIs extraits
+              {nouvelle ? " — aucun vérifié" : `, ${couverture.valides} vérifiés`}
             </span>
           </p>
         </div>
@@ -200,6 +224,15 @@ function DetailSociete({ societe }: { societe: Societe }) {
           Export CSV
         </button>
       </div>
+
+      {nouvelle && (
+        <div className="flex items-start gap-2 bg-warning-light border border-warning/30 rounded-[10px] px-4 py-2.5 mb-4">
+          <Sparkles className="w-[15px] h-[15px] text-warning flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-warning">
+            Extraction automatique, non vérifiée — chaque chiffre doit être recoupé avec le PDF source avant utilisation.
+          </p>
+        </div>
+      )}
 
       {couverture.extraits === 0 ? (
         <p className="text-sm text-text-secondary">Aucun KPI extrait pour cette société pour le moment.</p>
@@ -229,9 +262,8 @@ function DetailSociete({ societe }: { societe: Societe }) {
       <div className="flex items-start gap-2 border border-dashed border-border rounded-[10px] px-4 py-3 mt-8 text-text-tertiary">
         <Clock className="w-[15px] h-[15px] flex-shrink-0 mt-0.5" />
         <p className="text-xs">
-          À venir : cliquer sur une valeur pour voir la page PDF source avec le chiffre surligné. Pour l&apos;instant,
-          seul Groupama est relié à l&apos;onglet Documents (source cliquable) ; les autres sociétés affichent la
-          référence chapitre/page en texte.
+          Cliquez sur une valeur pour ouvrir l&apos;onglet Documents à la page source. La visualisation du PDF
+          lui-même reste à intégrer — pour l&apos;instant, seul le repérage de la page est affiché.
         </p>
       </div>
     </div>

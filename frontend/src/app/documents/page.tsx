@@ -13,6 +13,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import kpiSources from "@/data/kpi-sources.json";
+import { DONNEES_EXTRAITES, estNouvelleSociete, societesTriees } from "@/lib/donnees-extraites-utils";
 
 // Un nœud "narrative" est une sous-section de chapitre SFCR (A.1, B.3,
 // C.7, ...) dont le contenu textuel n'a jamais été extrait — seuls les
@@ -26,75 +27,101 @@ type TreeNode = {
   type: NodeType;
   children?: TreeNode[];
   pageCount?: number;
+  nouvelle?: boolean;
 };
 
-const sfcrTree: TreeNode[] = [
+// Sous-arbre détaillé (A à E + Annexes QRT) pour Groupama : seul le SFCR
+// Groupama a fait l'objet d'une décomposition chapitre par chapitre lors
+// du travail v2. Les autres sociétés n'ont que leurs KPIs QRT extraits,
+// donc juste un nœud "Annexes QRT" pointable.
+const sousArbreGroupama: TreeNode[] = [
   {
-    label: "Groupama",
-    type: "company",
+    label: "A. Activité et résultats",
+    type: "chapter",
     children: [
-      {
-        label: "A. Activité et résultats",
-        type: "chapter",
-        children: [
-          { label: "A.1 Activité", type: "narrative" },
-          { label: "A.2 Résultats de souscription", type: "narrative" },
-          { label: "A.3 Résultats des investissements", type: "narrative" },
-          { label: "A.4 Résultats des autres activités", type: "narrative" },
-          { label: "A.5 Autres informations", type: "narrative" },
-        ],
-      },
-      {
-        label: "B. Système de gouvernance",
-        type: "chapter",
-        children: [
-          { label: "B.1 Informations générales", type: "narrative" },
-          { label: "B.2 Compétences et honorabilité", type: "narrative" },
-          { label: "B.3 Système de gestion des risques", type: "narrative" },
-          { label: "B.4 ORSA", type: "narrative" },
-          { label: "B.5 Contrôle interne", type: "narrative" },
-          { label: "B.6 Fonction d'audit interne", type: "narrative" },
-          { label: "B.7 Fonction actuarielle", type: "narrative" },
-          { label: "B.8 Sous-traitance", type: "narrative" },
-        ],
-      },
-      {
-        label: "C. Profil de risque",
-        type: "chapter",
-        children: [
-          { label: "C.1 Risque de souscription", type: "narrative" },
-          { label: "C.2 Risque de marché", type: "narrative" },
-          { label: "C.3 Risque de crédit", type: "narrative" },
-          { label: "C.4 Risque de liquidité", type: "narrative" },
-          { label: "C.5 Risque opérationnel", type: "narrative" },
-          { label: "C.6 Autres risques importants", type: "narrative" },
-          { label: "C.7 Autres informations", type: "narrative" },
-        ],
-      },
-      {
-        label: "D. Valorisation à des fins de solvabilité",
-        type: "chapter",
-        children: [
-          { label: "D.1 Actifs", type: "narrative" },
-          { label: "D.2 Provisions techniques", type: "narrative" },
-          { label: "D.3 Autres passifs", type: "narrative" },
-          { label: "D.4 Méthodes de valorisation alternatives", type: "narrative" },
-        ],
-      },
-      {
-        label: "E. Gestion du capital",
-        type: "chapter",
-        children: [
-          { label: "E.1 Fonds propres", type: "narrative" },
-          { label: "E.2 SCR et MCR", type: "narrative" },
-          { label: "E.3 Durée du modèle interne", type: "narrative" },
-          { label: "E.4 Non-conformité", type: "narrative" },
-        ],
-      },
-      { label: "Annexes QRT", type: "qrt", pageCount: 15 },
+      { label: "A.1 Activité", type: "narrative" },
+      { label: "A.2 Résultats de souscription", type: "narrative" },
+      { label: "A.3 Résultats des investissements", type: "narrative" },
+      { label: "A.4 Résultats des autres activités", type: "narrative" },
+      { label: "A.5 Autres informations", type: "narrative" },
     ],
   },
+  {
+    label: "B. Système de gouvernance",
+    type: "chapter",
+    children: [
+      { label: "B.1 Informations générales", type: "narrative" },
+      { label: "B.2 Compétences et honorabilité", type: "narrative" },
+      { label: "B.3 Système de gestion des risques", type: "narrative" },
+      { label: "B.4 ORSA", type: "narrative" },
+      { label: "B.5 Contrôle interne", type: "narrative" },
+      { label: "B.6 Fonction d'audit interne", type: "narrative" },
+      { label: "B.7 Fonction actuarielle", type: "narrative" },
+      { label: "B.8 Sous-traitance", type: "narrative" },
+    ],
+  },
+  {
+    label: "C. Profil de risque",
+    type: "chapter",
+    children: [
+      { label: "C.1 Risque de souscription", type: "narrative" },
+      { label: "C.2 Risque de marché", type: "narrative" },
+      { label: "C.3 Risque de crédit", type: "narrative" },
+      { label: "C.4 Risque de liquidité", type: "narrative" },
+      { label: "C.5 Risque opérationnel", type: "narrative" },
+      { label: "C.6 Autres risques importants", type: "narrative" },
+      { label: "C.7 Autres informations", type: "narrative" },
+    ],
+  },
+  {
+    label: "D. Valorisation à des fins de solvabilité",
+    type: "chapter",
+    children: [
+      { label: "D.1 Actifs", type: "narrative" },
+      { label: "D.2 Provisions techniques", type: "narrative" },
+      { label: "D.3 Autres passifs", type: "narrative" },
+      { label: "D.4 Méthodes de valorisation alternatives", type: "narrative" },
+    ],
+  },
+  {
+    label: "E. Gestion du capital",
+    type: "chapter",
+    children: [
+      { label: "E.1 Fonds propres", type: "narrative" },
+      { label: "E.2 SCR et MCR", type: "narrative" },
+      { label: "E.3 Durée du modèle interne", type: "narrative" },
+      { label: "E.4 Non-conformité", type: "narrative" },
+    ],
+  },
+  { label: "Annexes QRT", type: "qrt", pageCount: 15 },
 ];
+
+/** Construit l'arborescence complète : Groupama en premier (sous-arbre
+ * détaillé A-E + QRT), puis chaque autre société de kpis.db avec un seul
+ * enfant "Annexes QRT" qui ouvre la vue de source (page indiquée par
+ * source_page du KPI cliqué). Les sociétés ajoutées à chaud portent
+ * `nouvelle: true` pour être décorées d'un badge dans l'arbre. */
+function construireArbre(): TreeNode[] {
+  const arbre: TreeNode[] = [];
+  const societes = societesTriees();
+  // Groupama en tête si présent
+  const groupama = societes.find((s) => s.name === "Groupama");
+  if (groupama) {
+    arbre.push({ label: "Groupama", type: "company", children: sousArbreGroupama });
+  }
+  for (const s of societes) {
+    if (s.name === "Groupama") continue;
+    arbre.push({
+      label: s.name,
+      type: "company",
+      nouvelle: estNouvelleSociete(s.name),
+      children: [{ label: "Annexes QRT", type: "qrt" }],
+    });
+  }
+  return arbre;
+}
+
+const sfcrTree: TreeNode[] = construireArbre();
 
 // Association KPI -> libellé lisible, pour le message "vous cherchiez
 // peut-être : ...". Tenue à part de kpi-sources.json (qui vient tel
@@ -119,6 +146,17 @@ type KpiSource = {
 type KpiSources = Record<string, Record<string, KpiSource>>;
 
 const typedKpiSources = kpiSources as KpiSources;
+
+/** Résout la page source d'un KPI pour une société : d'abord dans
+ * kpi-sources.json (données Groupama historiquement enrichies), sinon
+ * dans donnees-extraites.json (les 34 sociétés + nouvelles à chaud).
+ * Retourne null si le KPI ou la société sont inconnus. */
+function pageSourceKpi(company: string, kpi: string): number | null {
+  const via1 = typedKpiSources[company]?.[kpi]?.source_page ?? null;
+  if (via1) return via1;
+  const via2 = DONNEES_EXTRAITES.kpisParSociete[company]?.[kpi]?.pageSource ?? null;
+  return via2 ?? null;
+}
 
 type SelectedNode = {
   node: TreeNode;
@@ -147,7 +185,16 @@ function TreeItem({
   selectedPath: string[] | null;
   onSelect: (sel: SelectedNode) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(depth < 2);
+  // Sociétés (depth 0) : toutes fermées par défaut sauf Groupama, sinon la
+  // liste des 34 SFCR déroulés d'un coup rend l'arbre illisible.
+  // Chapitres A-E de Groupama (depth 1 sous Groupama) : ouverts.
+  const [isOpen, setIsOpen] = useState(depth === 1 || (depth === 0 && node.label === "Groupama"));
+  // Ouvre automatiquement la société ciblée quand on arrive avec
+  // ?company=X (clic depuis Base de données) : sinon le noeud QRT
+  // sélectionné serait "invisible" sous une société fermée.
+  useEffect(() => {
+    if (depth === 0 && selectedPath && selectedPath[0] === node.label) setIsOpen(true);
+  }, [selectedPath, depth, node.label]);
   const hasChildren = !!node.children && node.children.length > 0;
   const currentPath = [...path, node.label];
   const isSelected =
@@ -191,6 +238,14 @@ function TreeItem({
           <Building2 className="w-4 h-4 text-accent flex-shrink-0" />
         )}
         <span className="flex-1 truncate">{node.label}</span>
+        {node.nouvelle && (
+          <span
+            title="Société ajoutée à chaud — extraction automatique, aucun KPI vérifié à la main."
+            className="text-[9px] font-medium uppercase tracking-wide text-warning bg-warning-light px-1.5 py-0.5 rounded"
+          >
+            Nouveau
+          </span>
+        )}
         {node.pageCount && (
           <span className="text-[10px] text-text-tertiary bg-surface-secondary px-1.5 py-0.5 rounded">
             {node.pageCount}p
@@ -321,8 +376,7 @@ export default function DocumentsPage() {
     setSelected({ node: qrtNode, company, path: [company, qrtNode.label] });
     if (kpi) {
       setTargetKpi(kpi);
-      const page = typedKpiSources[company]?.[kpi]?.source_page ?? null;
-      setTargetPage(page);
+      setTargetPage(pageSourceKpi(company, kpi));
     }
   }, []);
 

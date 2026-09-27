@@ -48,12 +48,23 @@ export async function POST(request: Request) {
   const forme = await request.formData();
   const fichier = forme.get("pdf");
   const titre = forme.get("titre");
+  // Société + année : saisies par le fondateur à la confirmation, nécessaires
+  // pour déclencher l'extraction (étape suivante) sans avoir à les deviner
+  // depuis un PDF inconnu.
+  const societe = forme.get("societe");
+  const annee = forme.get("annee");
 
   if (!(fichier instanceof File)) {
     return NextResponse.json({ ok: false, erreur: "Aucun fichier PDF reçu." }, { status: 400 });
   }
   if (typeof titre !== "string" || titre.trim().length < 3) {
     return NextResponse.json({ ok: false, erreur: "Le titre confirmé est trop court." }, { status: 400 });
+  }
+  if (typeof societe !== "string" || societe.trim().length < 2) {
+    return NextResponse.json({ ok: false, erreur: "Le nom de la société est requis." }, { status: 400 });
+  }
+  if (typeof annee !== "string" || !/^(19|20)\d{2}$/.test(annee.trim())) {
+    return NextResponse.json({ ok: false, erreur: "L'année du rapport est invalide." }, { status: 400 });
   }
 
   try {
@@ -63,7 +74,13 @@ export async function POST(request: Request) {
     const octets = Buffer.from(await fichier.arrayBuffer());
     await writeFile(path.join(DOSSIER_DATA, nomFinal), octets);
 
-    return NextResponse.json({ ok: true, nomFichier: nomFinal, chemin: `data/${nomFinal}` });
+    return NextResponse.json({
+      ok: true,
+      nomFichier: nomFinal,
+      chemin: `data/${nomFinal}`,
+      societe: societe.trim(),
+      annee: Number(annee.trim()),
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     const lectureSeuleProbable = /EROFS|EACCES|read-only/i.test(message);
