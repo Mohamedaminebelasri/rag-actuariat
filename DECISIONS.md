@@ -7262,3 +7262,43 @@ ATTENDUE pour la plupart des grandes sociétés, pas un signe d'échec.
 Re-testé end-to-end sur CNP Assurances (comme Décision 106) après
 câblage : 22/22 valeurs identiques aux valeurs déjà vérifiées en base,
 aucune régression.
+
+## Décision 108 — GAP 2 : messages clairs pour un PDF sans annexe QRT exploitable
+
+CONTEXTE : `extraire_un_pdf.py` (Décision 106) s'arrêtait déjà
+proprement sur un PDF sans QRT exploitable (jamais de résultat faux),
+mais avec un seul message générique ne distinguant pas la cause —
+important pour que le fondateur comprenne POURQUOI une extraction a
+échoué (document non-SFCR vs. document SFCR scanné).
+
+### 3 cas désormais distingués dans `construire_corpus()`
+
+1. **0 page QRT détectée** → *"Aucune annexe QRT trouvée dans ce
+   document"* — probablement un rapport narratif pur (type MAAF) sans
+   annexes quantitatives, ou pas un document SFCR.
+2. **Pages QRT détectées mais 100% image** (texte natif insuffisant
+   sur TOUTES, `pages_ignorees` non vide, `templates_inconnus` vide) →
+   *"N page(s) QRT détectée(s) mais en format image — extraction
+   automatique non supportée, traitement manuel requis"* — même limite
+   que les documents 100% image déjà rencontrés dans ce projet
+   (Aéma/AG2R, jamais traités automatiquement, toujours par isolation
+   de pages + relecture manuelle). **Aucun pipeline OCR automatique
+   ajouté** (explicitement hors périmètre demandé, trop lourd).
+3. **Pages QRT avec texte natif mais aucun gabarit reconnu** (cas non
+   demandé explicitement mais découvert en implémentant — un document
+   SFCR d'un type EIOPA non couvert par `KPI_QRT_MAPPING`) →
+   *"N page(s) QRT détectée(s) mais aucune ne correspond à un gabarit
+   EIOPA connu"*, distinct des 2 autres.
+
+Ces 3 cas restaient auparavant indiscernables (les 2 premiers
+produisaient le même message ; le 3e n'était même pas détecté comme un
+échec — le corpus restait silencieusement vide et l'extraction
+continuait vers 22 KPIs NULL, un "succès" trompeur).
+
+### Test
+
+Testé par substitution de `classify_pages()` (Docling) par une liste
+de pages fabriquée pour chacun des 3 cas — évite de faire tourner
+Docling sur un vrai document 621 pages (Aéma, 100% image) juste pour
+vérifier une branche de contrôle. Les 3 messages s'affichent
+correctement, chacun avec sa cause distincte.

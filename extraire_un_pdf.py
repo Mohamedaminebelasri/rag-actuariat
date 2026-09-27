@@ -164,11 +164,11 @@ def construire_corpus(pdf_path, ek, suivi):
     classification = classify_pages(pdf_path)
     pages_qrt = [p for p in classification if p["type"] == "qrt"]
     if not pages_qrt:
-        raise RuntimeError(
-            "0 page QRT détectée dans ce PDF — document non reconnu comme un "
-            "rapport SFCR/QRT standard (ou entièrement scanné/image, non géré "
-            "par ce pipeline sans intervention manuelle)"
-        )
+        # Décision 108 (GAP 2) — distingué du cas "pages QRT présentes mais
+        # image" ci-dessous : ici, AUCUNE annexe QRT n'a été identifiée du
+        # tout, ex. un rapport narratif pur (type MAAF) sans annexes
+        # quantitatives, ou un document qui n'est pas un SFCR standard.
+        raise RuntimeError("Aucune annexe QRT trouvée dans ce document")
 
     inventaire = detecter_templates(pdf_path)
     suivi.etape(
@@ -200,6 +200,27 @@ def construire_corpus(pdf_path, ek, suivi):
             })
     finally:
         doc.close()
+
+    # Décision 108 (GAP 2) — corpus vide malgré des pages QRT détectées :
+    # un échec DIFFÉRENT de "0 page QRT" ci-dessus, avec sa propre cause et
+    # son propre message, plutôt que de continuer silencieusement vers une
+    # extraction à 22 NULL qui ressemblerait à un succès vide. Pas de
+    # pipeline OCR automatique ajouté ici (hors périmètre, trop lourd,
+    # cf. demande) — seul un message clair distinguant les 2 causes.
+    if not corpus:
+        if pages_ignorees and not templates_inconnus:
+            raise RuntimeError(
+                f"{len(pages_qrt)} page(s) QRT détectée(s) mais en format image "
+                f"— extraction automatique non supportée, traitement manuel requis "
+                f"(même limite que les documents 100% image déjà rencontrés dans "
+                f"ce projet, ex. Aéma/AG2R : nécessite Docling/OCR/relecture "
+                f"manuelle, hors de ce pipeline à chaud)"
+            )
+        raise RuntimeError(
+            f"{len(pages_qrt)} page(s) QRT détectée(s) mais aucune ne correspond "
+            f"à un gabarit EIOPA connu du dictionnaire KPI_QRT_MAPPING — type de "
+            f"document non couvert par ce pipeline"
+        )
 
     note = f"{len(corpus)} page(s) exploitée(s)"
     if pages_ignorees:
