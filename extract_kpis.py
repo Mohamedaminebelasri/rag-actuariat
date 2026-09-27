@@ -68,7 +68,19 @@ from paddleocr_reader import lire_image, valeur_a_droite_du_code, valeur_sous_la
 # (état partiellement initialisé qui casse la vérification lazy de paddlex/
 # modelscope). Contournement : forcer l'import PaddleOCR AVANT tout import
 # lié à Docling, pas un correctif de fond (signalé pour investigation future).
-paddleocr_reader._get_pipeline()
+# Décision 106 — rendu NON BLOQUANT : environnement sans PaddleOCR installé
+# du tout (ex. extraire_un_pdf.py, qui n'appelle jamais les fonctions OCR de
+# ce module) faisait planter l'import ENTIER de extract_kpis.py, y compris
+# ses fonctions génériques (resoudre_variantes_qrt, valeur_principale) qui
+# n'en dépendent pas. Élargissement strict : aucun changement de
+# comportement quand paddleocr est présent (le préchargement a toujours
+# lieu, même ordre) ; sans lui, avertissement au lieu d'un crash.
+try:
+    paddleocr_reader._get_pipeline()
+except ImportError as e:
+    print(f"!!! PaddleOCR indisponible ({e}) — les fonctions OCR de ce module "
+          f"(lire_picture_75_paddleocr, lire_r0060_paddleocr) échoueront si appelées, "
+          f"le reste du module (mapping QRT générique) n'en dépend pas.", file=sys.stderr)
 
 from detecter_templates import detecter_templates
 

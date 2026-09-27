@@ -7101,3 +7101,99 @@ Allianz Vie → `type_activite="Vie"` (override Décision 103) présent
 dans l'export ; MAIF → `scr_method=None` (NULL) présent tel quel, pas
 substitué par une valeur inventée ; encodage UTF-8 du fichier vérifié
 directement (`€` présent correctement, pas d'échappement cassé).
+
+## Décision 106 — extraire_un_pdf.py : extraction à chaud sur un PDF SFCR jamais vu (contrat frontend "Ajouter un PDF")
+
+CONTEXTE : demande du soir (frontend, coordination écrite dans
+`Claude outputs/demande-claude-code-extraction-live.md`) — le nouvel
+onglet "Ajouter un PDF" (commit f90e74f) écrit déjà le PDF confirmé
+dans `data/` ; il manquait le pont vers le pipeline d'extraction.
+
+### Corrections apportées à la demande d'origine (avant de coder, comme invité par le document de coordination)
+
+1. **"Cascade Gemini/Mistral/Groq"** : cette cascade n'existe PAS dans
+   le pipeline d'extraction KPI — c'est le fallback LLM du chatbot RAG
+   sur la directive 2009/138/CE (`src/rag.py`, CLAUDE.md), un système
+   séparé. L'extraction KPI (34 sociétés) repose sur un appariement de
+   gabarits QRT en texte natif (`detecter_templates()` +
+   `classify_pages()`/`extract_qrt_native()` + `resoudre_variantes_qrt()`/
+   `valeur_principale()`, dictionnaire `KPI_QRT_MAPPING`) — AUCUN appel
+   LLM sauf un fallback vision Gemini très ponctuel et non générique
+   (`extract_kpis.py::lire_picture_75`, spécifique à une image de
+   Groupama). `extraire_un_pdf.py` réutilise donc la vraie logique déjà
+   testée, sans nouvelle méthode d'extraction — l'étape `"appel_modele"`
+   du contrat JSON est conservée telle quelle (le frontend est déjà
+   écrit autour de ce nom), son message décrit honnêtement
+   l'appariement de gabarits, pas un appel LLM.
+2. **`export_kpis_for_frontend.py` (ou l'équivalent) pour
+   `donnees-extraites.json`** : ce script existait déjà mais
+   n'écrivait QUE `kpi-sources.json` — `donnees-extraites.json` avait
+   été généré une fois par une requête SQL ad hoc (commit 2a71854),
+   jamais rejouable. Étendu (`export_donnees_extraites()`) pour générer
+   aussi ce second fichier, avec la même forme exacte (vérifié :
+   0 divergence de contenu KPI contre le fichier committé, hors champ
+   `valide` qui a légitimement changé après le nettoyage des doublons
+   de validation_checks, Décision 104). **Piège trouvé en vérifiant** :
+   `companies.type` en base porte déjà, pour les 21 sociétés
+   multi-entités, un suffixe `" (Nom du groupe)"` ajouté directement en
+   base par une mutation antérieure NON reflétée dans le JSON committé
+   — le générateur retire ce suffixe s'il est présent pour reproduire
+   fidèlement l'affichage actuellement déployé plutôt que de le changer
+   silencieusement via un export.
+
+### `extraire_un_pdf.py`
+
+CLI : `python extraire_un_pdf.py --pdf <chemin> --societe <nom> --annee <int> --job-id <id>`.
+Écrit `jobs/<job-id>.json` à chaque étape (`extraction_pdf` →
+`appel_modele` → `ecriture_db` → `validation` → `ecriture_db` régénération
+export — ordre légèrement différent de la demande d'origine, la
+validation devant lire des KPIs déjà en base). Structure JSON conforme
+au contrat demandé (`statut`, `etape`, `message`, `societe`, `annee`,
+`kpis[]`, `erreur`). Ne lève jamais d'exception non gérée : un seul
+`try/except` englobant toute la logique métier écrit `statut="erreur"`
+avec un message clair en cas d'échec, à n'importe quelle étape.
+
+**`validated` forcé à `0`** pour tous les KPIs de cette extraction à
+chaud, y compris ceux dont TOUS les contrôles automatiques passent
+(écrase volontairement le résultat de `marquer_valides()` après coup)
+— conforme à la demande explicite : un contrôle mécanique n'est pas
+une revue humaine, "pas de checkpoint humain avant demain matin".
+`unite_source` enregistre l'hypothèse K€ comme **non vérifiée**
+(contrairement aux 8 sociétés confirmées par recoupement, Décisions
+094/096) — aucune correction d'unité silencieuse possible sur un
+document jamais vu.
+
+En cas de succès : régénère automatiquement `kpi-sources.json` et
+`donnees-extraites.json` (appel direct des fonctions de
+`export_kpis_for_frontend.py`), pour que "Base de données" affiche la
+nouvelle société sans étape manuelle.
+
+### Bug trouvé et corrigé en testant contre un cas réel
+
+Test end-to-end sur `data/sfcr_cnp_assurances_2025.pdf` (société
+factice "TEST Extraction Live", année 2099, nettoyée après test),
+comparé aux 22 valeurs déjà vérifiées de CNP Assurances 2025 (même
+PDF) : **1er essai, 2 KPIs faux d'un facteur ~23-26×**
+(`primes_acquises_brutes`, `charge_sinistres`) — le script prenait la
+1re variante du mapping qui matche (`resultats[0]`), alors que ces 2
+KPIs sont CUMULATIFS (vie et non-vie sont 2 variantes COMPLÉMENTAIRES,
+pas alternatives, cf. docstring de `resoudre_variantes_qrt`) : sur un
+assureur mixte comme CNP, seule la composante vie était captée.
+Corrigé en sommant TOUTES les variantes matchées, même pattern déjà
+vérifié dans `extract_kpis_cnp.py` (Décision 059,
+`sum(v for v, _, _ in resultats)`). Après correction : **0 divergence
+sur les 22 KPIs** contre les valeurs déjà en base.
+
+**Effet de bord corrigé au passage** : `extract_kpis.py` force le
+préchargement de PaddleOCR au niveau module (contournement Décision
+057) — plantait l'import ENTIER du module (y compris les fonctions
+génériques sans rapport avec l'OCR) dans un environnement sans
+`paddleocr` installé du tout. Rendu non bloquant (`try/except
+ImportError`, avertissement au lieu d'un crash) — élargissement strict,
+aucun changement de comportement quand `paddleocr` est présent.
+
+**Environnement d'exécution** : ce script (comme tout le pipeline
+Docling/PyMuPDF/PaddleOCR) doit tourner via
+`test_markdrop/.venv/Scripts/python.exe`, PAS le Python système —
+`fitz`/`docling`/`paddleocr` n'y sont pas installés. À communiquer côté
+frontend pour la commande lancée en détaché.

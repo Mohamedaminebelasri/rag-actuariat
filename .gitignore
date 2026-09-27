@@ -17,6 +17,10 @@ runtime.log
 batch_diagnostic_report.json
 frontend/diagnostic.txt
 
+# statuts de job d'extraction à chaud (extraire_un_pdf.py, Décision 106) —
+# éphémères, régénérés à chaque extraction, jamais une source de vérité
+jobs/
+
 # artefacts de test OCR jetables (test_markdrop/)
 test_markdrop/paddle_ocr_*.json
 test_markdrop/page87_*.png
