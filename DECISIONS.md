@@ -7302,3 +7302,90 @@ de pages fabriquée pour chacun des 3 cas — évite de faire tourner
 Docling sur un vrai document 621 pages (Aéma, 100% image) juste pour
 vérifier une branche de contrôle. Les 3 messages s'affichent
 correctement, chacun avec sa cause distincte.
+
+## Décision 109 — GAP 3 : généralisation du fallback modèle interne + 2 découvertes signalées, non corrigées
+
+CONTEXTE : `resoudre_par_libelle_modele_interne()` (Décision 056)
+n'était appelée que par le script Groupama (`extract_kpis.py::
+extraire_tout`), jamais par les scripts des 2 autres sociétés modèle
+interne déjà en base (Allianz Vie/IARD) ni par `extraire_un_pdf.py` —
+un nouveau PDF en modèle interne ne bénéficiait du mapping standard
+que "par chance" (cas d'Allianz Vie), pas par construction.
+
+### Correctif appliqué
+
+Dans la boucle SCR (`scr_operationnel`... `scr_diversification`) de
+`extraire_un_pdf.py::extraire_kpis()` : si `resoudre_variantes_qrt()`
+ne matche rien ET que `inventaire["scr_method"]` commence par
+`"modele_interne"`, tente désormais `resoudre_par_libelle_modele_
+interne()` avant de mettre NULL. Jamais tenté sur une société en
+formule standard (où l'absence de résultat via le mapping standard
+reste un signal fiable, pas une raison d'aller chercher un libellé de
+modèle interne hors de propos).
+
+### Test sur Groupama (modèle interne partiel)
+
+`extraire_un_pdf.py` exécuté sur `data/SFCR_2025_Groupe-Groupama.pdf`
+(société de test, nettoyée après coup) : seulement 1 page QRT
+exploitable en texte natif sur les 12 détectées (10 ignorées, format
+image ; 1 template hors dictionnaire) — bien EN DEÇÀ de ce que la
+vraie extraction Groupama utilise (`extract_kpis.py` s'appuie sur un
+corpus pré-construit via Gemini VLM sur plusieurs sources, hors
+périmètre de ce pipeline générique à chaud). **Résultat : les 7 KPIs
+SCR restent NULL, identique à avant le fix** — le fallback n'a rien à
+chercher car les pages S.25.0x n'atteignent jamais le corpus. Pas une
+régression du correctif, une limite du corpus disponible en amont.
+
+### Test sur Allianz Vie (modèle interne partiel) — 2 découvertes
+
+`extraire_un_pdf.py` exécuté sur
+`data/Rapport_de_solvabilité_Allianz_Vie_2025.pdf` (société de test,
+nettoyée après coup), comparé aux 22 valeurs déjà vérifiées en base :
+
+1. **`scr_diversification` : NULL → 912,286 M€ via le fallback**
+   (template `S.25.05.21`, libellé exact `"Diversification"` — match
+   net, pas approximatif). **PAS écrit dans la vraie ligne Allianz Vie
+   de kpis.db** : le signe est positif alors que
+   `kpi_definitions.py` attend `"negative"` pour ce KPI, et le
+   docstring de `extract_kpis_allianzvie.py` documente déjà
+   explicitement un "bug de signe détaché sur CE document précis" pour
+   ce KPI exact — la valeur trouvée est probablement juste, mais son
+   signe est suspect et non vérifié indépendamment. Conforme à la
+   consigne : *"si le fallback améliore un KPI qui était NULL → mets à
+   jour... si le fallback contredit une valeur existante → signale
+   sans corriger"* — ici ambigu (améliore un NULL mais avec un signe
+   suspect) → signalé, non appliqué à la vraie ligne. Le fallback reste
+   actif pour tout FUTUR document inconnu : le contrôle `signe_
+   scr_diversification` déjà existant (`validate_kpis.py`) capterait
+   un signe positif comme échec, et `validated` reste de toute façon
+   forcé à 0 sur une extraction à chaud (Décision 106) — aucun risque
+   silencieux introduit.
+
+2. **Découverte séparée, non corrigée** : `primes_acquises_brutes`/
+   `charge_sinistres` valent **0,0** (pas NULL) au lieu des 5979,78/
+   5619,11 M€ déjà vérifiés — cause : `sommer_toutes_colonnes()`
+   (`extract_kpis.py`) traite délibérément "ligne trouvée par libellé
+   mais 0 colonne capturée du tout" de la MÊME façon que "ligne trouvée
+   avec certaines cellules légitimement à 0/tiret" (comportement
+   documenté et VOULU depuis un fix antérieur, motivé précisément par
+   AFV/Allianz Vie/AG2R groupe — cf. commentaire en tête de fonction).
+   Ce n'est PAS une régression de ce correctif (le bug pré-existe,
+   indépendant de la boucle SCR modifiée ici) mais une découverte
+   dangereuse : `0,0` n'est filtré par AUCUN contrôle actuel
+   (`primes_acquises_brutes` n'est pas dans `KPIS_MONTANT_PLANCHER`,
+   Décision 107) — ressemble à une extraction réussie alors que c'est
+   un échec silencieux. **Non corrigé ce soir** : cette fonction a déjà
+   régressé 2 fois historiquement sur ce point précis (cf. son propre
+   commentaire), est partagée par les 34 scripts + `extraire_un_pdf.py`,
+   et mérite le plein protocole de régression sur les 34 sociétés avant
+   toute modification — hors du temps disponible ce soir, signalé pour
+   une session dédiée plutôt que patché à la hâte.
+
+### Régression finale (les 34 sociétés réelles)
+
+`validate_kpis.py --all` : mêmes 3 échecs déjà connus et attendus
+(MAIF/SGAM `completude_null_attendu`, Macifilia/Themis `mcr_inferieur_
+scr_total`), **zéro nouvelle régression, zéro faux positif plancher/
+plafond**. `kpis.db` : 34 sociétés, 748 lignes KPI, 1597 contrôles de
+validation, 0 doublon — état identique à avant ce correctif (les 2
+sociétés de test ont été entièrement nettoyées).

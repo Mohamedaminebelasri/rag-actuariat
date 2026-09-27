@@ -242,7 +242,7 @@ def _page_source(corpus, template_id):
 # sociétés déjà en base). Tout ce qui ne matche pas reste NULL.
 # ---------------------------------------------------------------------
 
-def extraire_kpis(corpus, ek, suivi):
+def extraire_kpis(corpus, ek, suivi, inventaire):
     templates_presents = {e["template_id"] for e in corpus}
     valeurs = {}
 
@@ -322,6 +322,18 @@ def extraire_kpis(corpus, ek, suivi):
         else:
             valeurs[kpi_name] = (None, None, "aucune variante du mapping ne matche")
 
+    # Décision 109 (GAP 3) — fallback modèle interne (resoudre_par_libelle_
+    # modele_interne, Décision 056) généralisé : jusqu'ici réservé au seul
+    # script extraire_tout() de Groupama, alors que d'autres sociétés en
+    # modèle interne (Allianz Vie, Allianz IARD) existent déjà en base et
+    # qu'un nouveau PDF inconnu pourrait très bien en être une. Les
+    # templates S.25.02 à S.25.05 (modèle interne) n'ont pas de code R/C
+    # universel — ce fallback cherche par libellé officiel exact à la
+    # place, UNIQUEMENT quand les codes standard n'ont rien donné ET que
+    # scr_method indique un modèle interne (jamais essayé sur une société
+    # en formule standard, où l'absence de résultat est déjà fiable).
+    scr_method = (inventaire.get("scr_method") or "")
+    est_modele_interne = scr_method.startswith("modele_interne")
     for kpi_name in ("scr_operationnel", "scr_marche", "scr_souscription_sante",
                       "scr_contrepartie", "scr_souscription_vie", "scr_souscription_nonvie",
                       "scr_diversification"):
@@ -330,8 +342,15 @@ def extraire_kpis(corpus, ek, suivi):
             valeur, template_id, variante = resultats[0]
             valeurs[kpi_name] = (valeur / diviseur_montant, _page_source(corpus, template_id),
                                   f"{template_id}/{variante['row']} (mapping)")
-        else:
-            valeurs[kpi_name] = (None, None, "aucune variante du mapping ne matche (modèle interne possible, non testé automatiquement)")
+            continue
+        if est_modele_interne:
+            fallback = ek.resoudre_par_libelle_modele_interne(kpi_name, corpus, templates_presents)
+            if fallback:
+                valeur, template_id, libelle = fallback
+                valeurs[kpi_name] = (valeur / diviseur_montant, _page_source(corpus, template_id),
+                                      f"{template_id}, fallback libellé modèle interne ({libelle!r}, Décision 056)")
+                continue
+        valeurs[kpi_name] = (None, None, "aucune variante du mapping ne matche (modèle interne possible, non testé automatiquement)")
 
     valeurs["resultat_technique"] = (None, None, "aucun équivalent QRT standardisé (Décision 051)")
     return valeurs, unite_detectee, confiant
@@ -450,7 +469,7 @@ def main():
         from kpi_definitions import KPI_DEFINITIONS
 
         corpus, inventaire = construire_corpus(pdf_path, ek, suivi)
-        valeurs, unite_detectee, confiant = extraire_kpis(corpus, ek, suivi)
+        valeurs, unite_detectee, confiant = extraire_kpis(corpus, ek, suivi, inventaire)
 
         defs_par_nom = {d["kpi_name"]: d for d in KPI_DEFINITIONS}
         apercu = [
