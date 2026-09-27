@@ -13,8 +13,10 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.47.0",
     "next": "15.5.25",
+    "pdfjs-dist": "^4.10.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
