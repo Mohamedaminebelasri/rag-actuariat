@@ -6887,3 +6887,49 @@ matching ; Allianz Vie : 2e occurrence confirmée d'un bug déjà vu 1
 seule fois) — confirme que le score de diagnostic (/20) ne garantit
 JAMAIS la fiabilité en l'absence de vérification arithmétique
 individuelle, cohérent avec la leçon déjà tirée en Décision 093.
+
+## Décision 102 — Clarification : "15/15 groupes exploitables" (diagnostic) ≠ "groupes avec extraction réelle en base"
+
+CONTEXTE : après l'ajout de Sogécap/Cardif Vie/Cardif RD/MAIF/Covéa/
+Allianz Vie (Décisions 096-101), un résumé de session a affirmé "les
+15 groupes du marché français initialement visés sont maintenant tous
+couverts par au moins une extraction réelle en base" — **confusion
+détectée et corrigée sur demande de l'utilisateur** : ce n'était vrai
+qu'au sens du tally DIAGNOSTIC (Décision 089/090, score `/20` via
+`batch_diagnostic.py`), jamais vérifié contre la présence réelle dans
+`kpis.db`. Les deux mesures sont **distinctes et ne doivent jamais être
+confondues** :
+
+- **"15/15 groupes exploitables au sens diagnostic"** (Décision 089/090)
+  — reste VRAI, ne pas supprimer ni réviser : mesure la qualité de
+  l'extraction générique/libellé sur un score `/20` (via
+  `batch_diagnostic.py`), sans jamais insérer la moindre valeur dans
+  `kpis.db`. Un groupe "exploitable" à ce sens peut n'avoir AUCUNE
+  ligne dans `kpis.db`.
+- **"Groupes avec extraction réelle en base"** — mesure DIFFÉRENTE,
+  vérifiée par requête directe sur `kpis.db` (`SELECT DISTINCT name
+  FROM companies`) au moment de l'écriture de cette décision :
+  **11 groupes sur 15** ont au moins une entité réellement insérée
+  (CNP, Crédit Agricole, BNP Paribas/Cardif, Société Générale/Sogécap,
+  Covéa, Groupama, Allianz, MACIF/Aéma, MAIF, AG2R La Mondiale, MGEN).
+  **4 groupes n'en ont AUCUNE**, malgré un score diagnostic ancien
+  jamais migré :
+
+| Groupe | Entités diagnostiquées (ancien, jamais migré) | Décision d'origine |
+|---|---|---|
+| AXA | AFV (AXA France Vie) 16/20, AFI (AXA France IARD) 16/20 | Décision 082 |
+| BPCE | BPCE Vie 20/20, BPCE IARD 13/20 | Décision 082/086 |
+| Generali | Generali Iard 17/20, Generali Vie 17/20 | Décision 080 |
+| SwissLife | 20/20 | Décision 076/082 |
+
+### Règle retenue pour la suite
+
+Tout futur bilan de session doit préciser EXPLICITEMENT laquelle des 2
+mesures est citée ("exploitable au sens diagnostic" vs "avec extraction
+réelle en base") — ne jamais réutiliser "couvert"/"exploitable" seul
+sans qualificatif, cause directe de la confusion corrigée ici. AXA,
+BPCE, Generali, SwissLife restent des candidats identifiés pour une
+future extraction réelle (mêmes méthodes déjà éprouvées : native texte
+`codes_eiopa` pour BPCE Vie/Generali/SwissLife probablement, à
+re-diagnostiquer avant extraction — ne pas supposer le mode sans
+vérifier, cf. leçon Sogécap/Décision 096), non commencée à ce jour.
