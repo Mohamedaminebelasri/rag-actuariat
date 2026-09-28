@@ -161,3 +161,37 @@ export async function POST(request: Request) {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// DELETE — Supprime toutes les corrections (ou une seule si clé fournie)
+// ---------------------------------------------------------------------------
+export async function DELETE(request: Request) {
+  if (!process.env.VERCEL) {
+    return NextResponse.json({ ok: false, erreur: "Non disponible en local." }, { status: 501 });
+  }
+
+  try {
+    const url = new URL(request.url);
+    const cle = url.searchParams.get("cle"); // ex: "Groupama::scr_total"
+
+    if (cle) {
+      // Supprime une correction spécifique
+      const corrections = await lireCorrectionsBlob();
+      if (!(cle in corrections)) {
+        return NextResponse.json({ ok: false, erreur: `Clé "${cle}" introuvable.` }, { status: 404 });
+      }
+      delete corrections[cle];
+      await ecrireCorrectionsBlob(corrections);
+      return NextResponse.json({ ok: true, supprimee: cle });
+    }
+
+    // Sans clé : vide toutes les corrections
+    await ecrireCorrectionsBlob({});
+    return NextResponse.json({ ok: true, message: "Toutes les corrections ont été supprimées." });
+  } catch (err) {
+    return NextResponse.json(
+      { ok: false, erreur: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
+}
