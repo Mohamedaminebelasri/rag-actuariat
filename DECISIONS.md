@@ -7486,3 +7486,89 @@ souvenir de session ("mêmes échecs déjà connus") sans une comparaison
 PROGRAMMATIQUE explicite de l'ensemble des échecs avant/après — cf.
 leçon déjà tirée en Décision 102 pour un problème de nature similaire
 (confusion entre 2 mesures jamais recoupées explicitement).
+
+## Décision 111 — Endpoint POST /api/kpi/correct + table corrections (correction manuelle des KPIs)
+
+CONTEXTE : le frontend a ajouté un bouton "Corriger" dans le modal
+KPI (onglet Données) — l'utilisateur voyant une valeur extraite fausse
+peut saisir la vraie valeur + un commentaire. Tâche assignée
+explicitement au backend, avec schéma/contrat déjà fourni.
+
+### Table `corrections` (`creer_table_corrections.py`)
+
+Créée exactement selon le schéma fourni (`CREATE TABLE IF NOT EXISTS`,
+idempotent) — journal jamais purgé, sert à analyser les erreurs du
+modèle d'extraction dans le temps.
+
+### Point important vérifié avant d'écrire le code : la saisie est la valeur BRUTE, pas M€
+
+Le champ "Valeur corrigée" du modal (`kpi-pdf-modal.tsx`) est juxtaposé
+à l'affichage de `kpi.valeurBrute` (`formatValeurBrute()`, Décision
+110 — ex. "54 487 486 K€", PAS "54,49 M€"), avec un placeholder de la
+même forme ("Ex : 54 487 486" — l'exemple même du signalement
+original). La saisie représente donc le nouveau `raw_value`, dans
+l'unité déjà connue (`raw_unit`), PAS directement la nouvelle `value`
+M€ — vérifié en lisant le composant avant d'écrire `corriger_kpi.py`,
+pas supposé. Pour un KPI sans `raw_value` (pct — `ratio_scr`/
+`ratio_mcr`, `formatValeurBrute()` retombe alors sur l'affichage M€/pct
+natif), la saisie représente directement la nouvelle `value`, sans
+conversion.
+
+### `corriger_kpi.py`
+
+Appelé synchronement (pas un job en arrière-plan comme
+`extraire_un_pdf.py`) par la route Next.js via `execFile` :
+1. Résout `company_id` depuis le nom de société.
+2. Trouve la ligne `kpis` la plus récente pour (company_id, kpi_name) —
+   même convention "année la plus récente" que `export_kpis_for_
+   frontend.py`.
+3. Parse la saisie (gère le format FR : espaces = milliers, virgule =
+   décimale — ex. "54 487 486" ou "262,5") ; erreur claire si non
+   numérique, jamais une valeur devinée.
+4. Si le KPI a un `raw_unit` connu : reconvertit vers M€ par la MÊME
+   identité arithmétique que Décision 110 (`value = raw/diviseur`).
+   Sinon : écrit la saisie directement comme nouvelle `value`.
+5. Insère la ligne `corrections` (ancienne valeur/unité, nouvelle
+   valeur TEXTE brute telle que saisie, commentaire) puis met à jour
+   `kpis` (`value`, `raw_value`, `validated=1`).
+Ne lève jamais d'exception non gérée — toujours `{"ok": false,
+"erreur": "..."}` en JSON sur stdout en cas d'échec (société/KPI
+introuvable, saisie non numérique).
+
+### Route `frontend/src/app/api/kpi/correct/route.ts`
+
+Suit exactement les conventions déjà établies dans ce dépôt
+(`runtime = "nodejs"`, variables d'environnement `SFCR_*`
+surchargeables, `RACINE_DEPOT` relatif à `process.cwd()`) — mêmes
+choix que `/api/lancer-extraction` et `/api/upload-pdf`, mais
+`execFile` synchrone (pas `spawn` détaché + fichier de statut à
+sonder) : cette route répond immédiatement, pas un job de fond. Python
+"léger" (`python`, pas le venv Docling/PyMuPDF/PaddleOCR) — `corriger_
+kpi.py` n'utilise que `sqlite3` (stdlib).
+
+**N'appelle PAS Python pour régénérer le JSON automatiquement (Option
+B, comme demandé)** : `frontend/package.json` reçoit un script
+`regenerate-json` (`python ../export_kpis_for_frontend.py`) à lancer
+manuellement après une correction.
+
+### Tests effectués (société/KPI jetables, nettoyés après)
+
+- `corriger_kpi.py` en CLI direct : correction M€ ("54 487 486" K€ →
+  54487,486 M€, `raw_value` mis à jour), correction pct ("262,5" →
+  262.5 direct), société inconnue → erreur claire, texte non numérique
+  → erreur claire. 4/4 comportements corrects.
+- Route HTTP réelle (`npm run dev` local + `curl`) : POST valide → `{
+  "ok": true, ... }` avec les bons chiffres reconvertis ; société
+  inconnue → 400 + message clair ; corps incomplet (kpiId manquant) →
+  400 + message clair. `npm run regenerate-json` testé, régénère bien
+  les 2 exports (698 KPIs, 34 sociétés).
+- `kpis.db`/`corrections` revérifiés propres après tests (aucune
+  société de test résiduelle).
+
+### Documentation
+
+`IDEES_KPI_A_FAIRE_PLUS_TARD.md` créé (n'existait nulle part dans le
+dépôt ni son historique — vérifié avant de l'écrire) avec la section
+"Bugs à corriger — Backend" demandée : bug valeurs brutes marqué
+résolu, décalage page noté déjà corrigé côté frontend, nouvel endpoint
+documenté.
