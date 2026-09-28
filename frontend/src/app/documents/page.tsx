@@ -6,16 +6,15 @@ import { cn } from "@/lib/utils";
 import kpiSources from "@/data/kpi-sources.json";
 import { DONNEES_EXTRAITES, estNouvelleSociete, societesTriees } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
+import { PdfPageViewer } from "@/components/donnees/pdf-page-viewer";
 
 /**
  * Onglet Documents — visualiseur PDF, une société = une ligne dans la
- * sidebar, un clic ouvre le PDF de cette société dans un lecteur intégré
- * (iframe pointant vers /api/pdf/<fichier>). Fini l'arborescence
- * dépliable A/B/C/D/E vide : on va directement au document.
+ * sidebar, un clic ouvre le PDF de cette société via PdfPageViewer
+ * (pdfjs-dist canvas, fonctionne partout y compris Vercel).
  *
  * Arrivée depuis Base de données avec ?company=X&kpi=Y : le PDF de X est
- * ouvert et on saute directement à la page source du KPI (#page=N, géré
- * nativement par le viewer PDF du navigateur).
+ * ouvert et on saute directement à la page source du KPI via initialPage.
  *
  * En production, les PDF sont servis depuis Vercel Blob (stockage en ligne).
  * En développement, ils sont lus depuis le dossier data/ local.
@@ -76,8 +75,9 @@ export default function DocumentsPage() {
   }, [societes, recherche]);
 
   const pdfSociete = societeSelectionnee ? PDF_PAR_SOCIETE[societeSelectionnee] : null;
+  // URL sans fragment — PdfPageViewer gère la navigation par page en interne
   const urlPdf = pdfSociete
-    ? `/api/pdf/${encodeURIComponent(pdfSociete)}${pageCible ? `#page=${pageCible}` : ""}`
+    ? `/api/pdf/${encodeURIComponent(pdfSociete)}`
     : null;
 
   const selectionner = (nom: string) => {
@@ -182,17 +182,13 @@ export default function DocumentsPage() {
             </div>
 
             {urlPdf ? (
-              // iframe : le lecteur PDF natif du navigateur gère #page=N,
-              // le zoom, la recherche. Rien à installer côté frontend.
-              // key : force le remount quand la société OU la page change,
-              // pour que le #page=N soit bien pris en compte (les navigateurs
-              // n'appliquent pas toujours un changement de fragment sur une
-              // iframe déjà chargée).
-              <iframe
+              // PdfPageViewer : rendu canvas via pdfjs-dist, fonctionne
+              // partout (y compris Vercel où l'iframe bloquait le PDF).
+              // Navigation par page, zoom et retina intégrés.
+              <PdfPageViewer
                 key={urlPdf}
-                src={urlPdf}
-                title={`PDF SFCR de ${societeSelectionnee}`}
-                className="flex-1 w-full min-h-0 border-0 bg-surface-secondary"
+                url={urlPdf}
+                initialPage={pageCible ?? 1}
               />
             ) : (
               <PdfIndisponible societe={societeSelectionnee} />
