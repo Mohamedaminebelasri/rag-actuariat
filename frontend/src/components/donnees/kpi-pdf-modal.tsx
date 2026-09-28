@@ -221,7 +221,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
           {pdfUrl ? (
             <PdfPageViewer
               url={pdfUrl}
-              initialPage={Math.max(1, (kpi.pageSource ?? 1) - 1)}
+              initialPage={kpi.pageSource ?? 1}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-text-tertiary">
