@@ -27,7 +27,7 @@ export function PdfPageViewer({ url, initialPage }: Props) {
   const [pageInput, setPageInput] = useState(String(initialPage));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(3);
   const [resizeKey, setResizeKey] = useState(0);
 
   /* ── Charger le PDF ─────────────────────────────────────── */
