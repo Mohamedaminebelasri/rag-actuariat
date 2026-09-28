@@ -12,19 +12,17 @@ type Props = {
   kpi: KpiExtrait;
   societe: string;
   onClose: () => void;
+  /** Callback pour soumettre une correction. Retourne true si succès. */
+  onCorrection?: (societe: string, kpiId: string, valeur: string, commentaire: string | null) => Promise<boolean>;
 };
 
 /**
- * Modal plein écran (légèrement réduit) affichant le PDF source à la page
- * du KPI sélectionné via un viewer PDF.js. Fonctionne sur tous les
- * navigateurs y compris mobile Safari (pas de #page=N dans iframe).
+ * Modal plein écran affichant le PDF source à la page du KPI sélectionné.
+ * Le bouton "Corriger" envoie via le callback onCorrection (hook parent).
  */
-export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
+export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection }: Props) {
   const nomPdf = PDF_PAR_SOCIETE[societe];
-  // URL sans fragment — la navigation par page est gérée par PdfPageViewer
-  const pdfUrl = nomPdf
-    ? `/api/pdf/${encodeURIComponent(nomPdf)}`
-    : null;
+  const pdfUrl = nomPdf ? `/api/pdf/${encodeURIComponent(nomPdf)}` : null;
 
   // Fermer avec Escape
   const handleKeyDown = useCallback(
@@ -54,17 +52,29 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
     if (!correctionValeur.trim()) return;
     setCorrectionEnCours(true);
     try {
-      const res = await fetch("/api/kpi/correct", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      let ok = false;
+      if (onCorrection) {
+        ok = await onCorrection(
           societe,
           kpiId,
-          valeurCorrigee: correctionValeur.trim(),
-          commentaire: correctionCommentaire.trim() || null,
-        }),
-      });
-      if (res.ok) {
+          correctionValeur.trim(),
+          correctionCommentaire.trim() || null
+        );
+      } else {
+        // Fallback direct si pas de callback
+        const res = await fetch("/api/kpi/correct", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            societe,
+            kpiId,
+            valeurCorrigee: correctionValeur.trim(),
+            commentaire: correctionCommentaire.trim() || null,
+          }),
+        });
+        ok = res.ok;
+      }
+      if (ok) {
         setCorrectionOk(true);
         setTimeout(() => {
           setShowCorrection(false);
@@ -74,7 +84,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
         }, 2000);
       }
     } catch {
-      // silently fail — backend pas encore prêt
+      // silently fail
     } finally {
       setCorrectionEnCours(false);
     }
@@ -216,7 +226,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
           </div>
         )}
 
-        {/* PDF viewer (pdfjs-dist) */}
+        {/* PDF viewer */}
         <div className="flex-1 min-h-0">
           {pdfUrl ? (
             <PdfPageViewer

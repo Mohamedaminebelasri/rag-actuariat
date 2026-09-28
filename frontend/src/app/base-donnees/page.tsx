@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useCorrections } from "@/lib/use-corrections";
 import { Database, Download, Search, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KpiLigne } from "@/components/donnees/kpi-ligne";
@@ -36,6 +37,8 @@ export default function BaseDonneesPage() {
   const [groupe, setGroupe] = useState<string>(GROUPE_TOUS);
   const [recherche, setRecherche] = useState("");
   const [societeSelectionnee, setSocieteSelectionnee] = useState<string | null>(null);
+
+  const { getCorrection, soumettre: soumettreCorrection } = useCorrections();
 
   const groupes = useMemo(() => groupesDisponibles(), []);
   const documents = useMemo(() => societesFiltrees(groupe, recherche), [groupe, recherche]);
@@ -144,7 +147,7 @@ export default function BaseDonneesPage() {
         </div>
 
         {societe ? (
-          <DetailSociete societe={societe} />
+          <DetailSociete societe={societe} getCorrection={getCorrection} soumettreCorrection={soumettreCorrection} />
         ) : (
           <div className="flex flex-col items-center justify-center h-72 text-center">
             <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center mb-4">
@@ -171,7 +174,15 @@ function StatTile({ label, valeur }: { label: string; valeur: number }) {
   );
 }
 
-function DetailSociete({ societe }: { societe: Societe }) {
+function DetailSociete({
+  societe,
+  getCorrection,
+  soumettreCorrection,
+}: {
+  societe: Societe;
+  getCorrection: (s: string, k: string) => import("@/lib/use-corrections").Correction | null;
+  soumettreCorrection: (s: string, k: string, v: string, c: string | null) => Promise<boolean>;
+}) {
   const [kpiModal, setKpiModal] = useState<string | null>(null);
   const kpis = kpisDe(societe.name);
   const couverture = couvertureKpis(societe.name);
@@ -252,7 +263,7 @@ function DetailSociete({ societe }: { societe: Societe }) {
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {idsDeCat.map(([id, label]) => (
-                    <KpiLigne key={id} id={id} label={label} kpi={kpis[id]} societe={societe.name} onSelect={setKpiModal} />
+                    <KpiLigne key={id} id={id} label={label} kpi={kpis[id]} societe={societe.name} onSelect={setKpiModal} correction={getCorrection(societe.name, id)} />
                   ))}
                 </div>
               </div>
@@ -275,6 +286,7 @@ function DetailSociete({ societe }: { societe: Societe }) {
           kpi={kpis[kpiModal]}
           societe={societe.name}
           onClose={() => setKpiModal(null)}
+          onCorrection={soumettreCorrection}
         />
       )}
     </div>

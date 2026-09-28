@@ -1,22 +1,100 @@
-import { execFile } from "node:child_process";
-import path from "node:path";
-import { promisify } from "node:util";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const execFileAsync = promisify(execFile);
+// ---------------------------------------------------------------------------
+// Stockage Vercel Blob — utilisé en production (Vercel) pour persister les
+// corrections KPI dans un fichier JSON hébergé dans le store Blob déjà
+// configuré pour les PDFs. En local, on délègue au script Python/SQLite.
+// ---------------------------------------------------------------------------
+const CORRECTIONS_BLOB_KEY = "kpi-corrections/corrections.json";
 
-// Racine du dépôt (rag-actuariat/), un niveau au-dessus de frontend/ — même
-// convention que /api/upload-pdf et /api/lancer-extraction.
-const RACINE_DEPOT = process.env.SFCR_REPO_ROOT ?? path.join(process.cwd(), "..");
-const SCRIPT_CORRECTION =
-  process.env.SFCR_SCRIPT_CORRECTION ?? path.join(RACINE_DEPOT, "corriger_kpi.py");
-// corriger_kpi.py n'utilise que sqlite3 (stdlib) — contrairement à
-// extraire_un_pdf.py, n'a pas besoin du venv Docling/PyMuPDF/PaddleOCR.
-// "python" (pas "python3") : plus fiable sur PATH Windows, cf. Décision 111.
-const PYTHON_BIN = process.env.SFCR_PYTHON_BIN_LEGER ?? "python";
+type Correction = {
+  valeurCorrigee: string;
+  commentaire: string | null;
+  date: string;
+};
+type CorrectionsMap = Record<string, Correction>; // clé = "societe::kpiId"
 
+async function lireCorrectionsBlob(): Promise<CorrectionsMap> {
+  const { get } = await import("@vercel/blob");
+  try {
+    const result = await get(CORRECTIONS_BLOB_KEY, { access: "private" });
+    if (!result || result.statusCode !== 200 || !result.stream) return {};
+    const reader = result.stream.getReader();
+    const chunks: Uint8Array[] = [];
+    let done = false;
+    while (!done) {
+      const r = await reader.read();
+      done = r.done;
+      if (r.value) chunks.push(r.value);
+    }
+    const texte = new TextDecoder().decode(Buffer.concat(chunks));
+    return JSON.parse(texte) as CorrectionsMap;
+  } catch {
+    return {};
+  }
+}
+
+async function ecrireCorrectionsBlob(corrections: CorrectionsMap): Promise<void> {
+  const { put } = await import("@vercel/blob");
+  const contenu = JSON.stringify(corrections, null, 2);
+  await put(CORRECTIONS_BLOB_KEY, contenu, {
+    access: "private",
+    contentType: "application/json",
+    addRandomSuffix: false,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Fallback local : appel du script Python/SQLite (corriger_kpi.py)
+// ---------------------------------------------------------------------------
+async function corrigerViaScript(
+  societe: string,
+  kpiId: string,
+  valeurCorrigee: string,
+  commentaire: string | null
+): Promise<{ ok: boolean; erreur?: string; [k: string]: unknown }> {
+  const { execFile } = await import("node:child_process");
+  const { promisify } = await import("node:util");
+  const path = await import("node:path");
+  const execFileAsync = promisify(execFile);
+
+  const RACINE_DEPOT = process.env.SFCR_REPO_ROOT ?? path.join(process.cwd(), "..");
+  const SCRIPT = process.env.SFCR_SCRIPT_CORRECTION ?? path.join(RACINE_DEPOT, "corriger_kpi.py");
+  const PYTHON = process.env.SFCR_PYTHON_BIN_LEGER ?? "python";
+
+  const args = [SCRIPT, "--societe", societe, "--kpi-name", kpiId, "--valeur-corrigee", valeurCorrigee];
+  if (commentaire) args.push("--commentaire", commentaire);
+
+  const { stdout } = await execFileAsync(PYTHON, args, { cwd: RACINE_DEPOT });
+  return JSON.parse(stdout.trim());
+}
+
+// ---------------------------------------------------------------------------
+// GET — Retourne toutes les corrections enregistrées (Vercel Blob)
+// ---------------------------------------------------------------------------
+export async function GET() {
+  if (!process.env.VERCEL) {
+    // En local, pas de Blob — les corrections sont dans SQLite, pas
+    // d'endpoint GET pour l'instant (le JSON est régénéré manuellement).
+    return NextResponse.json({ corrections: {} });
+  }
+
+  try {
+    const corrections = await lireCorrectionsBlob();
+    return NextResponse.json({ corrections });
+  } catch (err) {
+    return NextResponse.json(
+      { corrections: {}, erreur: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// POST — Enregistre une correction
+// ---------------------------------------------------------------------------
 type CorpsRequete = {
   societe?: string;
   kpiId?: string;
@@ -24,23 +102,6 @@ type CorpsRequete = {
   commentaire?: string | null;
 };
 
-type ResultatScript =
-  | { ok: true; ancienneValeur: number | null; nouvelleValeur: number; nouveauRawValue: number | null }
-  | { ok: false; erreur: string };
-
-/**
- * Applique une correction manuelle sur un KPI (bouton "Corriger" du modal
- * KPI, onglet Données). Synchrone (pas de job en arrière-plan comme
- * /api/lancer-extraction) : le frontend attend { ok: true } avant de
- * fermer le formulaire.
- *
- * N'écrit PAS automatiquement les JSON frontend après correction (Option B,
- * Décision 111) — il faut relancer `npm run regenerate-json` (racine du
- * dépôt) pour que donnees-extraites.json reflète la correction.
- *
- * Comme le reste des routes qui touchent kpis.db, ne fonctionne qu'en
- * local (accès filesystem direct à la DB SQLite, pas de DB en prod Vercel).
- */
 export async function POST(request: Request) {
   let corps: CorpsRequete;
   try {
@@ -50,40 +111,51 @@ export async function POST(request: Request) {
   }
 
   const { societe, kpiId, valeurCorrigee, commentaire } = corps;
-  if (!societe || typeof societe !== "string" || societe.trim().length < 1) {
+  if (!societe || typeof societe !== "string" || !societe.trim()) {
     return NextResponse.json({ ok: false, erreur: "Société manquante." }, { status: 400 });
   }
-  if (!kpiId || typeof kpiId !== "string" || kpiId.trim().length < 1) {
+  if (!kpiId || typeof kpiId !== "string" || !kpiId.trim()) {
     return NextResponse.json({ ok: false, erreur: "kpiId manquant." }, { status: 400 });
   }
-  if (!valeurCorrigee || typeof valeurCorrigee !== "string" || valeurCorrigee.trim().length < 1) {
+  if (!valeurCorrigee || typeof valeurCorrigee !== "string" || !valeurCorrigee.trim()) {
     return NextResponse.json({ ok: false, erreur: "Valeur corrigée manquante." }, { status: 400 });
   }
 
-  const args = [
-    SCRIPT_CORRECTION,
-    "--societe",
-    societe.trim(),
-    "--kpi-name",
-    kpiId.trim(),
-    "--valeur-corrigee",
-    valeurCorrigee.trim(),
-  ];
-  if (commentaire && typeof commentaire === "string" && commentaire.trim()) {
-    args.push("--commentaire", commentaire.trim());
+  // --- Mode Vercel : Blob ---
+  if (process.env.VERCEL) {
+    try {
+      const corrections = await lireCorrectionsBlob();
+      const cle = `${societe.trim()}::${kpiId.trim()}`;
+      corrections[cle] = {
+        valeurCorrigee: valeurCorrigee.trim(),
+        commentaire: (commentaire && typeof commentaire === "string" && commentaire.trim()) || null,
+        date: new Date().toISOString(),
+      };
+      await ecrireCorrectionsBlob(corrections);
+      return NextResponse.json({ ok: true });
+    } catch (err) {
+      return NextResponse.json(
+        { ok: false, erreur: `Échec Blob : ${err instanceof Error ? err.message : String(err)}` },
+        { status: 500 }
+      );
+    }
   }
 
+  // --- Mode local : script Python/SQLite ---
   try {
-    const { stdout } = await execFileAsync(PYTHON_BIN, args, { cwd: RACINE_DEPOT });
-    const resultat = JSON.parse(stdout.trim()) as ResultatScript;
+    const resultat = await corrigerViaScript(
+      societe.trim(),
+      kpiId.trim(),
+      valeurCorrigee.trim(),
+      (commentaire && typeof commentaire === "string" && commentaire.trim()) || null
+    );
     if (!resultat.ok) {
       return NextResponse.json(resultat, { status: 400 });
     }
     return NextResponse.json(resultat);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { ok: false, erreur: `Échec de la correction : ${message}` },
+      { ok: false, erreur: `Échec correction : ${err instanceof Error ? err.message : String(err)}` },
       { status: 500 }
     );
   }
