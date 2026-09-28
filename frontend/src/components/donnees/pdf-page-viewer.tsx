@@ -10,6 +10,8 @@ type Props = {
   initialPage: number;
   /** Zoom initial (défaut : 1.75) */
   defaultZoom?: number;
+  /** Callback quand le zoom change (pour persister le choix) */
+  onZoomChange?: (zoom: number) => void;
 };
 
 /**
@@ -17,7 +19,7 @@ type Props = {
  * Fonctionne sur tous les navigateurs y compris iOS Safari,
  * contrairement à l'approche iframe + #page=N.
  */
-export function PdfPageViewer({ url, initialPage, defaultZoom = 1.75 }: Props) {
+export function PdfPageViewer({ url, initialPage, defaultZoom = 1.75, onZoomChange }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +32,9 @@ export function PdfPageViewer({ url, initialPage, defaultZoom = 1.75 }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState(defaultZoom);
+
+  // Notifier le parent quand le zoom change
+  useEffect(() => { onZoomChange?.(zoom); }, [zoom, onZoomChange]);
   const [resizeKey, setResizeKey] = useState(0);
 
   /* ── Charger le PDF ─────────────────────────────────────── */

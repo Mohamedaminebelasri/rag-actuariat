@@ -6,6 +6,9 @@ import { formatValeurBrute, type KpiExtrait } from "@/lib/donnees-extraites-util
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import { PdfPageViewer } from "./pdf-page-viewer";
 
+/** Dernier zoom utilisé dans le modal KPI (persiste entre ouvertures) */
+let lastKpiZoom = 3;
+
 type Props = {
   kpiId: string;
   label: string;
@@ -232,7 +235,8 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
             <PdfPageViewer
               url={pdfUrl}
               initialPage={kpi.pageSource ?? 1}
-              defaultZoom={3}
+              defaultZoom={lastKpiZoom}
+              onZoomChange={(z) => { lastKpiZoom = z; }}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-text-tertiary">
