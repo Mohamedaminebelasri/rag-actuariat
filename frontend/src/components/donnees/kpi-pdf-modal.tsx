@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
-import { X, ExternalLink, ShieldCheck, Sparkles } from "lucide-react";
+import { useEffect, useCallback, useState } from "react";
+import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2 } from "lucide-react";
 import { formatValeurBrute, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import { PdfPageViewer } from "./pdf-page-viewer";
@@ -42,6 +42,43 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
       document.body.style.overflow = "";
     };
   }, [handleKeyDown]);
+
+  // --- Correction ---
+  const [showCorrection, setShowCorrection] = useState(false);
+  const [correctionValeur, setCorrectionValeur] = useState("");
+  const [correctionCommentaire, setCorrectionCommentaire] = useState("");
+  const [correctionEnCours, setCorrectionEnCours] = useState(false);
+  const [correctionOk, setCorrectionOk] = useState(false);
+
+  async function envoyerCorrection() {
+    if (!correctionValeur.trim()) return;
+    setCorrectionEnCours(true);
+    try {
+      const res = await fetch("/api/kpi/correct", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          societe,
+          kpiId,
+          valeurCorrigee: correctionValeur.trim(),
+          commentaire: correctionCommentaire.trim() || null,
+        }),
+      });
+      if (res.ok) {
+        setCorrectionOk(true);
+        setTimeout(() => {
+          setShowCorrection(false);
+          setCorrectionOk(false);
+          setCorrectionValeur("");
+          setCorrectionCommentaire("");
+        }, 2000);
+      }
+    } catch {
+      // silently fail — backend pas encore prêt
+    } finally {
+      setCorrectionEnCours(false);
+    }
+  }
 
   const source =
     kpi.chapitreSource && kpi.pageSource
@@ -91,6 +128,13 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
               <span className="font-mono text-base font-bold text-text-primary">
                 {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
               </span>
+              <button
+                onClick={() => setShowCorrection(!showCorrection)}
+                className="ml-1 w-7 h-7 flex items-center justify-center rounded-md text-text-tertiary hover:text-accent hover:bg-accent/10 transition-colors"
+                title="Corriger cette valeur"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             {/* Ouvrir dans Documents */}
@@ -121,7 +165,56 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
           <span className="font-mono text-base font-bold text-text-primary">
             {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
           </span>
+          <button
+            onClick={() => setShowCorrection(!showCorrection)}
+            className="ml-1 w-7 h-7 flex items-center justify-center rounded-md text-text-tertiary hover:text-accent hover:bg-accent/10 transition-colors"
+            title="Corriger cette valeur"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </button>
         </div>
+
+        {/* Formulaire de correction */}
+        {showCorrection && (
+          <div className="px-4 sm:px-5 py-3 border-b border-border bg-amber-50/50 flex-shrink-0">
+            {correctionOk ? (
+              <p className="text-sm text-success font-medium">Correction enregistrée !</p>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex-1 flex flex-col sm:flex-row gap-2">
+                  <div className="flex-shrink-0">
+                    <label className="text-[11px] text-text-tertiary block mb-0.5">Valeur corrigée</label>
+                    <input
+                      type="text"
+                      value={correctionValeur}
+                      onChange={(e) => setCorrectionValeur(e.target.value)}
+                      placeholder="Ex : 54 487 486"
+                      className="w-full sm:w-44 px-2.5 py-1.5 text-sm font-mono border border-border rounded-lg bg-surface focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-[11px] text-text-tertiary block mb-0.5">Commentaire (optionnel)</label>
+                    <input
+                      type="text"
+                      value={correctionCommentaire}
+                      onChange={(e) => setCorrectionCommentaire(e.target.value)}
+                      placeholder="Ex : valeur lue en K€ ligne R0010 colonne C0010"
+                      className="w-full px-2.5 py-1.5 text-sm border border-border rounded-lg bg-surface focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={envoyerCorrection}
+                  disabled={!correctionValeur.trim() || correctionEnCours}
+                  className="self-end sm:self-end px-3 py-1.5 rounded-lg text-sm font-medium bg-accent text-white hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                >
+                  {correctionEnCours ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  Envoyer
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* PDF viewer (pdfjs-dist) */}
         <div className="flex-1 min-h-0">
