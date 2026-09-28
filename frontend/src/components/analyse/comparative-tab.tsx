@@ -22,7 +22,7 @@ const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A"];
 
 /** Port de analyse_comparative() (comparative.py, Reflex). */
 export function ComparativeTab() {
-  const [societes, setSocietes] = useState<string[]>(["Groupama", "CNP Assurances"]);
+  const [societes, setSocietes] = useState<string[]>([]);
   const [filtreCategorie, setFiltreCategorie] = useState("Tous");
   const [kpiGraphique, setKpiGraphique] = useState("ratio_scr");
   const [afficherMoyenne, setAfficherMoyenne] = useState(true);
@@ -45,6 +45,16 @@ export function ComparativeTab() {
 
   return (
     <div className="flex flex-col gap-4 w-full items-start">
+      {/* Barre de sélection multi */}
+      {/* Filtres activité / modèle */}
+      <div className="bg-surface border border-border rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] px-[1.2em] py-[1em] w-full">
+        <FiltresSocietesBar
+          filtres={filtres}
+          onChange={setFiltres}
+          resume={`${disponiblesAAjouter.length} assureur${disponiblesAAjouter.length > 1 ? "s" : ""} disponible${disponiblesAAjouter.length > 1 ? "s" : ""} à ajouter`}
+        />
+      </div>
+
       {/* Barre de sélection multi */}
       <div className="bg-surface border border-border rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] px-[1.2em] py-[1em] w-full">
         <div className="flex items-center gap-3 flex-wrap w-full">
@@ -79,13 +89,6 @@ export function ComparativeTab() {
           <span className="text-sm font-mono text-text-tertiary whitespace-nowrap">
             {societes.length}/{MAX_SOCIETES} assureurs sélectionnés
           </span>
-        </div>
-        <div className="mt-3 pt-3 border-t border-border">
-          <FiltresSocietesBar
-            filtres={filtres}
-            onChange={setFiltres}
-            resume={`${disponiblesAAjouter.length} assureur${disponiblesAAjouter.length > 1 ? "s" : ""} disponible${disponiblesAAjouter.length > 1 ? "s" : ""} à ajouter`}
-          />
         </div>
       </div>
 

@@ -232,6 +232,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
             <PdfPageViewer
               url={pdfUrl}
               initialPage={kpi.pageSource ?? 1}
+              defaultZoom={3}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-text-tertiary">
