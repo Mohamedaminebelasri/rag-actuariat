@@ -1,7 +1,6 @@
 "use client";
 
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { KpiDefinition, KpiValeur } from "@/data/analyse-demo";
 import { ConfidenceBadge } from "./confidence-badge";
@@ -54,7 +53,6 @@ const LIBELLE_TENDANCE: Record<SentimentVariation, string> = {
  * Idée 1 : feu tricolore (bande + pastille) et flèche de tendance dont la
  * couleur tient compte du sens du KPI. */
 export function KpiCard({ def, valeur, societe }: { def: KpiDefinition; valeur: KpiValeur; societe: string }) {
-  const router = useRouter();
   const couleur = couleurSeuil(def.id, valeur.valeur);
   const statut = statutKpi(def.id, valeur.valeur);
   const aVariation = valeur.variation !== null;
@@ -70,13 +68,9 @@ export function KpiCard({ def, valeur, societe }: { def: KpiDefinition; valeur: 
         : TrendingDown;
 
   return (
-    <button
-      onClick={() =>
-        router.push(`/documents?company=${encodeURIComponent(societe)}&kpi=${encodeURIComponent(def.id)}`)
-      }
-      title="Voir la source dans les Annexes QRT"
+    <div
       className={cn(
-        "text-left h-full flex flex-col bg-surface border border-border rounded-[var(--radius-lg)] p-[1.1em] shadow-[var(--shadow-sm)] transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-px",
+        "text-left h-full flex flex-col bg-surface border border-border rounded-[var(--radius-lg)] p-[1.1em] shadow-[var(--shadow-sm)]",
         statut && BORDURE_STATUT[statut.couleur]
       )}
     >
@@ -113,6 +107,6 @@ export function KpiCard({ def, valeur, societe }: { def: KpiDefinition; valeur: 
         )}
       </div>
       <p className="text-xs text-text-tertiary mt-2 leading-relaxed">{def.description}</p>
-    </button>
+    </div>
   );
 }
