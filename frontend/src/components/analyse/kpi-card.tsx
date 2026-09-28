@@ -83,7 +83,7 @@ export function KpiCard({ def, valeur, societe }: { def: KpiDefinition; valeur: 
       <div className="flex items-center w-full">
         <span className="font-mono text-[11px] font-bold text-text-tertiary">{def.code}</span>
         <span className="flex-1" />
-        <ConfidenceBadge confiance={valeur.confiance} chapitre={valeur.chapitreSource} page={valeur.pageSource} />
+        {/* <ConfidenceBadge confiance={valeur.confiance} chapitre={valeur.chapitreSource} page={valeur.pageSource} /> */}
       </div>
       <p className="text-sm font-medium text-text-secondary mt-2.5">{def.label}</p>
       <p className={cn("font-mono text-[1.75rem] font-bold mt-0.5 leading-tight", COULEUR_VALEUR[couleur])}>
