@@ -36,9 +36,20 @@ export const CATEGORIE_LABELS: Record<string, string> = {
   A: "Activité",
 };
 
-export function formatValeur(valeur: number, unite: string): string {
+export function formatValeur(
+  valeur: number,
+  unite: string,
+  valeurBrute?: number | null,
+  uniteBrute?: string | null,
+): string {
   if (unite === "%") {
     return `${formatNombre(valeur, 1)} %`;
+  }
+  // Afficher la valeur brute (telle que dans le PDF) quand elle est disponible
+  if (valeurBrute != null) {
+    const u = uniteBrute ?? unite;
+    if (u === "K€" || u === "€") return `${formatNombre(valeurBrute, 0)} ${u}`;
+    return `${formatNombre(valeurBrute, 1)} ${u}`;
   }
   if (unite === "M€") {
     return `${formatNombre(valeur, 1)} M€`;

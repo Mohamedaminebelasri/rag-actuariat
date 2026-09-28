@@ -182,6 +182,8 @@ export type KpiValeur = {
   pageSource: number | null;
   confiance: "verified" | "extracted";
   dateExtraction: string;
+  valeurBrute: number | null;
+  uniteBrute: string | null;
 };
 
 function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
@@ -193,6 +195,8 @@ function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
     pageSource: k.pageSource,
     confiance: k.valide ? "verified" : "extracted",
     dateExtraction: DONNEES_EXTRAITES.genereLe.split("T")[0],
+    valeurBrute: k.valeurBrute ?? null,
+    uniteBrute: k.uniteBrute ?? null,
   };
 }
 

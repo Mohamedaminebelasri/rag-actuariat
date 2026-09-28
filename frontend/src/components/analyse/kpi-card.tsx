@@ -87,7 +87,7 @@ export function KpiCard({ def, valeur, societe }: { def: KpiDefinition; valeur: 
       </div>
       <p className="text-sm font-medium text-text-secondary mt-2.5">{def.label}</p>
       <p className={cn("font-mono text-[1.75rem] font-bold mt-0.5 leading-tight", COULEUR_VALEUR[couleur])}>
-        {formatValeur(valeur.valeur, def.unite)}
+        {formatValeur(valeur.valeur, def.unite, valeur.valeurBrute, valeur.uniteBrute)}
       </p>
       <div className="flex items-center gap-x-2 gap-y-1 flex-wrap mt-1.5 min-h-[1.4em]">
         {statut && (
