@@ -116,7 +116,7 @@ export function PdfPageViewer({ url, initialPage }: Props) {
 
     render();
     return () => { cancelled = true; };
-  }, [currentPage, zoom, resizeKey]);
+  }, [currentPage, zoom, resizeKey, totalPages]);
 
   /* ── Re-rendre quand le conteneur est redimensionné ─────── */
   useEffect(() => {
