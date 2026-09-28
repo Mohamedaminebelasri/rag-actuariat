@@ -2,7 +2,7 @@
 
 import { ShieldCheck, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
+import { formatValeurBrute, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 
 /**
  * Une ligne = un KPI réellement extrait pour une société.
@@ -48,7 +48,7 @@ export function KpiLigne({
         </span>
       </div>
       <p className="font-mono text-xl font-bold text-text-primary mt-1">
-        {formatValeurReelle(kpi.valeur, kpi.unite)}
+        {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
       </p>
       {source && <p className="text-[11px] text-text-tertiary mt-1.5">Source : {source}</p>}
     </>

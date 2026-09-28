@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from "react";
 import { X, ExternalLink, ShieldCheck, Sparkles } from "lucide-react";
-import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
+import { formatValeurBrute, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import { PdfPageViewer } from "./pdf-page-viewer";
 
@@ -89,7 +89,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
             <div className="hidden sm:flex items-center gap-2 bg-surface border border-border rounded-lg px-3 py-1.5">
               <span className="text-xs text-text-tertiary">Valeur extraite :</span>
               <span className="font-mono text-base font-bold text-text-primary">
-                {formatValeurReelle(kpi.valeur, kpi.unite)}
+                {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
               </span>
             </div>
 
@@ -119,7 +119,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
         <div className="sm:hidden flex items-center gap-2 px-4 py-2 border-b border-border bg-surface">
           <span className="text-xs text-text-tertiary">Valeur extraite :</span>
           <span className="font-mono text-base font-bold text-text-primary">
-            {formatValeurReelle(kpi.valeur, kpi.unite)}
+            {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
           </span>
         </div>
 

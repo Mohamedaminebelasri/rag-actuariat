@@ -28,6 +28,8 @@ export type KpiExtrait = {
   pageSource: number | null;
   chapitreSource: string | null;
   valide: boolean;
+  valeurBrute: number | null;
+  uniteBrute: string | null;
 };
 
 type DonneesExtraites = {
@@ -90,6 +92,21 @@ export function formatValeurReelle(valeur: number, unite: string): string {
   if (unite === "pct") return `${formatNombreEspace(valeur, 1)} %`;
   if (unite === "M€") return `${formatNombreEspace(valeur, 1)} M€`;
   return `${formatNombreEspace(valeur, 2)} ${unite}`;
+}
+
+/** Formate la valeur brute (telle qu'elle apparaît dans le PDF).
+ * Quand valeurBrute est null (ex. pourcentages), on tombe sur formatValeurReelle. */
+export function formatValeurBrute(
+  valeurBrute: number | null,
+  uniteBrute: string | null,
+  valeur: number,
+  unite: string,
+): string {
+  if (valeurBrute == null) return formatValeurReelle(valeur, unite);
+  const u = uniteBrute ?? unite;
+  // Les valeurs brutes K€ sont des entiers — pas de décimales inutiles
+  if (u === "K€" || u === "€") return `${formatNombreEspace(valeurBrute, 0)} ${u}`;
+  return `${formatNombreEspace(valeurBrute, 1)} ${u}`;
 }
 
 export function societesTriees(): Societe[] {
