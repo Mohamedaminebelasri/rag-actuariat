@@ -17,8 +17,8 @@ import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
  * ouvert et on saute directement à la page source du KPI (#page=N, géré
  * nativement par le viewer PDF du navigateur).
  *
- * Fonctionne uniquement en local (npm run dev sur le PC) : les PDF sont
- * dans rag-actuariat/data/, jamais déployés sur Vercel.
+ * En production, les PDF sont servis depuis Vercel Blob (stockage en ligne).
+ * En développement, ils sont lus depuis le dossier data/ local.
  */
 
 type KpiSource = {
@@ -192,7 +192,7 @@ export default function DocumentsPage() {
                 key={urlPdf}
                 src={urlPdf}
                 title={`PDF SFCR de ${societeSelectionnee}`}
-                className="flex-1 w-full bg-surface-secondary"
+                className="flex-1 w-full border-0 bg-surface-secondary"
               />
             ) : (
               <PdfIndisponible societe={societeSelectionnee} />
@@ -207,10 +207,7 @@ export default function DocumentsPage() {
             <p className="text-sm text-text-secondary max-w-sm">
               Choisissez une société dans la liste pour ouvrir son rapport SFCR.
             </p>
-            <p className="text-xs text-text-tertiary max-w-sm mt-3">
-              Fonctionne uniquement quand le site tourne en local sur votre PC — les PDF sont dans le dossier data/,
-              qui n&apos;est pas déployé en ligne.
-            </p>
+
           </div>
         )}
       </div>

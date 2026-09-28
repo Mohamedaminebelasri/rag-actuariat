@@ -234,6 +234,18 @@ export default function UploadPage() {
             <h2 className="font-heading italic text-3xl text-text-primary mt-0.5">Ajouter un PDF</h2>
           </div>
         </div>
+
+        <div className="flex items-center gap-3 rounded-[10px] border border-red-300 bg-red-50 px-4 py-3 mb-4 dark:border-red-500/30 dark:bg-red-950/40">
+          <ShieldAlert className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-red-700 dark:text-red-300">
+              Fonctionnalité en maintenance — disponible uniquement en local.
+            </p>
+            <p className="text-xs text-red-600/80 dark:text-red-400/70 mt-0.5">
+              Pour tester l&apos;ajout de PDF, lancez le site en local avec <code className="bg-red-100 dark:bg-red-900/50 px-1 rounded">npm run dev</code> sur votre PC.
+            </p>
+          </div>
+        </div>
         <p className="text-sm text-text-secondary mb-6">
           Déposez un rapport SFCR : nous proposons un titre à partir du document, vous confirmez ou renommez et
           précisez la société et l&apos;année, puis le modèle extrait automatiquement les KPIs.

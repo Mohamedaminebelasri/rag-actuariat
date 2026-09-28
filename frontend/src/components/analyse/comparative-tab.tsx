@@ -22,7 +22,7 @@ const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A"];
 
 /** Port de analyse_comparative() (comparative.py, Reflex). */
 export function ComparativeTab() {
-  const [societes, setSocietes] = useState<string[]>(["Groupama", "AXA France"]);
+  const [societes, setSocietes] = useState<string[]>(["Groupama", "CNP Assurances"]);
   const [filtreCategorie, setFiltreCategorie] = useState("Tous");
   const [kpiGraphique, setKpiGraphique] = useState("ratio_scr");
   const [afficherMoyenne, setAfficherMoyenne] = useState(true);

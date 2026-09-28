@@ -8,9 +8,8 @@ import { ComparativeTab } from "@/components/analyse/comparative-tab";
 
 /** Port de page_analyse() (test_markdrop/sfcr_app/analyse/page.py, Reflex,
  * commit c83d3ef) — 2 sous-onglets (individuelle/comparative), design
- * "Ivory" repris des tokens globaux (globals.css). Données 100% mock
- * (analyse-demo.ts) tant que le backend réel (kpis.db) n'est pas branché
- * sur cette page — bandeau "Données de démonstration" ci-dessous. */
+ * "Ivory" repris des tokens globaux (globals.css). Données réelles issues de kpis.db via donnees-extraites.json
+ * (analyse-demo.ts). 34 sociétés, 22 types de KPIs. */
 export default function AnalysePage() {
   const [sousOnglet, setSousOnglet] = useState<"individuelle" | "comparative">("individuelle");
 
@@ -24,10 +23,10 @@ export default function AnalysePage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-warning-light border border-warning/30 rounded-[10px] px-4 py-2.5 w-full my-4">
-          <Info className="w-[15px] h-[15px] text-warning flex-shrink-0" />
-          <p className="text-sm font-medium text-warning">
-            Données de démonstration — l&apos;onglet Analyse n&apos;est pas encore connecté au backend réel.
+        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-300/40 rounded-[10px] px-4 py-2.5 w-full my-4 dark:bg-emerald-950/30 dark:border-emerald-500/20">
+          <Info className="w-[15px] h-[15px] text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+          <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+            Données réelles — 34 sociétés, 22 indicateurs extraits des rapports SFCR.
           </p>
         </div>
 

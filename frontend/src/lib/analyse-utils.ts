@@ -25,9 +25,7 @@ import {
 export const SENS_KPI: Record<string, "higher" | "lower"> = {
   ratio_scr: "higher",
   ratio_mcr: "higher",
-  surplus_capital: "higher",
-  diversification: "lower", // stocké négatif : plus négatif = plus de bénéfice
-  ratio_sp: "lower",
+  scr_diversification: "lower", // stocké négatif : plus négatif = plus de bénéfice
 };
 
 export const CATEGORIE_LABELS: Record<string, string> = {
@@ -41,6 +39,9 @@ export const CATEGORIE_LABELS: Record<string, string> = {
 export function formatValeur(valeur: number, unite: string): string {
   if (unite === "%") {
     return `${formatNombre(valeur, 1)} %`;
+  }
+  if (unite === "M€") {
+    return `${formatNombre(valeur, 1)} M€`;
   }
   return `${formatNombre(valeur, 2)} Md€`;
 }
@@ -61,12 +62,6 @@ export type CouleurSeuil = "success" | "warning" | "danger" | "neutre";
 export function couleurSeuil(kpiId: string, valeur: number): CouleurSeuil {
   const def = KPI_PAR_ID[kpiId];
   if (!def || def.seuilReglementaire === null) return "neutre";
-  if (kpiId === "ratio_sp") {
-    // plus bas = meilleur
-    if (valeur <= 95) return "success";
-    if (valeur <= 105) return "warning";
-    return "danger";
-  }
   // ratio_scr / ratio_mcr : plus haut = meilleur
   if (valeur >= 150) return "success";
   if (valeur >= 100) return "warning";
@@ -75,7 +70,7 @@ export function couleurSeuil(kpiId: string, valeur: number): CouleurSeuil {
 
 export function formatVariation(variation: number, unit: string): string {
   const signe = variation >= 0 ? "+" : "";
-  return `${signe}${variation.toFixed(unit === "Md€" ? 2 : 1)} ${unit}`;
+  return `${signe}${variation.toFixed(unit === "Md€" || unit === "M€" ? 1 : 1)} ${unit}`;
 }
 
 export function kpiLabelCourt(def: KpiDefinition): string {
@@ -202,18 +197,18 @@ export function buildAlertes(societes: string[]): Alerte[] {
       });
     }
 
-    const div = kpis["diversification"];
+    const div = kpis["scr_diversification"];
     if (div) {
-      const valeursDiv = societes.map((s) => kpisSociete(s)["diversification"]?.valeur ?? 0);
+      const valeursDiv = societes.map((s) => kpisSociete(s)["scr_diversification"]?.valeur ?? 0);
       const moyenneDiv = valeursDiv.reduce((a, b) => a + b, 0) / valeursDiv.length;
       if (div.valeur > moyenneDiv + 5) {
         resultat.push({ type: "attention", texte: `${soc} : effet de diversification inférieur à la moyenne du panel` });
       }
     }
 
-    const ratioSp = kpis["ratio_sp"];
-    if (ratioSp && ratioSp.valeur <= 90) {
-      resultat.push({ type: "conforme", texte: `${soc} : ratio S/P maîtrisé (${ratioSp.valeur.toFixed(0)} %)` });
+    const ratioMcr = kpis["ratio_mcr"];
+    if (ratioMcr && ratioMcr.valeur >= 200) {
+      resultat.push({ type: "conforme", texte: `${soc} : ratio MCR solide (${ratioMcr.valeur.toFixed(0)} %)` });
     }
   }
   return resultat;
@@ -237,14 +232,11 @@ export function trierLignes(lignes: LigneKpi[], colonne: string, ascendant: bool
 export type StatutKpi = { couleur: Exclude<CouleurSeuil, "neutre">; libelle: string };
 
 /** Statut « feu tricolore » — uniquement pour les KPIs qui ont un seuil
- * (ratio SCR, ratio MCR, ratio S/P). Seuils indicatifs de démonstration. */
+ * (ratio SCR, ratio MCR). Seuils réglementaires Solvabilité II. */
 export function statutKpi(kpiId: string, valeur: number): StatutKpi | null {
   const couleur = couleurSeuil(kpiId, valeur);
   if (couleur === "neutre") return null;
-  const libelles =
-    kpiId === "ratio_sp"
-      ? { success: "Maîtrisé", warning: "Vigilance", danger: "Dégradé" }
-      : { success: "Solide", warning: "Vigilance", danger: "Sous le seuil" };
+  const libelles = { success: "Solide", warning: "Vigilance", danger: "Sous le seuil" };
   return { couleur, libelle: libelles[couleur] };
 }
 
