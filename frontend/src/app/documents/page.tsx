@@ -192,7 +192,7 @@ export default function DocumentsPage() {
                 key={urlPdf}
                 src={urlPdf}
                 title={`PDF SFCR de ${societeSelectionnee}`}
-                className="flex-1 w-full h-0 border-0 bg-surface-secondary"
+                className="flex-1 w-full min-h-0 border-0 bg-surface-secondary"
               />
             ) : (
               <PdfIndisponible societe={societeSelectionnee} />
