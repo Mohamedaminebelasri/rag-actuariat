@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Database, Download, Search, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KpiLigne } from "@/components/donnees/kpi-ligne";
+import { KpiPdfModal } from "@/components/donnees/kpi-pdf-modal";
 import {
   CATEGORIES_REELLES,
   DONNEES_EXTRAITES,
@@ -171,6 +172,7 @@ function StatTile({ label, valeur }: { label: string; valeur: number }) {
 }
 
 function DetailSociete({ societe }: { societe: Societe }) {
+  const [kpiModal, setKpiModal] = useState<string | null>(null);
   const kpis = kpisDe(societe.name);
   const couverture = couvertureKpis(societe.name);
   const annee = Object.values(kpis)[0]?.annee;
@@ -250,7 +252,7 @@ function DetailSociete({ societe }: { societe: Societe }) {
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {idsDeCat.map(([id, label]) => (
-                    <KpiLigne key={id} id={id} label={label} kpi={kpis[id]} societe={societe.name} />
+                    <KpiLigne key={id} id={id} label={label} kpi={kpis[id]} societe={societe.name} onSelect={setKpiModal} />
                   ))}
                 </div>
               </div>
@@ -262,10 +264,19 @@ function DetailSociete({ societe }: { societe: Societe }) {
       <div className="flex items-start gap-2 border border-dashed border-border rounded-[10px] px-4 py-3 mt-8 text-text-tertiary">
         <Clock className="w-[15px] h-[15px] flex-shrink-0 mt-0.5" />
         <p className="text-xs">
-          Cliquez sur une valeur pour ouvrir directement le PDF source à la bonne page dans l&apos;onglet Documents
-          (fonctionne uniquement en local).
+          Cliquez sur une valeur pour afficher le PDF source à la bonne page et vérifier le chiffre extrait.
         </p>
       </div>
+
+      {kpiModal && kpis[kpiModal] && (
+        <KpiPdfModal
+          kpiId={kpiModal}
+          label={KPI_LABELS_REELS[kpiModal] ?? kpiModal}
+          kpi={kpis[kpiModal]}
+          societe={societe.name}
+          onClose={() => setKpiModal(null)}
+        />
+      )}
     </div>
   );
 }

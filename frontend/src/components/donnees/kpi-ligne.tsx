@@ -1,35 +1,32 @@
 "use client";
 
 import { ShieldCheck, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 
 /**
  * Une ligne = un KPI réellement extrait pour une société.
  *
- * Lien vers la source : l'onglet Documents accueille maintenant les 34
- * sociétés (nœud "Annexes QRT" par société — voir sfcrTree dans
- * documents/page.tsx) plus les sociétés ajoutées à chaud. La carte est
- * donc cliquable dès qu'on a un pageSource, indépendamment de la société.
+ * Cliquer ouvre le modal PDF (géré par le parent via onSelect).
  */
 export function KpiLigne({
   id,
   label,
   kpi,
   societe,
+  onSelect,
 }: {
   id: string;
   label: string;
   kpi: KpiExtrait;
   societe: string;
+  onSelect?: (kpiId: string) => void;
 }) {
-  const router = useRouter();
   const source =
     kpi.chapitreSource && kpi.pageSource
       ? `${kpi.chapitreSource}, p. ${kpi.pageSource}`
       : kpi.chapitreSource ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
-  const lienActif = kpi.pageSource != null;
+  const lienActif = kpi.pageSource != null && onSelect;
 
   const contenu = (
     <>
@@ -67,8 +64,8 @@ export function KpiLigne({
 
   return (
     <button
-      onClick={() => router.push(`/documents?company=${encodeURIComponent(societe)}&kpi=${encodeURIComponent(id)}`)}
-      title="Voir la source dans les Annexes QRT"
+      onClick={() => onSelect(id)}
+      title="Voir la source PDF"
       className="text-left w-full bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-sm)] transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-px"
     >
       {contenu}
