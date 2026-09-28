@@ -103,7 +103,8 @@ export function formatValeurBrute(
   unite: string,
 ): string {
   if (valeurBrute == null) return formatValeurReelle(valeur, unite);
-  const u = uniteBrute ?? unite;
+  const raw = uniteBrute ?? unite;
+  const u = raw === "euros bruts" || raw === "euro brut" ? "€" : raw;
   // Les valeurs brutes K€ sont des entiers — pas de décimales inutiles
   if (u === "K€" || u === "€") return `${formatNombreEspace(valeurBrute, 0)} ${u}`;
   return `${formatNombreEspace(valeurBrute, 1)} ${u}`;
