@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "regenerate-json": "python ../export_kpis_for_frontend.py"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.0",
