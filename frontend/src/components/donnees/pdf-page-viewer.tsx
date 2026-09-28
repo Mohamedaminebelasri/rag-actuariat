@@ -77,9 +77,6 @@ export function PdfPageViewer({ url, initialPage, defaultZoom = 1.75, onZoomChan
     async function render() {
       setLoading(true);
 
-      // Remonter le conteneur en haut pour la nouvelle page
-      if (containerRef.current) containerRef.current.scrollTop = 0;
-
       // Annuler le rendu précédent
       if (renderTaskRef.current) {
         try { renderTaskRef.current.cancel(); } catch { /* ignore */ }
@@ -140,50 +137,6 @@ export function PdfPageViewer({ url, initialPage, defaultZoom = 1.75, onZoomChan
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
-
-  /* ── Navigation par molette (scroll) entre pages ────────── */
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || totalPages <= 1) return;
-
-    let cooldown = false;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (cooldown) return;
-
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const atBottom = scrollTop + clientHeight >= scrollHeight - 2;
-      const atTop = scrollTop <= 2;
-
-      if (e.deltaY > 0 && atBottom) {
-        // Scroll vers le bas + déjà en bas → page suivante
-        e.preventDefault();
-        setCurrentPage((p) => {
-          if (p >= totalPages) return p;
-          const next = p + 1;
-          setPageInput(String(next));
-          return next;
-        });
-        cooldown = true;
-        setTimeout(() => { cooldown = false; }, 400);
-      } else if (e.deltaY < 0 && atTop) {
-        // Scroll vers le haut + déjà en haut → page précédente
-        e.preventDefault();
-        setCurrentPage((p) => {
-          if (p <= 1) return p;
-          const prev = p - 1;
-          setPageInput(String(prev));
-          return prev;
-        });
-        cooldown = true;
-        setTimeout(() => { cooldown = false; }, 400);
-      }
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => container.removeEventListener("wheel", handleWheel);
-  }, [totalPages]);
-
   /* ── Navigation ─────────────────────────────────────────── */
   const goToPage = useCallback(
     (p: number) => {
