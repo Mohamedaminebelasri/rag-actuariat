@@ -64,7 +64,7 @@ export function IndividualTab() {
             </button>
           </div>
 
-          <PositionMarche key={societe} societe={societe} />
+          {/* <PositionMarche key={societe} societe={societe} /> */}
           <LegendeStatuts />
 
           {CATEGORIES.map((c) => {
