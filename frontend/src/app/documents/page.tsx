@@ -89,7 +89,7 @@ export default function DocumentsPage() {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="absolute inset-0 flex overflow-hidden">
       {/* Sidebar : liste plate des sociétés */}
       <div
         className={cn(
@@ -192,7 +192,7 @@ export default function DocumentsPage() {
                 key={urlPdf}
                 src={urlPdf}
                 title={`PDF SFCR de ${societeSelectionnee}`}
-                className="flex-1 w-full border-0 bg-surface-secondary"
+                className="flex-1 w-full h-0 border-0 bg-surface-secondary"
               />
             ) : (
               <PdfIndisponible societe={societeSelectionnee} />

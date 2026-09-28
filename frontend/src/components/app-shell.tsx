@@ -168,7 +168,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 min-h-0 overflow-auto bg-background">{children}</main>
+      <main className="relative flex-1 min-h-0 overflow-auto bg-background">{children}</main>
 
       {/* Barre d'onglets du bas (mobile) */}
       <nav
