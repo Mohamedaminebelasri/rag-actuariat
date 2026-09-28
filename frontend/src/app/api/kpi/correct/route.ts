@@ -43,6 +43,7 @@ async function ecrireCorrectionsBlob(corrections: CorrectionsMap): Promise<void>
     access: "private",
     contentType: "application/json",
     addRandomSuffix: false,
+    allowOverwrite: true,
   });
 }
 
