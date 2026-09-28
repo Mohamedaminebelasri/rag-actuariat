@@ -4,6 +4,7 @@ import { useEffect, useCallback } from "react";
 import { X, ExternalLink, ShieldCheck, Sparkles } from "lucide-react";
 import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
+import { PdfPageViewer } from "./pdf-page-viewer";
 
 type Props = {
   kpiId: string;
@@ -15,13 +16,14 @@ type Props = {
 
 /**
  * Modal plein écran (légèrement réduit) affichant le PDF source à la page
- * du KPI sélectionné. Permet de vérifier rapidement chaque valeur extraite
- * sans quitter l'onglet Données.
+ * du KPI sélectionné via un viewer PDF.js. Fonctionne sur tous les
+ * navigateurs y compris mobile Safari (pas de #page=N dans iframe).
  */
 export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
   const nomPdf = PDF_PAR_SOCIETE[societe];
+  // URL sans fragment — la navigation par page est gérée par PdfPageViewer
   const pdfUrl = nomPdf
-    ? `/api/pdf/${encodeURIComponent(nomPdf)}${kpi.pageSource ? `#page=${kpi.pageSource}` : ""}`
+    ? `/api/pdf/${encodeURIComponent(nomPdf)}`
     : null;
 
   // Fermer avec Escape
@@ -34,7 +36,6 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-    // Empêcher le scroll du body en arrière-plan
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
@@ -122,13 +123,12 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose }: Props) {
           </span>
         </div>
 
-        {/* PDF viewer */}
+        {/* PDF viewer (pdfjs-dist) */}
         <div className="flex-1 min-h-0">
           {pdfUrl ? (
-            <iframe
-              src={pdfUrl}
-              className="w-full h-full border-0"
-              title={`PDF source — ${societe} — ${label}`}
+            <PdfPageViewer
+              url={pdfUrl}
+              initialPage={kpi.pageSource ?? 1}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-text-tertiary">
