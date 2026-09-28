@@ -55,7 +55,7 @@ def export_kpis():
 
     resultat = {}
     for row in conn.execute(
-        """SELECT company_id, year, kpi_name, value, unit, source_page, source_chapter
+        """SELECT company_id, year, kpi_name, value, unit, source_page, source_chapter, raw_value, raw_unit
            FROM kpis WHERE value IS NOT NULL ORDER BY company_id, year DESC"""
     ):
         nom_entreprise = companies.get(row["company_id"])
@@ -72,6 +72,10 @@ def export_kpis():
                 "year": row["year"],
                 "source_page": row["source_page"],
                 "source_chapter": row["source_chapter"],
+                # Décision 110 — chiffre brut tel qu'imprimé dans le PDF
+                # (avant ÷1000/÷1 000 000), None pour les KPIs pct.
+                "raw_value": row["raw_value"],
+                "raw_unit": row["raw_unit"],
             },
         )
     conn.close()
@@ -118,7 +122,7 @@ def export_donnees_extraites():
 
     id_vers_nom = {s["id"]: s["name"] for s in societes}
     for row in conn.execute(
-        """SELECT company_id, year, kpi_name, value, unit, category, source_page, source_chapter, validated
+        """SELECT company_id, year, kpi_name, value, unit, category, source_page, source_chapter, validated, raw_value, raw_unit
            FROM kpis WHERE value IS NOT NULL ORDER BY company_id, year DESC"""
     ):
         nom = id_vers_nom.get(row["company_id"])
@@ -134,6 +138,10 @@ def export_donnees_extraites():
             "pageSource": row["source_page"],
             "chapitreSource": row["source_chapter"],
             "valide": bool(row["validated"]),
+            # Décision 110 — chiffre brut tel qu'imprimé dans le PDF
+            # (avant ÷1000/÷1 000 000), None pour les KPIs pct.
+            "valeurBrute": row["raw_value"],
+            "uniteBrute": row["raw_unit"],
         })
     conn.close()
 

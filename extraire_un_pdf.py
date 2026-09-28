@@ -397,21 +397,36 @@ def inserer_en_base(company_name, year, valeurs, inventaire, unite_detectee, con
     conn.commit()
     company_id = conn.execute("SELECT id FROM companies WHERE name=?", (company_name,)).fetchone()[0]
 
+    # Décision 110 — raw_value/raw_unit : le chiffre BRUT tel qu'imprimé
+    # dans le PDF (avant ÷1000 ou ÷1 000 000), additif à côté de
+    # value/unit (M€/pct) qui restent la source de vérité pour tout
+    # calcul/contrôle. diviseur_montant est celui RÉELLEMENT utilisé pour
+    # cette extraction (Décision 107) — reconstruction exacte (identité
+    # arithmétique inverse), pas une nouvelle lecture. Aucun raw_value
+    # pour les KPIs pct (ratio_scr/ratio_mcr) : pas de perte d'unité
+    # équivalente à reconstituer.
+    diviseur_reconstruction = 1_000_000 if unite_detectee == "euros bruts" else 1000
+
     defs_par_nom = {d["kpi_name"]: d for d in kpi_definitions}
     kpis_pour_job = []
     for kpi_name, (valeur, source_page, note) in valeurs.items():
         d = defs_par_nom[kpi_name]
+        raw_value = valeur * diviseur_reconstruction if (valeur is not None and d["unit"] == "M€") else None
+        raw_unit = unite_detectee if raw_value is not None else None
         conn.execute(
-            """INSERT INTO kpis (company_id, year, category, kpi_name, value, unit, source_page, source_chapter, validated)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
+            """INSERT INTO kpis (company_id, year, category, kpi_name, value, unit, source_page, source_chapter, validated, raw_value, raw_unit)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
                ON CONFLICT(company_id, year, kpi_name) DO UPDATE SET
                  value=excluded.value, unit=excluded.unit, source_page=excluded.source_page,
-                 source_chapter=excluded.source_chapter, validated=0""",
-            (company_id, year, d["category"], kpi_name, valeur, d["unit"], source_page, d["sfcr_chapter"]),
+                 source_chapter=excluded.source_chapter, validated=0,
+                 raw_value=excluded.raw_value, raw_unit=excluded.raw_unit""",
+            (company_id, year, d["category"], kpi_name, valeur, d["unit"], source_page, d["sfcr_chapter"],
+             raw_value, raw_unit),
         )
         kpis_pour_job.append({
             "kpi_name": kpi_name, "value": valeur, "unit": d["unit"], "category": d["category"],
             "source_page": source_page, "source_chapter": d["sfcr_chapter"], "validated": False,
+            "raw_value": raw_value, "raw_unit": raw_unit,
         })
     conn.commit()
     conn.close()

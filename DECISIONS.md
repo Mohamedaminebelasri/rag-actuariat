@@ -7389,3 +7389,100 @@ scr_total`), **zéro nouvelle régression, zéro faux positif plancher/
 plafond**. `kpis.db` : 34 sociétés, 748 lignes KPI, 1597 contrôles de
 validation, 0 doublon — état identique à avant ce correctif (les 2
 sociétés de test ont été entièrement nettoyées).
+
+## Décision 110 — raw_value/raw_unit sur kpis (chiffre brut du PDF, additif) + correction d'un compte d'échecs sous-estimé
+
+CONTEXTE : signalé "bug critique" côté frontend/fondateur (28/09/2026) —
+la conversion K€→M€ était perçue comme une perte de précision ("le PDF
+dit 4 266 905, l'outil stocke 4266,9 M€"). Vérification factuelle
+AVANT toute action : la conversion est mathématiquement correcte
+(4 266 905 K€ = 4266,905 M€, exactement ce qui est stocké) et résulte
+de ~10 décisions de vérification ce soir (094-107) — ce n'est pas un
+bug de calcul. Le signalement mentionnait aussi "le prompt d'extraction
+LLM" comme fichier concerné : n'existe pas dans ce pipeline (déjà
+clarifié Décision 106 pour un signalement similaire). Question posée à
+l'utilisateur avant de toucher au schéma partagé : ajouter le chiffre
+brut EN PLUS (additif) ou remplacer entièrement la conversion M€
+(cassant, annulerait ~10 décisions) → **réponse : additif**.
+
+### Correctif
+
+2 colonnes ajoutées sur `kpis` (`ajouter_valeurs_brutes.py`, idempotent) :
+- `raw_value` : chiffre brut tel qu'imprimé dans le PDF, AVANT ÷1000/
+  ÷1 000 000 — uniquement pour les KPIs `unit='M€'` (c'est là que la
+  conversion existe ; les KPIs `pct` n'ont pas d'équivalent, laissés à
+  NULL).
+- `raw_unit` : "K€" ou "euros bruts", depuis `companies.unite_source`
+  (Décision 103/107).
+
+`value`/`unit` restent la SEULE source de vérité pour tout calcul/
+contrôle existant (validate_kpis.py, kpi_service.py) — vérifié 0
+divergence value/unit avant/après sur les 748 lignes.
+
+**34 sociétés existantes** : `raw_value` RECONSTRUIT par arithmétique
+inverse (`value × diviseur`, depuis `unite_source`) — identité exacte
+avec l'insertion d'origine (`value = raw/diviseur`), pas une nouvelle
+lecture du PDF. Vérifié sur l'exemple cité du signalement : Allianz
+Vie `fonds_propres_eligibles` → `raw_value=4266905.0, raw_unit="K€"`,
+correspond exactement au "4 266 905" du PDF. 630 lignes M€
+reconstruites, 68 lignes pct laissées sans raw_value, 0 ambiguïté.
+
+**`extraire_un_pdf.py`** (toute future extraction à chaud) : capture
+`raw_value` par la même reconstruction exacte, depuis
+`diviseur_montant` réellement utilisé pour cette extraction (Décision
+107) — pas une reconstruction a posteriori, le diviseur est connu au
+moment de l'insertion.
+
+**Exports frontend** : `export_kpis_for_frontend.py` expose désormais
+`raw_value`/`raw_unit` dans `kpi-sources.json` et `valeurBrute`/
+`uniteBrute` dans `donnees-extraites.json` (convention camelCase déjà
+en place). **Le type TypeScript `KpiExtrait`
+(frontend/src/lib/donnees-extraites-utils.ts) n'a pas été modifié** —
+scope backend uniquement, comme pour tout le reste de la session ; le
+frontend doit ajouter ces 2 champs à son type et à l'affichage pour
+les exploiter.
+
+### Correction — compte d'échecs sous-estimé dans les Décisions 107-109
+
+En creusant une variation inattendue des totaux de contrôles (48/48 vs
+45/46, 37/38, 51/51...) après ce correctif, réalisé que les messages
+de commit des Décisions 107, 108 et 109 affirmaient à tort "mêmes 3
+échecs déjà connus, zéro nouvelle régression" — le compte RÉEL, vérifié
+maintenant de façon exhaustive (comparaison programmatique de
+`executer_controles()`+`executer_completude()` sur kpis.db AVANT
+(commit 9ca54a1, avant Décision 106) et APRÈS ce soir, hors le nouveau
+contrôle plancher) est de **7 sociétés avec au moins 1 échec**, pas 3-4 :
+
+| Société | Échec(s) |
+|---|---|
+| AG2R Prevoyance | completude_null_attendu (scr_souscription_nonvie NULL — assureur vie pure) |
+| Allianz Vie | completude_null_attendu (3 KPIs fusionnés, irréductibles, Décision 084/101) |
+| Covéa | completude_null_attendu (fonds_propres_t1_nr/t1_r/t2/t3 NULL) |
+| MAIF | completude_null_attendu (déjà connu) |
+| SGAM AG2R LA MONDIALE | completude_null_attendu (déjà connu) |
+| Macifilia | mcr_inferieur_scr_total + signe_charge_sinistres (déjà connu) |
+| Themis | mcr_inferieur_scr_total (déjà connu) |
+
+**Le résultat de fond reste inchangé et rassurant** : la comparaison
+programmatique confirme que cet ENSEMBLE de 7 sociétés et leurs échecs
+respectifs sont **strictement identiques** avant et après TOUT le
+travail de ce soir (Décisions 106-110) — zéro échec nouveau, zéro
+échec disparu, zéro régression réelle. L'erreur était uniquement dans
+le CHIFFRE cité ("3" au lieu de "7") dans mes propres messages de
+commit, jamais vérifié de façon exhaustive avant ce soir — seulement
+recopié d'une mémoire de session partielle. Les 4 échecs non
+mentionnés jusqu'ici (AG2R Prevoyance, Allianz Vie, Covéa — tous des
+`completude_null_attendu`) correspondent à des NULL déjà documentés et
+justifiés ailleurs dans DECISIONS.md (ex. Allianz Vie : "3 KPIS
+CONFIRMÉS IRRÉDUCTIBLES", docstring de `extract_kpis_allianzvie.py`,
+Décision 084/101) — pas des échecs silencieux nouvellement découverts,
+juste des échecs déjà connus mais mal comptés dans mes résumés
+récents.
+
+### Règle retenue
+
+Ne plus jamais affirmer "zéro régression" sur la seule base d'un
+souvenir de session ("mêmes échecs déjà connus") sans une comparaison
+PROGRAMMATIQUE explicite de l'ensemble des échecs avant/après — cf.
+leçon déjà tirée en Décision 102 pour un problème de nature similaire
+(confusion entre 2 mesures jamais recoupées explicitement).
