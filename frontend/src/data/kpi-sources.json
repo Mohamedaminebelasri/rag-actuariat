@@ -231,7 +231,7 @@
       "value": 36778.134,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 96,
       "source_chapter": "E.1",
       "raw_value": 36778134.0,
       "raw_unit": "K€"
@@ -240,7 +240,7 @@
       "value": 28605.491,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 96,
       "source_chapter": "E.1",
       "raw_value": 28605491.0,
       "raw_unit": "K€"
@@ -249,7 +249,7 @@
       "value": 2605.979,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 96,
       "source_chapter": "E.1",
       "raw_value": 2605979.0,
       "raw_unit": "K€"
@@ -258,7 +258,7 @@
       "value": 4379.844,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 96,
       "source_chapter": "E.1",
       "raw_value": 4379844.0,
       "raw_unit": "K€"
@@ -267,7 +267,7 @@
       "value": 1186.82,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 96,
       "source_chapter": "E.1",
       "raw_value": 1186820.0,
       "raw_unit": "K€"
@@ -321,7 +321,7 @@
       "value": 1065.8,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 97,
       "source_chapter": "E.2",
       "raw_value": 1065800.0,
       "raw_unit": "K€"
@@ -330,7 +330,7 @@
       "value": 34424.16,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 97,
       "source_chapter": "E.2",
       "raw_value": 34424160.0,
       "raw_unit": "K€"
@@ -339,7 +339,7 @@
       "value": 1854.639,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 97,
       "source_chapter": "E.2",
       "raw_value": 1854639.0,
       "raw_unit": "K€"
@@ -348,7 +348,7 @@
       "value": 1267.072,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 97,
       "source_chapter": "E.2",
       "raw_value": 1267072.0,
       "raw_unit": "K€"
@@ -357,7 +357,7 @@
       "value": 12986.854,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 97,
       "source_chapter": "E.2",
       "raw_value": 12986854.0,
       "raw_unit": "K€"
@@ -375,7 +375,7 @@
       "value": -9821.131,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 97,
       "source_chapter": "E.2",
       "raw_value": -9821131.0,
       "raw_unit": "K€"
@@ -386,7 +386,7 @@
       "value": 521.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 61,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -395,7 +395,7 @@
       "value": 2084.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 61,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -467,7 +467,7 @@
       "value": 88.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 55,
       "source_chapter": "D.2",
       "raw_value": 88000.0,
       "raw_unit": "K€"
@@ -476,7 +476,7 @@
       "value": 14.38,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 55,
       "source_chapter": "D.2",
       "raw_value": 14380.0,
       "raw_unit": "K€"
@@ -494,7 +494,7 @@
       "value": 42.599,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 58,
       "source_chapter": "A.2",
       "raw_value": 42599.0,
       "raw_unit": "K€"
@@ -503,7 +503,7 @@
       "value": 14.986,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 58,
       "source_chapter": "A.2",
       "raw_value": 14986.0,
       "raw_unit": "K€"
@@ -512,7 +512,7 @@
       "value": 1.704,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 62,
       "source_chapter": "E.2",
       "raw_value": 1704.0,
       "raw_unit": "K€"
@@ -521,7 +521,7 @@
       "value": 497.952,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 62,
       "source_chapter": "E.2",
       "raw_value": 497952.0,
       "raw_unit": "K€"
@@ -539,7 +539,7 @@
       "value": 3.875,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 62,
       "source_chapter": "E.2",
       "raw_value": 3875.0,
       "raw_unit": "K€"
@@ -548,7 +548,7 @@
       "value": 15.313,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 62,
       "source_chapter": "E.2",
       "raw_value": 15313.0,
       "raw_unit": "K€"
@@ -566,7 +566,7 @@
       "value": -14.137,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 62,
       "source_chapter": "E.2",
       "raw_value": -14137.0,
       "raw_unit": "K€"
@@ -959,7 +959,7 @@
       "value": 206.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -968,7 +968,7 @@
       "value": 391.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -995,7 +995,7 @@
       "value": 20992.468,
       "unit": "M€",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.1",
       "raw_value": 20992468.0,
       "raw_unit": "K€"
@@ -1004,7 +1004,7 @@
       "value": 16255.089,
       "unit": "M€",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.1",
       "raw_value": 16255089.0,
       "raw_unit": "K€"
@@ -1013,7 +1013,7 @@
       "value": 738.566,
       "unit": "M€",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.1",
       "raw_value": 738566.0,
       "raw_unit": "K€"
@@ -1022,7 +1022,7 @@
       "value": 3998.813,
       "unit": "M€",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.1",
       "raw_value": 3998813.0,
       "raw_unit": "K€"
@@ -1058,7 +1058,7 @@
       "value": 283473.92699999997,
       "unit": "M€",
       "year": 2025,
-      "source_page": 52,
+      "source_page": 67,
       "source_chapter": "D.2",
       "raw_value": 283473926.99999994,
       "raw_unit": "K€"
@@ -3251,7 +3251,7 @@
       "value": 191.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0690/C0010 (groupe)",
       "raw_value": null,
       "raw_unit": null
@@ -3260,7 +3260,7 @@
       "value": 432.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0650/C0010 (groupe)",
       "raw_value": null,
       "raw_unit": null
@@ -3287,7 +3287,7 @@
       "value": 10005.273,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0660/C0010 (groupe)",
       "raw_value": 10005273.0,
       "raw_unit": "K€"
@@ -3296,7 +3296,7 @@
       "value": 6944.919,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0660/C0020 (groupe)",
       "raw_value": 6944919.0,
       "raw_unit": "K€"
@@ -3305,7 +3305,7 @@
       "value": 1092.943,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0660/C0030 (groupe)",
       "raw_value": 1092943.0,
       "raw_unit": "K€"
@@ -3314,7 +3314,7 @@
       "value": 1967.411,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0660/C0040 (groupe)",
       "raw_value": 1967411.0,
       "raw_unit": "K€"
@@ -3368,7 +3368,7 @@
       "value": 321.485,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 133,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0130 (mapping, formule standard)",
       "raw_value": 321485.0,
       "raw_unit": "K€"
@@ -3377,7 +3377,7 @@
       "value": 5951.68,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 133,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0010 (mapping, formule standard)",
       "raw_value": 5951680.0,
       "raw_unit": "K€"
@@ -3386,7 +3386,7 @@
       "value": 983.872,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 133,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0040 (mapping, formule standard)",
       "raw_value": 983872.0,
       "raw_unit": "K€"
@@ -3395,7 +3395,7 @@
       "value": 192.68,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 133,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0020 (mapping, formule standard)",
       "raw_value": 192680.0,
       "raw_unit": "K€"
@@ -3404,7 +3404,7 @@
       "value": 1154.216,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 133,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0030 (mapping, formule standard)",
       "raw_value": 1154216.0,
       "raw_unit": "K€"
@@ -3415,7 +3415,7 @@
       "value": 169.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3424,7 +3424,7 @@
       "value": 324.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3451,7 +3451,7 @@
       "value": 1645.67,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 1645670.0,
       "raw_unit": "K€"
@@ -3460,7 +3460,7 @@
       "value": 1225.666,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 1225666.0,
       "raw_unit": "K€"
@@ -3469,7 +3469,7 @@
       "value": 105.857,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0030 (solo (EN))",
       "raw_value": 105857.0,
       "raw_unit": "K€"
@@ -3478,7 +3478,7 @@
       "value": 168.033,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0040 (solo (EN))",
       "raw_value": 168033.0,
       "raw_unit": "K€"
@@ -3487,7 +3487,7 @@
       "value": 146.114,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 151,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0050 (solo (EN))",
       "raw_value": 146114.0,
       "raw_unit": "K€"
@@ -3514,7 +3514,7 @@
       "value": 7787.343000000001,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 149,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — best_estimate + marge_risque",
       "raw_value": 7787343.000000001,
       "raw_unit": "K€"
@@ -3541,7 +3541,7 @@
       "value": 113.675,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 153,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 113675.0,
       "raw_unit": "K€"
@@ -3550,7 +3550,7 @@
       "value": 505.688,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 153,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 505688.0,
       "raw_unit": "K€"
@@ -3559,7 +3559,7 @@
       "value": 646.947,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 153,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0040 (mapping, formule standard)",
       "raw_value": 646947.0,
       "raw_unit": "K€"
@@ -3568,7 +3568,7 @@
       "value": 39.353,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 153,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 39353.0,
       "raw_unit": "K€"
@@ -3577,7 +3577,7 @@
       "value": 76.644,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 153,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
       "raw_value": 76644.0,
       "raw_unit": "K€"
@@ -3586,7 +3586,7 @@
       "value": -312.797,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 153,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -312797.0,
       "raw_unit": "K€"
@@ -3597,7 +3597,7 @@
       "value": 271.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 171,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3606,7 +3606,7 @@
       "value": 736.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 171,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3633,7 +3633,7 @@
       "value": 273.578,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 171,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 273578.0,
       "raw_unit": "K€"
@@ -3642,7 +3642,7 @@
       "value": 258.41,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 171,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 258410.00000000003,
       "raw_unit": "K€"
@@ -3669,7 +3669,7 @@
       "value": 15.168,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 171,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0050 (solo (EN))",
       "raw_value": 15168.0,
       "raw_unit": "K€"
@@ -3696,7 +3696,7 @@
       "value": 464.64,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 169,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — best_estimate + marge_risque",
       "raw_value": 464640.0,
       "raw_unit": "K€"
@@ -3723,7 +3723,7 @@
       "value": 6.245,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 173,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 6245.0,
       "raw_unit": "K€"
@@ -3732,7 +3732,7 @@
       "value": 56.27,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 173,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 56270.0,
       "raw_unit": "K€"
@@ -3741,7 +3741,7 @@
       "value": 60.71,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 173,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0040 (mapping, formule standard)",
       "raw_value": 60710.0,
       "raw_unit": "K€"
@@ -3750,7 +3750,7 @@
       "value": 9.17,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 173,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 9170.0,
       "raw_unit": "K€"
@@ -3759,7 +3759,7 @@
       "value": 6.34,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 173,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
       "raw_value": 6340.0,
       "raw_unit": "K€"
@@ -3777,7 +3777,7 @@
       "value": -34.405,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 173,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -34405.0,
       "raw_unit": "K€"
@@ -3788,7 +3788,7 @@
       "value": 231.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3797,7 +3797,7 @@
       "value": 844.9999999999999,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3824,7 +3824,7 @@
       "value": 209.001,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 209001.0,
       "raw_unit": "K€"
@@ -3833,7 +3833,7 @@
       "value": 156.319,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 156319.0,
       "raw_unit": "K€"
@@ -3842,7 +3842,7 @@
       "value": 30.029,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0030 (solo (EN))",
       "raw_value": 30029.0,
       "raw_unit": "K€"
@@ -3851,7 +3851,7 @@
       "value": 19.633,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0040 (solo (EN))",
       "raw_value": 19633.0,
       "raw_unit": "K€"
@@ -3860,7 +3860,7 @@
       "value": 3.021,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 191,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0050 (solo (EN))",
       "raw_value": 3021.0,
       "raw_unit": "K€"
@@ -3887,7 +3887,7 @@
       "value": 568.227,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 189,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — best_estimate + marge_risque",
       "raw_value": 568227.0,
       "raw_unit": "K€"
@@ -3914,7 +3914,7 @@
       "value": 4.551,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 193,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 4551.0,
       "raw_unit": "K€"
@@ -3923,7 +3923,7 @@
       "value": 65.579,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 193,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 65579.0,
       "raw_unit": "K€"
@@ -3932,7 +3932,7 @@
       "value": 43.195,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 193,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0040 (mapping, formule standard)",
       "raw_value": 43195.0,
       "raw_unit": "K€"
@@ -3941,7 +3941,7 @@
       "value": 7.219,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 193,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 7219.0,
       "raw_unit": "K€"
@@ -3968,7 +3968,7 @@
       "value": -26.505,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 193,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -26505.0,
       "raw_unit": "K€"
@@ -3979,7 +3979,7 @@
       "value": 710.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 210,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -3988,7 +3988,7 @@
       "value": 882.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 210,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4069,7 +4069,7 @@
       "value": 0.117,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 207,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 117.0,
       "raw_unit": "K€"
@@ -4105,7 +4105,7 @@
       "value": 1.176,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 212,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 1176.0,
       "raw_unit": "K€"
@@ -4114,7 +4114,7 @@
       "value": 3.305,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 212,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 3305.0,
       "raw_unit": "K€"
@@ -4123,7 +4123,7 @@
       "value": 0.577,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 212,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0040 (mapping, formule standard)",
       "raw_value": 577.0,
       "raw_unit": "K€"
@@ -4132,7 +4132,7 @@
       "value": 1.055,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 212,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 1055.0,
       "raw_unit": "K€"
@@ -4159,7 +4159,7 @@
       "value": -1.017,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 212,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -1016.9999999999999,
       "raw_unit": "K€"
@@ -4170,7 +4170,7 @@
       "value": 350.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 229,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4179,7 +4179,7 @@
       "value": 1397.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 229,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4206,7 +4206,7 @@
       "value": 841.43,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 229,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 841430.0,
       "raw_unit": "K€"
@@ -4215,7 +4215,7 @@
       "value": 820.391,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 229,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 820391.0,
       "raw_unit": "K€"
@@ -4242,7 +4242,7 @@
       "value": 1.482,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 229,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0050 (solo (EN))",
       "raw_value": 1482.0,
       "raw_unit": "K€"
@@ -4296,7 +4296,7 @@
       "value": 24.605,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 231,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 24605.0,
       "raw_unit": "K€"
@@ -4305,7 +4305,7 @@
       "value": 154.647,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 231,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 154647.0,
       "raw_unit": "K€"
@@ -4314,7 +4314,7 @@
       "value": 94.597,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 231,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0040 (mapping, formule standard)",
       "raw_value": 94597.0,
       "raw_unit": "K€"
@@ -4323,7 +4323,7 @@
       "value": 11.966,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 231,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 11966.0,
       "raw_unit": "K€"
@@ -4332,7 +4332,7 @@
       "value": 32.381,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 231,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
       "raw_value": 32381.0,
       "raw_unit": "K€"
@@ -4350,7 +4350,7 @@
       "value": -76.586,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 231,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -76586.0,
       "raw_unit": "K€"
@@ -4361,7 +4361,7 @@
       "value": 284.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 249,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4370,7 +4370,7 @@
       "value": 757.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 249,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4397,7 +4397,7 @@
       "value": 6927.162,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 249,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 6927162.0,
       "raw_unit": "K€"
@@ -4406,7 +4406,7 @@
       "value": 4603.211,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 249,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 4603211.0,
       "raw_unit": "K€"
@@ -4415,7 +4415,7 @@
       "value": 1102.961,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 249,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0030 (solo (EN))",
       "raw_value": 1102961.0,
       "raw_unit": "K€"
@@ -4424,7 +4424,7 @@
       "value": 1220.99,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 249,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0040 (solo (EN))",
       "raw_value": 1220990.0,
       "raw_unit": "K€"
@@ -4487,7 +4487,7 @@
       "value": 187.212,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 251,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 187212.0,
       "raw_unit": "K€"
@@ -4496,7 +4496,7 @@
       "value": 5203.7,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 251,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 5203700.0,
       "raw_unit": "K€"
@@ -4505,7 +4505,7 @@
       "value": 308.383,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 251,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0040 (mapping, formule standard)",
       "raw_value": 308383.0,
       "raw_unit": "K€"
@@ -4514,7 +4514,7 @@
       "value": 150.926,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 251,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 150926.0,
       "raw_unit": "K€"
@@ -4523,7 +4523,7 @@
       "value": 786.898,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 251,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
       "raw_value": 786898.0,
       "raw_unit": "K€"
@@ -4541,7 +4541,7 @@
       "value": -858.663,
       "unit": "M€",
       "year": 2025,
-      "source_page": 15,
+      "source_page": 251,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -858663.0,
       "raw_unit": "K€"
@@ -4552,7 +4552,7 @@
       "value": 180.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 10,
+      "source_page": 266,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4561,7 +4561,7 @@
       "value": 543.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 10,
+      "source_page": 266,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4588,7 +4588,7 @@
       "value": 637.645,
       "unit": "M€",
       "year": 2025,
-      "source_page": 10,
+      "source_page": 266,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 637645.0,
       "raw_unit": "K€"
@@ -4606,7 +4606,7 @@
       "value": 90.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 10,
+      "source_page": 266,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0030 (solo (EN))",
       "raw_value": 90000.0,
       "raw_unit": "K€"
@@ -4615,7 +4615,7 @@
       "value": 49.08,
       "unit": "M€",
       "year": 2025,
-      "source_page": 10,
+      "source_page": 266,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0040 (solo (EN))",
       "raw_value": 49080.0,
       "raw_unit": "K€"
@@ -4633,7 +4633,7 @@
       "value": 22870.995,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 262,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 22870995.0,
       "raw_unit": "K€"
@@ -4642,7 +4642,7 @@
       "value": 194.563,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 262,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 194563.0,
       "raw_unit": "K€"
@@ -4660,7 +4660,7 @@
       "value": 3220.305,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 261,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 2 lignes trouvées",
       "raw_value": 3220305.0,
       "raw_unit": "K€"
@@ -4669,7 +4669,7 @@
       "value": 1382.131,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 261,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0310+R0320+R0330(non-vie)+R1610(vie), 2 lignes trouvées",
       "raw_value": 1382131.0,
       "raw_unit": "K€"
@@ -4678,7 +4678,7 @@
       "value": 70.581,
       "unit": "M€",
       "year": 2025,
-      "source_page": 13,
+      "source_page": 268,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 70581.0,
       "raw_unit": "K€"
@@ -4687,7 +4687,7 @@
       "value": 913.153,
       "unit": "M€",
       "year": 2025,
-      "source_page": 13,
+      "source_page": 268,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 913153.0,
       "raw_unit": "K€"
@@ -4705,7 +4705,7 @@
       "value": 41.798,
       "unit": "M€",
       "year": 2025,
-      "source_page": 13,
+      "source_page": 268,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 41798.0,
       "raw_unit": "K€"
@@ -4714,7 +4714,7 @@
       "value": 320.672,
       "unit": "M€",
       "year": 2025,
-      "source_page": 13,
+      "source_page": 268,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
       "raw_value": 320672.0,
       "raw_unit": "K€"
@@ -4732,7 +4732,7 @@
       "value": -221.762,
       "unit": "M€",
       "year": 2025,
-      "source_page": 13,
+      "source_page": 268,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -221762.0,
       "raw_unit": "K€"
@@ -4743,7 +4743,7 @@
       "value": 144.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 281,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0620/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4752,7 +4752,7 @@
       "value": 550.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 281,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0640/C0010 (solo (EN))",
       "raw_value": null,
       "raw_unit": null
@@ -4779,7 +4779,7 @@
       "value": 1260.938,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 281,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 1260938.0,
       "raw_unit": "K€"
@@ -4797,7 +4797,7 @@
       "value": 210.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 281,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0030 (solo (EN))",
       "raw_value": 210000.0,
       "raw_unit": "K€"
@@ -4806,7 +4806,7 @@
       "value": 98.164,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 281,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0040 (solo (EN))",
       "raw_value": 98164.0,
       "raw_unit": "K€"
@@ -4824,7 +4824,7 @@
       "value": 34442.453,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 277,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 34442453.0,
       "raw_unit": "K€"
@@ -4833,7 +4833,7 @@
       "value": 246.799,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 277,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 246799.0,
       "raw_unit": "K€"
@@ -4851,7 +4851,7 @@
       "value": 2412.346,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 276,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 2 lignes trouvées",
       "raw_value": 2412346.0,
       "raw_unit": "K€"
@@ -4860,7 +4860,7 @@
       "value": 2612.136,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 276,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0310+R0320+R0330(non-vie)+R1610(vie), 2 lignes trouvées",
       "raw_value": 2612136.0,
       "raw_unit": "K€"
@@ -4869,7 +4869,7 @@
       "value": 102.693,
       "unit": "M€",
       "year": 2025,
-      "source_page": 11,
+      "source_page": 283,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0130 (mapping, formule standard)",
       "raw_value": 102693.0,
       "raw_unit": "K€"
@@ -4878,7 +4878,7 @@
       "value": 1946.869,
       "unit": "M€",
       "year": 2025,
-      "source_page": 11,
+      "source_page": 283,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0010 (mapping, formule standard)",
       "raw_value": 1946869.0,
       "raw_unit": "K€"
@@ -4896,7 +4896,7 @@
       "value": 216.447,
       "unit": "M€",
       "year": 2025,
-      "source_page": 11,
+      "source_page": 283,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0020 (mapping, formule standard)",
       "raw_value": 216447.0,
       "raw_unit": "K€"
@@ -4905,7 +4905,7 @@
       "value": 479.247,
       "unit": "M€",
       "year": 2025,
-      "source_page": 11,
+      "source_page": 283,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
       "raw_value": 479247.0,
       "raw_unit": "K€"
@@ -4923,7 +4923,7 @@
       "value": -452.607,
       "unit": "M€",
       "year": 2025,
-      "source_page": 11,
+      "source_page": 283,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
       "raw_value": -452607.0,
       "raw_unit": "K€"
@@ -5125,7 +5125,7 @@
       "value": 195.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -5134,7 +5134,7 @@
       "value": 366.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -5161,7 +5161,7 @@
       "value": 27400.137,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": 27400137.0,
       "raw_unit": "K€"
@@ -5170,7 +5170,7 @@
       "value": 21333.788,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": 21333788.0,
       "raw_unit": "K€"
@@ -5179,7 +5179,7 @@
       "value": 748.955,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": 748955.0,
       "raw_unit": "K€"
@@ -5188,7 +5188,7 @@
       "value": 5312.775,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": 5312775.0,
       "raw_unit": "K€"
@@ -5197,7 +5197,7 @@
       "value": 4.619,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.1",
       "raw_value": 4619.0,
       "raw_unit": "K€"
@@ -5215,7 +5215,7 @@
       "value": 6.909,
       "unit": "M€",
       "year": 2025,
-      "source_page": 66,
+      "source_page": 53,
       "source_chapter": "D.2",
       "raw_value": 6909.0,
       "raw_unit": "K€"
@@ -5352,7 +5352,7 @@
       "value": 9190.405053,
       "unit": "M€",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 40,
       "source_chapter": "E.1",
       "raw_value": 9190405053.0,
       "raw_unit": "euros bruts"
@@ -5361,7 +5361,7 @@
       "value": 6519.185226,
       "unit": "M€",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 40,
       "source_chapter": "E.1",
       "raw_value": 6519185226.0,
       "raw_unit": "euros bruts"
@@ -5370,7 +5370,7 @@
       "value": 1150.380725,
       "unit": "M€",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 40,
       "source_chapter": "E.1",
       "raw_value": 1150380725.0,
       "raw_unit": "euros bruts"
@@ -5379,7 +5379,7 @@
       "value": 1520.839103,
       "unit": "M€",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 40,
       "source_chapter": "E.1",
       "raw_value": 1520839103.0,
       "raw_unit": "euros bruts"
@@ -5797,7 +5797,7 @@
       "value": 601.531,
       "unit": "M€",
       "year": 2025,
-      "source_page": 2,
+      "source_page": 11,
       "source_chapter": "D.2",
       "raw_value": 601531.0,
       "raw_unit": "K€"
@@ -5934,7 +5934,7 @@
       "value": 1710.298,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": 1710298.0,
       "raw_unit": "K€"
@@ -5943,7 +5943,7 @@
       "value": 60.178,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": 60178.0,
       "raw_unit": "K€"
@@ -5952,7 +5952,7 @@
       "value": 32.831,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": 32831.0,
       "raw_unit": "K€"
@@ -5961,7 +5961,7 @@
       "value": 263.194,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": 263194.0,
       "raw_unit": "K€"
@@ -5970,7 +5970,7 @@
       "value": 1349.696,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": 1349696.0,
       "raw_unit": "K€"
@@ -5979,7 +5979,7 @@
       "value": -891.516,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": -891516.0,
       "raw_unit": "K€"
@@ -5988,7 +5988,7 @@
       "value": 118.928,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 106,
       "source_chapter": "E.2",
       "raw_value": 118928.0,
       "raw_unit": "K€"
@@ -6015,7 +6015,7 @@
       "value": 343.252,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 94,
       "source_chapter": "D.2",
       "raw_value": 343252.0,
       "raw_unit": "K€"
@@ -6107,7 +6107,7 @@
       "value": 12077.364,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": 12077364.0,
       "raw_unit": "K€"
@@ -6116,7 +6116,7 @@
       "value": 7607.617,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": 7607617.0,
       "raw_unit": "K€"
@@ -6125,7 +6125,7 @@
       "value": 8859.509,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": 8859509.0,
       "raw_unit": "K€"
@@ -6134,7 +6134,7 @@
       "value": 1352.876,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": 1352876.0,
       "raw_unit": "K€"
@@ -6143,7 +6143,7 @@
       "value": 694.793,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": 694793.0,
       "raw_unit": "K€"
@@ -6152,7 +6152,7 @@
       "value": 1058.463,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": 1058463.0,
       "raw_unit": "K€"
@@ -6161,7 +6161,7 @@
       "value": -10324.898,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 95,
       "source_chapter": "E.2",
       "raw_value": -10324898.0,
       "raw_unit": "K€"
@@ -6197,7 +6197,7 @@
       "value": 89296.604,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 91,
       "source_chapter": "D.2",
       "raw_value": 89296604.0,
       "raw_unit": "K€"
@@ -6208,7 +6208,7 @@
       "value": 192.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 88,
+      "source_page": 89,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -6217,7 +6217,7 @@
       "value": 430.99999999999994,
       "unit": "pct",
       "year": 2025,
-      "source_page": 88,
+      "source_page": 89,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -6244,7 +6244,7 @@
       "value": 4266.905,
       "unit": "M€",
       "year": 2025,
-      "source_page": 88,
+      "source_page": 89,
       "source_chapter": "E.1",
       "raw_value": 4266905.0,
       "raw_unit": "K€"
@@ -6253,7 +6253,7 @@
       "value": 4266.905,
       "unit": "M€",
       "year": 2025,
-      "source_page": 88,
+      "source_page": 89,
       "source_chapter": "E.1",
       "raw_value": 4266905.0,
       "raw_unit": "K€"
