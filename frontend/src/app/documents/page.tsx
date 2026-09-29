@@ -189,6 +189,7 @@ export default function DocumentsPage() {
                 key={urlPdf}
                 url={urlPdf}
                 initialPage={pageCible ?? 1}
+                mode="scroll"
               />
             ) : (
               <PdfIndisponible societe={societeSelectionnee} />
