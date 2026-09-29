@@ -3,6 +3,13 @@
 Suivi de progression pour le prompt de nuit (3 tâches). Mis à jour au
 fur et à mesure — permet de reprendre proprement en cas de coupure.
 
+**STATUT FINAL : les 3 tâches sont FAITES.** Session interrompue une
+fois (limite d'usage) entre les tâches 1 et 3, reprise proprement
+grâce à ce fichier — le commit de la Tâche 3 n'était pas encore passé
+au moment de la coupure, refait à la reprise sans rien perdre.
+Décisions 112 (Tâche 1), 113 (Tâche 3), 114 (Tâche 2) dans
+DECISIONS.md. Tout est commité et poussé sur `origin/master`.
+
 ## Corrections faites au prompt avant de commencer
 
 - Les chemins donnés (`test_markdrop/extract_kpis.py`,
