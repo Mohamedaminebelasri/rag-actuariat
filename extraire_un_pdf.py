@@ -503,6 +503,27 @@ def main():
         suivi.etape("validation", "Exécution des contrôles actuariels (cohérence interne, signes, magnitude)...")
         n_passed, controles = valider(args.societe, args.annee)
 
+        # Décision 112 (nuit 28/09) — source_page tel qu'écrit ci-dessus
+        # (_page_source) pointe sur la 1re page du GABARIT QRT, pas
+        # forcément la page où la ligne précise du KPI est imprimée (un
+        # gabarit peut s'étendre sur plusieurs pages physiques). Recherche
+        # la page réelle par correspondance de la valeur brute + code de
+        # ligne QRT connu (même outil que la correction rétroactive des 34
+        # sociétés) — jamais une page devinée : ambigu/introuvable laisse
+        # source_page inchangé.
+        suivi.etape("ecriture_db", "Vérification des pages sources (recherche de la page réelle par valeur)...")
+        try:
+            from corriger_source_page import corriger_pour_societe
+            conn_pages = sqlite3.connect(DB_PATH)
+            conn_pages.row_factory = sqlite3.Row
+            _j, n_pages_corrigees, _a, _i = corriger_pour_societe(conn_pages, args.societe, pdf_path)
+            conn_pages.commit()
+            conn_pages.close()
+            if n_pages_corrigees:
+                print(f"[ecriture_db] {n_pages_corrigees} source_page corrigé(s) après vérification")
+        except Exception as e:
+            print(f"!!! vérification source_page ignorée (non bloquant) : {e}", file=sys.stderr)
+
         suivi.etape("ecriture_db", "Régénération des exports frontend (kpi-sources.json, donnees-extraites.json)...")
         from export_kpis_for_frontend import export_kpis, export_donnees_extraites
         export_kpis()
