@@ -117,6 +117,12 @@ def export_donnees_extraites():
             "type": type_brut,
             "groupe": groupe,
             "country": c["country"],
+            # Décision 113 (nuit) — pas encore exposés jusqu'ici alors que
+            # déjà réels en base depuis Décision 103 (pas des valeurs de
+            # démo) : l'onglet Analyse en a besoin pour filtrer/avertir
+            # sur la comparabilité entre sociétés.
+            "typeActivite": c["type_activite"],
+            "scrMethod": c["scr_method"],
         })
         kpis_par_societe[c["name"]] = {}
 

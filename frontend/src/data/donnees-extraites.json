@@ -1,243 +1,311 @@
 {
-  "genereLe": "2026-09-29T01:06:07",
+  "genereLe": "2026-09-29T01:09:38",
   "societes": [
     {
       "id": 67,
       "name": "AG.Mut",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mutuelle",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 64,
       "name": "AG2R Prevoyance",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 61,
       "name": "Abeille Epargne Retraite",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 62,
       "name": "Abeille IARD Sante",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 60,
       "name": "Abeille Vie",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 45,
       "name": "Aema Groupe",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 56,
       "name": "Aesio Mutuelle",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 107,
       "name": "Allianz Vie",
       "type": "SA",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "modele_interne_partiel"
     },
     {
       "id": 65,
       "name": "Arpege Prevoyance",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 3,
       "name": "CNP Assurances",
       "type": "SA",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 103,
       "name": "Cardif Assurance Vie",
       "type": "SA",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 104,
       "name": "Cardif Assurances Risques Divers",
       "type": "SA",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 106,
       "name": "Covéa",
       "type": "mutuelle",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 101,
       "name": "Crédit Agricole Assurances",
       "type": "groupe",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 1,
       "name": "Groupama",
       "type": "mutuelle",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "modele_interne_partiel"
     },
     {
       "id": 69,
       "name": "La Mondiale",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 70,
       "name": "La Mondiale Europartner",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 71,
       "name": "La Mondiale Partenaire",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 44,
       "name": "MACIF SAM",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 10,
       "name": "MACSF prévoyance",
       "type": "mutuelle",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 105,
       "name": "MAIF",
       "type": "mutuelle",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": null
     },
     {
       "id": 72,
       "name": "MGEN",
       "type": "mutuelle",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 58,
       "name": "MMJ",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mutuelle",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 57,
       "name": "MNPAF",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mutuelle",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 53,
       "name": "Macif Sante Prevoyance",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 52,
       "name": "Macif Vie",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 55,
       "name": "Macifilia",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 59,
       "name": "Nuoma",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mutuelle",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 50,
       "name": "Predica",
       "type": "SA",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 66,
       "name": "Prima",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mutuelle",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 63,
       "name": "SGAM AG2R LA MONDIALE",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 102,
       "name": "Sogécap",
       "type": "groupe",
       "groupe": null,
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 54,
       "name": "Themis",
       "type": "mutuelle",
       "groupe": "Aéma Groupe",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard"
     },
     {
       "id": 68,
       "name": "VIASANTE Mutuelle",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France"
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
     }
   ],
   "kpisParSociete": {
