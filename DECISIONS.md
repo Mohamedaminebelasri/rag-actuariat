@@ -7572,3 +7572,91 @@ dépôt ni son historique — vérifié avant de l'écrire) avec la section
 "Bugs à corriger — Backend" demandée : bug valeurs brutes marqué
 résolu, décalage page noté déjà corrigé côté frontend, nouvel endpoint
 documenté.
+
+## Décision 112 — TÂCHE 1 (nuit) : correction source_page + réfutation du diagnostic "Catégorie A" du prompt de nuit
+
+CONTEXTE : prompt de nuit signalant 4 catégories de problèmes sur
+`source_page` (A: multi-entités "le plus grave" — pages titre QRT au
+lieu de la donnée réelle ; B: décalage ±1 entité unique ; C: mauvaise
+section ; D: 13 sociétés à NULL), avec diagnostic technique déjà
+correct (repris de mon propre diagnostic de la nuit précédente).
+Chemins de fichiers donnés dans le prompt FAUX (`test_markdrop/
+extract_kpis.py` etc. — ces scripts sont à la racine, vérifié avant de
+commencer, pas supposé).
+
+### Outil : `corriger_source_page.py`
+
+Recherche RÉTROACTIVE et générique (pas une correction par script,
+trop risqué sur 15+ scripts différents) : pour chaque KPI non-NULL
+d'une société à PDF en texte natif, cherche la page où la valeur BRUTE
+(`raw_value` pour M€, `value` pour pct) apparaît réellement, désambiguïsée
+par les codes de ligne QRT connus (`KPI_QRT_MAPPING`, déjà vérifiés par
+l'extraction réelle — pas des codes inventés) quand la valeur seule
+matche plusieurs pages (mention narrative + ligne QRT réelle).
+**Jamais une page devinée** : 0 ou ≥2 candidats après filtre -> page
+laissée inchangée, journalisée.
+
+2 bugs trouvés et corrigés en construisant l'outil :
+- Comparaison d'égalité flottante naïve (`valeur == int(valeur)`) ratait
+  les artefacts d'arrondi (`430.99999999999994` pour 431, résultat de
+  `×100/÷1`) — remplacée par une comparaison à l'arrondi avec tolérance.
+- 1re passe (valeur seule) : 128 KPIs ambigus sur ~381 (valeur reprise
+  en résumé narratif EN PLUS de la ligne QRT) — réduit à 63 après le
+  filtre par code de ligne.
+
+**Résultat sur les sociétés à PDF texte natif** (hors 13 entités Aéma,
+100% image) : 171 `source_page` corrigés, 63 ambigus (inchangés), 129
+introuvables (inchangés) — dominés par les KPIs **dérivés/sommés**
+(`best_estimate`, `marge_risque`, `provisions_techniques`,
+`primes_acquises_brutes`, `charge_sinistres`) qui ne peuvent
+structurellement PAS apparaître comme un nombre unique imprimé (ce
+sont des sommes de plusieurs lignes QRT) — limite inhérente, pas un
+bug de l'outil, jamais forcé.
+
+### Réfutation du diagnostic "Catégorie A" (Aéma, 100% image) — vérifié, pas supposé
+
+Les 4 exemples cités dans le prompt de nuit comme "le plus grave" ont
+été vérifiés un par un en rendant la page PDF réellement stockée
+(`fitz.get_pixmap`) et en LISANT l'image :
+
+| Exemple cité | Page stockée | Affirmation du prompt | Vérifié sur la page stockée |
+|---|---|---|---|
+| MNPAF ratio_scr 283% | 547 | "page titre", vrai ~262 | **R0620 = 283% imprimé sur la page 547 elle-même** |
+| La Mondiale Europartner fonds_propres 637 645 | 266 (déjà corrigé par l'outil ci-dessus, était 10) | "page organigramme", vrai ~87 | **R0500 = 637 645 imprimé sur la page 266** |
+| Aéma Groupe fonds_propres_t3 485 268 | 446 | "page titre", vrai ~64 | **R0660/Niveau 3 = 485 268 imprimé sur la page 446** |
+| Macifilia fonds_propres 18 411 | 518 | "page titre", vrai ~213 | **R0540 = 18 411 imprimé sur la page 518** |
+
+**4/4 exemples cités étaient déjà corrects avant toute intervention de
+cette nuit** — le diagnostic "Catégorie A" du prompt ne correspond pas
+à l'état réel de `kpis.db`. Étendu à un contrôle programmatique sur
+les **273** lignes KPI non-NULL des 13 entités Aéma (les pages
+gardent un petit texte natif — le TITRE seulement, ex. "MACIFILIA
+S.23.01.01.01 FONDS PROPRES" — même si les valeurs elles-mêmes sont en
+image) : vérifie que la page stockée porte bien le nom de la BONNE
+entité et un gabarit plausible pour ce KPI. **273/273 passent.** Aucune
+correction nécessaire côté Aéma — probablement parce que
+`aema_entites.py::ENTITES_KPIS` a été rempli par une vraie lecture
+manuelle humaine (docstring du script), contrairement au bug
+`_page_source()` (1re page du gabarit) qui touche les scripts
+automatisés.
+
+### `extraire_un_pdf.py` (futures extractions)
+
+Ajout d'un appel à `corriger_pour_societe()` (fonction réutilisable
+extraite de l'outil ci-dessus) juste après l'insertion en base, avant
+la régénération des exports — toute future extraction à chaud
+bénéficie automatiquement de la même correction, non bloquant en cas
+d'erreur (n'interrompt jamais l'extraction). Testé end-to-end (société
+jetable, nettoyée après) : 5 `source_page` corrigés automatiquement
+sur l'extraction de test.
+
+### État final
+
+`source_page` NULL sur KPI non-NULL : 87 → **53**, concentré sur les
+KPIs dérivés/sommés (CNP/MACSF/MAIF/Covéa en tête) + un reliquat de 2
+par entité AG2R (même limite). Combler ces 53 nécessiterait de retracer
+manuellement, pour chaque script, quelle(s) page(s) QRT ont
+effectivement servi à calculer la somme — hors périmètre de ce
+correctif rétroactif générique.
+
+`donnees-extraites.json` régénéré avec les `pageSource` corrigés.
