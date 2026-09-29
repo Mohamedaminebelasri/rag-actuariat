@@ -7660,3 +7660,116 @@ effectivement servi à calculer la somme — hors périmètre de ce
 correctif rétroactif générique.
 
 `donnees-extraites.json` régénéré avec les `pageSource` corrigés.
+
+## Décision 113 — TÂCHE 3 (nuit) : réfutation "métadonnées inventées" + export typeActivite/scrMethod
+
+CONTEXTE : prompt de nuit affirmant `type_activite`/`scr_method` sur
+`companies` "contiennent des valeurs inventées pour la démo".
+**Vérifié FAUX** : ces champs ont déjà été remplis à partir de vraies
+données dès Décision 103 (plus tôt cette nuit) — `detecter_templates()`
+pour `scr_method`, règle dérivée des KPIs `scr_souscription_vie/nonvie`
+réellement extraits pour `type_activite`. Seul `analyse-demo.ts`
+(onglet Analyse, frontend) reste sur des données inventées — un
+fichier DIFFÉRENT, déjà connu et documenté (Décision 105).
+
+Re-vérifié ce soir par recherche textuelle directe dans 7 PDF (chapitre
+A/pages de garde), sans se contenter de faire confiance à Décision
+103 : Groupama ("modèle interne partiel **groupe**" — texte explicite,
+confirme la valeur déjà stockée) ; Covéa et Crédit Agricole Assurances
+(mentions explicites "assurance non-vie" ET "vie et santé"/"assurance
+de personnes" — confirme "Mixte") ; MGEN (santé et prévoyance,
+cohérent). **Aucune divergence trouvée entre le PDF et la valeur déjà
+stockée.**
+
+Ambiguïté identifiée et laissée EXPLICITEMENT non résolue (jamais
+deviné) : Allianz Vie `scr_method` — recherche exhaustive du mot
+"partiel" dans les 93 pages ne trouve aucune déclaration propre à
+Allianz Vie sur l'étendue de son modèle interne (seule occurrence :
+le nom générique du gabarit EIOPA S.25.05.21, qui s'appelle "modèle
+interne (partiel ou intégral)" pour TOUTE société l'utilisant, pas une
+déclaration spécifique). Indice indirect fort en faveur d'un modèle
+COMPLET (toutes les briques SCR principales fusionnées/opaques, cf.
+Décision 084/101) mais pas une confirmation textuelle — valeur laissée
+inchangée.
+
+**Correctif réel apporté** : `typeActivite`/`scrMethod` n'étaient
+jusqu'ici PAS exposés dans `donnees-extraites.json` (seuls `type`/
+`groupe`/`country` l'étaient), alors que l'onglet Analyse en a besoin
+pour le filtrage/avertissement de comparabilité demandé — ajoutés à
+`export_kpis_for_frontend.py::export_donnees_extraites()`.
+
+## Décision 114 — TÂCHE 2 (nuit) : PdfPageViewer, scroll continu (onglet Documents)
+
+CONTEXTE : refactoring explicitement autorisé à toucher le frontend
+("EXCEPTION"), scope limité à l'onglet Documents — le modal KPI garde
+le mode page-par-page (vérifie seulement 1-2 pages, pas besoin de
+défilement continu).
+
+### Architecture
+
+`PdfPageViewer` devient un point d'entrée qui choisit entre
+`PdfSingleViewer` (implémentation historique, **strictement
+inchangée**, extraite telle quelle) et `PdfScrollViewer` (nouveau,
+défilement continu), via une prop `mode?: "single" | "scroll"`
+**par défaut `"single"`** — `kpi-pdf-modal.tsx` n'a donc AUCUNE
+modification à faire, son comportement (`defaultZoom={lastKpiZoom}`,
+`onZoomChange`) reste identique par construction. Seul
+`documents/page.tsx` passe `mode="scroll"` — unique changement
+frontend en dehors du composant lui-même.
+
+`PdfScrollViewer` : toutes les pages sont des "slots" absolument
+positionnés (hauteur/largeur connues dès le chargement des métadonnées
+de TOUTES les pages, avant tout rendu — nécessaire pour une scrollbar
+correcte dès le départ, même sur 621 pages). Seules les pages dans la
+fenêtre tampon (page visible ±3) portent un `<canvas>` réellement
+monté ; les autres sont un `<div>` vide de la bonne taille — React
+démonte le canvas en dehors de la fenêtre (libère la mémoire, pas
+juste un `style=display:none`). Un `IntersectionObserver` par slot met
+à jour la page courante et la fenêtre tampon au fil du scroll.
+
+### 2 bugs réels trouvés et corrigés en testant dans un vrai navigateur
+
+Conformément à la consigne de test des changements UI : serveur `npm
+run dev` lancé, testé sur `/documents` avec Allianz Vie (93 pages) —
+pas seulement un `tsc`/`eslint` propre.
+
+1. **Gel de l'onglet sur un saut lointain** (`goToPage` avec
+   `behavior: "smooth"`) : un saut page 2 → 80 anime le scroll sur des
+   dizaines de slots, chacun déclenchant l'`IntersectionObserver` à
+   chaque frame de l'animation → tempête de recalculs de fenêtre
+   tampon + rendus canvas annulés/relancés en boucle, jusqu'à geler
+   l'onglet (`CDP Page.captureScreenshot timed out`, constaté
+   plusieurs fois en test réel). Corrigé : `behavior: "auto"` (saut
+   instantané, un seul recalcul à l'arrivée).
+2. **`setVisibleRange({...})` avec un nouvel objet à chaque callback
+   de l'observer**, même quand `start`/`end` ne changeaient pas —
+   l'effet de rendu (dépendance `[visibleRange, layout]`) se
+   redéclenchait en boucle, annulant sans fin des rendus jamais
+   terminés (constaté : `renderedScale` jamais posé après un saut,
+   nouveau gel du navigateur reproduit une 2e fois). Corrigé par un
+   setter stable qui ne déclenche une mise à jour que si les valeurs
+   changent réellement (`prev.start===next.start && prev.end===next.end`).
+
+**Fix additionnel de robustesse** (découvert en creusant le bug 2) :
+tester a révélé que l'`IntersectionObserver` ne se redéclenche pas de
+façon fiable après un saut instantané loin de la position actuelle
+(0 callback reçu même avec une géométrie correcte, vérifié avec un
+observer de test indépendant). `goToPage` et le scroll initial fixent
+donc directement `currentPage`/`pageInput`/`visibleRange` plutôt que
+de dépendre uniquement de l'observer pour ce cas précis — l'observer
+reste la seule source pour le scroll naturel de l'utilisateur.
+
+### Validé en navigateur réel (pas seulement `tsc`/`eslint`)
+
+- Scroll naturel (molette) : page 1→2, indicateur mis à jour
+  correctement.
+- Saut lointain (page 2→80, saisie + Entrée) : scrollTop correct,
+  fenêtre tampon exactement 7 pages (77-83, ±3 autour de 80), contenu
+  réellement rendu visible (capture d'écran : texte du PDF affiché).
+- Retour page 1 : fenêtre tampon redevient 1-4, canvas de la page 80
+  bien démonté (libération mémoire confirmée par inspection DOM).
+- Modal KPI (`base-donnees` → Allianz Vie → Ratio SCR) : **totalement
+  inchangé** — mode page-par-page, saute directement à la page 89
+  (cohérent avec le correctif Décision 112), zoom 300% préservé,
+  contenu exact affiché (R0500/R0540 = 4 266 905, déjà vérifié
+  Décision 112).
