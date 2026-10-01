@@ -7939,3 +7939,112 @@ session future.
 et renvoi à cette décision), `kpis.db` (mêmes 3 corrections),
 `frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
 (régénérés).
+
+## Décision 117 — Audit qualité systématique : 6 nouvelles valeurs fausses trouvées (bug "ligne adjacente" confirmé systématique)
+
+CONTEXTE : prompt de nuit demandant un audit qualité des 273 KPIs
+Aéma "image/rendu" + un test aléatoire de 20 KPIs toutes sources, pour
+vérifier si le bug "ligne adjacente" trouvé 2 fois la nuit précédente
+(Décision 116, MMJ et Thémis) était isolé ou systématique.
+
+### Méthode
+
+1. Vérification arithmétique automatisée (fonds_propres=somme des
+   tiers, ratio_scr/ratio_mcr recalculés, scr_total ≥ modules
+   individuels, scr_diversification ≤ 0) sur les 13 entités Aéma.
+2. Vérification visuelle (rendu PNG + lecture directe) de
+   `primes_acquises_brutes` et `charge_sinistres` pour les 13 entités
+   (les 2 KPIs identifiés à risque), complétée par 4 pages S.25.01
+   entières et 1 page S.28.
+3. Test aléatoire de 20 KPIs toutes sources (seed=2026 fixé).
+
+### Résultat de la vérification arithmétique : 0 vrai bug, 8 faux positifs tous expliqués
+
+Le check naïf a signalé 4 entités où un module SCR individuel dépasse
+`scr_total`, et 4 où `ratio_mcr` ne recalcule pas depuis
+`fonds_propres_eligibles`. Vérifiées une par une par rendu PNG : les 8
+sont légitimes.
+- `scr_total` < somme des modules bruts à cause de la capacité
+  d'absorption des pertes des provisions techniques et des impôts
+  différés (lignes R0140/R0150, template S.25.01.2x.02) — mécanisme
+  réel, vérifié recalculer EXACTEMENT au stockage près sur les 4 cas
+  (ex. Macif Vie : 3 963 973 − 3 191 149 − 71 910 + 113 265 = 814 179,
+  exact).
+- `ratio_mcr` utilise R0550 (fonds propres éligibles pour le MCR,
+  restriction Tier 2/3 différente), pas R0540 (ce que nous stockons
+  comme `fonds_propres_eligibles`, éligible pour le SCR) — les 2
+  chiffres diffèrent par construction du template QRT S.23.01, donc le
+  ratio recalculé depuis R0540 ne matche jamais exactement R0550/mcr.
+  Vérifié sur Abeille Vie : R0550=4 256 915 348, 4 256 915 348/818 850
+  670=519,9%≈520% stocké.
+
+**Enseignement** : les checks arithmétiques "évidents" sur les
+rapports Solvabilité II ignorent facilement 2 mécanismes réels (LAC
+TP/DT, distinction R0540/R0550) — une vérification automatisée seule,
+sans retour au PDF, aurait produit 8 fausses alertes ou pire, 8
+"corrections" incorrectes si on avait fait confiance à l'arithmétique
+naïve. Confirme encore la discipline "vérifier sur le PDF avant de
+conclure", déjà centrale aux Décisions 112/115/116.
+
+### Résultat de la vérification visuelle ciblée : 6 vraies valeurs fausses trouvées
+
+Toutes sur `primes_acquises_brutes`/`charge_sinistres`, toutes des
+variantes du même bug de fond (ligne ou colonne ADJACENTE confondue
+sur un tableau QRT S.05.01.02 tourné à 90°, déjà identifié Décision
+116 sur MMJ/Thémis) :
+
+- **MACIF SAM** (primes et charge) : incluait en trop R0240/R0340
+  ("Part des réassureurs" — une ligne de DÉDUCTION pour obtenir le
+  Net, jamais une composante à ADDITIONNER au Brut). Corrigé :
+  4 854 620 → 4 446 321 K€ (primes) ; 3 429 372 → 3 263 184 K€
+  (charge).
+- **Abeille IARD Santé** (charge_sinistres) : composante non-vie
+  confondait R0300 (Primes acquises Net) avec R0310 (Charge sinistres
+  Brut). Corrigé : 1 999 115 035 → 1 464 937 847 €.
+- **Abeille Épargne Retraite** (primes_acquises_brutes) : confondait
+  R1500 (Primes ÉMISES Net) avec R1510 (Primes ACQUISES Brut). Corrigé
+  : 1 262 145 906 → 1 264 646 880 €.
+- **Aéma Groupe** (primes_acquises_brutes) : composante vie confondait
+  R1500 (Net) avec R1510 (Brut). Corrigé : 18 552 020 → 18 600 014 K€.
+- **Abeille Vie** (primes_acquises_brutes) : composante vie confondait
+  R1600 (Net) avec R1510 (Brut). Corrigé : 3 971 475 103 →
+  3 984 172 891 €.
+
+Chaque correction vérifiée par rendu PNG + lecture directe de la ligne
+ET section concernées (jamais devinée), recoupée arithmétiquement
+(non-vie + vie = total stocké, à l'unité près) avant application.
+
+**Entités vérifiées SANS bug** (même KPIs, même méthode) : Macif Santé
+Prévoyance, Aésio Mutuelle, Macif Vie, Macifilia, MNPAF, Nuoma (déjà
+V3). Couverture désormais complète : les 26 KPIs
+`primes_acquises_brutes`/`charge_sinistres` des 13 entités Aéma ont
+tous été vérifiés par lecture directe du PDF (V3+V4 combinées).
+
+### Résultat du test aléatoire (Tâche 2, 20 KPIs, seed=2026)
+
+**20/20 corrects** : 18 par correspondance texte/visuel directe, 2 par
+recoupement arithmétique exact (La Mondiale Europartner et Crédit
+Agricole Assurances / `provisions_techniques`, tous deux des sommes
+calculées best_estimate+marge_risque dont chaque composant a été
+vérifié individuellement). Aucune nouvelle anomalie — cohérent avec le
+fait que la Tâche 1 avait déjà couvert la zone à risque principale.
+
+### Portée restante non couverte
+
+Les 273 KPIs Aéma n'ont pas tous été vérifiés visuellement un par un
+(impossible en une session) — la vérification ciblée a porté sur les 2
+KPIs à risque identifiés (primes/charge, 26/26 couverts) + les KPIs
+SCR/MCR/fonds_propres des entités déjà flagged par les checks
+arithmétiques (tous légitimes) + un échantillon aléatoire de 20. Les
+KPIs non spécifiquement revérifiés (best_estimate, marge_risque,
+scr_marche, etc. pour les entités jamais flagged ni échantillonnées)
+restent sous la confiance accordée par les recoupements internes déjà
+documentés dans les commentaires `aema_entites.py` (Décision 083) —
+pas une garantie à 100%, mais pas un point faible identifié non plus.
+
+### Fichiers modifiés
+
+`aema_entites.py` (6 valeurs corrigées, commentées avec justification
+et renvoi à cette décision), `kpis.db` (mêmes 6 corrections),
+`frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
+(régénérés).
