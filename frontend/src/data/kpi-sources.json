@@ -592,21 +592,21 @@
       "raw_unit": "K€"
     },
     "primes_acquises_brutes": {
-      "value": 4854.62,
+      "value": 4446.321,
       "unit": "M€",
       "year": 2025,
       "source_page": 455,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total",
-      "raw_value": 4854620.0,
+      "raw_value": 4446321.0,
       "raw_unit": "K€"
     },
     "charge_sinistres": {
-      "value": 3429.372,
+      "value": 3263.184,
       "unit": "M€",
       "year": 2025,
       "source_page": 455,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0310+R0320+R0330 (non-vie) + R1610 (vie), colonne Total",
-      "raw_value": 3429372.0,
+      "raw_value": 3263184.0,
       "raw_unit": "K€"
     },
     "fonds_propres_eligibles": {
@@ -783,12 +783,12 @@
       "raw_unit": "K€"
     },
     "primes_acquises_brutes": {
-      "value": 18552.02,
+      "value": 18600.014,
       "unit": "M€",
       "year": 2025,
       "source_page": 442,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total",
-      "raw_value": 18552020.0,
+      "raw_value": 18600014.0,
       "raw_unit": "K€"
     },
     "charge_sinistres": {
@@ -2693,12 +2693,12 @@
       "raw_unit": "euros bruts"
     },
     "primes_acquises_brutes": {
-      "value": 3971.475103,
+      "value": 3984.172891,
       "unit": "M€",
       "year": 2025,
       "source_page": 580,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01(non-vie,R0210/Total=85683521,p.580)+S.05.01.02.02(vie,R1510/Total=3885791582,p.581)",
-      "raw_value": 3971475103.0,
+      "raw_value": 3984172891.0,
       "raw_unit": "euros bruts"
     },
     "charge_sinistres": {
@@ -2884,12 +2884,12 @@
       "raw_unit": "euros bruts"
     },
     "primes_acquises_brutes": {
-      "value": 1262.145906,
+      "value": 1264.64688,
       "unit": "M€",
       "year": 2025,
       "source_page": 595,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.02 (vie, seule activité), R1510/Total",
-      "raw_value": 1262145906.0,
+      "raw_value": 1264646880.0,
       "raw_unit": "euros bruts"
     },
     "charge_sinistres": {
@@ -3084,12 +3084,12 @@
       "raw_unit": "euros bruts"
     },
     "charge_sinistres": {
-      "value": 1999.115035,
+      "value": 1464.937847,
       "unit": "M€",
       "year": 2025,
       "source_page": 606,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01(non-vie,R0310/Total=2025194914,p.606)+S.05.01.02.02(vie,R1610/Total=-26079879,p.607, rentes de sinistres non-vie converties)",
-      "raw_value": 1999115035.0,
+      "raw_value": 1464937847.0,
       "raw_unit": "euros bruts"
     },
     "fonds_propres_eligibles": {
