@@ -404,7 +404,7 @@
       "value": 439.837,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 61,
       "source_chapter": "E.2",
       "raw_value": 439837.0,
       "raw_unit": "K€"
@@ -422,7 +422,7 @@
       "value": 2291.367,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 61,
       "source_chapter": "E.1",
       "raw_value": 2291367.0,
       "raw_unit": "K€"
@@ -431,7 +431,7 @@
       "value": 2291.367,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 61,
       "source_chapter": "E.1",
       "raw_value": 2291367.0,
       "raw_unit": "K€"
@@ -577,7 +577,7 @@
       "value": 5969.795,
       "unit": "M€",
       "year": 2025,
-      "source_page": 453,
+      "source_page": 96,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Meilleure estimation",
       "raw_value": 5969795.0,
       "raw_unit": "K€"
@@ -586,7 +586,7 @@
       "value": 341.059,
       "unit": "M€",
       "year": 2025,
-      "source_page": 453,
+      "source_page": 96,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Marge de risque",
       "raw_value": 341059.0,
       "raw_unit": "K€"
@@ -622,7 +622,7 @@
       "value": 7872.072,
       "unit": "M€",
       "year": 2025,
-      "source_page": 463,
+      "source_page": 101,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 7872072.0,
       "raw_unit": "K€"
@@ -640,7 +640,7 @@
       "value": 751.973,
       "unit": "M€",
       "year": 2025,
-      "source_page": 463,
+      "source_page": 101,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau2",
       "raw_value": 751973.0,
       "raw_unit": "K€"
@@ -658,7 +658,7 @@
       "value": 2964.22,
       "unit": "M€",
       "year": 2025,
-      "source_page": 463,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0580 — confirmé p.464 (S.25.01.21.02/R0220) et p.467 (S.28.01.01.05/R0310)",
       "raw_value": 2964220.0,
       "raw_unit": "K€"
@@ -667,7 +667,7 @@
       "value": 746.13,
       "unit": "M€",
       "year": 2025,
-      "source_page": 463,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0600 — confirmé p.467 (S.28.01.01.05/R0400)",
       "raw_value": 746130.0,
       "raw_unit": "K€"
@@ -694,7 +694,7 @@
       "value": 2713.693,
       "unit": "M€",
       "year": 2025,
-      "source_page": 464,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0010",
       "raw_value": 2713693.0,
       "raw_unit": "K€"
@@ -703,7 +703,7 @@
       "value": 63.361,
       "unit": "M€",
       "year": 2025,
-      "source_page": 464,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0020",
       "raw_value": 63361.0,
       "raw_unit": "K€"
@@ -712,7 +712,7 @@
       "value": 40.522,
       "unit": "M€",
       "year": 2025,
-      "source_page": 464,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0030",
       "raw_value": 40522.0,
       "raw_unit": "K€"
@@ -721,7 +721,7 @@
       "value": 235.321,
       "unit": "M€",
       "year": 2025,
-      "source_page": 464,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0040",
       "raw_value": 235321.0,
       "raw_unit": "K€"
@@ -730,7 +730,7 @@
       "value": 1464.01,
       "unit": "M€",
       "year": 2025,
-      "source_page": 464,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0050",
       "raw_value": 1464010.0,
       "raw_unit": "K€"
@@ -739,7 +739,7 @@
       "value": -1035.321,
       "unit": "M€",
       "year": 2025,
-      "source_page": 464,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0060",
       "raw_value": -1035320.9999999999,
       "raw_unit": "K€"
@@ -748,7 +748,7 @@
       "value": 148.152,
       "unit": "M€",
       "year": 2025,
-      "source_page": 465,
+      "source_page": 102,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.02/R0130",
       "raw_value": 148152.0,
       "raw_unit": "K€"
@@ -757,7 +757,7 @@
       "value": 6310.854,
       "unit": "M€",
       "year": 2025,
-      "source_page": 453,
+      "source_page": 96,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — best_estimate + marge_risque",
       "raw_value": 6310854.0,
       "raw_unit": "K€"
@@ -777,7 +777,7 @@
       "value": 2260.715,
       "unit": "M€",
       "year": 2025,
-      "source_page": 440,
+      "source_page": 58,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 5 segments Marge de risque",
       "raw_value": 2260715.0,
       "raw_unit": "K€"
@@ -804,7 +804,7 @@
       "value": 12860.966,
       "unit": "M€",
       "year": 2025,
-      "source_page": 446,
+      "source_page": 64,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Total (y compris autres secteurs financiers)",
       "raw_value": 12860966.0,
       "raw_unit": "K€"
@@ -822,7 +822,7 @@
       "value": 374.466,
       "unit": "M€",
       "year": 2025,
-      "source_page": 446,
+      "source_page": 64,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau1 restreint",
       "raw_value": 374466.0,
       "raw_unit": "K€"
@@ -831,7 +831,7 @@
       "value": 1259.99,
       "unit": "M€",
       "year": 2025,
-      "source_page": 446,
+      "source_page": 64,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau2",
       "raw_value": 1259990.0,
       "raw_unit": "K€"
@@ -840,7 +840,7 @@
       "value": 485.268,
       "unit": "M€",
       "year": 2025,
-      "source_page": 446,
+      "source_page": 64,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0660/Niveau3",
       "raw_value": 485268.0,
       "raw_unit": "K€"
@@ -849,7 +849,7 @@
       "value": 6063.105,
       "unit": "M€",
       "year": 2025,
-      "source_page": 446,
+      "source_page": 66,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0680 — confirmé p.444 (S.22.01.22.01/R0090) et p.448 (S.25.01.22.02/R0220 et R0570)",
       "raw_value": 6063105.0,
       "raw_unit": "K€"
@@ -858,7 +858,7 @@
       "value": 2836.823,
       "unit": "M€",
       "year": 2025,
-      "source_page": 446,
+      "source_page": 66,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.22.01/R0610 — confirmé p.448 (S.25.01.22.02/R0470)",
       "raw_value": 2836823.0,
       "raw_unit": "K€"
@@ -894,7 +894,7 @@
       "value": 264.007,
       "unit": "M€",
       "year": 2025,
-      "source_page": 448,
+      "source_page": 66,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0020",
       "raw_value": 264007.0,
       "raw_unit": "K€"
@@ -912,7 +912,7 @@
       "value": 590.138,
       "unit": "M€",
       "year": 2025,
-      "source_page": 448,
+      "source_page": 66,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0040",
       "raw_value": 590138.0,
       "raw_unit": "K€"
@@ -921,7 +921,7 @@
       "value": 1706.195,
       "unit": "M€",
       "year": 2025,
-      "source_page": 448,
+      "source_page": 66,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.01/R0050",
       "raw_value": 1706195.0,
       "raw_unit": "K€"
@@ -939,7 +939,7 @@
       "value": 586.048,
       "unit": "M€",
       "year": 2025,
-      "source_page": 448,
+      "source_page": 66,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 439-451 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.22.02/R0130",
       "raw_value": 586048.0,
       "raw_unit": "K€"
@@ -1168,7 +1168,7 @@
       "value": 2278.966,
       "unit": "M€",
       "year": 2025,
-      "source_page": 471,
+      "source_page": 113,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.02 (vie seule), R1510/Total",
       "raw_value": 2278966.0,
       "raw_unit": "K€"
@@ -1186,7 +1186,7 @@
       "value": 1801.4,
       "unit": "M€",
       "year": 2025,
-      "source_page": 475,
+      "source_page": 133,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Total",
       "raw_value": 1801400.0,
       "raw_unit": "K€"
@@ -1195,7 +1195,7 @@
       "value": 1663.589,
       "unit": "M€",
       "year": 2025,
-      "source_page": 475,
+      "source_page": 133,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 1663589.0,
       "raw_unit": "K€"
@@ -1231,7 +1231,7 @@
       "value": 814.179,
       "unit": "M€",
       "year": 2025,
-      "source_page": 475,
+      "source_page": 134,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0580 — confirmé p.476 (S.25.01.21.02/R0220)",
       "raw_value": 814179.0,
       "raw_unit": "K€"
@@ -1240,7 +1240,7 @@
       "value": 366.381,
       "unit": "M€",
       "year": 2025,
-      "source_page": 475,
+      "source_page": 134,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0600",
       "raw_value": 366381.0,
       "raw_unit": "K€"
@@ -1276,7 +1276,7 @@
       "value": 8.505,
       "unit": "M€",
       "year": 2025,
-      "source_page": 476,
+      "source_page": 134,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0020",
       "raw_value": 8505.0,
       "raw_unit": "K€"
@@ -1294,7 +1294,7 @@
       "value": 29.818,
       "unit": "M€",
       "year": 2025,
-      "source_page": 476,
+      "source_page": 134,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0040",
       "raw_value": 29818.0,
       "raw_unit": "K€"
@@ -1321,7 +1321,7 @@
       "value": 113.265,
       "unit": "M€",
       "year": 2025,
-      "source_page": 476,
+      "source_page": 134,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 468-478 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.02/R0130",
       "raw_value": 113265.0,
       "raw_unit": "K€"
@@ -1341,7 +1341,7 @@
       "value": 592.695,
       "unit": "M€",
       "year": 2025,
-      "source_page": 480,
+      "source_page": 168,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 4 lignes non-nulles Meilleure estimation (R0580+R0630+R0670)",
       "raw_value": 592695.0,
       "raw_unit": "K€"
@@ -1350,7 +1350,7 @@
       "value": 58.039,
       "unit": "M€",
       "year": 2025,
-      "source_page": 480,
+      "source_page": 168,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 3 lignes Marge de risque (R0590+R0640+R0680)",
       "raw_value": 58039.0,
       "raw_unit": "K€"
@@ -1377,7 +1377,7 @@
       "value": 948.561,
       "unit": "M€",
       "year": 2025,
-      "source_page": 490,
+      "source_page": 171,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Total",
       "raw_value": 948561.0,
       "raw_unit": "K€"
@@ -1386,7 +1386,7 @@
       "value": 948.561,
       "unit": "M€",
       "year": 2025,
-      "source_page": 490,
+      "source_page": 171,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 948561.0,
       "raw_unit": "K€"
@@ -1422,7 +1422,7 @@
       "value": 366.181,
       "unit": "M€",
       "year": 2025,
-      "source_page": 490,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0580 — confirmé p.491 (S.25.01.21.02/R0220)",
       "raw_value": 366181.0,
       "raw_unit": "K€"
@@ -1431,7 +1431,7 @@
       "value": 92.022,
       "unit": "M€",
       "year": 2025,
-      "source_page": 490,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0600",
       "raw_value": 92022.0,
       "raw_unit": "K€"
@@ -1458,7 +1458,7 @@
       "value": 183.553,
       "unit": "M€",
       "year": 2025,
-      "source_page": 491,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0010",
       "raw_value": 183553.0,
       "raw_unit": "K€"
@@ -1467,7 +1467,7 @@
       "value": 12.382,
       "unit": "M€",
       "year": 2025,
-      "source_page": 491,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0020",
       "raw_value": 12382.0,
       "raw_unit": "K€"
@@ -1476,7 +1476,7 @@
       "value": 61.988,
       "unit": "M€",
       "year": 2025,
-      "source_page": 491,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0030",
       "raw_value": 61988.0,
       "raw_unit": "K€"
@@ -1485,7 +1485,7 @@
       "value": 199.866,
       "unit": "M€",
       "year": 2025,
-      "source_page": 491,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0040",
       "raw_value": 199866.0,
       "raw_unit": "K€"
@@ -1503,7 +1503,7 @@
       "value": -125.196,
       "unit": "M€",
       "year": 2025,
-      "source_page": 491,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0060",
       "raw_value": -125196.0,
       "raw_unit": "K€"
@@ -1512,7 +1512,7 @@
       "value": 38.266,
       "unit": "M€",
       "year": 2025,
-      "source_page": 491,
+      "source_page": 172,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.02/R0130",
       "raw_value": 38266.0,
       "raw_unit": "K€"
@@ -1521,7 +1521,7 @@
       "value": 650.734,
       "unit": "M€",
       "year": 2025,
-      "source_page": 480,
+      "source_page": 168,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 479-493 (extraction manuelle sur rendu image, cf. Décision 083) — best_estimate + marge_risque",
       "raw_value": 650734.0,
       "raw_unit": "K€"
@@ -1532,7 +1532,7 @@
       "value": 1.218,
       "unit": "M€",
       "year": 2025,
-      "source_page": 495,
+      "source_page": 189,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, R0540 seul (100% non-vie hors santé)",
       "raw_value": 1218.0,
       "raw_unit": "K€"
@@ -1541,7 +1541,7 @@
       "value": 0.078,
       "unit": "M€",
       "year": 2025,
-      "source_page": 495,
+      "source_page": 189,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, R0550 seul",
       "raw_value": 78.0,
       "raw_unit": "K€"
@@ -1568,7 +1568,7 @@
       "value": 9.428,
       "unit": "M€",
       "year": 2025,
-      "source_page": 503,
+      "source_page": 192,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Total",
       "raw_value": 9428.0,
       "raw_unit": "K€"
@@ -1613,7 +1613,7 @@
       "value": 1.055,
       "unit": "M€",
       "year": 2025,
-      "source_page": 503,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0580 — confirmé p.504 (S.25.01.21.02/R0220)",
       "raw_value": 1055.0,
       "raw_unit": "K€"
@@ -1622,7 +1622,7 @@
       "value": 2.7,
       "unit": "M€",
       "year": 2025,
-      "source_page": 503,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0600 — plancher absolu MCR (> SCR), cas légitime pour petite entité",
       "raw_value": 2700.0,
       "raw_unit": "K€"
@@ -1649,7 +1649,7 @@
       "value": 0.599,
       "unit": "M€",
       "year": 2025,
-      "source_page": 504,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0010",
       "raw_value": 599.0,
       "raw_unit": "K€"
@@ -1658,7 +1658,7 @@
       "value": 0.035,
       "unit": "M€",
       "year": 2025,
-      "source_page": 504,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0020",
       "raw_value": 35.0,
       "raw_unit": "K€"
@@ -1685,7 +1685,7 @@
       "value": 0.675,
       "unit": "M€",
       "year": 2025,
-      "source_page": 504,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0050",
       "raw_value": 675.0,
       "raw_unit": "K€"
@@ -1694,7 +1694,7 @@
       "value": -0.283,
       "unit": "M€",
       "year": 2025,
-      "source_page": 504,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0060",
       "raw_value": -283.0,
       "raw_unit": "K€"
@@ -1703,7 +1703,7 @@
       "value": 0.058,
       "unit": "M€",
       "year": 2025,
-      "source_page": 504,
+      "source_page": 193,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.02/R0130",
       "raw_value": 58.0,
       "raw_unit": "K€"
@@ -1723,7 +1723,7 @@
       "value": 11.424,
       "unit": "M€",
       "year": 2025,
-      "source_page": 509,
+      "source_page": 210,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 2 lignes non-nulles BE (R0540 non-vie + R0670 vie, sans primes cette année)",
       "raw_value": 11424.0,
       "raw_unit": "K€"
@@ -1732,7 +1732,7 @@
       "value": 0.05,
       "unit": "M€",
       "year": 2025,
-      "source_page": 509,
+      "source_page": 210,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.02.01.02.01 Bilan, somme 2 lignes MR (R0550+R0680)",
       "raw_value": 50.0,
       "raw_unit": "K€"
@@ -1759,7 +1759,7 @@
       "value": 18.411,
       "unit": "M€",
       "year": 2025,
-      "source_page": 518,
+      "source_page": 213,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Total",
       "raw_value": 18411.0,
       "raw_unit": "K€"
@@ -1768,7 +1768,7 @@
       "value": 18.411,
       "unit": "M€",
       "year": 2025,
-      "source_page": 518,
+      "source_page": 213,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 18411.0,
       "raw_unit": "K€"
@@ -1804,7 +1804,7 @@
       "value": 1.932,
       "unit": "M€",
       "year": 2025,
-      "source_page": 518,
+      "source_page": 214,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0580 — confirmé p.519 (S.25.01.21.02/R0220)",
       "raw_value": 1932.0,
       "raw_unit": "K€"
@@ -1840,7 +1840,7 @@
       "value": 1.596,
       "unit": "M€",
       "year": 2025,
-      "source_page": 519,
+      "source_page": 214,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0010",
       "raw_value": 1596.0,
       "raw_unit": "K€"
@@ -1849,7 +1849,7 @@
       "value": 0.038,
       "unit": "M€",
       "year": 2025,
-      "source_page": 519,
+      "source_page": 214,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0020",
       "raw_value": 38.0,
       "raw_unit": "K€"
@@ -1876,7 +1876,7 @@
       "value": 0.091,
       "unit": "M€",
       "year": 2025,
-      "source_page": 519,
+      "source_page": 214,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0050",
       "raw_value": 91.0,
       "raw_unit": "K€"
@@ -1885,7 +1885,7 @@
       "value": -0.093,
       "unit": "M€",
       "year": 2025,
-      "source_page": 519,
+      "source_page": 214,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.01/R0060",
       "raw_value": -93.0,
       "raw_unit": "K€"
@@ -1894,7 +1894,7 @@
       "value": 0.3,
       "unit": "M€",
       "year": 2025,
-      "source_page": 519,
+      "source_page": 214,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — S.25.01.21.02/R0130",
       "raw_value": 300.0,
       "raw_unit": "K€"
@@ -1903,7 +1903,7 @@
       "value": 11.474,
       "unit": "M€",
       "year": 2025,
-      "source_page": 509,
+      "source_page": 210,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 508-522 (extraction manuelle sur rendu image, cf. Décision 083) — best_estimate + marge_risque",
       "raw_value": 11474.0,
       "raw_unit": "K€"
@@ -1914,7 +1914,7 @@
       "value": 534.971909,
       "unit": "M€",
       "year": 2025,
-      "source_page": 524,
+      "source_page": 246,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 3 lignes BE (R0580+R0630+R0670)",
       "raw_value": 534971909.0,
       "raw_unit": "euros bruts"
@@ -1923,7 +1923,7 @@
       "value": 66.130806,
       "unit": "M€",
       "year": 2025,
-      "source_page": 524,
+      "source_page": 249,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 3 lignes MR (R0590+R0640+R0680)",
       "raw_value": 66130806.00000001,
       "raw_unit": "euros bruts"
@@ -1950,7 +1950,7 @@
       "value": 1840.228925,
       "unit": "M€",
       "year": 2025,
-      "source_page": 534,
+      "source_page": 254,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Total",
       "raw_value": 1840228925.0,
       "raw_unit": "euros bruts"
@@ -1959,7 +1959,7 @@
       "value": 1840.228925,
       "unit": "M€",
       "year": 2025,
-      "source_page": 534,
+      "source_page": 254,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 1840228925.0,
       "raw_unit": "euros bruts"
@@ -1995,7 +1995,7 @@
       "value": 680.657826,
       "unit": "M€",
       "year": 2025,
-      "source_page": 534,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0580 — confirmé p.535 (S.25.01.21.02/R0220, ±1 arrondi)",
       "raw_value": 680657826.0,
       "raw_unit": "euros bruts"
@@ -2004,7 +2004,7 @@
       "value": 170.164457,
       "unit": "M€",
       "year": 2025,
-      "source_page": 534,
+      "source_page": 254,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 170164457.0,
       "raw_unit": "euros bruts"
@@ -2031,7 +2031,7 @@
       "value": 308.698424,
       "unit": "M€",
       "year": 2025,
-      "source_page": 535,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0010",
       "raw_value": 308698424.0,
       "raw_unit": "euros bruts"
@@ -2040,7 +2040,7 @@
       "value": 57.851994,
       "unit": "M€",
       "year": 2025,
-      "source_page": 535,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 57851994.0,
       "raw_unit": "euros bruts"
@@ -2049,7 +2049,7 @@
       "value": 30.920506,
       "unit": "M€",
       "year": 2025,
-      "source_page": 535,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0030 (Simplification life catastrophe risk)",
       "raw_value": 30920506.0,
       "raw_unit": "euros bruts"
@@ -2058,7 +2058,7 @@
       "value": 428.129823,
       "unit": "M€",
       "year": 2025,
-      "source_page": 535,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0040",
       "raw_value": 428129823.0,
       "raw_unit": "euros bruts"
@@ -2076,7 +2076,7 @@
       "value": -207.075288,
       "unit": "M€",
       "year": 2025,
-      "source_page": 535,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0060",
       "raw_value": -207075288.0,
       "raw_unit": "euros bruts"
@@ -2085,7 +2085,7 @@
       "value": 63.580291,
       "unit": "M€",
       "year": 2025,
-      "source_page": 535,
+      "source_page": 253,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 63580291.0,
       "raw_unit": "euros bruts"
@@ -2094,7 +2094,7 @@
       "value": 601.102715,
       "unit": "M€",
       "year": 2025,
-      "source_page": 524,
+      "source_page": 246,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 523-538 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 601102715.0,
       "raw_unit": "euros bruts"
@@ -2105,7 +2105,7 @@
       "value": 4.848587,
       "unit": "M€",
       "year": 2025,
-      "source_page": 540,
+      "source_page": 278,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, R0580 seul (santé similaire non-vie)",
       "raw_value": 4848587.0,
       "raw_unit": "euros bruts"
@@ -2114,7 +2114,7 @@
       "value": 1.740626,
       "unit": "M€",
       "year": 2025,
-      "source_page": 540,
+      "source_page": 279,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, R0590 seul",
       "raw_value": 1740626.0,
       "raw_unit": "euros bruts"
@@ -2123,7 +2123,7 @@
       "value": 124.60625,
       "unit": "M€",
       "year": 2025,
-      "source_page": 542,
+      "source_page": 264,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01 (non-vie, seule activité), R0210/Total",
       "raw_value": 124606250.0,
       "raw_unit": "euros bruts"
@@ -2141,7 +2141,7 @@
       "value": 97.481243,
       "unit": "M€",
       "year": 2025,
-      "source_page": 547,
+      "source_page": 284,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Total",
       "raw_value": 97481243.0,
       "raw_unit": "euros bruts"
@@ -2150,7 +2150,7 @@
       "value": 97.481243,
       "unit": "M€",
       "year": 2025,
-      "source_page": 547,
+      "source_page": 284,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 97481243.0,
       "raw_unit": "euros bruts"
@@ -2186,7 +2186,7 @@
       "value": 34.398841,
       "unit": "M€",
       "year": 2025,
-      "source_page": 547,
+      "source_page": 283,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0580 — confirmé p.548 (S.25.01.21.02/R0220, ±1 arrondi)",
       "raw_value": 34398841.0,
       "raw_unit": "euros bruts"
@@ -2195,7 +2195,7 @@
       "value": 8.59971,
       "unit": "M€",
       "year": 2025,
-      "source_page": 547,
+      "source_page": 284,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 8599710.0,
       "raw_unit": "euros bruts"
@@ -2222,7 +2222,7 @@
       "value": 13.467991,
       "unit": "M€",
       "year": 2025,
-      "source_page": 548,
+      "source_page": 283,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0010",
       "raw_value": 13467991.0,
       "raw_unit": "euros bruts"
@@ -2231,7 +2231,7 @@
       "value": 2.48541,
       "unit": "M€",
       "year": 2025,
-      "source_page": 548,
+      "source_page": 283,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 2485410.0,
       "raw_unit": "euros bruts"
@@ -2249,7 +2249,7 @@
       "value": 23.428466,
       "unit": "M€",
       "year": 2025,
-      "source_page": 548,
+      "source_page": 283,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0040",
       "raw_value": 23428466.0,
       "raw_unit": "euros bruts"
@@ -2267,7 +2267,7 @@
       "value": -8.721214,
       "unit": "M€",
       "year": 2025,
-      "source_page": 548,
+      "source_page": 283,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0060",
       "raw_value": -8721214.0,
       "raw_unit": "euros bruts"
@@ -2276,7 +2276,7 @@
       "value": 3.738187,
       "unit": "M€",
       "year": 2025,
-      "source_page": 548,
+      "source_page": 283,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 3738187.0,
       "raw_unit": "euros bruts"
@@ -2285,7 +2285,7 @@
       "value": 6.589213,
       "unit": "M€",
       "year": 2025,
-      "source_page": 540,
+      "source_page": 278,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 539-550 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 6589213.0,
       "raw_unit": "euros bruts"
@@ -2296,7 +2296,7 @@
       "value": 3.277082,
       "unit": "M€",
       "year": 2025,
-      "source_page": 552,
+      "source_page": 305,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, R0580 seul (santé similaire non-vie)",
       "raw_value": 3277082.0,
       "raw_unit": "euros bruts"
@@ -2305,7 +2305,7 @@
       "value": 0.921004,
       "unit": "M€",
       "year": 2025,
-      "source_page": 552,
+      "source_page": 306,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, R0590 seul",
       "raw_value": 921004.0,
       "raw_unit": "euros bruts"
@@ -2314,7 +2314,7 @@
       "value": 70.690019,
       "unit": "M€",
       "year": 2025,
-      "source_page": 554,
+      "source_page": 292,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01 (non-vie, seule activité), R0210/Total",
       "raw_value": 70690019.0,
       "raw_unit": "euros bruts"
@@ -2332,7 +2332,7 @@
       "value": 50.122541,
       "unit": "M€",
       "year": 2025,
-      "source_page": 559,
+      "source_page": 311,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Total",
       "raw_value": 50122541.0,
       "raw_unit": "euros bruts"
@@ -2341,7 +2341,7 @@
       "value": 50.122541,
       "unit": "M€",
       "year": 2025,
-      "source_page": 559,
+      "source_page": 311,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 50122541.0,
       "raw_unit": "euros bruts"
@@ -2377,7 +2377,7 @@
       "value": 22.040337,
       "unit": "M€",
       "year": 2025,
-      "source_page": 559,
+      "source_page": 310,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0580 — confirmé p.560 (S.25.01.21.02/R0220, ±1 arrondi)",
       "raw_value": 22040337.0,
       "raw_unit": "euros bruts"
@@ -2386,7 +2386,7 @@
       "value": 5.510084,
       "unit": "M€",
       "year": 2025,
-      "source_page": 559,
+      "source_page": 311,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 5510084.0,
       "raw_unit": "euros bruts"
@@ -2404,7 +2404,7 @@
       "value": 910.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": 559,
+      "source_page": 311,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0640",
       "raw_value": null,
       "raw_unit": null
@@ -2413,7 +2413,7 @@
       "value": 12.055077,
       "unit": "M€",
       "year": 2025,
-      "source_page": 560,
+      "source_page": 310,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0010",
       "raw_value": 12055077.0,
       "raw_unit": "euros bruts"
@@ -2422,7 +2422,7 @@
       "value": 2.182451,
       "unit": "M€",
       "year": 2025,
-      "source_page": 560,
+      "source_page": 310,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 2182451.0,
       "raw_unit": "euros bruts"
@@ -2440,7 +2440,7 @@
       "value": 12.131965,
       "unit": "M€",
       "year": 2025,
-      "source_page": 560,
+      "source_page": 310,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0040",
       "raw_value": 12131965.0,
       "raw_unit": "euros bruts"
@@ -2458,7 +2458,7 @@
       "value": -6.449855,
       "unit": "M€",
       "year": 2025,
-      "source_page": 560,
+      "source_page": 310,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0060",
       "raw_value": -6449855.0,
       "raw_unit": "euros bruts"
@@ -2467,7 +2467,7 @@
       "value": 2.120701,
       "unit": "M€",
       "year": 2025,
-      "source_page": 560,
+      "source_page": 310,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 2120701.0,
       "raw_unit": "euros bruts"
@@ -2476,7 +2476,7 @@
       "value": 4.198086,
       "unit": "M€",
       "year": 2025,
-      "source_page": 552,
+      "source_page": 305,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 4198086.0,
       "raw_unit": "euros bruts"
@@ -2487,7 +2487,7 @@
       "value": 5.730487,
       "unit": "M€",
       "year": 2025,
-      "source_page": 565,
+      "source_page": 335,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, R0580 seul (santé similaire non-vie)",
       "raw_value": 5730487.0,
       "raw_unit": "euros bruts"
@@ -2496,7 +2496,7 @@
       "value": 0.96125,
       "unit": "M€",
       "year": 2025,
-      "source_page": 565,
+      "source_page": 336,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, R0590 seul",
       "raw_value": 961250.0,
       "raw_unit": "euros bruts"
@@ -2505,7 +2505,7 @@
       "value": 57.945849,
       "unit": "M€",
       "year": 2025,
-      "source_page": 567,
+      "source_page": 320,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01 (non-vie, seule activité), R0210/Total",
       "raw_value": 57945849.0,
       "raw_unit": "euros bruts"
@@ -2523,7 +2523,7 @@
       "value": 61.36335,
       "unit": "M€",
       "year": 2025,
-      "source_page": 572,
+      "source_page": 341,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Total",
       "raw_value": 61363350.0,
       "raw_unit": "euros bruts"
@@ -2532,7 +2532,7 @@
       "value": 61.36335,
       "unit": "M€",
       "year": 2025,
-      "source_page": 572,
+      "source_page": 341,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 61363350.0,
       "raw_unit": "euros bruts"
@@ -2568,7 +2568,7 @@
       "value": 20.812242,
       "unit": "M€",
       "year": 2025,
-      "source_page": 572,
+      "source_page": 340,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0580 — confirmé p.573 (S.25.01.21.02/R0220, exact)",
       "raw_value": 20812242.0,
       "raw_unit": "euros bruts"
@@ -2577,7 +2577,7 @@
       "value": 5.20306,
       "unit": "M€",
       "year": 2025,
-      "source_page": 572,
+      "source_page": 341,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 5203060.0,
       "raw_unit": "euros bruts"
@@ -2604,7 +2604,7 @@
       "value": 13.974262,
       "unit": "M€",
       "year": 2025,
-      "source_page": 573,
+      "source_page": 340,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0010",
       "raw_value": 13974262.0,
       "raw_unit": "euros bruts"
@@ -2613,7 +2613,7 @@
       "value": 0.885065,
       "unit": "M€",
       "year": 2025,
-      "source_page": 573,
+      "source_page": 340,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 885065.0,
       "raw_unit": "euros bruts"
@@ -2631,7 +2631,7 @@
       "value": 12.119069,
       "unit": "M€",
       "year": 2025,
-      "source_page": 573,
+      "source_page": 340,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0040",
       "raw_value": 12119069.0,
       "raw_unit": "euros bruts"
@@ -2649,7 +2649,7 @@
       "value": -6.022255,
       "unit": "M€",
       "year": 2025,
-      "source_page": 573,
+      "source_page": 340,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0060",
       "raw_value": -6022255.0,
       "raw_unit": "euros bruts"
@@ -2658,7 +2658,7 @@
       "value": 1.738375,
       "unit": "M€",
       "year": 2025,
-      "source_page": 573,
+      "source_page": 340,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 1738375.0,
       "raw_unit": "euros bruts"
@@ -2667,7 +2667,7 @@
       "value": 6.691737,
       "unit": "M€",
       "year": 2025,
-      "source_page": 565,
+      "source_page": 335,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 564-576 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 6691737.0,
       "raw_unit": "euros bruts"
@@ -2678,7 +2678,7 @@
       "value": 46362.670005,
       "unit": "M€",
       "year": 2025,
-      "source_page": 578,
+      "source_page": 371,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 4 lignes BE (R0580+R0630+R0670+R0710)",
       "raw_value": 46362670005.0,
       "raw_unit": "euros bruts"
@@ -2687,7 +2687,7 @@
       "value": 756.806225,
       "unit": "M€",
       "year": 2025,
-      "source_page": 578,
+      "source_page": 371,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 2 lignes MR non-nulles (R0680+R0720)",
       "raw_value": 756806225.0,
       "raw_unit": "euros bruts"
@@ -2723,7 +2723,7 @@
       "value": 4093.145214,
       "unit": "M€",
       "year": 2025,
-      "source_page": 588,
+      "source_page": 376,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 4093145214.0,
       "raw_unit": "euros bruts"
@@ -2759,7 +2759,7 @@
       "value": 1997.45696,
       "unit": "M€",
       "year": 2025,
-      "source_page": 588,
+      "source_page": 377,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0580 — confirmé p.589 (S.25.01.21.02/R0220, ±1 arrondi)",
       "raw_value": 1997456960.0,
       "raw_unit": "euros bruts"
@@ -2768,7 +2768,7 @@
       "value": 818.85067,
       "unit": "M€",
       "year": 2025,
-      "source_page": 588,
+      "source_page": 377,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 818850670.0,
       "raw_unit": "euros bruts"
@@ -2804,7 +2804,7 @@
       "value": 43.133957,
       "unit": "M€",
       "year": 2025,
-      "source_page": 589,
+      "source_page": 377,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 43133957.0,
       "raw_unit": "euros bruts"
@@ -2849,7 +2849,7 @@
       "value": 149.464706,
       "unit": "M€",
       "year": 2025,
-      "source_page": 589,
+      "source_page": 377,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 149464706.0,
       "raw_unit": "euros bruts"
@@ -2858,7 +2858,7 @@
       "value": 47119.47623,
       "unit": "M€",
       "year": 2025,
-      "source_page": 578,
+      "source_page": 371,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 577-592 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 47119476230.0,
       "raw_unit": "euros bruts"
@@ -2869,7 +2869,7 @@
       "value": 25498.195478,
       "unit": "M€",
       "year": 2025,
-      "source_page": 594,
+      "source_page": 400,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 2 lignes BE (R0670+R0710)",
       "raw_value": 25498195478.0,
       "raw_unit": "euros bruts"
@@ -2878,7 +2878,7 @@
       "value": 360.658109,
       "unit": "M€",
       "year": 2025,
-      "source_page": 594,
+      "source_page": 400,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 2 lignes MR (R0680+R0720)",
       "raw_value": 360658109.0,
       "raw_unit": "euros bruts"
@@ -2905,7 +2905,7 @@
       "value": 1729.9787,
       "unit": "M€",
       "year": 2025,
-      "source_page": 599,
+      "source_page": 405,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Total",
       "raw_value": 1729978700.0,
       "raw_unit": "euros bruts"
@@ -2914,7 +2914,7 @@
       "value": 1595.590117,
       "unit": "M€",
       "year": 2025,
-      "source_page": 599,
+      "source_page": 405,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 1595590117.0,
       "raw_unit": "euros bruts"
@@ -2950,7 +2950,7 @@
       "value": 438.900678,
       "unit": "M€",
       "year": 2025,
-      "source_page": 599,
+      "source_page": 406,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0580 — confirmé p.600 (S.25.01.21.02/R0220, ±1 arrondi)",
       "raw_value": 438900678.0,
       "raw_unit": "euros bruts"
@@ -2959,7 +2959,7 @@
       "value": 197.505305,
       "unit": "M€",
       "year": 2025,
-      "source_page": 599,
+      "source_page": 406,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 197505305.0,
       "raw_unit": "euros bruts"
@@ -2995,7 +2995,7 @@
       "value": 37.618176,
       "unit": "M€",
       "year": 2025,
-      "source_page": 600,
+      "source_page": 406,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 37618176.0,
       "raw_unit": "euros bruts"
@@ -3040,7 +3040,7 @@
       "value": 84.890604,
       "unit": "M€",
       "year": 2025,
-      "source_page": 600,
+      "source_page": 406,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 84890604.0,
       "raw_unit": "euros bruts"
@@ -3049,7 +3049,7 @@
       "value": 25858.853587,
       "unit": "M€",
       "year": 2025,
-      "source_page": 594,
+      "source_page": 400,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 593-602 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 25858853587.0,
       "raw_unit": "euros bruts"
@@ -3060,7 +3060,7 @@
       "value": 2527.247594,
       "unit": "M€",
       "year": 2025,
-      "source_page": 604,
+      "source_page": 430,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 4 lignes BE (R0540+R0580+R0630+R0670)",
       "raw_value": 2527247594.0,
       "raw_unit": "euros bruts"
@@ -3069,7 +3069,7 @@
       "value": 167.168601,
       "unit": "M€",
       "year": 2025,
-      "source_page": 604,
+      "source_page": 430,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.02.01.02.01 Bilan, somme 4 lignes MR (R0550+R0590+R0640+R0680)",
       "raw_value": 167168601.0,
       "raw_unit": "euros bruts"
@@ -3105,7 +3105,7 @@
       "value": 1093.828202,
       "unit": "M€",
       "year": 2025,
-      "source_page": 614,
+      "source_page": 434,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau1 non restreint",
       "raw_value": 1093828202.0,
       "raw_unit": "euros bruts"
@@ -3123,7 +3123,7 @@
       "value": 378.13464,
       "unit": "M€",
       "year": 2025,
-      "source_page": 614,
+      "source_page": 434,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0540/Niveau2",
       "raw_value": 378134640.0,
       "raw_unit": "euros bruts"
@@ -3150,7 +3150,7 @@
       "value": 386.992783,
       "unit": "M€",
       "year": 2025,
-      "source_page": 614,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.23.01.01.01/R0600",
       "raw_value": 386992783.0,
       "raw_unit": "euros bruts"
@@ -3177,7 +3177,7 @@
       "value": 342.109634,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0010",
       "raw_value": 342109634.0,
       "raw_unit": "euros bruts"
@@ -3186,7 +3186,7 @@
       "value": 106.535572,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0020",
       "raw_value": 106535572.0,
       "raw_unit": "euros bruts"
@@ -3195,7 +3195,7 @@
       "value": 14.59327,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0030",
       "raw_value": 14593270.0,
       "raw_unit": "euros bruts"
@@ -3204,7 +3204,7 @@
       "value": 63.253699,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0040",
       "raw_value": 63253699.0,
       "raw_unit": "euros bruts"
@@ -3213,7 +3213,7 @@
       "value": 692.659723,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0050",
       "raw_value": 692659723.0,
       "raw_unit": "euros bruts"
@@ -3222,7 +3222,7 @@
       "value": -302.198358,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.01/R0060",
       "raw_value": -302198358.0,
       "raw_unit": "euros bruts"
@@ -3231,7 +3231,7 @@
       "value": 73.038969,
       "unit": "M€",
       "year": 2025,
-      "source_page": 615,
+      "source_page": 435,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.25.01.21.02/R0130",
       "raw_value": 73038969.0,
       "raw_unit": "euros bruts"
@@ -3240,7 +3240,7 @@
       "value": 2694.416195,
       "unit": "M€",
       "year": 2025,
-      "source_page": 604,
+      "source_page": 430,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 603-621 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — best_estimate + marge_risque",
       "raw_value": 2694416195.0,
       "raw_unit": "euros bruts"
@@ -3523,7 +3523,7 @@
       "value": 3594.353,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 19,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 8 lignes trouvées",
       "raw_value": 3594353.0,
       "raw_unit": "K€"
@@ -3678,7 +3678,7 @@
       "value": 444.555,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 74,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 444555.0,
       "raw_unit": "K€"
@@ -3705,7 +3705,7 @@
       "value": 147.55,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 21,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 6 lignes trouvées",
       "raw_value": 147550.0,
       "raw_unit": "K€"
@@ -3869,7 +3869,7 @@
       "value": 550.081,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 77,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 550081.0,
       "raw_unit": "K€"
@@ -3896,7 +3896,7 @@
       "value": 69.302,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 23,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 4 lignes trouvées",
       "raw_value": 69302.0,
       "raw_unit": "K€"
@@ -4015,7 +4015,7 @@
       "value": 34.399,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 210,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0010 (solo (EN))",
       "raw_value": 34399.0,
       "raw_unit": "K€"
@@ -4024,7 +4024,7 @@
       "value": 34.399,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 210,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 34399.0,
       "raw_unit": "K€"
@@ -4060,7 +4060,7 @@
       "value": 22.926,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 79,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 22926.0,
       "raw_unit": "K€"
@@ -4087,7 +4087,7 @@
       "value": 59.288,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 24,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 8 lignes trouvées",
       "raw_value": 59288.0,
       "raw_unit": "K€"
@@ -4224,7 +4224,7 @@
       "value": 19.556,
       "unit": "M€",
       "year": 2025,
-      "source_page": 12,
+      "source_page": 229,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0030 (solo (EN))",
       "raw_value": 19556.0,
       "raw_unit": "K€"
@@ -4442,7 +4442,7 @@
       "value": 31438.775,
       "unit": "M€",
       "year": 2025,
-      "source_page": 1,
+      "source_page": 84,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
       "raw_value": 31438775.0,
       "raw_unit": "K€"
@@ -4469,7 +4469,7 @@
       "value": 4273.921,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 27,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.05.01.02 (texte tourné, lecture ligne brute), somme R0210+R0220+R0230(non-vie)+R1510(vie), 6 lignes trouvées",
       "raw_value": 4273921.0,
       "raw_unit": "K€"
@@ -4597,7 +4597,7 @@
       "value": 498.565,
       "unit": "M€",
       "year": 2025,
-      "source_page": 10,
+      "source_page": 266,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 498565.0,
       "raw_unit": "K€"
@@ -4788,7 +4788,7 @@
       "value": 952.774,
       "unit": "M€",
       "year": 2025,
-      "source_page": 8,
+      "source_page": 281,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.01/R0540/C0020 (solo (EN))",
       "raw_value": 952774.0,
       "raw_unit": "K€"
@@ -5015,7 +5015,7 @@
       "value": 1905.804,
       "unit": "M€",
       "year": 2025,
-      "source_page": 46,
+      "source_page": 5,
       "source_chapter": "D.2",
       "raw_value": 1905804.0,
       "raw_unit": "K€"
@@ -5334,7 +5334,7 @@
       "value": 4259.413627,
       "unit": "M€",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 40,
       "source_chapter": "E.2",
       "raw_value": 4259413627.0,
       "raw_unit": "euros bruts"
@@ -5415,7 +5415,7 @@
       "value": 144531.054482,
       "unit": "M€",
       "year": 2025,
-      "source_page": 32,
+      "source_page": 39,
       "source_chapter": "D.2",
       "raw_value": 144531054482.0,
       "raw_unit": "euros bruts"
@@ -6089,7 +6089,7 @@
       "value": 33251.714,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 91,
       "source_chapter": "E.1",
       "raw_value": 33251714.0,
       "raw_unit": "K€"
