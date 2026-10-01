@@ -76,8 +76,14 @@ ENTITES_KPIS = {
     "MACIF SAM": {
         "best_estimate": (5969795.0, 453, "S.02.01.02.01 Bilan, somme 5 segments Meilleure estimation"),
         "marge_risque": (341059.0, 453, "S.02.01.02.01 Bilan, somme 5 segments Marge de risque"),
-        "primes_acquises_brutes": (4854620.0, 455, "S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total"),
-        "charge_sinistres": (3429372.0, 455, "S.05.01.02.01+.02, R0310+R0320+R0330 (non-vie) + R1610 (vie), colonne Total"),
+        # Décision 117 (audit qualité 01/10/2026) : les 2 valeurs
+        # ci-dessous incluaient par erreur R0240/R0340 ("Part des
+        # réassureurs", une ligne de DÉDUCTION pour obtenir le Net, pas
+        # une composante du Brut) en plus de R0210+R0220+R0230/
+        # R0310+R0320+R0330 — gonflant le "brut" de la part cédée aux
+        # réassureurs. Corrigé après relecture directe du rendu PNG p.455.
+        "primes_acquises_brutes": (4446321.0, 455, "S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total"),
+        "charge_sinistres": (3263184.0, 455, "S.05.01.02.01+.02, R0310+R0320+R0330 (non-vie) + R1610 (vie), colonne Total"),
         "fonds_propres_eligibles": (9443143.0, 463, "S.23.01.01.01/R0540/Total"),
         "fonds_propres_t1_nr": (7872072.0, 463, "S.23.01.01.01/R0540/Niveau1 non restreint"),
         "fonds_propres_t1_r": (374465.0, 463, "S.23.01.01.01/R0540/Niveau1 restreint"),
@@ -98,7 +104,12 @@ ENTITES_KPIS = {
     "Aema Groupe": {
         "best_estimate": (105865186.0, 440, "S.02.01.02.01 Bilan, somme 5 segments Meilleure estimation"),
         "marge_risque": (2260715.0, 440, "S.02.01.02.01 Bilan, somme 5 segments Marge de risque"),
-        "primes_acquises_brutes": (18552020.0, 442, "S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total"),
+        # Décision 117 (audit qualité 01/10/2026) : la composante vie de
+        # primes_acquises_brutes utilisait en réalité R1500 (Primes
+        # ÉMISES, Net = 8 727 068) au lieu de R1510 (Primes ACQUISES,
+        # Brut = 8 775 062) — corrigé après relecture directe du rendu
+        # PNG p.443. charge_sinistres vérifié correct (R1610 déjà juste).
+        "primes_acquises_brutes": (18600014.0, 442, "S.05.01.02.01+.02, R0210+R0220+R0230 (non-vie) + R1510 (vie), colonne Total"),
         "charge_sinistres": (15035231.0, 442, "S.05.01.02.01+.02, R0310+R0320+R0330 (non-vie) + R1610 (vie), colonne Total"),
         "fonds_propres_eligibles": (12860966.0, 446, "S.23.01.22.01/R0660/Total (y compris autres secteurs financiers)"),
         "fonds_propres_t1_nr": (10741242.0, 446, "S.23.01.22.01/R0660/Niveau1 non restreint"),
@@ -376,7 +387,12 @@ ENTITES_KPIS = {
         # 1 997 456 960 (±1 arrondi).
         "best_estimate": (46362670005.0, 578, "S.02.01.02.01 Bilan, somme 4 lignes BE (R0580+R0630+R0670+R0710)"),
         "marge_risque": (756806225.0, 578, "S.02.01.02.01 Bilan, somme 2 lignes MR non-nulles (R0680+R0720)"),
-        "primes_acquises_brutes": (3971475103.0, 580, "S.05.01.02.01(non-vie,R0210/Total=85683521,p.580)+S.05.01.02.02(vie,R1510/Total=3885791582,p.581)"),
+        # Décision 117 (audit qualité 01/10/2026) : la composante vie de
+        # primes_acquises_brutes citait "R1510=3885791582" mais c'était
+        # en réalité R1600 (Primes acquises, NET = 3 885 791 582) ; le
+        # vrai R1510 (Brut) = 3 898 489 370. Corrigé après relecture
+        # directe du rendu PNG p.581. charge_sinistres vérifié correct.
+        "primes_acquises_brutes": (3984172891.0, 580, "S.05.01.02.01(non-vie,R0210/Total=85683521,p.580)+S.05.01.02.02(vie,R1510/Total=3898489370,p.581)"),
         "charge_sinistres": (3734914598.0, 580, "S.05.01.02.01(non-vie,R0310/Total=95067347,p.580)+S.05.01.02.02(vie,R1610/Total=3639847251,p.581)"),
         "fonds_propres_eligibles": (5091873694.0, 588, "S.23.01.01.01/R0540/Total (éligibilité SCR)"),
         "fonds_propres_t1_nr": (4093145214.0, 588, "S.23.01.01.01/R0540/Niveau1 non restreint"),
@@ -405,7 +421,12 @@ ENTITES_KPIS = {
         # 438 900 678 (±1 arrondi).
         "best_estimate": (25498195478.0, 594, "S.02.01.02.01 Bilan, somme 2 lignes BE (R0670+R0710)"),
         "marge_risque": (360658109.0, 594, "S.02.01.02.01 Bilan, somme 2 lignes MR (R0680+R0720)"),
-        "primes_acquises_brutes": (1262145906.0, 595, "S.05.01.02.02 (vie, seule activité), R1510/Total"),
+        # Décision 117 (audit qualité 01/10/2026) : primes_acquises_brutes
+        # pointait en fait sur R1500 (Primes ÉMISES, Net = 1 262 145 906)
+        # au lieu de R1510 (Primes ACQUISES, Brut = 1 264 646 880) —
+        # corrigé après relecture directe du rendu PNG p.595.
+        # charge_sinistres vérifié correct (R1610 déjà juste).
+        "primes_acquises_brutes": (1264646880.0, 595, "S.05.01.02.02 (vie, seule activité), R1510/Total"),
         "charge_sinistres": (1769662909.0, 595, "S.05.01.02.02 (vie, seule activité), R1610/Total"),
         "fonds_propres_eligibles": (1729978700.0, 599, "S.23.01.01.01/R0540/Total"),
         "fonds_propres_t1_nr": (1595590117.0, 599, "S.23.01.01.01/R0540/Niveau1 non restreint"),
@@ -439,8 +460,13 @@ ENTITES_KPIS = {
         # R0100+R0130+R0150=931 326 706=R0580(p614), exact.
         "best_estimate": (2527247594.0, 604, "S.02.01.02.01 Bilan, somme 4 lignes BE (R0540+R0580+R0630+R0670)"),
         "marge_risque": (167168601.0, 604, "S.02.01.02.01 Bilan, somme 4 lignes MR (R0550+R0590+R0640+R0680)"),
+        # Décision 117 (audit qualité 01/10/2026) : la composante non-vie
+        # de charge_sinistres citait "R0310=2025194914" mais c'était en
+        # réalité R0300 (Primes acquises, NET) ; le vrai R0310 (Charge
+        # sinistres Brut-directe) = 1 491 017 726. Corrigé après relecture
+        # directe du rendu PNG p.606. primes_acquises_brutes vérifié correct.
         "primes_acquises_brutes": (2140998437.0, 606, "S.05.01.02.01(non-vie,R0210/Total=2140998437,p.606)+S.05.01.02.02(vie,R1510/Total=0,p.607)"),
-        "charge_sinistres": (1999115035.0, 606, "S.05.01.02.01(non-vie,R0310/Total=2025194914,p.606)+S.05.01.02.02(vie,R1610/Total=-26079879,p.607, rentes de sinistres non-vie converties)"),
+        "charge_sinistres": (1464937847.0, 606, "S.05.01.02.01(non-vie,R0310/Total=1491017726,p.606)+S.05.01.02.02(vie,R1610/Total=-26079879,p.607, rentes de sinistres non-vie converties)"),
         "fonds_propres_eligibles": (1559491555.0, 614, "S.23.01.01.01/R0540/Total"),
         "fonds_propres_t1_nr": (1093828202.0, 614, "S.23.01.01.01/R0540/Niveau1 non restreint"),
         "fonds_propres_t1_r": (0.0, 614, "S.23.01.01.01/R0540/Niveau1 restreint"),
