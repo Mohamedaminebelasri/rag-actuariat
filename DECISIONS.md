@@ -7868,3 +7868,74 @@ code de ligne pour trancher — un chantier futur, pas pour ce soir).
 Les 5 KPIs "déjà bons" cités dans le prompt comme référence (AG2R
 Prévoyance, La Mondiale, Cardif Assurances RD, Allianz Vie, Sogécap)
 restent inchangés et corrects — vérifié explicitement, zéro régression.
+
+## Décision 116 — Investigation forensique : valeurs KPI "introuvables" dans le PDF
+
+CONTEXTE : prompt de nuit signalant 4 valeurs KPI stockées dans
+`kpis.db` introuvables dans leur PDF source par `pdftotext`, posant la
+question d'une possible invention/mauvais calcul. Mission : tracer
+chaque valeur jusqu'à sa source et donner un verdict vérifié, pas
+corriger à l'aveugle.
+
+### Verdict : 3/4 cas cités étaient des fausses alertes, 1 était un vrai bug
+
+- **MMJ/charge_sinistres** (❌ FAUX) : `aema_entites.py` annonçait
+  "R0310/Total" (Charge des sinistres Brut) mais contenait en réalité
+  la valeur de R0300 (Primes acquises Net) — 2 lignes adjacentes d'un
+  tableau QRT tourné à 90°, confondues à la lecture manuelle. Confirmé
+  par rendu PNG p.554 et lecture ligne par ligne. Corrigé :
+  69 127 735 → 55 926 771 (euros bruts).
+- **Cardif Assurance Vie/charge_sinistres** (✅ CORRECT) : somme
+  automatique via `resoudre_variantes_qrt()` de 2 cellules QRT réelles
+  (R1610 vie p.6 + R0310/R0320/R0330 non-vie p.5), extraites en texte
+  natif, pas devinées. Logiquement introuvable comme chaîne littérale
+  puisque c'est une somme calculée sur 2 pages, jamais imprimée telle
+  quelle — exactement le pattern déjà documenté Décision 112 pour les
+  KPIs dérivés/sommés.
+- **Crédit Agricole Assurances/primes_acquises_brutes** (✅ CORRECT) :
+  le prompt affirmait à tort que la page 69 était une "page de titre" ;
+  vérifié par rendu PNG que c'est une page de DONNÉES réelles
+  (S.05.01.02, 2/3, non-vie). Somme vérifiée exacte :
+  7 570 076 (non-vie, p.69, R0210+R0220+R0230) + 41 602 922 (vie, p.70,
+  R1510) = 49 172 998 K€ ≈ 49 173,00 M€ stocké.
+- **Abeille Vie/fonds_propres_t2** (✅ CORRECT) : vérifié directement
+  sur le rendu PNG p.588 — ligne R0540, colonne "Niveau 2" =
+  998 728 480, correspondance exacte. Introuvable par `pdftotext`
+  simplement parce que la page est 100% image (aucune valeur de cette
+  page n'a de couche texte, pas spécifique à ce KPI). Recoupement
+  interne déjà cohérent avant même le rendu : t1_nr+t1_r+t2+t3 =
+  fonds_propres_eligibles à l'euro près.
+
+**Conclusion méthodologique** : "introuvable par recherche textuelle"
+n'est PAS un signal fiable d'invention — déjà établi Décision 112, ici
+confirmé sur un 2e lot de cas avec un diagnostic complet par KPI. Les
+2 causes légitimes sont : (1) somme calculée de plusieurs cellules QRT
+réelles, jamais imprimée comme chaîne unique ; (2) page 100% image
+sans couche texte, où AUCUNE valeur n'est trouvable par cette méthode.
+Le seul cas réellement faux (MMJ) avait une cause différente : une
+erreur de lecture manuelle (ligne adjacente), détectable uniquement
+par relecture visuelle directe de la page — pas par recherche
+textuelle, qui aurait de toute façon échoué pour les 2 valeurs (la
+fausse ET la vraie), puisque la page est en image.
+
+### Bug supplémentaire trouvé (vérification de précaution, hors 4 cas cités)
+
+Après avoir confirmé MMJ, vérification du même risque (ligne confondue
+sur tableau tourné 90°) sur les 4 autres entités Aéma au gabarit
+identique ("non-vie seule", S.05.01.02.01) : Macifilia, MNPAF, Nuoma
+vérifiées correctes, mais **Thémis avait 2 valeurs fausses** :
+`primes_acquises_brutes` (R0110 "Primes émises" confondu avec R0210
+"Primes acquises", 1 899 → 1 920 K€) et `charge_sinistres` (R0300
+"Primes acquises Net" confondu avec R0310 "Charge sinistres Brut",
+1 920 → 386 K€). Les deux corrigées après vérification visuelle du
+rendu PNG p.497. Portée de cette vérification bonus limitée à ces 5
+entités (sur 13 Aéma au total) — un audit complet des 273 KPIs "rendu
+image" (Tâche 2 du prompt, "si temps") n'a pas été fait, reporté à une
+session future.
+
+### Fichiers modifiés
+
+`aema_entites.py` (3 valeurs corrigées, commentées avec justification
+et renvoi à cette décision), `kpis.db` (mêmes 3 corrections),
+`frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
+(régénérés).
