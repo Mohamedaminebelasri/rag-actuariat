@@ -24,9 +24,14 @@ prend la page où elle apparaît EFFECTIVEMENT. Jamais une page devinée :
 comme "ambigu"/"introuvable" pour revue humaine plutôt qu'un mauvais
 pari.
 
-Ne couvre PAS les 13 entités Aéma (100% image, aucun texte natif
-extractible sans OCR, cf. aema_entites.py) — traitées séparément par
-vérification visuelle ciblée (hors de ce script, cf. NIGHT_LOG.md).
+MISE À JOUR (Décision 115, nuit 30/09) : couvre désormais AUSSI les 13
+entités Aéma — leur annexe QRT (pages 439-621) est bien 100% image,
+MAIS le chapitre narratif qui la précède (pages 1-438) a un texte natif
+riche, avec une section dédiée par entité reprenant la plupart des
+KPIs en clair (cf. AEMA_BORNES ci-dessous). Les 9 entités AG2R voient
+leur recherche élargie au chapitre narratif équivalent (pages 1 à la
+fin de leur bloc QRT), qui contient des sommes/totaux (ex.
+best_estimate) absents de l'annexe QRT elle-même.
 
     python corriger_source_page.py            # applique les corrections
     python corriger_source_page.py --dry-run   # affiche sans écrire
@@ -44,6 +49,32 @@ DATA_DIR = BASE_DIR / "data"
 
 sys.path.insert(0, str(BASE_DIR))
 from kpi_qrt_mapping import KPI_QRT_MAPPING  # noqa: E402
+
+# Décision 115 — libellés français tels que lus DIRECTEMENT dans le
+# chapitre narratif de 2 PDF réels avant d'écrire cette liste (pages
+# 66/278/283/377 Aéma, 76-77 AG2R) — sert de désambiguïsation quand
+# plusieurs pages contiennent la même valeur mais SANS code de ligne QRT à
+# proximité (le chapitre narratif n'a pas de code R####, juste du texte).
+# UNIQUEMENT les KPIs où le libellé observé est assez spécifique pour ne
+# pas matcher autre chose par hasard — ex. "fonds_propres_t1_r" est
+# délibérément ABSENT : son "libellé" serait juste "Niveau 1 – restreint",
+# un en-tête de COLONNE partagé par toutes les lignes du tableau, qui
+# n'aide pas à distinguer QUELLE ligne.
+LABELS_NARRATIFS = {
+    "best_estimate": ["Meilleure estimation"],
+    "marge_risque": ["Marge de risque"],
+    "provisions_techniques": ["Provisions techniques SII", "Total provisions techniques"],
+    "scr_total": ["SCR net total", "SCR groupe complet", "SCR diversifié"],
+    "scr_marche": ["SCR marché"],
+    "scr_contrepartie": ["SCR contrepartie"],
+    "scr_souscription_vie": ["SCR souscription vie"],
+    "scr_souscription_sante": ["SCR souscription santé"],
+    "scr_souscription_nonvie": ["SCR souscription non-vie"],
+    "scr_operationnel": ["SCR opérationnel"],
+    "scr_diversification": ["Diversification entre modules"],
+    "charge_sinistres": ["Charge des sinistres", "Charge de sinistres"],
+    "fonds_propres_eligibles": ["fonds propres éligibles", "fonds propres Solvabilité II disponibles"],
+}
 
 
 def codes_ligne_pour(kpi_name):
@@ -101,16 +132,45 @@ PDF_PAR_SOCIETE = {
     "VIASANTE Mutuelle": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
 }
 
-# 100% image, aucun texte natif — skip (cf. docstring). Traité à part.
-AEMA_ENTITES_IMAGE = {
-    "Aema Groupe", "MACIF SAM", "Macif Vie", "Macif Sante Prevoyance",
-    "Themis", "Macifilia", "Aesio Mutuelle", "MNPAF", "MMJ", "Nuoma",
-    "Abeille Vie", "Abeille Epargne Retraite", "Abeille IARD Sante",
+# Décision 115 (nuit 30/09) — CORRECTIF DU CORRECTIF : la nuit du 28/09,
+# les 13 entités Aéma étaient entièrement SKIPPÉES ici en les croyant
+# "100% image, aucun texte natif" — vrai pour l'annexe QRT (pages 439-621)
+# mais FAUX pour le chapitre narratif qui la précède (pages 1-438) : CHAQUE
+# entité y a sa propre section (ex. "Abeille Vie" p.344-379) avec un
+# tableau natif "ÉVOLUTION DES SCR ET MCR (EN MILLIERS D'EUROS)" qui
+# reprend la plupart des KPIs en clair — vérifié en lisant directement le
+# texte de ces pages avant d'écrire ce correctif, pas supposé (cf.
+# Décision 115, DECISIONS.md). Bornes 1-indexées découvertes en
+# recherchant, pour chaque entité, les pages dont la 1re ligne EST
+# exactement son nom (en-tête de section) — contiguës et sans chevauchement
+# pour les 13.
+AEMA_BORNES = {
+    "Aema Groupe": (6, 71),
+    "MACIF SAM": (73, 104),
+    "Macif Vie": (107, 135),
+    "Macif Sante Prevoyance": (138, 173),
+    "Themis": (176, 193),
+    "Macifilia": (196, 214),
+    "Aesio Mutuelle": (217, 256),
+    "MNPAF": (259, 284),
+    "MMJ": (287, 312),
+    "Nuoma": (314, 341),
+    "Abeille Vie": (344, 379),
+    "Abeille Epargne Retraite": (382, 407),
+    "Abeille IARD Sante": (410, 436),
 }
 
-# Bornes 1-indexées (page_debut, page_fin) dans le document AG2R combiné
-# (repris de ag2r_entites.py::ENTITES_BORNES) — utilisées pour scoper la
-# recherche et éviter un faux match dans le bloc d'une AUTRE entité.
+# Bornes 1-indexées (page_debut, page_fin) de l'annexe QRT dans le document
+# AG2R combiné (repris de ag2r_entites.py::ENTITES_BORNES). Décision 115 :
+# le chapitre narratif QUI PRÉCÈDE (pages 1-121, vérifié — ex. Prima
+# "Meilleure estimation... Total... 550 081" en page 77, texte natif)
+# contient aussi des valeurs absentes de l'annexe QRT (sommes/totaux,
+# ex. best_estimate) — structure moins régulière que pour Aéma (mini-blocs
+# par entité dispersés sur plusieurs sections, pas un chapitre contigu par
+# entité), donc pas de bornes précises par entité ici : la recherche est
+# élargie à TOUT le chapitre narratif (page 1) jusqu'à la fin du bloc QRT
+# de l'entité, la désambiguïsation par valeur+code de ligne reste le
+# garde-fou contre un faux match.
 AG2R_BORNES = {
     "SGAM AG2R LA MONDIALE": (122, 134),
     "AG2R Prevoyance": (139, 157),
@@ -152,11 +212,21 @@ def formes_nombre(valeur):
     return formes
 
 
-def chercher_page(pages_texte, valeur, unite, page_min=1, page_max=None, est_pct=False, codes_ligne=None):
+def chercher_page(pages_texte, valeur, unite, page_min=1, page_max=None, est_pct=False, codes_ligne=None,
+                   valeurs_alternatives=None, libelles=None):
     """pages_texte : liste de texte normalisé par page (index 0 = page
     physique 1). Retourne (page_trouvee_ou_None, nb_candidats, raison).
 
-    2 passes : (1) toutes les pages où la valeur apparaît ; (2) si
+    `valeurs_alternatives` : autres nombres à chercher EN PLUS de
+    `valeur` (même KPI, écrit différemment ailleurs dans le document) —
+    sert notamment aux 7 entités Aéma + Sogécap en euros bruts
+    (Décision 094/096) : leur annexe QRT est en euros bruts mais le
+    chapitre NARRATIF du même document reste en milliers d'euros comme
+    le reste du rapport (constaté : "MCR 818 851" narratif pour Abeille
+    Vie vs raw_value=818850670 en euros bruts — 818850670/1000=818850,67,
+    seule la forme K€ apparaît dans le texte narratif).
+
+    2 passes : (1) toutes les pages où une des valeurs apparaît ; (2) si
     plusieurs candidats, filtre sur celles qui contiennent AUSSI un des
     codes de ligne QRT connus pour ce KPI (KPI_QRT_MAPPING) — distingue
     une mention narrative répétée (résumé/synthèse) de la vraie ligne
@@ -167,21 +237,32 @@ def chercher_page(pages_texte, valeur, unite, page_min=1, page_max=None, est_pct
 
     page_max = page_max or len(pages_texte)
     formes = formes_nombre(valeur)
+    for v in (valeurs_alternatives or []):
+        if v:
+            formes.extend(formes_nombre(v))
     if not formes:
         return None, 0, "aucune forme numérique générée"
 
-    candidats = []
+    # positions_valeur[page] = liste des positions (index caractère) où une
+    # forme de la valeur apparaît sur cette page — nécessaire pour la
+    # désambiguïsation par PROXIMITÉ ci-dessous (pas seulement "le code
+    # apparaît quelque part sur la page", trop large : un code de ligne
+    # générique comme R0220 peut légitimement apparaître ailleurs sur la
+    # page pour un AUTRE champ — constaté, faux positif réel trouvé en
+    # testant Allianz Vie/scr_total, cf. Décision 115).
+    positions_valeur = {}
     for i in range(page_min - 1, min(page_max, len(pages_texte))):
         texte = pages_texte[i]
+        positions = []
         for forme in formes:
             motif = re.escape(forme)
             if est_pct:
                 motif = motif + r"\s*%"
-            if re.search(motif, texte):
-                candidats.append(i + 1)  # page physique 1-indexée
-                break
+            positions.extend(m.start() for m in re.finditer(motif, texte))
+        if positions:
+            positions_valeur[i + 1] = positions
 
-    candidats = sorted(set(candidats))
+    candidats = sorted(positions_valeur)
     if len(candidats) == 1:
         return candidats[0], 1, "match unique"
     if len(candidats) == 0:
@@ -189,11 +270,77 @@ def chercher_page(pages_texte, valeur, unite, page_min=1, page_max=None, est_pct
 
     if codes_ligne:
         motif_codes = re.compile("|".join(re.escape(c) for c in codes_ligne))
-        candidats_filtres = [p for p in candidats if motif_codes.search(pages_texte[p - 1])]
+        # 150 caractères s'est avéré trop large sur une page QRT dense :
+        # un code SANS RAPPORT (ex. R0220 d'une tout autre ligne) tombait
+        # parfois dans la fenêtre par coïncidence (faux positif réel trouvé
+        # sur Allianz Vie/scr_total, page 90). Le motif réel observé
+        # partout est "CODE\n    VALEUR" (le code précède la valeur de
+        # quelques caractères seulement, ex. "R0580\n    2 218 591" = 10
+        # caractères) — 40 reste une marge confortable sans élargir au
+        # point de recapter des codes d'autres lignes.
+        FENETRE = 40
+        candidats_filtres = []
+        for p in candidats:
+            texte = pages_texte[p - 1]
+            for pos_valeur in positions_valeur[p]:
+                debut = max(0, pos_valeur - FENETRE)
+                fin = min(len(texte), pos_valeur + FENETRE)
+                if motif_codes.search(texte[debut:fin]):
+                    candidats_filtres.append(p)
+                    break
         if len(candidats_filtres) == 1:
-            return candidats_filtres[0], 1, f"match unique après filtre code de ligne (parmi {candidats})"
+            return candidats_filtres[0], 1, f"match unique après filtre code de ligne à proximité (parmi {candidats})"
         if len(candidats_filtres) > 1:
-            return None, len(candidats_filtres), f"ambigu même après filtre code de ligne ({candidats_filtres})"
+            # AMBIGUÏTÉ RÉELLE, pas de repli : plusieurs pages ont chacune
+            # un code QRT associé de près à la valeur — un cas vécu
+            # (Allianz Vie/scr_total, pages 89 ET 90 chacune avec un code de
+            # la liste à proximité d'une occurrence différente de la valeur)
+            # a montré qu'un repli "dernière occurrence" choisit alors
+            # parfois la MAUVAISE page (90, un renvoi de calcul MCR,
+            # au lieu de 89, la vraie ligne SCR). Contrairement au cas
+            # "aucun code trouvé" ci-dessous (texte narratif, pas de risque
+            # de confondre 2 LIGNES QRT différentes), ici deviner serait
+            # plus dangereux que de laisser inchangé.
+            return None, len(candidats_filtres), f"ambigu même après filtre code de ligne à proximité ({candidats_filtres})"
+
+    # Repli : UNIQUEMENT pour le chapitre narratif (pas de code R#### —
+    # texte brut) — libellé français spécifique au KPI (LABELS_NARRATIFS),
+    # MÊME logique de proximité que les codes de ligne ci-dessus. PAS de
+    # "dernière occurrence" aveugle : un essai précédent choisissait parfois
+    # un nombre identique mais SANS RAPPORT (ex. MNPAF/marge_risque : la
+    # vraie valeur "1 741" en page 278, à côté du libellé "Marge de
+    # risque" — mais "1 741" réapparaît par pure coïncidence en page 283
+    # comme variation annuelle d'un tout autre poste, le SCR ; choisir
+    # "la dernière page" aurait retenu 283, la mauvaise). Jamais un KPI
+    # deviné sans libellé de confiance (cf. LABELS_NARRATIFS, volontairement
+    # incomplet).
+    if libelles:
+        motif_libelles = re.compile("|".join(re.escape(l) for l in libelles), re.IGNORECASE)
+        FENETRE_LIBELLE = 80  # un libellé français est plus long qu'un code R####
+        candidats_filtres = []
+        for p in candidats:
+            texte = pages_texte[p - 1]
+            for pos_valeur in positions_valeur[p]:
+                debut = max(0, pos_valeur - FENETRE_LIBELLE)
+                fin = min(len(texte), pos_valeur + FENETRE_LIBELLE)
+                if motif_libelles.search(texte[debut:fin]):
+                    candidats_filtres.append(p)
+                    break
+        if len(candidats_filtres) == 1:
+            return candidats_filtres[0], 1, f"match unique après filtre libellé narratif à proximité (parmi {candidats})"
+        if len(candidats_filtres) > 1:
+            # Contrairement au repli "dernière occurrence" aveugle supprimé
+            # plus haut : ICI chaque candidat a DÉJÀ été confirmé par un
+            # libellé pertinent à proximité (pas une coïncidence numérique
+            # nue) — s'ils sont adjacents (≤2 pages d'écart), c'est très
+            # probablement la MÊME donnée répétée dans 2 tableaux voisins du
+            # même sous-chapitre (ex. Prima/best_estimate : "Meilleure
+            # estimation... 550 081" en page 76 ET 77, 2 lignes vérifiées du
+            # même bloc "Provisions techniques", pas 2 faits différents).
+            # Au-delà de 2 pages, reste une vraie ambiguïté.
+            if candidats_filtres[-1] - candidats_filtres[0] <= 2:
+                return candidats_filtres[-1], 1, f"dernière occurrence confirmée par libellé parmi {candidats_filtres} (≤2 pages d'écart)"
+            return None, len(candidats_filtres), f"ambigu même après filtre libellé narratif ({candidats_filtres})"
 
     return None, len(candidats), f"ambigu ({len(candidats)} pages candidates : {candidats[:6]})"
 
@@ -221,14 +368,26 @@ def corriger_pour_societe(conn, nom, pdf_path, page_min=1, page_max=None, pages_
     n_corriges = n_ambigu = n_introuvable = 0
     company_id = conn.execute("SELECT id FROM companies WHERE name=?", (nom,)).fetchone()[0]
     for row in conn.execute(
-        "SELECT kpi_name, value, unit, raw_value, source_page FROM kpis WHERE company_id=? AND value IS NOT NULL",
+        "SELECT kpi_name, value, unit, raw_value, raw_unit, source_page FROM kpis WHERE company_id=? AND value IS NOT NULL",
         (company_id,),
     ):
         est_pct = row["unit"] == "pct"
         valeur_recherchee = row["value"] if est_pct else (row["raw_value"] if row["raw_value"] is not None else row["value"])
+        # Décision 115 — le chapitre NARRATIF reste en milliers d'euros même
+        # pour les entités dont l'annexe QRT (et donc raw_value) est en
+        # euros bruts (7 entités Aéma + Sogécap, Décision 094/096) : essaie
+        # aussi la forme K€ (raw_value/1000) et la valeur M€ elle-même.
+        alternatives = [row["value"]]
+        if not est_pct and row["raw_unit"] and row["raw_unit"].startswith("euros bruts") and row["raw_value"]:
+            # forme décimale ET forme arrondie au K€ entier (le texte
+            # narratif affiche un arrondi, ex. "818 851" pour 818850,67 —
+            # constaté sur Abeille Vie/mcr, pas une supposition).
+            alternatives.append(row["raw_value"] / 1000)
+            alternatives.append(round(row["raw_value"] / 1000))
         page_trouvee, n_cand, raison = chercher_page(
             pages_texte, valeur_recherchee, row["unit"], page_min, page_max, est_pct=est_pct,
-            codes_ligne=codes_ligne_pour(row["kpi_name"]),
+            codes_ligne=codes_ligne_pour(row["kpi_name"]), valeurs_alternatives=alternatives,
+            libelles=LABELS_NARRATIFS.get(row["kpi_name"]),
         )
         ancien = row["source_page"]
         if page_trouvee is None:
@@ -259,16 +418,10 @@ def main():
 
     cache_pages = {}  # chemin PDF -> liste de textes par page (évite de rouvrir)
     journal = []  # (societe, kpi_name, ancien, nouveau, raison)
-    n_corriges = n_ambigu = n_introuvable = n_skip = 0
+    n_corriges = n_ambigu = n_introuvable = 0
 
     societes = [r["name"] for r in conn.execute("SELECT name FROM companies ORDER BY name")]
     for nom in societes:
-        if nom in AEMA_ENTITES_IMAGE:
-            n_skip += conn.execute(
-                "SELECT COUNT(*) FROM kpis k JOIN companies c ON c.id=k.company_id WHERE c.name=? AND value IS NOT NULL",
-                (nom,),
-            ).fetchone()[0]
-            continue
         nom_pdf = PDF_PAR_SOCIETE.get(nom)
         if not nom_pdf:
             print(f"!!! pas de PDF connu pour {nom!r}, ignoré")
@@ -284,9 +437,14 @@ def main():
         pages_texte = cache_pages[pdf_path]
 
         page_min, page_max = 1, len(pages_texte)
-        if nom in AG2R_BORNES:
-            pd, pf = AG2R_BORNES[nom]
-            page_min, page_max = pd, pf
+        if nom in AEMA_BORNES:
+            # Chapitre narratif, contigu et précis par entité (cf. commentaire
+            # AEMA_BORNES) — jamais l'annexe QRT (aucun texte natif là-bas).
+            page_min, page_max = AEMA_BORNES[nom]
+        elif nom in AG2R_BORNES:
+            # Élargi à 1..fin-de-bloc-QRT (cf. commentaire AG2R_BORNES) :
+            # couvre le chapitre narratif ET l'annexe QRT de cette entité.
+            page_min, page_max = 1, AG2R_BORNES[nom][1]
 
         j, c, a, i = corriger_pour_societe(conn, nom, pdf_path, page_min, page_max, pages_texte, args.dry_run)
         journal.extend(j)
@@ -302,7 +460,6 @@ def main():
     print(f"  corrigés (page différente trouvée) : {n_corriges}")
     print(f"  ambigus (plusieurs pages candidates, inchangé) : {n_ambigu}")
     print(f"  introuvables (0 page candidate, inchangé) : {n_introuvable}")
-    print(f"  ignorés (entités Aéma 100% image) : {n_skip}")
 
     print("\n--- détail des corrections ---")
     for nom, kpi, ancien, nouveau, raison in journal:
