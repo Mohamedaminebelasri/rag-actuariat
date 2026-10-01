@@ -7773,3 +7773,98 @@ reste la seule source pour le scroll naturel de l'utilisateur.
   (cohérent avec le correctif Décision 112), zoom 300% préservé,
   contenu exact affiché (R0500/R0540 = 4 266 905, déjà vérifié
   Décision 112).
+
+## Décision 115 — Correctif du correctif : source_page des PDFs multi-entités (Aéma/AG2R)
+
+CONTEXTE : prompt de nuit signalant que la Décision 112 (28/09) avait
+laissé les PDFs multi-entités (Aéma Groupe, AG2R LA MONDIALE) faux —
+un test sur 10 KPIs aléatoires donnait 5/10 corrects, les 5 échecs
+tous sur des multi-entités, avec 5 exemples précis cités.
+
+### Vérification préalable (avant toute correction, comme la nuit précédente)
+
+Les 5 exemples cités ont été vérifiés un par un contre `kpis.db` et le
+texte réel des PDF — **cette fois les 5 claims du prompt se sont
+confirmés exacts** (contrairement au prompt de la nuit du 28/09, où
+les 4 exemples "Catégorie A" s'étaient révélés faux à la vérification).
+Différence de fond trouvée : la Décision 112 avait skippé entièrement
+les 13 entités Aéma en les croyant "100% image" — vrai pour l'annexe
+QRT (pages 439-621) mais **FAUX pour le chapitre narratif qui la
+précède** (pages 1-438) : chaque entité y a sa PROPRE section avec un
+tableau natif "ÉVOLUTION DES SCR ET MCR (EN MILLIERS D'EUROS)"
+reprenant la plupart des KPIs en clair — vérifié en lisant directement
+le texte des pages 64-67 (Aéma Groupe) et 377 (Abeille Vie) avant
+d'écrire une seule ligne de correctif. Même chose pour AG2R : les
+sommes/totaux (best_estimate) absents de l'annexe QRT apparaissent
+dans un chapitre "Bilan"/"Provisions" narratif antérieur (ex. Prima
+p.76-77 : "Total... Meilleure estimation 550 081", texte natif).
+
+### Correctifs apportés à `corriger_source_page.py`
+
+1. **`AEMA_BORNES`** remplace le skip total des 13 entités Aéma —
+   bornes de pages narratives précises par entité, découvertes en
+   cherchant les pages dont la 1re ligne EST exactement le nom de
+   l'entité (en-tête de section, contigu et sans chevauchement pour
+   les 13).
+2. **`AG2R_BORNES`** élargi : recherche désormais 1..fin-du-bloc-QRT
+   (pas seulement le bloc QRT lui-même) — structure narrative AG2R
+   moins régulière que Aéma (mini-blocs dispersés par entité à travers
+   plusieurs sections), pas de bornes précises par entité possibles,
+   compensé par la désambiguïsation valeur+code/libellé.
+3. **Alternative K€ pour les entités en euros bruts** (7 Aéma + Sogécap,
+   Décision 094/096) : leur chapitre narratif reste en milliers d'euros
+   même quand leur annexe QRT (et donc `raw_value`) est en euros bruts
+   — cherche aussi `raw_value/1000` ET sa forme arrondie à l'entier
+   (le texte narratif affiche un arrondi, ex. "818 851" pour
+   818850,67 — bug de comparaison flottante trouvé et corrigé en
+   testant, pas supposé).
+
+### 2 bugs de désambiguïsation trouvés et corrigés EN TESTANT (pas supposés)
+
+1. **Filtre par code de ligne trop large** (fenêtre de 150 caractères) :
+   un code SANS RAPPORT (ex. R0220 d'une tout autre ligne) tombait
+   parfois dans la fenêtre par coïncidence — repéré sur Allianz Vie/
+   scr_total (pages 89 ET 90 passaient le filtre, la "dernière
+   occurrence" aurait retenu 90, qui est un renvoi de calcul MCR, pas
+   la vraie ligne SCR en page 89). Fenêtre resserrée à 40 caractères
+   ET, plus important, **le repli "dernière occurrence" aveugle a été
+   supprimé entièrement** pour le cas "ambigu même après filtre code" :
+   deviner entre 2 pages QRT-codées est plus dangereux que de laisser
+   inchangé.
+2. **Coïncidence numérique dans le chapitre narratif** : MNPAF/
+   marge_risque — la vraie valeur "1 741" (page 278/279, à côté du
+   libellé "Marge de risque") réapparaît PAR COÏNCIDENCE page 283 comme
+   variation annuelle d'un tout autre poste (le SCR). Un repli
+   "dernière occurrence" aveugle aurait retenu 283 (faux). Remplacé par
+   `LABELS_NARRATIFS` : dictionnaire de libellés français observés
+   DIRECTEMENT dans les PDF (pas inventés) servant de désambiguïsation
+   par proximité, même logique que les codes de ligne — un repli
+   "dernière occurrence" n'est maintenant accepté QUE si chaque
+   candidat est DÉJÀ confirmé par un libellé pertinent à proximité ET
+   que les candidats sont à ≤2 pages d'écart (répétition de la même
+   donnée dans 2 tableaux voisins du même sous-chapitre, pas 2 faits
+   différents — vérifié sur Prima/best_estimate et AG.Mut/best_estimate).
+
+### Résultat
+
+171 `source_page` corrigés sur cette passe (98 ambigus et 209
+introuvables laissés inchangés, jamais devinés). `source_page` NULL
+sur KPI non-NULL : 53 → 44 (reste concentré sur les KPIs dérivés/sommés
+dont le total n'apparaît littéralement nulle part, limite déjà
+documentée Décision 112 — ex. Crédit Agricole/primes_acquises_brutes,
+confirmé absent du document entier par recherche exhaustive).
+
+**Validation (15 KPIs demandés, couvrant Aéma/AG2R/single-entity/Crédit
+Agricole)** : 12/15 corrects par vérification directe du texte PDF à
+la page stockée. Les 3 échecs (SGAM AG2R LA MONDIALE/scr_total,
+Groupama/ratio_scr, Crédit Agricole/scr_total) sont des gaps
+**PRÉ-EXISTANTS** — valeurs identiques bit-à-bit à l'état d'avant ce
+correctif (vérifié par diff contre le commit précédent), donc AUCUNE
+régression ; `corriger_source_page.py` les a examinés et correctement
+laissés inchangés plutôt que deviner (ex. Groupama/ratio_scr : "274%"
+apparaît dans 5 contextes narratifs différents, vraiment ambigu, sans
+code de ligne pour trancher — un chantier futur, pas pour ce soir).
+
+Les 5 KPIs "déjà bons" cités dans le prompt comme référence (AG2R
+Prévoyance, La Mondiale, Cardif Assurances RD, Allianz Vie, Sogécap)
+restent inchangés et corrects — vérifié explicitement, zéro régression.
