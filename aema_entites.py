@@ -186,8 +186,16 @@ ENTITES_KPIS = {
         # source, pas une erreur de lecture).
         "best_estimate": (1218.0, 495, "S.02.01.02.01 Bilan, R0540 seul (100% non-vie hors santé)"),
         "marge_risque": (78.0, 495, "S.02.01.02.01 Bilan, R0550 seul"),
-        "primes_acquises_brutes": (1899.0, 497, "S.05.01.02.01 (non-vie, seule activité), R0210/Total"),
-        "charge_sinistres": (1920.0, 497, "S.05.01.02.01 (non-vie, seule activité), R0310/Total"),
+        # Décision 116 (investigation forensique 01/10/2026) : les 2
+        # valeurs ci-dessous étaient décalées d'une ligne lors de la
+        # lecture manuelle initiale — primes_acquises_brutes pointait en
+        # fait sur R0110 (Primes ÉMISES, pas acquises, même valeur de
+        # colonne "Brut - assurance directe" que R0210, facile à confondre
+        # sur un tableau tourné 90°) ; charge_sinistres pointait sur R0300
+        # (Primes acquises Net) au lieu de R0310 (Charge sinistres Brut).
+        # Corrigé après relecture directe du rendu PNG p.497.
+        "primes_acquises_brutes": (1920.0, 497, "S.05.01.02.01 (non-vie, seule activité), R0210/Total"),
+        "charge_sinistres": (386.0, 497, "S.05.01.02.01 (non-vie, seule activité), R0310/Total"),
         "fonds_propres_eligibles": (9428.0, 503, "S.23.01.01.01/R0540/Total"),
         "fonds_propres_t1_nr": (9428.0, 503, "S.23.01.01.01/R0540/Niveau1 non restreint"),
         "fonds_propres_t1_r": (0.0, 503, "S.23.01.01.01/R0540/Niveau1 restreint"),
@@ -306,7 +314,12 @@ ENTITES_KPIS = {
         "best_estimate": (3277082.0, 552, "S.02.01.02.01 Bilan, R0580 seul (santé similaire non-vie)"),
         "marge_risque": (921004.0, 552, "S.02.01.02.01 Bilan, R0590 seul"),
         "primes_acquises_brutes": (70690019.0, 554, "S.05.01.02.01 (non-vie, seule activité), R0210/Total"),
-        "charge_sinistres": (69127735.0, 554, "S.05.01.02.01 (non-vie, seule activité), R0310/Total"),
+        # Décision 116 (investigation forensique 01/10/2026) : la valeur
+        # ci-dessous pointait en fait sur R0300 (Primes acquises Net,
+        # 69 127 735) au lieu de R0310 (Charge sinistres Brut-directe,
+        # 55 926 771) — décalage d'une ligne lors de la lecture manuelle,
+        # corrigé après relecture directe du rendu PNG p.554.
+        "charge_sinistres": (55926771.0, 554, "S.05.01.02.01 (non-vie, seule activité), R0310/Total"),
         "fonds_propres_eligibles": (50122541.0, 559, "S.23.01.01.01/R0540/Total"),
         "fonds_propres_t1_nr": (50122541.0, 559, "S.23.01.01.01/R0540/Niveau1 non restreint"),
         "fonds_propres_t1_r": (0.0, 559, "S.23.01.01.01/R0540/Niveau1 restreint"),
