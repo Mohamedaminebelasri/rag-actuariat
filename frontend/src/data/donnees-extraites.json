@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-01T05:14:59",
+  "genereLe": "2026-10-01T12:08:01",
   "societes": [
     {
       "id": 67,
@@ -5327,14 +5327,14 @@
         "uniteBrute": "euros bruts"
       },
       "charge_sinistres": {
-        "valeur": 69.127735,
+        "valeur": 55.926771,
         "unite": "M€",
         "categorie": "activité",
         "annee": 2025,
         "pageSource": 554,
         "chapitreSource": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01 (non-vie, seule activité), R0310/Total",
         "valide": false,
-        "valeurBrute": 69127735.0,
+        "valeurBrute": 55926771.0,
         "uniteBrute": "euros bruts"
       },
       "fonds_propres_eligibles": {
@@ -7613,25 +7613,25 @@
         "uniteBrute": "K€"
       },
       "primes_acquises_brutes": {
-        "valeur": 1.899,
+        "valeur": 1.92,
         "unite": "M€",
         "categorie": "activité",
         "annee": 2025,
         "pageSource": 497,
         "chapitreSource": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01 (non-vie, seule activité), R0210/Total",
         "valide": false,
-        "valeurBrute": 1899.0,
+        "valeurBrute": 1920.0,
         "uniteBrute": "K€"
       },
       "charge_sinistres": {
-        "valeur": 1.92,
+        "valeur": 0.386,
         "unite": "M€",
         "categorie": "activité",
         "annee": 2025,
         "pageSource": 497,
         "chapitreSource": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01 (non-vie, seule activité), R0310/Total",
         "valide": false,
-        "valeurBrute": 1920.0,
+        "valeurBrute": 386.0,
         "uniteBrute": "K€"
       },
       "fonds_propres_eligibles": {

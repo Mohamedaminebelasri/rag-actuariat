@@ -1547,21 +1547,21 @@
       "raw_unit": "K€"
     },
     "primes_acquises_brutes": {
-      "value": 1.899,
-      "unit": "M€",
-      "year": 2025,
-      "source_page": 497,
-      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01 (non-vie, seule activité), R0210/Total",
-      "raw_value": 1899.0,
-      "raw_unit": "K€"
-    },
-    "charge_sinistres": {
       "value": 1.92,
       "unit": "M€",
       "year": 2025,
       "source_page": 497,
-      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01 (non-vie, seule activité), R0310/Total",
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01 (non-vie, seule activité), R0210/Total",
       "raw_value": 1920.0,
+      "raw_unit": "K€"
+    },
+    "charge_sinistres": {
+      "value": 0.386,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 497,
+      "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 494-507 (extraction manuelle sur rendu image, cf. Décision 083) — S.05.01.02.01 (non-vie, seule activité), R0310/Total",
+      "raw_value": 386.0,
       "raw_unit": "K€"
     },
     "fonds_propres_eligibles": {
@@ -2320,12 +2320,12 @@
       "raw_unit": "euros bruts"
     },
     "charge_sinistres": {
-      "value": 69.127735,
+      "value": 55.926771,
       "unit": "M€",
       "year": 2025,
       "source_page": 554,
       "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 551-563 (extraction manuelle sur rendu image, cf. Décision 083 ; unité source : euros bruts (Décision 093)) — S.05.01.02.01 (non-vie, seule activité), R0310/Total",
-      "raw_value": 69127735.0,
+      "raw_value": 55926771.0,
       "raw_unit": "euros bruts"
     },
     "fonds_propres_eligibles": {
