@@ -8156,3 +8156,95 @@ recalculé) sans anomalie.
 `kpis.db` (26 `source_page` corrigés ou remis à NULL),
 `frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
 (régénérés). Aucun script d'extraction modifié.
+
+## Décision 119 — Audit complet single-entity (actuariel + sources image) : résolution de la limite Groupama
+
+CONTEXTE : prompt de nuit demandant (1) 10 règles de cohérence
+actuarielle appliquées systématiquement aux 12 sociétés single-entity,
+et (2) une re-vérification des sources incluant la possibilité de
+pages QRT en image dans ces PDF "texte natif" — en particulier pour
+clore la limite laissée ouverte dans NIGHT_LOG_V5.md (7 composantes
+SCR de Groupama introuvables nulle part dans le texte).
+
+### Tâche 1 — 10 règles actuarielles : 16 signalements, 0 vrai bug
+
+Toutes les "anomalies" brutes se sont révélées légitimes après
+investigation individuelle (jamais classées "faux positif" sans
+preuve) :
+- **Corridor MCR (Art. 129, 25-45%)** : CNP (45,000003%) et MACSF
+  (24,999943%) sont exactement aux bornes réglementaires (bruit
+  flottant), pas des violations. **Groupama (63,8%)** dépasse
+  réellement le corridor, mais légitimement : au niveau GROUPE, le
+  MCR consolidé est une SOMME des MCR solos (chacun dans son propre
+  corridor), comparé à un SCR groupe qui bénéficie lui de la
+  diversification inter-entités — le narratif du rapport (p.75, E.2.2)
+  le confirme explicitement ("le minimum de capital requis au niveau
+  groupe est la somme des minima de capital requis de l'ensemble des
+  entités du Groupe"). Le corridor solo ne s'applique structurellement
+  pas de la même façon au niveau groupe.
+- **scr_total < somme des modules individuels** (7 sociétés) :
+  mécanisme de capacité d'absorption des pertes (LAC TP/DT), déjà
+  identifié Décision 117 sur les entités Aéma, re-confirmé ici en
+  détail sur **CNP** (lecture directe p.97, S.25.01.21 : SCR de
+  base=40 711 593, LAC TP=-26 691 143, LAC DT=-829 430, opérationnel=
+  1 065 800 → 14 256 820 ≈ scr_total stocké, exact à l'arrondi près).
+- **Allianz Vie** : absence structurelle de `scr_marche`/
+  `scr_contrepartie`/`scr_souscription_vie`/`scr_souscription_sante`/
+  `scr_diversification` déjà documentée et justifiée (Décision 084,
+  modèle interne, lignes fusionnées dans le template S.25.05.21) — pas
+  une anomalie nouvelle.
+- **Cardif Assurances Risques Divers, loss ratio 23,3%** (sous le
+  seuil indicatif de 30%) : documenté comme sondage statistique, pas
+  une preuve d'erreur (valeurs déjà individuellement vérifiées
+  correctes, Décision 118) — non corrigé, cohérent avec le cas
+  similaire déjà rencontré sur Macifilia (ratio négatif légitime,
+  Décision 116/117).
+
+### Tâche 2 — Scan systématique des pages image : Groupama isolé, 7 citations corrigées
+
+Les 12 PDF ont été scannés pour détecter les pages à texte natif
+quasi-absent (<300 caractères, signal d'une page scannée/image), puis
+croisés avec les `source_page` actuellement utilisées. **Seule
+Groupama** avait des citations tombant sur de telles pages — les 11
+autres sociétés confirment que V5 n'avait manqué aucune page image.
+
+Root cause trouvée pour Groupama : 5 KPI (`scr_operationnel`,
+`scr_marche`, `scr_contrepartie`, `scr_souscription_vie`,
+`scr_souscription_sante`) proviennent, d'après `extract_kpis.py`, d'une
+image embarquée nommée "picture_75.png" (un schéma SCR en waterfall,
+lu par 3 sources croisées — PaddleOCR + Gemini Vision + Claude Vision,
+déjà vérifié manuellement par l'utilisateur selon le commentaire du
+script). **"picture_75" est un index séquentiel d'extraction, pas un
+numéro de page** — quelqu'un avait déduit à tort `source_page=75` de
+ce nom de fichier. Rendu PNG de la page 74 (pas 75) : le schéma SCR y
+est bien visible, avec les 5 valeurs EXACTEMENT identiques à celles
+stockées (confirmé par recherche texte : absent de la couche texte de
+la page 74, c'est une image pure — ce qui explique pourquoi ni V5 ni
+le scan texte de ce soir ne les avaient trouvées). Corrigé : 75 → 74.
+
+2 autres KPI (`scr_total`, `scr_souscription_nonvie`) pointaient vers
+la page 85, qui est en réalité la table FONDS PROPRES (Annexe 5,
+S.23.01.22-01), pas la table SCR — confusion probable entre 2 annexes
+voisines. La vraie table SCR (Annexe 6, S.25.05.22, template de modèle
+interne partiel — fusionne aussi marché+crédit en R0070 et vie+santé
+en R0400, cohérent avec le schéma) est page 87, où les 2 valeurs sont
+confirmées littéralement (R0220/R0570=6 020 977 ;
+R0310=2 474 794). Corrigé : 85 → 87.
+
+**0 valeur modifiée** — les 7 corrections sont uniquement des
+`source_page`, toutes les valeurs étaient déjà correctes. Ceci clôt
+définitivement la limite "Groupama, 7 composantes SCR introuvables"
+laissée ouverte dans NIGHT_LOG_V5.md.
+
+### Tâche 4 — Test post-correction : 10/10, cohérence confirmée
+
+Même échantillon aléatoire que V5 (seed=2026) — 10/10, aucun des 7 KPI
+corrigés ce soir n'y figurant par hasard, mais les 12 sociétés passent
+désormais la totalité des 10 règles actuarielles (après explication
+des faux positifs ci-dessus).
+
+### Fichiers modifiés
+
+`kpis.db` (7 `source_page` corrigés, Groupama uniquement),
+`frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
+(régénérés). Aucun script d'extraction modifié.
