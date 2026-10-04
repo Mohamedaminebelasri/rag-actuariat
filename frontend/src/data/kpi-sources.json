@@ -85,7 +85,7 @@
       "value": 69035.1,
       "unit": "M€",
       "year": 2025,
-      "source_page": 79,
+      "source_page": null,
       "source_chapter": "D.2",
       "raw_value": 69035100.0,
       "raw_unit": "K€"
@@ -94,7 +94,7 @@
       "value": 2384.339,
       "unit": "M€",
       "year": 2025,
-      "source_page": 79,
+      "source_page": null,
       "source_chapter": "D.2",
       "raw_value": 2384339.0,
       "raw_unit": "K€"
@@ -103,7 +103,7 @@
       "value": 71419.439,
       "unit": "M€",
       "year": 2025,
-      "source_page": 79,
+      "source_page": 68,
       "source_chapter": "D.2",
       "raw_value": 71419439.0,
       "raw_unit": "K€"
@@ -195,7 +195,7 @@
       "value": 258.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 79,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -213,7 +213,7 @@
       "value": 14256.819,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 94,
       "source_chapter": "E.2",
       "raw_value": 14256819.0,
       "raw_unit": "K€"
@@ -222,7 +222,7 @@
       "value": 6415.569,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 94,
       "source_chapter": "E.2",
       "raw_value": 6415569.0,
       "raw_unit": "K€"
@@ -413,7 +413,7 @@
       "value": 109.959,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 61,
       "source_chapter": "E.2",
       "raw_value": 109959.0,
       "raw_unit": "K€"
@@ -977,7 +977,7 @@
       "value": 10178.708,
       "unit": "M€",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.2",
       "raw_value": 10178708.0,
       "raw_unit": "K€"
@@ -986,7 +986,7 @@
       "value": 4580.418,
       "unit": "M€",
       "year": 2025,
-      "source_page": 68,
+      "source_page": 70,
       "source_chapter": "E.2",
       "raw_value": 4580418.0,
       "raw_unit": "K€"
@@ -5143,7 +5143,7 @@
       "value": 14087.44,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.2",
       "raw_value": 14087440.0,
       "raw_unit": "K€"
@@ -5152,7 +5152,7 @@
       "value": 6188.486,
       "unit": "M€",
       "year": 2025,
-      "source_page": 74,
+      "source_page": 76,
       "source_chapter": "E.2",
       "raw_value": 6188486.0,
       "raw_unit": "K€"
@@ -5316,7 +5316,7 @@
       "value": 215.79999999999998,
       "unit": "pct",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 29,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -5325,7 +5325,7 @@
       "value": 420.09999999999997,
       "unit": "pct",
       "year": 2025,
-      "source_page": 39,
+      "source_page": 29,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -5889,7 +5889,7 @@
       "value": 2344.989,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 122,
       "source_chapter": "E.2",
       "raw_value": 2344989.0,
       "raw_unit": "K€"
@@ -5898,7 +5898,7 @@
       "value": 612.514,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 122,
       "source_chapter": "E.2",
       "raw_value": 612514.0,
       "raw_unit": "K€"
@@ -5907,7 +5907,7 @@
       "value": 227.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 122,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -5916,7 +5916,7 @@
       "value": 869.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 122,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -5925,7 +5925,7 @@
       "value": 5329.707,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 122,
       "source_chapter": "E.1",
       "raw_value": 5329707.0,
       "raw_unit": "K€"
@@ -5997,7 +5997,7 @@
       "value": 5319.982,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 122,
       "source_chapter": "E.1",
       "raw_value": 5319982.0,
       "raw_unit": "K€"
@@ -6042,7 +6042,7 @@
       "value": 4750.604,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 120,
       "source_chapter": "D.2",
       "raw_value": 4750604.0,
       "raw_unit": "K€"
@@ -6071,7 +6071,7 @@
       "value": 221.0,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 93,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -6080,7 +6080,7 @@
       "value": 511.00000000000006,
       "unit": "pct",
       "year": 2025,
-      "source_page": null,
+      "source_page": 93,
       "source_chapter": "E.1",
       "raw_value": null,
       "raw_unit": null
@@ -6098,7 +6098,7 @@
       "value": 15058.209,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 93,
       "source_chapter": "E.2",
       "raw_value": 15058209.0,
       "raw_unit": "K€"
@@ -6188,7 +6188,7 @@
       "value": 6478.904,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 93,
       "source_chapter": "E.2",
       "raw_value": 6478904.0,
       "raw_unit": "K€"
@@ -6226,7 +6226,7 @@
       "value": 2218.591,
       "unit": "M€",
       "year": 2025,
-      "source_page": 88,
+      "source_page": 89,
       "source_chapter": "E.2",
       "raw_value": 2218591.0,
       "raw_unit": "K€"
@@ -6235,7 +6235,7 @@
       "value": 990.124,
       "unit": "M€",
       "year": 2025,
-      "source_page": 88,
+      "source_page": 89,
       "source_chapter": "E.2",
       "raw_value": 990124.0,
       "raw_unit": "K€"
