@@ -8048,3 +8048,111 @@ pas une garantie à 100%, mais pas un point faible identifié non plus.
 et renvoi à cette décision), `kpis.db` (mêmes 6 corrections),
 `frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
 (régénérés).
+
+## Décision 118 — Vérification single-entity texte natif : 26 source_page corrigés, 0 valeur fausse trouvée
+
+CONTEXTE : prompt de nuit ciblant les 12 sociétés single-entity à PDF
+texte natif (catégorie jusqu'ici la moins auditée), suite à un test
+Cowork (10 KPIs, seed=77) ayant trouvé 1 bug pageSource (Groupama/
+provisions_techniques, page 79 = titre vide au lieu de 68/71) et 1
+écart d'arrondi mineur (2 K€).
+
+### Vérification préalable (avant toute action)
+
+Les 2 claims du prompt vérifiés exacts : page 79 est réellement vide
+("Annexe 1 (2/2)", juste l'en-tête) ; pages 68 et 71 contiennent
+littéralement "71 419 437" ; le stocké (71 419 439) = best_estimate +
+marge_risque calculés séparément, écart de 2 K€ par arrondi
+indépendant de chaque composante — mineur, non corrigé (corriger
+provisions_techniques casserait sa cohérence avec ses 2 composantes).
+
+### Méthode : script automatisé + vérification manuelle systématique de chaque flag
+
+Un script (fitz, pas pdftotext) a vérifié les ~240 KPIs testables des
+12 sociétés contre leur `source_page` (puis ±3 pages en repli).
+**Aucune correction n'a été appliquée sur la seule foi du script** —
+chaque "page décalée" ou "introuvable" a été re-vérifié manuellement,
+ce qui a révélé 2 classes de faux positifs/négatifs importantes :
+
+1. **Le script trouve parfois une page COÏNCIDENTE plutôt que la
+   bonne** : pour `scr_total`/`mcr`, le tableau QRT S.23.01.01
+   commence souvent sur une page et les lignes R0580/R0600 (SCR/MCR)
+   n'arrivent que sur la page SUIVANTE. Une page de comparaison
+   voisine (template S.22.01.21, "Impact des mesures relatives aux
+   garanties de long terme") répète souvent les MÊMES totaux comme
+   valeurs de référence, avec des codes de ligne DIFFÉRENTS (R0090/
+   R0110 au lieu de R0580/R0600) — un script qui cherche juste "la
+   valeur existe sur une page voisine" peut se tromper de page de
+   manière invisible si on ne vérifie pas le CODE DE LIGNE. Confirmé
+   sur Allianz Vie (88→89, pas 87), Crédit Agricole (74→76, pas 73),
+   Predica (68→70, pas 67).
+2. **Mon propre script de vérification avait 2 bugs** (faux négatifs,
+   pas des bugs de données) : ne gérait pas les nombres négatifs
+   (signe affiché dans une cellule séparée du nombre dans le texte PDF
+   extrait, ex. "-\n...\n14 137") — affectait `scr_diversification`
+   sur 4 sociétés, toutes confirmées correctes une fois le signe
+   ignoré dans la recherche. Et une troncature au lieu d'un arrondi
+   sur des valeurs `.999...` (ex. ratio_mcr=430,99999999999994 →
+   cherché "430" au lieu de "431", qui est la vraie valeur imprimée).
+
+### Cause racine trouvée chez CNP Assurances et Covéa : page jamais capturée par le script d'extraction
+
+`extract_kpis_cnp.py` et `extract_kpis_covea.py` passent
+`page_source=None` EN DUR pour chaque KPI (jamais dérivé du corpus
+QRT, contrairement aux autres scripts qui ont une fonction
+`_page_source()`). Les 11/21 (CNP) et 9/17 (Covéa) KPIs qui ont
+aujourd'hui une page l'ont reçue via `corriger_source_page.py` lors
+d'une nuit précédente ; les KPIs restants étaient resté `NULL` car ce
+script ne les avait pas résolus avec confiance. Recherche manuelle
+dans le document complet : `scr_total`/`mcr`/`ratio_scr`/`ratio_mcr`
+trouvés et confirmés pour les deux sociétés (CNP p.94 ; Covéa p.93,
+tableau de consolidation groupe méthode D&A). Non corrigé dans le code
+source ce soir (le `kpis.db` est corrigé, suffisant pour le frontend ;
+corriger `extract_kpis_cnp.py`/`extract_kpis_covea.py` pour qu'ils
+dérivent la page depuis le corpus serait un chantier plus large, hors
+scope "corrections ciblées" de ce soir).
+
+Même cause chez **MAIF** (source_chapter="E.1"/"E.2"/"D.2" mais jamais
+de page) : 6 KPIs trouvés groupés sur une seule page QRT (122,
+S.23.01.01 complet) + `provisions_techniques` trouvé page 120 (valeur
+identique imprimée littéralement, en plus d'être une somme calculée en
+interne). `best_estimate` reste `NULL` : confirmé correct par calcul
+exact (3 860 956 non-vie p.118 + 546 396 vie p.125 = 4 407 352) mais
+aucune page unique ne porte le total combiné — jamais deviné. Même
+cause chez **MACSF prévoyance** (`mcr` trouvé p.61).
+
+### Résultat : 0 valeur fausse trouvée, 26 source_page corrigés
+
+Contrairement aux nuits V3/V4 (9 valeurs fausses trouvées sur la
+catégorie Aéma multi-entité/image), **aucune valeur n'était fausse**
+dans cette catégorie single-entity/texte natif — cohérent avec
+l'hypothèse du prompt ("la catégorie la plus propre du dataset").
+Toutes les 26 corrections sont des `source_page` (traçabilité),
+jamais une valeur. Détail complet des 26 corrections et de la limite
+non résolue (Groupama, 7 composantes SCR introuvables, voir ci-dessous)
+dans NIGHT_LOG_V5.md.
+
+### Limite non résolue : Groupama, ventilation SCR par module introuvable
+
+7 KPIs (scr_operationnel, scr_marche, scr_souscription_sante/vie/
+nonvie, scr_contrepartie, scr_diversification) ont une `source_page`
+qui ne correspond à AUCUN texte réel — recherche exhaustive, avec et
+sans signe, dans tout le document. La page actuellement citée pour 5
+d'entre eux (75) est un chapitre narratif qualitatif sans tableau
+chiffré (discussion du modèle interne partiel). Non corrigé : aucune
+page de remplacement trouvée avec confiance (jamais deviné) — Groupama
+utilise un modèle interne partiel, la ventilation par module n'est
+peut-être publiée qu'en image ou sous une forme non standard. À
+creuser dans une session future (rendu PNG des pages 73-90).
+
+### Test post-correction (10 KPIs, seed=2026) : 10/10, + 12/12 sociétés cohérentes
+
+Score parfait, et les 12 sociétés single-entity passent les 2 checks
+de cohérence demandés (décomposition fonds propres par tiers, ratio
+recalculé) sans anomalie.
+
+### Fichiers modifiés
+
+`kpis.db` (26 `source_page` corrigés ou remis à NULL),
+`frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
+(régénérés). Aucun script d'extraction modifié.
