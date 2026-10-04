@@ -135,8 +135,12 @@ ENTITES_KPIS = {
         # R1000(p469)=R0700(p475)=1 674 024 ; R0580(p475)=R0220(p476)=
         # 814 179 ; R0100(p476)=somme(R0010..R0070)=3 963 973 ;
         # R0100+R0130+R0140+R0150=R0220=814 179.
-        "best_estimate": (25497971.0, 468, "S.02.01.02.01 Bilan, somme 5 lignes Meilleure estimation (R0540+R0580+R0630+R0670+R0710)"),
-        "marge_risque": (274339.0, 468, "S.02.01.02.01 Bilan, somme 5 lignes Marge de risque (R0550+R0590+R0640+R0680+R0720)"),
+        # Décision 121 (audit exhaustif 04/10/2026) : page corrigée 468 → 469
+        # — la page 468 est le recto Actifs du bilan (R0010-R0500), les
+        # lignes Meilleure estimation/Marge de risque (R0510-R0720) sont
+        # au verso, page 469 (confirmé par le pied de page et le rendu PNG).
+        "best_estimate": (25497971.0, 469, "S.02.01.02.01 Bilan, somme 5 lignes Meilleure estimation (R0540+R0580+R0630+R0670+R0710)"),
+        "marge_risque": (274339.0, 469, "S.02.01.02.01 Bilan, somme 5 lignes Marge de risque (R0550+R0590+R0640+R0680+R0720)"),
         "primes_acquises_brutes": (2278966.0, 471, "S.05.01.02.02 (vie seule), R1510/Total"),
         "charge_sinistres": (1844429.0, 471, "S.05.01.02.02 (vie seule), R1610/Total"),
         "fonds_propres_eligibles": (1801400.0, 475, "S.23.01.01.01/R0540/Total"),
