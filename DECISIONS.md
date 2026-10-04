@@ -8248,3 +8248,102 @@ des faux positifs ci-dessus).
 `kpis.db` (7 `source_page` corrigés, Groupama uniquement),
 `frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
 (régénérés). Aucun script d'extraction modifié.
+
+## Décision 120 — Audit complet multi-entity (Aéma + AG2R) : 91 source_page corrigés, découverte d'une régression massive
+
+CONTEXTE : prompt de nuit demandant un audit complet (10 règles
+actuarielles + vérification exhaustive des sources) pour les 13
+entités Aéma et les entités AG2R, après que V5/V6 aient nettoyé la
+catégorie single-entity. Prompt contenant 2 inexactitudes vérifiées
+avant de commencer : (1) le groupe AG2R compte 9 entités réelles, pas
+8, avec des noms différents de ceux listés ; (2) `primes_emises_brutes`
+n'est pas un KPI suivi par le projet (21 KPIs réels dans
+`kpi_definitions.py`) — remplacé par `fonds_propres_eligibles`.
+
+### Méthode qui a payé : comparaison systématique au lieu d'un échantillonnage
+
+Plutôt que de vérifier des KPIs au hasard, la comparaison
+programmatique de TOUTES les `source_page` de `kpis.db` contre les
+pages documentées dans `aema_entites.py` (qui contient, pour chaque
+entité, la page QRT d'origine ET des commentaires de recoupement
+arithmétique écrits lors de l'extraction initiale, Décision 083/085)
+a immédiatement révélé **140 écarts** sur 273 KPIs Aéma.
+
+### Découverte majeure : une régression de 58 source_page causée par une nuit antérieure
+
+Chaque écart vérifié individuellement (recherche littérale du texte
+stocké sur la page actuellement en base) :
+- **82/140** : citation narrative légitime (le même chiffre apparaît
+  aussi dans le chapitre narratif AEMA_BORNES, mécanisme déjà établi
+  Décision 115/116) — laissées inchangées.
+- **58/140** : la valeur stockée n'existe PAS sur la page en base.
+  **Diagnostic** : `corriger_source_page.py`, lors d'une nuit
+  antérieure (probablement la recherche élargie `AEMA_BORNES` des
+  Décisions 115-117), a trouvé un match textuel COÏNCIDENTEL dans le
+  chapitre narratif et a remplacé une page QRT déjà correcte et
+  documentée par une page narrative FAUSSE — une régression, pas un
+  nouveau bug d'extraction. Corrigé : reverti vers la page
+  `aema_entites.py` documentée, après spot-check visuel confirmant
+  le bon titre de tableau (ex. page 446 confirmée "AÉMA GROUPE —
+  S.23.01.22.01 FONDS PROPRES").
+
+**Aucune des 58 valeurs elles-mêmes n'était fausse** — uniquement la
+`source_page`. Ceci souligne un risque méthodologique à retenir : un
+outil de correction automatique de pages, même disambiguisé avec soin
+(codes de ligne, libellés), peut dans de rares cas écraser une
+citation DÉJÀ CORRECTE par une autre techniquement "trouvée" mais en
+réalité fausse (un faux positif de "found=True" sur un texte voisin
+mais non identique), si le process n'a pas de garde-fou comparant
+contre une source de vérité indépendante. `aema_entites.py` a servi
+ce soir de garde-fou — cette discipline (toujours garder une trace
+indépendante vérifiable) mérite d'être reproduite pour les futures
+passes de correction automatique.
+
+### AG2R : bug systémique de pages relatives jamais converties en absolues
+
+`ag2r_entites.py` passe `page_source=None` en dur pour la plupart des
+KPIs (même pattern que CNP/Covéa, Décision 118). Une correction
+antérieure a comblé une partie des `NULL`, mais avec des **pages
+relatives à chaque sous-PDF isolé d'entité**, jamais converties en
+pages absolues du document combiné de 288 pages (ex. "page 12",
+"page 15", "page 1" sans rapport avec l'entité). Hypothèse testée et
+confirmée sur AG.Mut (bornes 198-215) : `scr_souscription_vie` "page
+15" = page absolue 212 (=198+15-1) exactement, confirmée par "Risque
+de souscription en vie R0030 = 0" à cet endroit précis.
+
+**33 `source_page` AG2R corrigés** : 17 cas "page=12" (placeholder
+générique) sur 6 entités (`scr_total`/`mcr`/`fonds_propres_t1_r/t2/t3`),
+8 cas supplémentaires (pages relatives mal converties sur d'autres
+entités/KPIs, confirmés par code de ligne R0090/R0220/R0680 selon le
+template), 4 cas de citations narratives retrouvées par recherche
+plein document (Prima/marge_risque p.77, VIASANTE Mutuelle/
+best_estimate+marge_risque p.80, La Mondiale Partenaire/
+provisions_techniques p.279), et 16 cas remis à `NULL` (confirmés
+sommes calculées sans citation littérale possible après recherche
+exhaustive — cohérent avec le pattern Décision 112, jamais deviné).
+
+### Règles actuarielles : 220 tests, 16 signalements, 0 vrai bug
+
+Toutes les anomalies retombent sur des mécanismes déjà documentés :
+capacité d'absorption des pertes réduisant `scr_total` sous la somme
+des modules bruts (Décision 117, re-confirmé en détail sur La
+Mondiale : 5 591 244 − 3 336 477 + 187 212 = 2 441 979, exact) ;
+plancher absolu du MCR pour Thémis/Macifilia (déjà documenté dans les
+commentaires `aema_entites.py` depuis Décision 083) ; exception du
+corridor MCR 25-45% au niveau groupe pour Aéma Groupe et SGAM AG2R LA
+MONDIALE (même mécanisme que Groupama, Décision 119) ; AG.Mut proche
+du plancher MCR absolu sur une petite entité (3,9 M€).
+
+### Résultat final
+
+**91 `source_page` corrigés cette nuit (58 Aéma + 33 AG2R), 0 valeur
+modifiée.** Test de validation post-correction (15 KPIs, seed=777,
+mix Aéma/AG2R, mix image/texte) : 15/15. Bilan cumulé du projet
+(V3→V7) : 9 valeurs corrigées au total, 124 `source_page` corrigés au
+total, 0 valeur inventée.
+
+### Fichiers modifiés
+
+`kpis.db` (91 `source_page` corrigés/nullifiés),
+`frontend/src/data/donnees-extraites.json` + `kpi-sources.json`
+(régénérés). Aucun script d'extraction modifié.
