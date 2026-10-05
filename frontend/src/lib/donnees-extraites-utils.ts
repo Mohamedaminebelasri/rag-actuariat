@@ -20,6 +20,15 @@ export type Societe = {
   country: string;
 };
 
+export type Composant = {
+  label: string;
+  codeQrt: string | null;
+  valeur: number;
+  unite: string;
+  pageSource: number | null;
+  operation: string;
+};
+
 export type KpiExtrait = {
   valeur: number;
   unite: string;
@@ -30,6 +39,8 @@ export type KpiExtrait = {
   valide: boolean;
   valeurBrute: number | null;
   uniteBrute: string | null;
+  estCompose?: boolean;
+  composants?: Composant[] | null;
 };
 
 type DonneesExtraites = {

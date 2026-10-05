@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2 } from "lucide-react";
-import { formatValeurBrute, type KpiExtrait } from "@/lib/donnees-extraites-utils";
+import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight } from "lucide-react";
+import { formatValeurBrute, formatValeurReelle, type KpiExtrait, type Composant } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import { PdfPageViewer } from "./pdf-page-viewer";
 
@@ -19,6 +19,11 @@ type Props = {
   onCorrection?: (societe: string, kpiId: string, valeur: string, commentaire: string | null) => Promise<boolean>;
 };
 
+/** Formate un nombre avec espaces (séparateur de milliers) et virgule décimale */
+function fmtComposant(valeur: number, unite: string): string {
+  return formatValeurReelle(valeur, unite);
+}
+
 /**
  * Modal plein écran affichant le PDF source à la page du KPI sélectionné.
  * Le bouton "Corriger" envoie via le callback onCorrection (hook parent).
@@ -26,6 +31,21 @@ type Props = {
 export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection }: Props) {
   const nomPdf = PDF_PAR_SOCIETE[societe];
   const pdfUrl = nomPdf ? `/api/pdf/${encodeURIComponent(nomPdf)}` : null;
+
+  // --- Navigation page PDF ---
+  // viewingPage contrôle quelle page le PDF viewer affiche.
+  // viewKey force un remount du PdfPageViewer pour changer de page.
+  const [viewingPage, setViewingPage] = useState(kpi.pageSource ?? 1);
+  const [viewKey, setViewKey] = useState(0);
+
+  function naviguerVersPage(page: number) {
+    setViewingPage(page);
+    setViewKey((k) => k + 1);
+  }
+
+  // --- Décomposition ---
+  const [showDecomposition, setShowDecomposition] = useState(true);
+  const hasComposants = kpi.estCompose && kpi.composants && kpi.composants.length > 0;
 
   // Fermer avec Escape
   const handleKeyDown = useCallback(
@@ -126,6 +146,12 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
                   )}
                   {kpi.valide ? "Vérifié" : "À vérifier"}
                 </span>
+                {hasComposants && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium flex-shrink-0 text-amber-700 bg-amber-100">
+                    <Calculator className="w-3 h-3" />
+                    Valeur calculée
+                  </span>
+                )}
               </div>
               <p className="text-xs text-text-tertiary mt-0.5 truncate">
                 {societe}
@@ -229,12 +255,93 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
           </div>
         )}
 
+        {/* Section décomposition — KPIs composés */}
+        {hasComposants && (
+          <div className="border-b border-border bg-amber-50/30 flex-shrink-0">
+            <button
+              onClick={() => setShowDecomposition(!showDecomposition)}
+              className="w-full flex items-center gap-2 px-4 sm:px-5 py-2 text-left hover:bg-amber-50/50 transition-colors"
+            >
+              <Calculator className="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <span className="text-sm font-medium text-amber-800">Décomposition</span>
+              <span className="text-xs text-amber-600">
+                ({kpi.composants!.length} composant{kpi.composants!.length > 1 ? "s" : ""})
+              </span>
+              <svg
+                className={`w-4 h-4 text-amber-500 ml-auto transition-transform ${showDecomposition ? "rotate-180" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {showDecomposition && (
+              <div className="px-4 sm:px-5 pb-3 space-y-1.5">
+                {kpi.composants!.map((comp, i) => (
+                  <div key={i}>
+                    {/* Opérateur entre les composants (sauf avant le premier) */}
+                    {i > 0 && (
+                      <div className="flex items-center gap-2 py-0.5 pl-2">
+                        <span className="text-xs font-mono font-bold text-amber-500">
+                          {comp.operation === "-" ? "−" : "+"}
+                        </span>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => comp.pageSource && naviguerVersPage(comp.pageSource)}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-white/70 border border-amber-200/60 hover:border-amber-300 hover:bg-white transition-colors group text-left"
+                    >
+                      {/* Code QRT */}
+                      <span className="font-mono text-xs text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                        {comp.codeQrt}
+                      </span>
+                      {/* Label + valeur */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-text-primary truncate">{comp.label}</p>
+                        <p className="text-xs text-text-tertiary">
+                          <span className="font-mono font-medium text-text-secondary">{fmtComposant(comp.valeur, comp.unite)}</span>
+                          {comp.pageSource != null && " · "}
+                          {comp.pageSource != null && (
+                            <span className="text-accent group-hover:underline">
+                              p.&nbsp;{comp.pageSource}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                      {/* Flèche */}
+                      <ArrowRight className="w-3.5 h-3.5 text-text-tertiary group-hover:text-accent transition-colors flex-shrink-0" />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Ligne de total */}
+                <div className="flex items-center gap-3 px-3 pt-2 mt-1 border-t border-amber-200/60">
+                  <span className="text-xs font-medium text-amber-700">Total</span>
+                  <span className="font-mono text-sm font-bold text-text-primary">
+                    {fmtComposant(
+                      kpi.composants!.reduce((acc, c) => acc + (c.operation === "-" ? -c.valeur : c.valeur), 0),
+                      kpi.unite
+                    )}
+                  </span>
+                  <span className="text-xs text-text-tertiary ml-auto">
+                    Valeur stockée : {formatValeurReelle(kpi.valeur, kpi.unite)}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* PDF viewer */}
         <div className="flex-1 min-h-0">
           {pdfUrl ? (
             <PdfPageViewer
+              key={viewKey}
               url={pdfUrl}
-              initialPage={kpi.pageSource ?? 1}
+              initialPage={viewingPage}
               defaultZoom={lastKpiZoom}
               onZoomChange={(z) => { lastKpiZoom = z; }}
             />
