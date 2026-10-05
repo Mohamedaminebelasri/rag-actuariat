@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-05T01:30:11",
+  "genereLe": "2026-10-05T01:46:02",
   "societes": [
     {
       "id": 67,
@@ -1187,8 +1187,25 @@
         "valide": true,
         "valeurBrute": 25498195478.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 17833.832925,
+            "unite": "M€",
+            "pageSource": 594,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 7664.362553,
+            "unite": "M€",
+            "pageSource": 594,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 360.658109,
@@ -1200,8 +1217,25 @@
         "valide": true,
         "valeurBrute": 360658109.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 250.264544,
+            "unite": "M€",
+            "pageSource": 594,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 110.393565,
+            "unite": "M€",
+            "pageSource": 594,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 1264.64688,
@@ -1213,8 +1247,17 @@
         "valide": false,
         "valeurBrute": 1264646880.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Vie (seule activité)",
+            "codeQrt": "R1510",
+            "valeur": 1264.64688,
+            "unite": "M€",
+            "pageSource": 595,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 1769.662909,
@@ -1226,8 +1269,17 @@
         "valide": false,
         "valeurBrute": 1769662909.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Vie (seule activité)",
+            "codeQrt": "R1610",
+            "valeur": 1769.662909,
+            "unite": "M€",
+            "pageSource": 595,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 1729.9787,
@@ -1479,8 +1531,49 @@
         "valide": true,
         "valeurBrute": 2527247594.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 2369.530958,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 48.757466,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 3.470649,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 105.488521,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 167.168601,
@@ -1492,8 +1585,49 @@
         "valide": true,
         "valeurBrute": 167168601.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 161.106113,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 0.547006,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 0.05967,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 5.455812,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 604,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 2140.998437,
@@ -1505,8 +1639,25 @@
         "valide": false,
         "valeurBrute": 2140998437.0000002,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (Total)",
+            "codeQrt": "R0210",
+            "valeur": 2140.998437,
+            "unite": "M€",
+            "pageSource": 606,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Vie (Total, rentes issues de sinistres non-vie convertis)",
+            "codeQrt": "R1510",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 607,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 1464.937847,
@@ -1518,8 +1669,25 @@
         "valide": false,
         "valeurBrute": 1464937847.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (Total)",
+            "codeQrt": "R0310",
+            "valeur": 1491.017726,
+            "unite": "M€",
+            "pageSource": 606,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Vie (négatif, rentes issues de sinistres non-vie convertis)",
+            "codeQrt": "R1610",
+            "valeur": -26.079879,
+            "unite": "M€",
+            "pageSource": 607,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 1559.491555,
@@ -1771,8 +1939,49 @@
         "valide": true,
         "valeurBrute": 46362670005.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 243.905334,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 106.994763,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 26384.761875,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 19627.008033,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 756.806225,
@@ -1784,8 +1993,49 @@
         "valide": true,
         "valeurBrute": 756806225.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 435.081532,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 321.724693,
+            "unite": "M€",
+            "pageSource": 578,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 3984.172891,
@@ -1797,8 +2047,25 @@
         "valide": false,
         "valeurBrute": 3984172891.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (Total)",
+            "codeQrt": "R0210",
+            "valeur": 85.683521,
+            "unite": "M€",
+            "pageSource": 580,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Vie (Total)",
+            "codeQrt": "R1510",
+            "valeur": 3898.48937,
+            "unite": "M€",
+            "pageSource": 581,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 3734.914598,
@@ -1810,8 +2077,25 @@
         "valide": false,
         "valeurBrute": 3734914598.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (Total)",
+            "codeQrt": "R0310",
+            "valeur": 95.067347,
+            "unite": "M€",
+            "pageSource": 580,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Vie (Total)",
+            "codeQrt": "R1610",
+            "valeur": 3639.847251,
+            "unite": "M€",
+            "pageSource": 581,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 5091.873694,
@@ -2063,8 +2347,49 @@
         "valide": true,
         "valeurBrute": 105865186.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 6933.945,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 965.908,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 1041.504,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 69434.607,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 27489.222,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 2260.715,
@@ -2076,8 +2401,49 @@
         "valide": true,
         "valeurBrute": 2260715.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 416.581,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 91.004,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 69.044,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 1025.613,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 658.473,
+            "unite": "M€",
+            "pageSource": 440,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 18600.014,
@@ -2089,8 +2455,41 @@
         "valide": false,
         "valeurBrute": 18600014.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie, assurance directe (Total)",
+            "codeQrt": "R0210",
+            "valeur": 9493.858,
+            "unite": "M€",
+            "pageSource": 442,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Non-vie, réassurance proportionnelle acceptée (Total)",
+            "codeQrt": "R0220",
+            "valeur": 331.094,
+            "unite": "M€",
+            "pageSource": 442,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Non-vie, réassurance non proportionnelle acceptée (Total)",
+            "codeQrt": "R0230",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 442,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Vie (Total)",
+            "codeQrt": "R1510",
+            "valeur": 8775.062,
+            "unite": "M€",
+            "pageSource": 443,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 15035.231,
@@ -2102,8 +2501,41 @@
         "valide": false,
         "valeurBrute": 15035231.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie, assurance directe (Total)",
+            "codeQrt": "R0310",
+            "valeur": 6889.586,
+            "unite": "M€",
+            "pageSource": 442,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Non-vie, réassurance proportionnelle acceptée (Total)",
+            "codeQrt": "R0320",
+            "valeur": 260.074,
+            "unite": "M€",
+            "pageSource": 442,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Non-vie, réassurance non proportionnelle acceptée (Total)",
+            "codeQrt": "R0330",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 442,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Vie (Total)",
+            "codeQrt": "R1610",
+            "valeur": 7885.571,
+            "unite": "M€",
+            "pageSource": 443,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 12860.966,
@@ -2355,8 +2787,49 @@
         "valide": true,
         "valeurBrute": 534971909.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 397.678555,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 40.644763,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 96.648591,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 66.130806,
@@ -2368,8 +2841,49 @@
         "valide": true,
         "valeurBrute": 66130806.00000001,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 43.769888,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 3.588599,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 18.772319,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 524,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 1773.403021,
@@ -2381,8 +2895,25 @@
         "valide": false,
         "valeurBrute": 1773403021.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (Total)",
+            "codeQrt": "R0210",
+            "valeur": 1707.56411,
+            "unite": "M€",
+            "pageSource": 526,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Vie (Total)",
+            "codeQrt": "R1510",
+            "valeur": 65.838911,
+            "unite": "M€",
+            "pageSource": 527,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 1325.929044,
@@ -2394,8 +2925,25 @@
         "valide": false,
         "valeurBrute": 1325929044.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (Total)",
+            "codeQrt": "R0310",
+            "valeur": 1289.307027,
+            "unite": "M€",
+            "pageSource": 526,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Vie (Total)",
+            "codeQrt": "R1610",
+            "valeur": 36.622017,
+            "unite": "M€",
+            "pageSource": 527,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 1840.228925,
@@ -7194,8 +7742,49 @@
         "valide": true,
         "valeurBrute": 5969795.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 4561.084,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 195.303,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 618.242,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 595.166,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 341.059,
@@ -7207,8 +7796,49 @@
         "valide": true,
         "valeurBrute": 341059.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 252.908,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 30.669,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 28.809,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 28.673,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 453,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 4446.321,
@@ -7220,8 +7850,41 @@
         "valide": false,
         "valeurBrute": 4446321.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie, assurance directe (Total)",
+            "codeQrt": "R0210",
+            "valeur": 4410.689,
+            "unite": "M€",
+            "pageSource": 455,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Non-vie, réassurance proportionnelle acceptée (Total)",
+            "codeQrt": "R0220",
+            "valeur": 0.004,
+            "unite": "M€",
+            "pageSource": 455,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Non-vie, réassurance non proportionnelle acceptée (Total)",
+            "codeQrt": "R0230",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 455,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Vie (Total)",
+            "codeQrt": "R1510",
+            "valeur": 35.628,
+            "unite": "M€",
+            "pageSource": 456,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 3263.184,
@@ -7233,8 +7896,41 @@
         "valide": false,
         "valeurBrute": 3263184.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie, assurance directe (Total)",
+            "codeQrt": "R0310",
+            "valeur": 3225.436,
+            "unite": "M€",
+            "pageSource": 455,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Non-vie, réassurance proportionnelle acceptée (Total)",
+            "codeQrt": "R0320",
+            "valeur": -1.181,
+            "unite": "M€",
+            "pageSource": 455,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Non-vie, réassurance non proportionnelle acceptée (Total)",
+            "codeQrt": "R0330",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 455,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Vie (Total)",
+            "codeQrt": "R1610",
+            "valeur": 38.929,
+            "unite": "M€",
+            "pageSource": 456,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 9443.143,
@@ -8759,8 +9455,17 @@
         "valide": true,
         "valeurBrute": 3277082.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Santé similaire non-vie (seule activité)",
+            "codeQrt": "R0580",
+            "valeur": 3.277082,
+            "unite": "M€",
+            "pageSource": 552,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 0.921004,
@@ -8772,8 +9477,17 @@
         "valide": true,
         "valeurBrute": 921004.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Santé similaire non-vie (seule activité)",
+            "codeQrt": "R0590",
+            "valeur": 0.921004,
+            "unite": "M€",
+            "pageSource": 552,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 70.690019,
@@ -8785,8 +9499,17 @@
         "valide": false,
         "valeurBrute": 70690019.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (seule activité)",
+            "codeQrt": "R0210",
+            "valeur": 70.690019,
+            "unite": "M€",
+            "pageSource": 554,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 55.926771,
@@ -8798,8 +9521,17 @@
         "valide": false,
         "valeurBrute": 55926771.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (seule activité)",
+            "codeQrt": "R0310",
+            "valeur": 55.926771,
+            "unite": "M€",
+            "pageSource": 554,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 50.122541,
@@ -9051,8 +9783,17 @@
         "valide": true,
         "valeurBrute": 4848587.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Santé similaire non-vie (seule activité)",
+            "codeQrt": "R0580",
+            "valeur": 4.848587,
+            "unite": "M€",
+            "pageSource": 540,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 1.740626,
@@ -9064,8 +9805,17 @@
         "valide": true,
         "valeurBrute": 1740626.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Santé similaire non-vie (seule activité)",
+            "codeQrt": "R0590",
+            "valeur": 1.740626,
+            "unite": "M€",
+            "pageSource": 540,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 124.60625,
@@ -9077,8 +9827,17 @@
         "valide": false,
         "valeurBrute": 124606250.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (seule activité)",
+            "codeQrt": "R0210",
+            "valeur": 124.60625,
+            "unite": "M€",
+            "pageSource": 542,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 110.861791,
@@ -9090,8 +9849,17 @@
         "valide": false,
         "valeurBrute": 110861791.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (seule activité)",
+            "codeQrt": "R0310",
+            "valeur": 110.861791,
+            "unite": "M€",
+            "pageSource": 542,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 97.481243,
@@ -9343,8 +10111,49 @@
         "valide": true,
         "valeurBrute": 592695.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 68.67,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 297.995,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 226.03,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 58.039,
@@ -9356,8 +10165,49 @@
         "valide": true,
         "valeurBrute": 58039.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 13.352,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 24.065,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 20.622,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 480,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 1181.586,
@@ -9369,8 +10219,25 @@
         "valide": false,
         "valeurBrute": 1181586.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (Total)",
+            "codeQrt": "R0210",
+            "valeur": 896.062,
+            "unite": "M€",
+            "pageSource": 482,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises Brut — Vie (Total)",
+            "codeQrt": "R1510",
+            "valeur": 285.524,
+            "unite": "M€",
+            "pageSource": 483,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 777.528,
@@ -9382,8 +10249,25 @@
         "valide": false,
         "valeurBrute": 777528.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (Total)",
+            "codeQrt": "R0310",
+            "valeur": 656.058,
+            "unite": "M€",
+            "pageSource": 482,
+            "operation": "+"
+          },
+          {
+            "label": "Charge des sinistres Brut — Vie (Total)",
+            "codeQrt": "R1610",
+            "valeur": 121.47,
+            "unite": "M€",
+            "pageSource": 483,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 948.561,
@@ -9635,8 +10519,49 @@
         "valide": true,
         "valeurBrute": 25497971.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 54.352,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 24165.943,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 1277.676,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 274.339,
@@ -9648,8 +10573,49 @@
         "valide": true,
         "valeurBrute": 274339.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 12.58,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 249.884,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 11.875,
+            "unite": "M€",
+            "pageSource": 469,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 2278.966,
@@ -9661,8 +10627,17 @@
         "valide": false,
         "valeurBrute": 2278966.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Vie (seule activité)",
+            "codeQrt": "R1510",
+            "valeur": 2278.966,
+            "unite": "M€",
+            "pageSource": 471,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 1844.429,
@@ -9674,8 +10649,17 @@
         "valide": false,
         "valeurBrute": 1844429.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Vie (seule activité)",
+            "codeQrt": "R1610",
+            "valeur": 1844.429,
+            "unite": "M€",
+            "pageSource": 471,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 1801.4,
@@ -9927,8 +10911,49 @@
         "valide": true,
         "valeurBrute": 11424.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé)",
+            "codeQrt": "R0540",
+            "valeur": 9.735,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire non-vie)",
+            "codeQrt": "R0580",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Santé (similaire vie)",
+            "codeQrt": "R0630",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0670",
+            "valeur": 1.689,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Meilleure estimation — Vie UC et indexés",
+            "codeQrt": "R0710",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 0.05,
@@ -9940,8 +10965,49 @@
         "valide": true,
         "valeurBrute": 50.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé)",
+            "codeQrt": "R0550",
+            "valeur": 0.045,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire non-vie)",
+            "codeQrt": "R0590",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Santé (similaire vie)",
+            "codeQrt": "R0640",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie (hors santé, UC/indexés exclus)",
+            "codeQrt": "R0680",
+            "valeur": 0.005,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          },
+          {
+            "label": "Marge de risque — Vie UC et indexés",
+            "codeQrt": "R0720",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 509,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 5.554,
@@ -9953,8 +11019,17 @@
         "valide": false,
         "valeurBrute": 5554.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (seule activité avec primes)",
+            "codeQrt": "R0210",
+            "valeur": 5.554,
+            "unite": "M€",
+            "pageSource": 511,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": -939.552,
@@ -9966,8 +11041,17 @@
         "valide": false,
         "valeurBrute": -939552.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (négatif, reprise de provision)",
+            "codeQrt": "R0310",
+            "valeur": -939.552,
+            "unite": "M€",
+            "pageSource": 511,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 18.411,
@@ -10219,8 +11303,17 @@
         "valide": true,
         "valeurBrute": 5730487.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Santé similaire non-vie (seule activité)",
+            "codeQrt": "R0580",
+            "valeur": 5.730487,
+            "unite": "M€",
+            "pageSource": 565,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 0.96125,
@@ -10232,8 +11325,17 @@
         "valide": true,
         "valeurBrute": 961250.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Santé similaire non-vie (seule activité)",
+            "codeQrt": "R0590",
+            "valeur": 0.96125,
+            "unite": "M€",
+            "pageSource": 565,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 57.945849,
@@ -10245,8 +11347,17 @@
         "valide": false,
         "valeurBrute": 57945849.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (seule activité)",
+            "codeQrt": "R0210",
+            "valeur": 57.945849,
+            "unite": "M€",
+            "pageSource": 567,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 50.072108,
@@ -10258,8 +11369,17 @@
         "valide": false,
         "valeurBrute": 50072108.0,
         "uniteBrute": "euros bruts",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (seule activité)",
+            "codeQrt": "R0310",
+            "valeur": 50.072108,
+            "unite": "M€",
+            "pageSource": 567,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 61.36335,
@@ -12184,8 +13304,17 @@
         "valide": true,
         "valeurBrute": 1218.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Meilleure estimation — Non-vie (hors santé, seule activité)",
+            "codeQrt": "R0540",
+            "valeur": 1.218,
+            "unite": "M€",
+            "pageSource": 495,
+            "operation": "+"
+          }
+        ]
       },
       "marge_risque": {
         "valeur": 0.078,
@@ -12197,8 +13326,17 @@
         "valide": true,
         "valeurBrute": 78.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Marge de risque — Non-vie (hors santé, seule activité)",
+            "codeQrt": "R0550",
+            "valeur": 0.078,
+            "unite": "M€",
+            "pageSource": 495,
+            "operation": "+"
+          }
+        ]
       },
       "primes_acquises_brutes": {
         "valeur": 1.92,
@@ -12210,8 +13348,17 @@
         "valide": false,
         "valeurBrute": 1920.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises Brut — Non-vie (seule activité)",
+            "codeQrt": "R0210",
+            "valeur": 1.92,
+            "unite": "M€",
+            "pageSource": 497,
+            "operation": "+"
+          }
+        ]
       },
       "charge_sinistres": {
         "valeur": 0.386,
@@ -12223,8 +13370,17 @@
         "valide": false,
         "valeurBrute": 386.0,
         "uniteBrute": "K€",
-        "estCompose": false,
-        "composants": null
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge des sinistres Brut — Non-vie (seule activité)",
+            "codeQrt": "R0310",
+            "valeur": 0.386,
+            "unite": "M€",
+            "pageSource": 497,
+            "operation": "+"
+          }
+        ]
       },
       "fonds_propres_eligibles": {
         "valeur": 9.428,
