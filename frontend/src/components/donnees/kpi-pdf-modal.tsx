@@ -147,7 +147,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
                   {kpi.valide ? "Vérifié" : "À vérifier"}
                 </span>
                 {hasComposants && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium flex-shrink-0 text-amber-700 bg-amber-100">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium flex-shrink-0 text-blue-700 bg-blue-50">
                     <Calculator className="w-3 h-3" />
                     Valeur calculée
                   </span>
@@ -197,6 +197,9 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
             </button>
           </div>
         </div>
+
+        {/* Contenu scrollable — tout défile ensemble */}
+        <div className="flex-1 overflow-y-auto">
 
         {/* Valeur sur mobile */}
         <div className="sm:hidden flex items-center gap-2 px-4 py-2 border-b border-border bg-surface">
@@ -257,18 +260,18 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
 
         {/* Section décomposition — KPIs composés */}
         {hasComposants && (
-          <div className="border-b border-border bg-amber-50/30 flex-shrink-0">
+          <div className="border-b border-border bg-slate-50/50 flex-shrink-0">
             <button
               onClick={() => setShowDecomposition(!showDecomposition)}
-              className="w-full flex items-center gap-2 px-4 sm:px-5 py-2 text-left hover:bg-amber-50/50 transition-colors"
+              className="w-full flex items-center gap-2 px-4 sm:px-5 py-2 text-left hover:bg-slate-100/50 transition-colors"
             >
-              <Calculator className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              <span className="text-sm font-medium text-amber-800">Décomposition</span>
-              <span className="text-xs text-amber-600">
+              <Calculator className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <span className="text-sm font-medium text-slate-700">Décomposition</span>
+              <span className="text-xs text-blue-500">
                 ({kpi.composants!.length} composant{kpi.composants!.length > 1 ? "s" : ""})
               </span>
               <svg
-                className={`w-4 h-4 text-amber-500 ml-auto transition-transform ${showDecomposition ? "rotate-180" : ""}`}
+                className={`w-4 h-4 text-slate-400 ml-auto transition-transform ${showDecomposition ? "rotate-180" : ""}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -285,17 +288,17 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
                     {/* Opérateur entre les composants (sauf avant le premier) */}
                     {i > 0 && (
                       <div className="flex items-center gap-2 py-0.5 pl-2">
-                        <span className="text-xs font-mono font-bold text-amber-500">
+                        <span className="text-xs font-mono font-bold text-blue-400">
                           {comp.operation === "-" ? "−" : "+"}
                         </span>
                       </div>
                     )}
                     <button
                       onClick={() => comp.pageSource && naviguerVersPage(comp.pageSource)}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-white/70 border border-amber-200/60 hover:border-amber-300 hover:bg-white transition-colors group text-left"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-white/70 border border-slate-200 hover:border-blue-300 hover:bg-white transition-colors group text-left"
                     >
                       {/* Code QRT */}
-                      <span className="font-mono text-xs text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                      <span className="font-mono text-xs text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded flex-shrink-0">
                         {comp.codeQrt}
                       </span>
                       {/* Label + valeur */}
@@ -318,8 +321,8 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
                 ))}
 
                 {/* Ligne de total */}
-                <div className="flex items-center gap-3 px-3 pt-2 mt-1 border-t border-amber-200/60">
-                  <span className="text-xs font-medium text-amber-700">Total</span>
+                <div className="flex items-center gap-3 px-3 pt-2 mt-1 border-t border-slate-200">
+                  <span className="text-xs font-medium text-blue-700">Total</span>
                   <span className="font-mono text-sm font-bold text-text-primary">
                     {fmtComposant(
                       kpi.composants!.reduce((acc, c) => acc + (c.operation === "-" ? -c.valeur : c.valeur), 0),
@@ -336,7 +339,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
         )}
 
         {/* PDF viewer */}
-        <div className="flex-1 min-h-0">
+        <div className="h-[80vh]">
           {pdfUrl ? (
             <PdfPageViewer
               key={viewKey}
@@ -353,6 +356,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
             </div>
           )}
         </div>
+        </div>{/* fin contenu scrollable */}
       </div>
     </div>
   );

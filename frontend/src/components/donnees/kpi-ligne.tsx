@@ -45,7 +45,7 @@ export function KpiLigne({
           {kpi.estCompose && kpi.composants && kpi.composants.length > 0 && (
             <span
               title="Valeur calculée à partir de sous-lignes QRT"
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-amber-700 bg-amber-100"
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-blue-700 bg-blue-50"
             >
               <Calculator className="w-2.5 h-2.5" />
               Calculé
