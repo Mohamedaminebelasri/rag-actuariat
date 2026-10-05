@@ -54,27 +54,41 @@ LIGNE_PRIMES_VIE = "r1510"
 LIGNE_SINISTRES_VIE = "r1610"
 
 
-def _somme_lignes_total(paires, codes_suffixes):
+def _somme_lignes_total(paires, codes_suffixes, capturer=None, page=None):
     """paires : sortie de classifier_lignes(). Retourne (somme, n_trouvees)
     des valeurs[-1] (colonne Total) des lignes dont le libellé normalisé
-    se termine par un des codes de `codes_suffixes`."""
+    se termine par un des codes de `codes_suffixes`.
+
+    `capturer`, si fourni (liste), est complétée de façon PUREMENT
+    ADDITIVE (aucun changement de la somme retournée) par 1 dict par
+    ligne trouvée — {"code", "libelle", "valeur", "page"} — pour
+    reconstituer le détail composant par composant (table
+    `kpi_composants`)."""
     total, n = 0.0, 0
     for label, valeurs in paires:
         for code in codes_suffixes:
             if label.endswith(code) and valeurs:
                 total += valeurs[-1]
                 n += 1
+                if capturer is not None:
+                    capturer.append({
+                        "code": code.upper(), "libelle": label,
+                        "valeur": valeurs[-1], "page": page,
+                    })
                 break
     return total, n
 
 
-def resoudre_primes_sinistres_ag2r(sous_pdf_path, pages_qrt):
+def resoudre_primes_sinistres_ag2r(sous_pdf_path, pages_qrt, capturer_primes=None, capturer_sinistres=None):
     """Scanne toutes les pages S.05.01.02 de l'entité (texte brut, pas
     extract_qrt_native) et somme les colonnes Total des lignes "Brut"
     non-vie (R0210+R0220+R0230) et vie (R1510) pour primes_acquises_
     brutes, même logique pour charge_sinistres (R0310+R0320+R0330 +
     R1610). Retourne (primes, charge, n_lignes_trouvees) — n_lignes
-    sert de garde-fou : si 0, ne rien insérer plutôt que 0,00 trompeur."""
+    sert de garde-fou : si 0, ne rien insérer plutôt que 0,00 trompeur.
+
+    `capturer_primes`/`capturer_sinistres`, si fournis (listes), voir
+    _somme_lignes_total — purement additif."""
     doc = fitz.open(str(sous_pdf_path))
     primes_total, sinistres_total, n_trouve = 0.0, 0.0, 0
     for page in pages_qrt:
@@ -82,8 +96,10 @@ def resoudre_primes_sinistres_ag2r(sous_pdf_path, pages_qrt):
             continue
         texte = doc[page["page"] - 1].get_text()
         paires = classifier_lignes(texte)
-        p, n1 = _somme_lignes_total(paires, LIGNES_PRIMES_NONVIE + (LIGNE_PRIMES_VIE,))
-        s, n2 = _somme_lignes_total(paires, LIGNES_SINISTRES_NONVIE + (LIGNE_SINISTRES_VIE,))
+        p, n1 = _somme_lignes_total(paires, LIGNES_PRIMES_NONVIE + (LIGNE_PRIMES_VIE,),
+                                     capturer=capturer_primes, page=page["page"])
+        s, n2 = _somme_lignes_total(paires, LIGNES_SINISTRES_NONVIE + (LIGNE_SINISTRES_VIE,),
+                                     capturer=capturer_sinistres, page=page["page"])
         primes_total += p
         sinistres_total += s
         n_trouve += n1 + n2

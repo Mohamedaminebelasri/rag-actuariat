@@ -125,7 +125,7 @@ def extraire_section(texte_page, debut, fin=None):
     return "\n".join(lignes[i_debut:i_fin])
 
 
-def extraire_par_libelle(texte_page, labels_candidats, colonne=0, sommer_occurrences=False):
+def extraire_par_libelle(texte_page, labels_candidats, colonne=0, sommer_occurrences=False, capturer=None):
     """labels_candidats : liste de libellés (str) à chercher, dans l'ordre
     de priorité — le premier qui matche EXACTEMENT (après normalisation,
     jamais par sous-chaîne, cf. Décision 057) une ligne du texte de page
@@ -159,7 +159,14 @@ def extraire_par_libelle(texte_page, labels_candidats, colonne=0, sommer_occurre
             continue
         try:
             if sommer_occurrences:
-                total = sum(v[colonne] for v in occurrences if len(v) > colonne)
+                valides = [v[colonne] for v in occurrences if len(v) > colonne]
+                total = sum(valides)
+                if capturer is not None:
+                    for i, v in enumerate(valides, start=1):
+                        capturer.append({
+                            "code": f"{label_orig} (occurrence {i}/{len(valides)})",
+                            "libelle": label_orig, "valeur": v, "page": None,
+                        })
                 return total, label_orig
             else:
                 v = occurrences[0]

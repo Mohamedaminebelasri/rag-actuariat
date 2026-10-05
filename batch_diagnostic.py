@@ -202,12 +202,17 @@ def resoudre_scr_mcr_maif(pdf_path, fitz_module, extraire_par_libelle):
     return resultats
 
 
-def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_libelle):
+def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_libelle, capturer=None):
     """Retourne {"primes_acquises_brutes": (valeur, libelle), "charge_sinistres": (...)}
     en sommant, sur chaque page S.05.01.02 possédant une vraie colonne
     Total, les sous-lignes "Brut" de la section concernée (non-vie 3
     sous-lignes OU vie 1 seule) — vérifié contre un calcul manuel exact
-    sur Covéa 2025 (Décision 073)."""
+    sur Covéa 2025 (Décision 073).
+
+    `capturer`, si fourni (dict {kpi_name: []}), est complété de façon
+    PUREMENT ADDITIVE par 1 dict par sous-ligne — {"code", "libelle",
+    "valeur", "page"} — "code" vaut le libellé lui-même (pas de code
+    R/C en mode libellés français)."""
     resultats = {}
     specs = {
         "primes_acquises_brutes": ("Primes acquises", "Charge des sinistres"),
@@ -234,6 +239,12 @@ def resoudre_primes_sinistres_covea(pages_qrt, extraire_section, extraire_par_li
                     total += sous_total
                     trouve = True
                     details.extend(sous_details)
+                    if capturer is not None:
+                        for used, v in sous_details:
+                            capturer.setdefault(kpi_name, []).append({
+                                "code": used, "libelle": used, "valeur": v,
+                                "page": page.get("page"),
+                            })
                     break  # un seul jeu de sous-libellés (non_vie OU vie) par page
         resultats[kpi_name] = (total, f"somme {len(details)} sous-ligne(s) Brut, colonne Total (Décision 073)") if trouve else (None, None)
     return resultats

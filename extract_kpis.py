@@ -207,7 +207,7 @@ def sommer_cellules(elements, specs):
     return total
 
 
-def sommer_cellules_tolerant(elements, specs):
+def sommer_cellules_tolerant(elements, specs, capturer=None):
     """Comme sommer_cellules, mais NE FAIT PAS échouer toute la somme si
     une ligne est trouvée avec le bon libellé mais SANS valeur (cellule
     vide dans le PDF source — cas réel : CNP n'a pas de provisions
@@ -215,7 +215,13 @@ def sommer_cellules_tolerant(elements, specs):
     Décision 060) — cette ligne contribue alors 0, comme demandé
     explicitement ("somme uniquement ceux qui ont une valeur"). Un
     DÉSACCORD de libellé (vraie erreur, pas juste une case vide) continue
-    en revanche à faire échouer, même discipline que sommer_cellules."""
+    en revanche à faire échouer, même discipline que sommer_cellules.
+
+    `capturer`, si fourni (liste), est complétée de façon PUREMENT
+    ADDITIVE (aucun changement de la valeur retournée) par 1 dict par
+    code_ligne trouvé — {"code", "libelle", "valeur", "page"} — pour
+    permettre de reconstituer le détail composant par composant (table
+    `kpi_composants`), sans toucher au calcul existant."""
     total = 0.0
     for code_ligne, libelle_attendu in specs:
         trouve_avec_bon_libelle = False
@@ -228,15 +234,22 @@ def sommer_cellules_tolerant(elements, specs):
             if libelle_attendu.lower() not in libelle.lower():
                 raise KpiIntrouvable(f"{code_ligne} : libellé {libelle!r} ne contient pas {libelle_attendu!r}")
             trouve_avec_bon_libelle = True
+            contribution = 0.0
             if "C0010" in row["valeurs"]:
-                total += _vers_float(row["valeurs"]["C0010"]["valeur_brute"])
+                contribution = _vers_float(row["valeurs"]["C0010"]["valeur_brute"])
+                total += contribution
+            if capturer is not None:
+                capturer.append({
+                    "code": code_ligne, "libelle": libelle or libelle_attendu,
+                    "valeur": contribution, "page": e.get("page_source"),
+                })
             break
         if not trouve_avec_bon_libelle:
             raise KpiIntrouvable(f"{code_ligne} introuvable (ni avec valeur ni vide) dans aucun élément fourni")
     return total
 
 
-def sommer_toutes_colonnes(elements, specs, exclure_total=False):
+def sommer_toutes_colonnes(elements, specs, exclure_total=False, capturer=None):
     """Comme sommer_cellules, mais somme TOUTES les colonnes présentes de
     chaque ligne (pas seulement C0010) — nécessaire pour S.05.01 où les
     lignes de branches (direct/réassurance) sont ventilées sur plusieurs
@@ -283,6 +296,11 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
     explicitement libellée "Total" même si l'arithmétique ne tombait pas
     parfaitement juste (gardé pour compat CNP).
 
+    `capturer`, si fourni (liste), est complétée de façon PUREMENT
+    ADDITIVE (aucun changement de la valeur retournée) par 1 dict par
+    code_ligne — {"code", "libelle", "valeur" (déjà net de l'exclusion
+    Total), "page"} — même objectif que sur sommer_cellules_tolerant.
+
     Détection GLOBALE, pas page par page : une même ligne (ex. R0210)
     peut être imprimée sur PLUSIEURS pages physiques avec des colonnes
     de ligne d'activité différentes sur chacune (Crédit Agricole
@@ -295,6 +313,7 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
     total = 0.0
     for code_ligne, libelle_attendu in specs:
         cellules_toutes = []
+        libelle_trouve = ""
         trouve = False
         for e in elements:
             lignes = e["contenu"]["lignes"]
@@ -315,10 +334,13 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
             # lignes sommées vide, alors que les 2 autres avaient des
             # valeurs).
             trouve = True
-            cellules_toutes.extend(row["valeurs"].values())
+            libelle_trouve = libelle or libelle_trouve
+            page = e.get("page_source")
+            for cellule in row["valeurs"].values():
+                cellules_toutes.append((cellule, page))
         if not trouve:
             raise KpiIntrouvable(f"{code_ligne} introuvable avec le libellé {libelle_attendu!r} dans aucun élément fourni")
-        montants = [_vers_float(c["valeur_brute"]) for c in cellules_toutes]
+        montants = [_vers_float(c["valeur_brute"]) for c, _ in cellules_toutes]
         n = len(montants)
         somme_totale = sum(montants)
         # Un seul candidat "= somme des autres" accepté (dégénère sinon :
@@ -329,12 +351,22 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
                      if n > 1 and abs(m - (somme_totale - m)) <= 1 and m != 0]
         exclus = set(candidats) if len(candidats) == 1 else set()
         if exclure_total:
-            for i, cellule in enumerate(cellules_toutes):
+            for i, (cellule, _) in enumerate(cellules_toutes):
                 if (cellule.get("libelle_colonne") or "").strip().lower() == "total":
                     exclus.add(i)
+        contribution_ligne = 0.0
+        page_ligne = None
         for i, m in enumerate(montants):
             if i not in exclus:
                 total += m
+                contribution_ligne += m
+                if page_ligne is None:
+                    page_ligne = cellules_toutes[i][1]
+        if capturer is not None:
+            capturer.append({
+                "code": code_ligne, "libelle": libelle_trouve or libelle_attendu,
+                "valeur": contribution_ligne, "page": page_ligne,
+            })
     return total
 
 
@@ -343,7 +375,7 @@ def sommer_toutes_colonnes(elements, specs, exclure_total=False):
 # 3.7 étape finale) — remplace les templates Groupama codés en dur.
 # ---------------------------------------------------------------------
 
-def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
+def resoudre_variantes_qrt(kpi_name, corpus, templates_presents, capturer_composants=None):
     """Essaie CHAQUE variante de KPI_QRT_MAPPING[kpi_name] dont le
     template est présent (variantes_disponibles), dans l'ordre déclaré.
     Retourne la liste de TOUTES celles qui aboutissent (pas seulement la
@@ -367,7 +399,14 @@ def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
     cf. sommer_toutes_colonnes). Un (template, row, col) déjà résolu
     n'est donc conservé qu'une seule fois, sur son PREMIER succès dans
     l'ordre de déclaration du mapping — sans impact sur les variantes
-    GÉNUINEMENT différentes (vie vs non-vie : row différent)."""
+    GÉNUINEMENT différentes (vie vs non-vie : row différent).
+
+    `capturer_composants`, si fourni (liste), est complété de façon
+    PUREMENT ADDITIF (aucun changement des `resultats` retournés) par le
+    détail ligne-par-ligne (code QRT, valeur, page) de CHAQUE variante
+    acceptée, à plat — toutes les variantes d'un KPI cumulatif
+    (primes/sinistres vie+non-vie) sont des composants `+` du même total,
+    cf. docstring ci-dessus."""
     resultats = []
     vus = set()
     for v in variantes_disponibles(kpi_name, templates_presents):
@@ -380,18 +419,28 @@ def resoudre_variantes_qrt(kpi_name, corpus, templates_presents):
         if cle_dedup in vus:
             continue
         try:
+            composants_variante = [] if capturer_composants is not None else None
             if isinstance(row, list):
                 if col == "toutes":
                     valeur = sommer_toutes_colonnes(elements, [(r, libelle) for r in row],
-                                                     exclure_total=v.get("exclure_total", False))
+                                                     exclure_total=v.get("exclure_total", False),
+                                                     capturer=composants_variante)
                 else:
-                    valeur = sommer_cellules_tolerant(elements, [(r, libelle) for r in row])
+                    valeur = sommer_cellules_tolerant(elements, [(r, libelle) for r in row],
+                                                       capturer=composants_variante)
             else:
                 valeur = lire_cellule(elements, row, col, libelle)
+                if composants_variante is not None:
+                    composants_variante.append({
+                        "code": row, "libelle": libelle,
+                        "valeur": valeur, "page": elements[0].get("page_source"),
+                    })
             template_id_complet = next(e["template_id"] for e in elements if row in e["contenu"].get("lignes", {})) \
                 if not isinstance(row, list) else elements[0]["template_id"]
             resultats.append((valeur, template_id_complet, v))
             vus.add(cle_dedup)
+            if capturer_composants is not None:
+                capturer_composants.extend(composants_variante)
         except KpiIntrouvable:
             continue
     return resultats
@@ -728,11 +777,16 @@ def lire_picture_75():
 # retenue, les suivantes servent de croisement.
 # ---------------------------------------------------------------------
 
-def valeur_principale(kpi_name, corpus, templates_presents):
+def valeur_principale(kpi_name, corpus, templates_presents, capturer_composants=None):
     """1re variante qui aboutit — lève KpiIntrouvable si aucune ne
     marche (comportement identique à lire_cellule direct, juste indirect
-    via le mapping)."""
-    resultats = resoudre_variantes_qrt(kpi_name, corpus, templates_presents)
+    via le mapping). `capturer_composants` : voir resoudre_variantes_qrt
+    — ATTENTION, ici il capture le détail de TOUTES les variantes
+    essayées (y compris celles qui ne sont pas retenues comme résultat
+    principal), l'appelant qui veut seulement le détail de la variante
+    retenue doit filtrer par `variante["template"]`/`variante["row"]`."""
+    resultats = resoudre_variantes_qrt(kpi_name, corpus, templates_presents,
+                                        capturer_composants=capturer_composants)
     if not resultats:
         raise KpiIntrouvable(f"{kpi_name} : aucune variante du mapping ne matche un template présent")
     valeur, template_id, variante = resultats[0]

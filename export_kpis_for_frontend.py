@@ -126,6 +126,27 @@ def export_donnees_extraites():
         })
         kpis_par_societe[c["name"]] = {}
 
+    # Composants des KPIs "somme" (best_estimate, marge_risque,
+    # primes_acquises_brutes, charge_sinistres, provisions_techniques —
+    # table `kpi_composants`), regroupés par (company_id, year, kpi_name)
+    # — pas de valeur devinée : un KPI sans ligne dans `kpi_composants`
+    # reste `estCompose=False`, jamais un composant inventé.
+    composants_par_cle = {}
+    for row in conn.execute(
+        """SELECT company_id, year, kpi_name, composant_label, composant_code_qrt,
+                  composant_valeur, composant_unite, composant_page, operation
+           FROM kpi_composants ORDER BY company_id, year, kpi_name, composant_index"""
+    ):
+        cle = (row["company_id"], row["year"], row["kpi_name"])
+        composants_par_cle.setdefault(cle, []).append({
+            "label": row["composant_label"],
+            "codeQrt": row["composant_code_qrt"],
+            "valeur": row["composant_valeur"],
+            "unite": row["composant_unite"],
+            "pageSource": row["composant_page"],
+            "operation": row["operation"],
+        })
+
     id_vers_nom = {s["id"]: s["name"] for s in societes}
     for row in conn.execute(
         """SELECT company_id, year, kpi_name, value, unit, category, source_page, source_chapter, validated, raw_value, raw_unit
@@ -134,6 +155,7 @@ def export_donnees_extraites():
         nom = id_vers_nom.get(row["company_id"])
         if nom is None:
             continue
+        composants = composants_par_cle.get((row["company_id"], row["year"], row["kpi_name"]))
         # 1re occurrence par kpi_name = année la plus récente (ORDER BY year DESC),
         # même convention que export_kpis() ci-dessus.
         kpis_par_societe[nom].setdefault(row["kpi_name"], {
@@ -148,6 +170,11 @@ def export_donnees_extraites():
             # (avant ÷1000/÷1 000 000), None pour les KPIs pct.
             "valeurBrute": row["raw_value"],
             "uniteBrute": row["raw_unit"],
+            # KPIs composés (somme de sous-lignes QRT) — composants=None
+            # tant qu'ils n'ont pas été vérifiés/insérés dans
+            # `kpi_composants` (peupler_composants_*.py), jamais déduits.
+            "estCompose": composants is not None,
+            "composants": composants,
         })
     conn.close()
 
