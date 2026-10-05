@@ -4,6 +4,7 @@ import { ShieldCheck, Sparkles, Calculator } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
+import type { Correction } from "@/lib/use-corrections";
 
 /**
  * Une ligne = un KPI réellement extrait pour une société.
@@ -19,11 +20,15 @@ export function KpiLigne({
   label,
   kpi,
   societe,
+  onSelect,
+  correction,
 }: {
   id: string;
   label: string;
   kpi: KpiExtrait;
   societe: string;
+  onSelect?: (id: string) => void;
+  correction?: Correction | null;
 }) {
   const router = useRouter();
   const source =
@@ -62,10 +67,21 @@ export function KpiLigne({
         {formatValeurReelle(kpi.valeur, kpi.unite)}
       </p>
       {source && <p className="text-[11px] text-text-tertiary mt-1.5">Source : {source}</p>}
+      {correction && (
+        <p className="text-[11px] text-blue-600 mt-1">
+          Corrigé : {correction.valeurCorrigee}{correction.commentaire ? ` — ${correction.commentaire}` : ""}
+        </p>
+      )}
     </>
   );
 
-  if (!lienActif) {
+  const handleClick = onSelect
+    ? () => onSelect(id)
+    : lienActif
+      ? () => router.push(`/documents?company=${encodeURIComponent(societe)}&kpi=${encodeURIComponent(id)}`)
+      : undefined;
+
+  if (!handleClick) {
     return (
       <div className="text-left bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-sm)]">
         {contenu}
@@ -75,8 +91,8 @@ export function KpiLigne({
 
   return (
     <button
-      onClick={() => router.push(`/documents?company=${encodeURIComponent(societe)}&kpi=${encodeURIComponent(id)}`)}
-      title="Voir la source dans les Annexes QRT"
+      onClick={handleClick}
+      title={onSelect ? "Voir le détail et la source PDF" : "Voir la source dans les Annexes QRT"}
       className="text-left w-full bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-sm)] transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-px"
     >
       {contenu}
