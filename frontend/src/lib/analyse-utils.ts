@@ -47,7 +47,8 @@ export function formatValeur(
   }
   // Afficher la valeur brute (telle que dans le PDF) quand elle est disponible
   if (valeurBrute != null) {
-    const u = uniteBrute ?? unite;
+    const raw = uniteBrute ?? unite;
+    const u = raw === "euros bruts" || raw === "euro brut" ? "€" : raw;
     if (u === "K€" || u === "€") return `${formatNombre(valeurBrute, 0)} ${u}`;
     return `${formatNombre(valeurBrute, 1)} ${u}`;
   }
