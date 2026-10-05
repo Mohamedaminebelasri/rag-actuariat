@@ -45,7 +45,7 @@ export function KpiLigne({
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm text-text-secondary leading-snug">{label}</p>
         <div className="flex items-center gap-1 flex-shrink-0">
-          {validationHumaine && (
+          {validationHumaine ? (
             <span
               title={`Traité par ${validationHumaine.par} le ${new Date(validationHumaine.date).toLocaleDateString("fr-FR")}`}
               className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-emerald-700 bg-emerald-50"
@@ -53,26 +53,29 @@ export function KpiLigne({
               <UserCheck className="w-2.5 h-2.5" />
               Traité
             </span>
+          ) : (
+            <>
+              {kpi.estCompose && kpi.composants && kpi.composants.length > 0 && (
+                <span
+                  title="Valeur calculée à partir de sous-lignes QRT"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-blue-700 bg-blue-50"
+                >
+                  <Calculator className="w-2.5 h-2.5" />
+                  Calculé
+                </span>
+              )}
+              <span
+                title={kpi.valide ? "Recoupé automatiquement (triple validation)" : "Extrait par IA, non recoupé"}
+                className={cn(
+                  "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium",
+                  kpi.valide ? "text-success bg-success-light" : "text-warning bg-warning-light"
+                )}
+              >
+                {kpi.valide ? <ShieldCheck className="w-2.5 h-2.5" /> : <Sparkles className="w-2.5 h-2.5" />}
+                {kpi.valide ? "Vérifié" : "Extrait"}
+              </span>
+            </>
           )}
-          {kpi.estCompose && kpi.composants && kpi.composants.length > 0 && (
-            <span
-              title="Valeur calculée à partir de sous-lignes QRT"
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-blue-700 bg-blue-50"
-            >
-              <Calculator className="w-2.5 h-2.5" />
-              Calculé
-            </span>
-          )}
-          <span
-            title={kpi.valide ? "Recoupé automatiquement (triple validation)" : "Extrait par IA, non recoupé"}
-            className={cn(
-              "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium",
-              kpi.valide ? "text-success bg-success-light" : "text-warning bg-warning-light"
-            )}
-          >
-            {kpi.valide ? <ShieldCheck className="w-2.5 h-2.5" /> : <Sparkles className="w-2.5 h-2.5" />}
-            {kpi.valide ? "Vérifié" : "Extrait"}
-          </span>
         </div>
       </div>
       <p className="font-mono text-xl font-bold text-text-primary mt-1">
