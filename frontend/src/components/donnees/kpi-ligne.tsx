@@ -1,10 +1,11 @@
 "use client";
 
-import { ShieldCheck, Sparkles, Calculator } from "lucide-react";
+import { ShieldCheck, Sparkles, Calculator, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 import type { Correction } from "@/lib/use-corrections";
+import type { ValidationHumaine } from "@/lib/use-validations-humaines";
 
 /**
  * Une ligne = un KPI réellement extrait pour une société.
@@ -22,6 +23,7 @@ export function KpiLigne({
   societe,
   onSelect,
   correction,
+  validationHumaine,
 }: {
   id: string;
   label: string;
@@ -29,6 +31,7 @@ export function KpiLigne({
   societe: string;
   onSelect?: (id: string) => void;
   correction?: Correction | null;
+  validationHumaine?: ValidationHumaine | null;
 }) {
   const router = useRouter();
   const source =
@@ -42,6 +45,15 @@ export function KpiLigne({
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm text-text-secondary leading-snug">{label}</p>
         <div className="flex items-center gap-1 flex-shrink-0">
+          {validationHumaine && (
+            <span
+              title={`Traité par ${validationHumaine.par} le ${new Date(validationHumaine.date).toLocaleDateString("fr-FR")}`}
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-emerald-700 bg-emerald-50"
+            >
+              <UserCheck className="w-2.5 h-2.5" />
+              Traité
+            </span>
+          )}
           {kpi.estCompose && kpi.composants && kpi.composants.length > 0 && (
             <span
               title="Valeur calculée à partir de sous-lignes QRT"

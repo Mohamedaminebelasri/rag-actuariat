@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight } from "lucide-react";
+import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight, UserCheck, CheckCircle2 } from "lucide-react";
 import { formatValeurBrute, formatValeurReelle, type KpiExtrait, type Composant } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
+import type { ValidationHumaine } from "@/lib/use-validations-humaines";
 import { PdfPageViewer } from "./pdf-page-viewer";
 
 /** Dernier zoom utilisé dans le modal KPI (persiste entre ouvertures) */
@@ -17,6 +18,10 @@ type Props = {
   onClose: () => void;
   /** Callback pour soumettre une correction. Retourne true si succès. */
   onCorrection?: (societe: string, kpiId: string, valeur: string, commentaire: string | null) => Promise<boolean>;
+  /** Validation humaine existante (si déjà traité) */
+  validationHumaine?: ValidationHumaine | null;
+  /** Callback pour marquer comme traité par un humain */
+  onValidation?: (societe: string, kpiId: string, par?: string) => Promise<boolean>;
 };
 
 /** Formate un nombre avec espaces (séparateur de milliers) et virgule décimale */
@@ -28,7 +33,7 @@ function fmtComposant(valeur: number, unite: string): string {
  * Modal plein écran affichant le PDF source à la page du KPI sélectionné.
  * Le bouton "Corriger" envoie via le callback onCorrection (hook parent).
  */
-export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection }: Props) {
+export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection, validationHumaine, onValidation }: Props) {
   const nomPdf = PDF_PAR_SOCIETE[societe];
   const pdfUrl = nomPdf ? `/api/pdf/${encodeURIComponent(nomPdf)}` : null;
 
@@ -70,6 +75,10 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
   const [correctionCommentaire, setCorrectionCommentaire] = useState("");
   const [correctionEnCours, setCorrectionEnCours] = useState(false);
   const [correctionOk, setCorrectionOk] = useState(false);
+
+  // --- Validation humaine ---
+  const [validationEnCours, setValidationEnCours] = useState(false);
+  const [dejaValide, setDejaValide] = useState(!!validationHumaine);
 
   async function envoyerCorrection() {
     if (!correctionValeur.trim()) return;
@@ -185,6 +194,34 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection 
               >
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
+            )}
+
+            {/* Bouton validation humaine */}
+            {onValidation && (
+              dejaValide ? (
+                <span
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200"
+                  title={validationHumaine ? `Traité par ${validationHumaine.par} le ${new Date(validationHumaine.date).toLocaleDateString("fr-FR")}` : "Traité par un humain"}
+                >
+                  <UserCheck className="w-4 h-4" />
+                  Traité
+                </span>
+              ) : (
+                <button
+                  onClick={async () => {
+                    setValidationEnCours(true);
+                    const ok = await onValidation(societe, kpiId);
+                    if (ok) setDejaValide(true);
+                    setValidationEnCours(false);
+                  }}
+                  disabled={validationEnCours}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-text-secondary border border-border hover:text-emerald-700 hover:bg-emerald-50 hover:border-emerald-200 transition-colors disabled:opacity-50"
+                  title="Marquer ce KPI comme vérifié par un humain"
+                >
+                  {validationEnCours ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  Marquer traité
+                </button>
+              )
             )}
 
             {/* Bouton fermer */}

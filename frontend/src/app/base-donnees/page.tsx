@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useCorrections } from "@/lib/use-corrections";
+import { useValidationsHumaines } from "@/lib/use-validations-humaines";
 import { Database, Download, Search, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KpiLigne } from "@/components/donnees/kpi-ligne";
@@ -39,6 +40,7 @@ export default function BaseDonneesPage() {
   const [societeSelectionnee, setSocieteSelectionnee] = useState<string | null>(null);
 
   const { getCorrection, soumettre: soumettreCorrection } = useCorrections();
+  const { estValideParHumain, valider: validerHumain } = useValidationsHumaines();
 
   const groupes = useMemo(() => groupesDisponibles(), []);
   const documents = useMemo(() => societesFiltrees(groupe, recherche), [groupe, recherche]);
@@ -147,7 +149,7 @@ export default function BaseDonneesPage() {
         </div>
 
         {societe ? (
-          <DetailSociete societe={societe} getCorrection={getCorrection} soumettreCorrection={soumettreCorrection} />
+          <DetailSociete societe={societe} getCorrection={getCorrection} soumettreCorrection={soumettreCorrection} estValideParHumain={estValideParHumain} validerHumain={validerHumain} />
         ) : (
           <div className="flex flex-col items-center justify-center h-72 text-center">
             <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center mb-4">
@@ -178,10 +180,14 @@ function DetailSociete({
   societe,
   getCorrection,
   soumettreCorrection,
+  estValideParHumain,
+  validerHumain,
 }: {
   societe: Societe;
   getCorrection: (s: string, k: string) => import("@/lib/use-corrections").Correction | null;
   soumettreCorrection: (s: string, k: string, v: string, c: string | null) => Promise<boolean>;
+  estValideParHumain: (s: string, k: string) => import("@/lib/use-validations-humaines").ValidationHumaine | null;
+  validerHumain: (s: string, k: string, par?: string) => Promise<boolean>;
 }) {
   const [kpiModal, setKpiModal] = useState<string | null>(null);
   const kpis = kpisDe(societe.name);
@@ -263,7 +269,7 @@ function DetailSociete({
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {idsDeCat.map(([id, label]) => (
-                    <KpiLigne key={id} id={id} label={label} kpi={kpis[id]} societe={societe.name} onSelect={setKpiModal} correction={getCorrection(societe.name, id)} />
+                    <KpiLigne key={id} id={id} label={label} kpi={kpis[id]} societe={societe.name} onSelect={setKpiModal} correction={getCorrection(societe.name, id)} validationHumaine={estValideParHumain(societe.name, id)} />
                   ))}
                 </div>
               </div>
@@ -287,6 +293,8 @@ function DetailSociete({
           societe={societe.name}
           onClose={() => setKpiModal(null)}
           onCorrection={soumettreCorrection}
+          validationHumaine={estValideParHumain(societe.name, kpiModal)}
+          onValidation={validerHumain}
         />
       )}
     </div>
