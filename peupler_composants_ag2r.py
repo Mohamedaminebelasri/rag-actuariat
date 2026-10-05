@@ -69,7 +69,7 @@ def traiter_entite(conn, nom, pd, pf, qrt_dict_synth):
             print(f"  [{nom}/{kpi_name}] résolution impossible ({e}) — ignoré")
             continue
         _inserer_si_coherent(cur, company_id, kpi_name, capturer, valeur_brute / 1000,
-                              valeur_stockee, unite, nom)
+                              valeur_stockee, unite, nom, pd)
 
     # --- primes_acquises_brutes / charge_sinistres (fonction dédiée AG2R) ---
     pages_qrt = [p for p in classify_pages(sous_pdf) if p["type"] == "qrt"]
@@ -89,10 +89,20 @@ def traiter_entite(conn, nom, pd, pf, qrt_dict_synth):
                 continue
             valeur_stockee, unite = stored
             _inserer_si_coherent(cur, company_id, kpi_name, capturer, valeur_brute / 1000,
-                                  valeur_stockee, unite, nom)
+                                  valeur_stockee, unite, nom, pd)
 
 
-def _inserer_si_coherent(cur, company_id, kpi_name, capturer, valeur_recomposee, valeur_stockee, unite, nom):
+def _inserer_si_coherent(cur, company_id, kpi_name, capturer, valeur_recomposee, valeur_stockee, unite, nom,
+                          page_debut):
+    """`page_debut` : borne de début du bloc de l'entité dans le document
+    combiné (ENTITES_BORNES) — nécessaire pour convertir les pages
+    capturées par `construire_corpus_entite()`/`resoudre_primes_sinistres_ag2r()`,
+    qui sont RELATIVES au sous-PDF extrait par `extraire_entite()` (1-indexées
+    depuis le début du bloc), en pages ABSOLUES du document combiné
+    (page_absolue = page_relative + page_debut - 1) — bug trouvé en
+    vérifiant VIASANTE Mutuelle/charge_sinistres (composants pointaient
+    vers les pages 3/4 du document entier, soit couverture/sommaire/lexique,
+    au lieu des pages 219/220 réelles)."""
     if not capturer:
         return
     tolerance = max(abs(valeur_stockee) * TOLERANCE_PCT / 100, TOLERANCE_ABS_MIN)
@@ -106,9 +116,10 @@ def _inserer_si_coherent(cur, company_id, kpi_name, capturer, valeur_recomposee,
     )
     lignes = []
     for i, c in enumerate(capturer, start=1):
+        page_absolue = c["page"] + page_debut - 1 if c["page"] is not None else None
         lignes.append((
             company_id, YEAR, kpi_name, i, c["libelle"] or c["code"],
-            c["code"], c["valeur"] / 1000, unite, c["page"], "+",
+            c["code"], c["valeur"] / 1000, unite, page_absolue, "+",
         ))
     cur.executemany(
         """INSERT INTO kpi_composants
