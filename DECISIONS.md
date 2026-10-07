@@ -8427,3 +8427,68 @@ vérification de l'arrondi).
 `aema_entites.py` (1 valeur de page corrigée, Macif Vie), `kpis.db`
 (1 `source_page` corrigé), `frontend/src/data/donnees-extraites.json`
 + `kpi-sources.json` (régénérés).
+
+## Décision 123 — Extraction AXA France Vie (AFV), 1re des 5 nouvelles entités de la nuit
+
+CONTEXTE : shift de nuit demandant l'extraction de 5 sociétés jamais
+vues (AFV, AFI, SwissLife, BPCE Vie, BPCE IARD). AFV traitée en
+premier (document le plus simple : annexes QRT seules, 11 pages,
+texte natif, 10 pages QRT).
+
+### Unité confirmée par lecture directe, pas par magnitude
+
+Chaque page QRT lue (S.02.01.02, S.12.01.02, S.23.01.01, S.25.05.21)
+affiche explicitement "in thousand EUR" / "in Thousands EUR" en
+en-tête — DIVISEUR_MONTANT=1000 est un FAIT vérifié sur le document
+lui-même, pas une hypothèse de l'auto-détection par magnitude
+(`detecter_diviseur_montant` la jugeait "AMBIGU" sur ce document).
+
+### Modèle interne COMPLET — 4 KPIs SCR laissés NULL, jamais devinés
+
+S.25.05.21 ("Solvency Capital Requirement - for undertakings on
+**Full** Internal Models") est le SEUL gabarit SCR présent (aucun
+S.25.01/S.25.02) → `scr_method='modele_interne_complet'`. Ce gabarit
+fusionne scr_marche+scr_contrepartie ("Total market & credit risk",
+R0070/R0080) et scr_souscription_vie+scr_souscription_sante ("Total
+Life & Health underwriting risk", R0400/R0410) — non séparables,
+laissés NULL plutôt que répartis arbitrairement. Recoupement
+arithmétique exact effectué à la main sur le texte brut de la page 10 :
+R0070(6 684 360,57)+R0190(735 023,77)+R0400(4 816 784,84)+R0270(0)+
+R0480(955 998,61) = R0110 (13 192 167,79, "Total undiversified
+components") ; R0110+R0060(diversification,-7 722 540,63) =
+5 469 627,16 = scr_total. Même méthode validée pour Allianz Vie,
+déjà en base avec exactement le même pattern de 4 (+1 pour Allianz
+Vie) NULL — `completude_null_attendu` échoue pour les 2 sociétés de
+façon identique et attendue (39/40 et 37/38 contrôles respectivement),
+pas une régression de ce soir.
+
+### Bug isolé : `extract_qrt_native()` échoue silencieusement sur S.05.01.02
+
+Le tableau Primes/Sinistres (S.05.01.02) de ce document a 17 colonnes
+(non-vie) + 9 colonnes (vie) — bien plus dense que les gabarits déjà
+rencontrés. `extract_qrt_native()` détecte correctement les 31 codes
+de ligne mais ne positionne AUCUNE valeur (`valeurs: {}` partout,
+vérifié) → primes_acquises_brutes/charge_sinistres seraient sortis à
+0,0 (business réel : AFV est un des plus gros assureurs vie de
+France, 0 est absurde). Corrigé par lecture manuelle du texte brut de
+la page 4 (même formule que le mapping générique : R0210+R0220+R0230
+non-vie Total + R1510 vie Total pour les primes ; R0310+R0320+R0330+
+R1610 pour les sinistres) : primes=20 560,331 M€, sinistres=
+20 985,964 M€. PAS de modification de `extract_qrt_native()` (code
+partagé, 33 autres sociétés en dépendent) — override scopé à ce seul
+document, documenté en tête de `extract_kpis_afv.py`.
+
+### Résultat
+
+17/22 KPIs remplis, 5 NULL (4 fusions modèle interne + resultat_technique,
+comme toutes les autres sociétés). `kpi_composants` peuplé pour les 4
+KPIs sommes (best_estimate, marge_risque : 5 lignes R05x0 chacun,
+page 2 ; primes_acquises_brutes, charge_sinistres : 4 lignes R0x10/
+R0x20/R0x30/R1x10 chacun, page 4). 39/40 contrôles `validate_kpis.py`
+passés (1 échec attendu, cf. ci-dessus). `validated` forcé à 0 (aucune
+revue humaine cette nuit, même convention que `extraire_un_pdf.py`).
+
+### Fichiers modifiés
+
+`extract_kpis_afv.py` (nouveau), `kpis.db` (société + 22 KPIs + 18
+lignes `kpi_composants` insérés).
