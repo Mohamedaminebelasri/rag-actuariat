@@ -8780,3 +8780,189 @@ définition précise de cette mesure, distincte du score diagnostic
 
 `extract_kpis_generali_vie.py` (nouveau), `kpis.db` (société + 22
 KPIs + 14 lignes `kpi_composants` insérés).
+
+## Décision 131 — Création de la table `kpi_composants` (rétroactif, comble un trou de documentation)
+
+CONTEXTE : cette décision n'a jamais été écrite au moment des faits —
+toute la fonctionnalité `kpi_composants` (Décisions 131-133) a été
+construite entre la Décision 122 (dernier audit Aéma, 2026-10-04) et
+la Décision 123 (shift de nuit AFV/AFI/SwissLife/BPCE, 2026-10-07)
+sans aucune entrée correspondante dans ce fichier. Écrite après coup
+à partir du vrai historique git (`git log`/`git show`), pas de
+mémoire ni d'hypothèse — commits cités avec leur hash exact.
+
+**Pourquoi** : 5 des 22 KPIs (`best_estimate`, `marge_risque`,
+`provisions_techniques`, `primes_acquises_brutes`, `charge_sinistres`)
+sont des SOMMES de plusieurs lignes QRT (ex. `best_estimate` = R0540+
+R0580+R0630+R0670+R0710). Jusqu'ici seul le total final était stocké
+dans `kpis.value` — l'interface (modal KPI, onglet Données) avait
+besoin du détail ligne par ligne pour que l'utilisateur puisse
+vérifier CHAQUE composant contre le PDF, pas seulement le total.
+
+**Commit de référence** : `427f1af` (2026-10-05 01:32) — *"Ajoute la
+décomposition des KPIs sommes (kpi_composants) pour 21/34 sociétés"*.
+
+**Schéma de la table** :
+```sql
+CREATE TABLE kpi_composants (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    company_id INTEGER NOT NULL,
+    year INTEGER NOT NULL,
+    kpi_name TEXT NOT NULL,
+    composant_index INTEGER NOT NULL,
+    composant_label TEXT NOT NULL,
+    composant_code_qrt TEXT,
+    composant_valeur REAL,
+    composant_unite TEXT,
+    composant_page INTEGER,
+    operation TEXT DEFAULT '+',
+    FOREIGN KEY (company_id) REFERENCES companies(id)
+);
+CREATE INDEX idx_kpi_composants_company_kpi
+  ON kpi_composants(company_id, year, kpi_name);
+```
+Exposée côté frontend via `estCompose`/`composants` dans
+`donnees-extraites.json` (`export_kpis_for_frontend.py`), sans
+toucher au type TypeScript `KpiExtrait` existant.
+
+**Capture additive, pas de ré-extraction** : le remplissage réutilise
+les fonctions de résolution déjà vérifiées (`sommer_cellules_tolerant`/
+`sommer_toutes_colonnes`/`resoudre_variantes_qrt`/`valeur_principale`
+dans `extract_kpis.py`, `_somme_lignes_total`/
+`resoudre_primes_sinistres_ag2r` dans `ag2r_entites.py`,
+`resoudre_primes_sinistres_covea` dans `batch_diagnostic.py`,
+`extraire_par_libelle`) — zéro changement de la valeur déjà calculée
+et stockée dans `kpis.value`, uniquement une capture additive du
+détail des lignes qui la composent.
+
+### Fichiers modifiés (commit 427f1af)
+
+`kpi_composants` (table, nouvelle), `extract_kpis.py`,
+`ag2r_entites.py`, `batch_diagnostic.py`, `extraire_par_libelle.py`,
+`export_kpis_for_frontend.py`, `kpis.db`.
+
+## Décision 132 — Remplissage des composants pour les 34 sociétés : 170 KPIs composés, 553 lignes, 0 écart (rétroactif)
+
+Suite directe de la Décision 131, même trou de documentation comblé
+rétroactivement.
+
+**Commits de référence** : `427f1af` (2026-10-05 01:32, 21/34
+sociétés) puis `73caba1` (2026-10-05 01:46) — *"Complète la
+décomposition des KPIs sommes pour les 13 entités Aéma"*.
+
+### Couverture
+
+- `427f1af` : 21/34 sociétés couvertes directement (8 sociétés
+  single-entity texte natif + les 9 entités AG2R + Allianz Vie +
+  Crédit Agricole + Covéa + MAIF), via les fonctions de résolution
+  déjà vérifiées. `provisions_techniques` : 34/34 d'emblée (= somme
+  interne de `best_estimate`+`marge_risque` déjà stockés, aucune
+  ré-extraction). Les 13 entités Aéma restaient sans composants
+  (document 100% image, aucun texte natif sur les pages QRT
+  concernées — vérifié, pas supposé).
+- `73caba1` : complète les 13 entités Aéma via 2 sources, aucune
+  valeur devinée : (1) `peupler_composants_aema_connus.py` — détail
+  déjà documenté textuellement dans les commentaires vérifiés
+  d'`aema_entites.py` lors des audits V3-V8 (Décisions 085/116/117)
+  pour 10 entités, aucune relecture de PDF ; (2) `peupler_composants_
+  aema_pages.py` — 11 pages QRT (S.02.01.02.01 pour 9 entités,
+  S.05.01.02.01/.02 pour MACIF SAM et Aéma Groupe) rendues en PNG
+  300 DPI et lues visuellement ligne par ligne (mêmes codes R0540/
+  R0580/R0630/R0670/R0710 et R0550/R0590/R0640/R0680/R0720 que
+  `kpi_qrt_mapping.py`).
+
+**Résultat final** : **170/170 KPIs composés** (34 sociétés × 5 KPIs
+sommes), **553 lignes** dans `kpi_composants`, **0 écart** entre
+somme(composants) et `kpis.value` déjà stocké (tolérance 1%/0,5 M€ —
+toute insertion qui ne reconstitue pas le total officiel est ignorée
+et signalée, jamais forcée). Confirmé par requête directe sur
+`kpis.db` au moment d'écrire cette décision rétroactive : 170
+combinaisons distinctes, 553 lignes, exactement les chiffres du
+commit — aucun écart constaté depuis.
+
+### Bug trouvé et corrigé AVANT insertion (garde-fou de recoupement)
+
+**Aéma Groupe / `charge_sinistres`** : confusion de ligne **R1600
+(Net) / R1610 (Brut)** lors d'une première lecture visuelle de la
+page QRT — détectée et corrigée avant insertion par recoupement
+arithmétique contre la valeur déjà stockée dans `kpis.value` (la
+somme des composants lus ne reconstituait pas le total tant que la
+mauvaise ligne était utilisée). Documenté directement dans le corps
+du commit `73caba1`. Aucune valeur fausse n'est jamais arrivée en
+base — c'est exactement le garde-fou "somme(composants) ==
+kpis.value" qui a permis de l'attraper avant écriture, pas après.
+
+### Fichiers modifiés (commits 427f1af + 73caba1)
+
+`peupler_composants_aema_connus.py` (nouveau), `peupler_composants_
+aema_pages.py` (nouveau), `peupler_composants_sommes_generique.py`,
+`peupler_composants_manuels.py`, `peupler_composants_libelles_fr.py`,
+`peupler_composants_provisions.py`, `kpis.db`.
+
+En parallèle (session frontend distincte, non détaillée ici) :
+`2abb092` (2026-10-05 01:49, affichage de la décomposition dans le
+modal KPI), `9aad5ae` (badge "Calculé" sur les cartes KPI),
+`28316ac` (props `onSelect`/correction `KpiLigne`), `71ac4a6`
+(couleurs + scroll du modal), `98bde76` (lisibilité de la section
+décomposition) — câblage UI des composants, aucune donnée touchée.
+
+## Décision 133 — Bug `composant_page` AG2R : pages relatives au sous-PDF jamais converties en absolues (rétroactif)
+
+Même trou de documentation comblé rétroactivement (cf. Décision 131).
+
+**Commit de référence** : `88632d8` (2026-10-05 12:36) — *"Corrige
+les composant_page des 9 entités AG2R (page relative -> absolue)"*.
+
+### Cause
+
+Bug trouvé en vérifiant VIASANTE Mutuelle/`charge_sinistres` : les
+composants (R0310/R0320/R1610) pointaient vers les pages 3/4 du
+document entier (couverture/sommaire/lexique) au lieu des vraies
+pages QRT 219/220. `peupler_composants_ag2r.py` réutilise
+`construire_corpus_entite()` et `resoudre_primes_sinistres_ag2r()`
+(`ag2r_entites.py`), qui lisent un **sous-PDF temporaire** extrait
+par `extraire_entite()` (bornes `ENTITES_BORNES`) — `classify_pages()`
+y renvoie des numéros de page **RELATIFS au sous-PDF**, jamais
+convertis en pages **ABSOLUES** du document combiné (288 pages) avant
+insertion dans `kpi_composants`. Vérifié que ce n'était PAS un bug
+dans `ag2r_entites.py` lui-même : le code original ne stocke aucune
+page pour primes/`charge_sinistres` (`source_page=None`), le risque
+n'existait donc pas avant l'ajout de `kpi_composants` cette semaine
+(Décision 131).
+
+### Fix
+
+`peupler_composants_ag2r.py`, `_inserer_si_coherent()` reçoit
+désormais `page_debut` (borne de début du bloc de l'entité) et
+calcule `page_absolue = page_relative + page_debut - 1` avant
+stockage.
+
+### Impact mesuré
+
+Scan complet de `kpi_composants` avant/après : **179 composants**
+avaient `composant_page <= 10`. Répartition vérifiée une par une,
+pas supposée :
+- **138** (9 entités AG2R, 4 KPIs chacune) : bug confirmé, corrigé
+  ici.
+- **40** (Cardif Assurance Vie/Cardif Assurances Risques Divers) :
+  **faux positif** — leur PDF "Annexes" fait réellement 14 pages (que
+  les QRT, sans chapitre narratif), pages basses légitimes, vérifié
+  page par page.
+- **1** (MGEN/`provisions_techniques`, composant `best_estimate` à la
+  page 5) : incohérence **pré-existante** dans `kpis.source_page`
+  lui-même (même famille que le cas MMJ déjà documenté), sans lien
+  avec ce bug, **non traitée** par ce commit.
+
+Re-exécuté pour les 9 entités AG2R : 36/36 KPIs, **0 écart de
+valeur** (seules les pages ont changé). Validation finale sur
+l'export complet : 170/170 KPIs composés, 0 écart > 1%.
+
+**Statut vérifié ce soir (Décision 130, diagnostic global)** : aucune
+page basse suspecte ne subsiste pour les 9 entités AG2R (`composant_
+page` actuel : 74-277, cohérent avec leurs chapitres narratifs/
+annexes QRT) — le fix tient.
+
+### Fichiers modifiés (commit 88632d8)
+
+`peupler_composants_ag2r.py`, `kpis.db`,
+`frontend/src/data/donnees-extraites.json` (régénéré).
