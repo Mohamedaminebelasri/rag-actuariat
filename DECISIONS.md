@@ -8619,3 +8619,68 @@ via override documenté dans `extract_kpis_bpcevie.py`.
 
 `extract_kpis_bpcevie.py` (nouveau), `kpis.db` (société + 22 KPIs +
 18 lignes `kpi_composants` insérés).
+
+## Décision 127 — Extraction BPCE Assurances IARD, 5/5 : document sans codes EIOPA, extraction 100% manuelle
+
+Document confirmé "le plus risqué des 5" (diagnostic ancien 13/20).
+Cause racine identifiée (pas supposée) : les pages QRT de ce document
+n'imprimentAUCUN code EIOPA (`R####`/`C####`) — uniquement des
+libellés français en clair suivis de leur valeur. `extract_qrt_native()`
+ancre ses lignes sur une regex de code EIOPA : sur ce document, elle
+ne trouve RIEN, sur AUCUNE des 7 pages QRT du dictionnaire (`lignes`
+vide, vérifié) — les 22 KPIs sortaient tous NULL automatiquement, pas
+seulement 2 comme sur les 4 autres sociétés de ce soir.
+
+Décision : PAS de modification de `extract_qrt_native()` (code
+partagé, 38 autres sociétés en dépendent via des codes EIOPA présents
+— supporter un mode "libellé seul" est un projet à part entière, hors
+périmètre d'une nuit sur 5 sociétés). Les 22 KPIs ont été lus et
+recoupés entièrement à la main sur le texte brut :
+
+- **Provisions techniques (p.68, bilan passif)** : best_estimate/
+  marge_risque = somme de 5 lignes chacun. Chaîne vérifiée exacte :
+  BE+RM non-vie(hors santé)=1 924 471+81 302=2 005 773=sous-total
+  imprimé (exact) ; + santé=284 112=sous-total "non-vie" imprimé
+  (2 289 885, exact) ; vie=25 756+1 215=26 971=sous-total vie imprimé
+  (exact). best_estimate=2 214,043 M€, marge_risque=102,813 M€.
+- **Primes/sinistres (p.69-70)** : sommes des colonnes "Total" déjà
+  imprimées par le document (non-vie 1/3+2/3 + vie 3/3). primes=
+  1 956,753 M€, sinistres=1 282,994 M€.
+- **Fonds propres/SCR/MCR (p.76-77)** : ratios publiés directement
+  (128%/213%) — ratio_mcr recoupé avec le plafond Tier 2 à 20% du
+  MCR : min(219 664,20%×237 597=47 519)=47 519 ;
+  (458 660+0+47 519)/237 597×100=213,07%≈213% publié, confirme le
+  plafond appliqué. Somme des 4 tiers (458 660+0+219 664+0=678 324)
+  ≈ fonds_propres_eligibles (678 325, écart 1 K€ = arrondi du
+  document lui-même).
+- **SCR par module (p.78)** : chaîne complète vérifiée exacte — 5
+  modules+diversification=163 214+82 866+1 311+68 682+526 509-196 476
+  =646 106≈646 105 ("SCR de base", arrondi 1 K€) ; +opérationnel
+  (65 765)-LAC DT(183 876, SEUL ajustement LAC ici, contrairement à
+  SwissLife/BPCE Vie qui en ont 2)=527 994=scr_total publié, EXACT.
+
+Aucune valeur n'a été insérée sans recoupement contre au moins une
+autre ligne du même document. 21/22 remplis (NULL : resultat_technique
+uniquement, universel — PAS de fusion modèle interne ici, formule
+standard avec tous les modules distincts). 48/48 contrôles
+`validate_kpis.py`. `kpi_composants` : 18 lignes (5+5+4+4).
+`validated` forcé à 0.
+
+### Fichiers modifiés
+
+`extract_kpis_bpceiard.py` (nouveau), `kpis.db` (société + 22 KPIs +
+18 lignes `kpi_composants` insérés).
+
+## Décision 128 — Bilan de la nuit : 5/5 entités extraites, 39 sociétés en base
+
+Les 5 sociétés demandées (AFV, AFI, SwissLife, BPCE Vie, BPCE IARD)
+sont extraites, recoupées arithmétiquement ligne par ligne contre le
+texte brut de leur propre document, et commitées une par une
+(Décisions 123-127). kpis.db passe de 34 à 39 sociétés. Aucune
+régression introduite sur les 34 existantes : aucun fichier partagé
+(`extract_kpis.py`, `ingest.py`, `detecter_templates.py`,
+`validate_kpis.py`) n'a été modifié pendant cette session — tous les
+bugs rencontrés (AFV : tableau S.05.01.02 vide ; BPCE Vie : mauvaise
+page + double-comptage ; BPCE IARD : absence totale de codes EIOPA)
+ont été contournés par override scopé au script de la société
+concernée, jamais par un changement du moteur générique.
