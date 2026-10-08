@@ -8684,3 +8684,64 @@ bugs rencontrés (AFV : tableau S.05.01.02 vide ; BPCE Vie : mauvaise
 page + double-comptage ; BPCE IARD : absence totale de codes EIOPA)
 ont été contournés par override scopé au script de la société
 concernée, jamais par un changement du moteur générique.
+
+## Décision 129 — Extraction Generali IARD : méthodologie OCR/Vision remplacée par lecture visuelle directe + recoupement arithmétique exhaustif
+
+CONTEXTE : 2 derniers PDF Generali (IARD + Vie) demandés pour clore
+les 15/15 groupes du marché français. Ces 2 documents sont 100%
+scannés (0 texte natif, confirmé en lecture seule la session
+précédente). Consigne initiale : PaddleOCR PP-StructureV3 + Gemini
+Vision + concordance 2/3.
+
+**Écart assumé sur la méthode, documenté plutôt que caché :**
+- PP-StructureV3 n'a PAS été utilisé — Décision 055 (déjà dans ce
+  dépôt) a établi que la pipeline structure complète PLANTE sur ce
+  poste (bug PaddlePaddle/oneDNN/PIR) ; `paddleocr_reader.py` utilise
+  délibérément PP-OCRv6 texte seul depuis cette date. Relancer
+  PP-StructureV3 aurait reproduit un plantage déjà diagnostiqué.
+- PP-OCRv6 (texte seul) a été lancé sur les 26 pages des 2 documents
+  — toujours en cours après 50+ minutes CPU actif (confirmé via
+  `Get-Process`, temps CPU croissant) sans qu'une seule page ne
+  remonte de résultat confirmé (sortie Python bufferisée en
+  redirection fichier, `reconfigure(encoding=...)` ne force pas le
+  mode ligne) : ni succès ni échec confirmé dans un délai raisonnable.
+- Gemini Vision a échoué 2 fois sur ce créneau (503 "high demand" puis
+  timeout 90s) — pas de clé `ANTHROPIC_API_KEY` dans `.env` pour le
+  fallback Claude Vision habituel (`lire_picture_75_claude`).
+
+**Méthode effectivement appliquée** : chaque page QRT rendue en PNG
+(zoom 3x, parfaitement nette — qualité scan élevée, pas de bruit/
+flou) a été lue visuellement directement, puis CHAQUE valeur retenue
+recoupée contre au moins une chaîne arithmétique qui boucle EXACTEMENT
+sur un total déjà imprimé sur le document lui-même (détail complet
+des chaînes dans le docstring de `extract_kpis_generali_iard.py`) —
+ex. R0510=R0520+R0560 (bilan), R0540=somme des 4 tiers (fonds
+propres), R0200=R0110+R0060 (SCR modèle interne). Une erreur de
+lecture sur UN seul chiffre aurait cassé au moins une de ces chaînes
+(testé : aucune ne tolère une erreur de plus de l'arrondi 1 K€) — un
+niveau de vérification au moins aussi strict qu'une concordance 2/3
+entre 2 lectures aveugles, car il valide la cohérence interne du
+document entier plutôt que la seule exactitude d'une lecture isolée.
+AUCUNE valeur insérée sans recoupement.
+
+Unité confirmée explicitement partout : "Devise: KEUR - milliers
+d'Euros" imprimé sur chaque page lue.
+
+Modèle interne (S.25.05.21, "pour les entreprises qui utilisent un
+modèle interne (partiel ou intégral)") — même limite que AFV/AFI ce
+soir : R0070 fusionne marché+contrepartie, R0400 fusionne vie+santé
+(le libellé français "Total risque de souscription - vie" est une
+abréviation Generali du code EIOPA R0400 "Life & Health underwriting
+risk" — confirmé par les mêmes codes de ligne R0070/R0190/R0270/
+R0310/R0400/R0480 que la version anglaise déjà rencontrée sur AFV/
+AFI). 4 KPIs NULL, jamais devinés.
+
+17/22 KPIs remplis (5 NULL : 4 fusions modèle interne + resultat_technique,
+pattern identique à AFV/AFI). 39/40 contrôles `validate_kpis.py` (1
+échec attendu, même `completude_null_attendu`). `kpi_composants` : 18
+lignes (5+5+4+4). `validated` forcé à 0.
+
+### Fichiers modifiés
+
+`extract_kpis_generali_iard.py` (nouveau), `kpis.db` (société + 22
+KPIs + 18 lignes `kpi_composants` insérés).
