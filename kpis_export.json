@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-27T16:26:19.678463+00:00",
+  "generated_at": "2026-10-08T01:09:39.213546+00:00",
   "year": 2025,
-  "n_companies": 34,
+  "n_companies": 39,
   "companies": [
     {
       "name": "AG.Mut",
@@ -246,6 +246,248 @@
       }
     },
     {
+      "name": "AXA France IARD",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "modele_interne_complet",
+      "type_activite": "Non-vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 167.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "ratio_mcr": {
+          "value": 355.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "fonds_propres_eligibles": {
+          "value": 4390.846,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_nr": {
+          "value": 4193.094,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_r": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t2": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t3": {
+          "value": 197.752,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_total": {
+          "value": 2621.463,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_marche": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 2398.72765,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_souscription_sante": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 620.30477,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -3717.87106,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 16371.02919,
+          "unit": "M€",
+          "validated": true
+        },
+        "marge_risque": {
+          "value": 446.60908,
+          "unit": "M€",
+          "validated": true
+        },
+        "provisions_techniques": {
+          "value": 16817.63827,
+          "unit": "M€",
+          "validated": true
+        },
+        "mcr": {
+          "value": 1179.658,
+          "unit": "M€",
+          "validated": true
+        },
+        "primes_acquises_brutes": {
+          "value": 9637.327859999996,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 11517.61947,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
+      "name": "AXA France Vie",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "modele_interne_complet",
+      "type_activite": "Vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 159.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "ratio_mcr": {
+          "value": 351.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "fonds_propres_eligibles": {
+          "value": 8671.479,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_nr": {
+          "value": 8643.185,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_r": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t2": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t3": {
+          "value": 28.293,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_total": {
+          "value": 5469.627,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_marche": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_souscription_sante": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 955.99861,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -7722.5406299999995,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 138213.354,
+          "unit": "M€",
+          "validated": true
+        },
+        "marge_risque": {
+          "value": 1429.969,
+          "unit": "M€",
+          "validated": true
+        },
+        "provisions_techniques": {
+          "value": 139643.323,
+          "unit": "M€",
+          "validated": true
+        },
+        "mcr": {
+          "value": 2461.332,
+          "unit": "M€",
+          "validated": true
+        },
+        "primes_acquises_brutes": {
+          "value": 20560.331,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 20985.964,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
       "name": "Abeille Epargne Retraite",
       "type": "mutuelle (Aéma Groupe)",
       "country": "France",
@@ -350,7 +592,7 @@
           "validated": true
         },
         "primes_acquises_brutes": {
-          "value": 1262.145906,
+          "value": 1264.64688,
           "unit": "M€",
           "validated": false
         },
@@ -476,7 +718,7 @@
           "validated": false
         },
         "charge_sinistres": {
-          "value": 1999.115035,
+          "value": 1464.937847,
           "unit": "M€",
           "validated": false
         },
@@ -592,7 +834,7 @@
           "validated": true
         },
         "primes_acquises_brutes": {
-          "value": 3971.475103,
+          "value": 3984.172891,
           "unit": "M€",
           "validated": false
         },
@@ -713,7 +955,7 @@
           "validated": true
         },
         "primes_acquises_brutes": {
-          "value": 18552.02,
+          "value": 18600.014,
           "unit": "M€",
           "validated": false
         },
@@ -1082,6 +1324,248 @@
         },
         "charge_sinistres": {
           "value": 125.559,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
+      "name": "BPCE Assurances IARD",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "formule_standard",
+      "type_activite": "Non-vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 128.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "ratio_mcr": {
+          "value": 213.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "fonds_propres_eligibles": {
+          "value": 678.325,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_nr": {
+          "value": 458.66,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_r": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t2": {
+          "value": 219.664,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t3": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_total": {
+          "value": 527.994,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_marche": {
+          "value": 163.214,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": 1.311,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 526.509,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_souscription_sante": {
+          "value": 68.682,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": 82.866,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 65.765,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -196.476,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 2214.043,
+          "unit": "M€",
+          "validated": true
+        },
+        "marge_risque": {
+          "value": 102.813,
+          "unit": "M€",
+          "validated": true
+        },
+        "provisions_techniques": {
+          "value": 2316.856,
+          "unit": "M€",
+          "validated": true
+        },
+        "mcr": {
+          "value": 237.597,
+          "unit": "M€",
+          "validated": true
+        },
+        "primes_acquises_brutes": {
+          "value": 1956.753,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 1282.994,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
+      "name": "BPCE Vie",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "formule_standard",
+      "type_activite": "Vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 249.00000000000003,
+          "unit": "pct",
+          "validated": true
+        },
+        "ratio_mcr": {
+          "value": 507.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "fonds_propres_eligibles": {
+          "value": 7363.314,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_nr": {
+          "value": 6210.148,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_r": {
+          "value": 264.225,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t2": {
+          "value": 888.941,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t3": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_total": {
+          "value": 2957.205,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_marche": {
+          "value": 9593.49,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": 5743.182,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_souscription_sante": {
+          "value": 362.991,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": 488.8,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 396.323,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -3556.596,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 113837.694,
+          "unit": "M€",
+          "validated": true
+        },
+        "marge_risque": {
+          "value": 1645.554,
+          "unit": "M€",
+          "validated": true
+        },
+        "provisions_techniques": {
+          "value": 115483.248,
+          "unit": "M€",
+          "validated": true
+        },
+        "mcr": {
+          "value": 1330.742,
+          "unit": "M€",
+          "validated": true
+        },
+        "primes_acquises_brutes": {
+          "value": 17225.427,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 7644.259,
           "unit": "M€",
           "validated": false
         },
@@ -2286,12 +2770,12 @@
           "validated": true
         },
         "primes_acquises_brutes": {
-          "value": 4854.62,
+          "value": 4446.321,
           "unit": "M€",
           "validated": false
         },
         "charge_sinistres": {
-          "value": 3429.372,
+          "value": 3263.184,
           "unit": "M€",
           "validated": false
         },
@@ -2775,7 +3259,7 @@
           "validated": false
         },
         "charge_sinistres": {
-          "value": 69.127735,
+          "value": 55.926771,
           "unit": "M€",
           "validated": false
         },
@@ -3876,6 +4360,127 @@
       }
     },
     {
+      "name": "SwissLife Assurance et Patrimoine",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "formule_standard",
+      "type_activite": "Vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 160.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "ratio_mcr": {
+          "value": 576.0,
+          "unit": "pct",
+          "validated": true
+        },
+        "fonds_propres_eligibles": {
+          "value": 2703.042,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_nr": {
+          "value": 2353.042,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t1_r": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t2": {
+          "value": 200.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "fonds_propres_t3": {
+          "value": 150.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_total": {
+          "value": 1692.097,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_marche": {
+          "value": 2851.424,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": 983.224,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": true
+        },
+        "scr_souscription_sante": {
+          "value": 13.206,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": 158.169,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 105.322,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -711.488,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 29429.205,
+          "unit": "M€",
+          "validated": true
+        },
+        "marge_risque": {
+          "value": 519.977,
+          "unit": "M€",
+          "validated": true
+        },
+        "provisions_techniques": {
+          "value": 29949.182,
+          "unit": "M€",
+          "validated": true
+        },
+        "mcr": {
+          "value": 423.024,
+          "unit": "M€",
+          "validated": true
+        },
+        "primes_acquises_brutes": {
+          "value": 4456.122,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 2619.108,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
       "name": "Themis",
       "type": "mutuelle (Aéma Groupe)",
       "country": "France",
@@ -3980,12 +4585,12 @@
           "validated": false
         },
         "primes_acquises_brutes": {
-          "value": 1.899,
+          "value": 1.92,
           "unit": "M€",
           "validated": false
         },
         "charge_sinistres": {
-          "value": 1.92,
+          "value": 0.386,
           "unit": "M€",
           "validated": false
         },
@@ -4120,149 +4725,149 @@
   ],
   "corpus_stats": {
     "ratio_scr": {
-      "n": 34,
-      "moyenne": 298.25882352941176,
-      "mediane": 233.5,
-      "min": 144.0,
+      "n": 39,
+      "moyenne": 282.14871794871794,
+      "mediane": 227.0,
+      "min": 128.0,
       "max": 953.0
     },
     "ratio_mcr": {
-      "n": 34,
-      "moyenne": 703.7758823529412,
-      "mediane": 531.5,
-      "min": 303.0,
+      "n": 39,
+      "moyenne": 664.8815384615384,
+      "mediane": 511.00000000000006,
+      "min": 213.0,
       "max": 2084.0
     },
     "fonds_propres_eligibles": {
-      "n": 34,
-      "moyenne": 6724.797442970588,
-      "mediane": 1820.8144625,
+      "n": 39,
+      "moyenne": 6473.079975923077,
+      "mediane": 2291.367,
       "min": 9.428,
       "max": 36778.134
     },
     "fonds_propres_t1_nr": {
-      "n": 33,
-      "moyenne": 4760.284146,
-      "mediane": 1663.589,
+      "n": 38,
+      "moyenne": 4709.144889947368,
+      "mediane": 2065.7979625,
       "min": 9.428,
       "max": 28605.491
     },
     "fonds_propres_t1_r": {
-      "n": 32,
-      "moyenne": 288.92102265625,
+      "n": 37,
+      "moyenne": 257.0188574324324,
       "mediane": 0.0,
       "min": 0.0,
       "max": 2605.979
     },
     "fonds_propres_t2": {
-      "n": 32,
-      "moyenne": 812.3883689375,
-      "mediane": 116.27629150000001,
+      "n": 37,
+      "moyenne": 737.9738596216216,
+      "mediane": 134.388583,
       "min": 0.0,
       "max": 5312.775
     },
     "fonds_propres_t3": {
-      "n": 31,
-      "moyenne": 98.39986167741935,
+      "n": 36,
+      "moyenne": 95.17890866666666,
       "mediane": 0.0,
       "min": 0.0,
       "max": 1186.82
     },
     "scr_total": {
-      "n": 34,
-      "moyenne": 3000.4638005,
-      "mediane": 904.339353,
+      "n": 39,
+      "moyenne": 2956.0039799230767,
+      "mediane": 974.095,
       "min": 1.055,
       "max": 15058.209
     },
     "scr_marche": {
-      "n": 33,
-      "moyenne": 5417.251135181818,
-      "mediane": 913.153,
+      "n": 36,
+      "moyenne": 5316.039318361111,
+      "mediane": 1311.7255,
       "min": 0.599,
       "max": 34424.16
     },
     "scr_souscription_vie": {
-      "n": 33,
-      "moyenne": 3074.3693837878786,
-      "mediane": 70.433,
+      "n": 36,
+      "moyenne": 3005.0529629166667,
+      "mediane": 73.5385,
       "min": 0.0,
       "max": 25147.008
     },
     "scr_souscription_nonvie": {
-      "n": 32,
-      "moyenne": 590.7407187812499,
+      "n": 37,
+      "moyenne": 589.9713419189189,
       "mediane": 0.0,
       "min": 0.0,
       "max": 8859.509
     },
     "scr_souscription_sante": {
-      "n": 33,
-      "moyenne": 351.7556914242424,
-      "mediane": 94.597,
+      "n": 36,
+      "moyenne": 334.8004671388889,
+      "mediane": 88.2165,
       "min": 0.0,
       "max": 1854.639
     },
     "scr_contrepartie": {
-      "n": 33,
-      "moyenne": 176.85887257575757,
-      "mediane": 57.851994,
+      "n": 36,
+      "moyenne": 182.3938276388889,
+      "mediane": 61.769499999999994,
       "min": 0.035,
       "max": 1267.072
     },
     "scr_operationnel": {
-      "n": 34,
-      "moyenne": 260.2290566764706,
-      "mediane": 101.1485,
+      "n": 39,
+      "moyenne": 281.83336684615387,
+      "mediane": 105.322,
       "min": 0.058,
       "max": 1390.927
     },
     "scr_diversification": {
-      "n": 32,
-      "moyenne": -2264.38374075,
-      "mediane": -382.48,
+      "n": 37,
+      "moyenne": -2388.2500376756757,
+      "mediane": -452.607,
       "min": -13960.67,
       "max": -0.093
     },
     "best_estimate": {
-      "n": 34,
-      "moyenne": 43297.275761,
-      "mediane": 5188.5735,
+      "n": 39,
+      "moyenne": 45440.32566830769,
+      "mediane": 7573.399,
       "min": 1.218,
       "max": 277593.524
     },
     "marge_risque": {
-      "n": 34,
-      "moyenne": 834.1152167941176,
-      "mediane": 209.75549999999998,
+      "n": 39,
+      "moyenne": 833.4574218205129,
+      "mediane": 246.799,
       "min": 0.05,
       "max": 5880.403
     },
     "provisions_techniques": {
-      "n": 34,
-      "moyenne": 44131.390977794115,
-      "mediane": 5530.729,
+      "n": 39,
+      "moyenne": 46273.78309012821,
+      "mediane": 7787.343000000001,
       "min": 1.296,
       "max": 283473.92699999997
     },
     "mcr": {
-      "n": 34,
-      "moyenne": 1263.2089765,
-      "mediane": 365.813,
+      "n": 39,
+      "moyenne": 1245.6784154102563,
+      "mediane": 386.992783,
       "min": 2.7,
       "max": 6478.904
     },
     "primes_acquises_brutes": {
-      "n": 34,
-      "moyenne": 7745.633264323529,
-      "mediane": 2810.6785,
-      "min": 1.899,
+      "n": 39,
+      "moyenne": 8124.1642720256405,
+      "mediane": 3220.305,
+      "min": 1.92,
       "max": 49173.0
     },
     "charge_sinistres": {
-      "n": 34,
-      "moyenne": 5664.52303682353,
-      "mediane": 2188.8950175,
+      "n": 39,
+      "moyenne": 6049.451988974359,
+      "mediane": 2393.639,
       "min": -939.552,
       "max": 30255.38
     },

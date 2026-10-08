@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-05T12:35:32",
+  "genereLe": "2026-10-08T01:10:00",
   "societes": [
     {
       "id": 67,
@@ -18,6 +18,24 @@
       "country": "France",
       "typeActivite": "Vie",
       "scrMethod": "formule_standard"
+    },
+    {
+      "id": 117,
+      "name": "AXA France IARD",
+      "type": "SA",
+      "groupe": null,
+      "country": "France",
+      "typeActivite": "Non-vie",
+      "scrMethod": "modele_interne_complet"
+    },
+    {
+      "id": 116,
+      "name": "AXA France Vie",
+      "type": "SA",
+      "groupe": null,
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "modele_interne_complet"
     },
     {
       "id": 61,
@@ -78,6 +96,24 @@
       "name": "Arpege Prevoyance",
       "type": "entité",
       "groupe": "Groupe AG2R La Mondiale",
+      "country": "France",
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard"
+    },
+    {
+      "id": 120,
+      "name": "BPCE Assurances IARD",
+      "type": "SA",
+      "groupe": null,
+      "country": "France",
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard"
+    },
+    {
+      "id": 119,
+      "name": "BPCE Vie",
+      "type": "SA",
+      "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
       "scrMethod": "formule_standard"
@@ -287,6 +323,15 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Mixte",
+      "scrMethod": "formule_standard"
+    },
+    {
+      "id": 118,
+      "name": "SwissLife Assurance et Patrimoine",
+      "type": "SA",
+      "groupe": null,
+      "country": "France",
+      "typeActivite": "Vie",
       "scrMethod": "formule_standard"
     },
     {
@@ -1171,6 +1216,748 @@
         "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
         "valide": false,
         "valeurBrute": -312797.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      }
+    },
+    "AXA France IARD": {
+      "ratio_scr": {
+        "valeur": 167.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "ratio_mcr": {
+        "valeur": 355.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_total": {
+        "valeur": 2621.463,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 2621463.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "mcr": {
+        "valeur": 1179.658,
+        "unite": "M€",
+        "categorie": "mcr",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 1179658.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_eligibles": {
+        "valeur": 4390.846,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 4390846.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_nr": {
+        "valeur": 4193.094,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 4193094.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 197.752,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 8,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 197752.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "best_estimate": {
+        "valeur": 16371.02919,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 2,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 16371029.19,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0540",
+            "valeur": 14999.67358,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0580",
+            "valeur": 108.23283,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0630",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0670",
+            "valeur": 1263.12278,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0710",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          }
+        ]
+      },
+      "marge_risque": {
+        "valeur": 446.60908,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 2,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 446609.08,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0550",
+            "valeur": 389.95809,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0590",
+            "valeur": 1.9323,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0640",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0680",
+            "valeur": 54.71869,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0720",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          }
+        ]
+      },
+      "provisions_techniques": {
+        "valeur": 16817.63827,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 2,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 16817638.27,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "primes_acquises_brutes": {
+        "valeur": 9637.327859999996,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 3,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 9637327.859999996,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Premiums earned | Primes acquises",
+            "codeQrt": "R0210",
+            "valeur": 8921.270189999997,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          },
+          {
+            "label": "Premiums earned | Primes acquises",
+            "codeQrt": "R0220",
+            "valeur": 715.08035,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          },
+          {
+            "label": "Premiums earned | Primes acquises",
+            "codeQrt": "R0230",
+            "valeur": 0.9773200000000001,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          },
+          {
+            "label": "Premiums earned | Primes acquises",
+            "codeQrt": "R1510",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          }
+        ]
+      },
+      "charge_sinistres": {
+        "valeur": 11517.61947,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 3,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 11517619.469999999,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Claims incurred | Charge des sinistres",
+            "codeQrt": "R0310",
+            "valeur": 11158.9488,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          },
+          {
+            "label": "Claims incurred | Charge des sinistres",
+            "codeQrt": "R0320",
+            "valeur": 346.61197000000004,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          },
+          {
+            "label": "Claims incurred | Charge des sinistres",
+            "codeQrt": "R0330",
+            "valeur": 12.0587,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          },
+          {
+            "label": "Claims incurred | Charge des sinistres",
+            "codeQrt": "R1610",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 3,
+            "operation": "+"
+          }
+        ]
+      },
+      "scr_operationnel": {
+        "valeur": 620.30477,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 620304.77,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 2398.72765,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 2398727.65,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_diversification": {
+        "valeur": -3717.87106,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": -3717871.06,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      }
+    },
+    "AXA France Vie": {
+      "ratio_scr": {
+        "valeur": 159.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "ratio_mcr": {
+        "valeur": 351.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_total": {
+        "valeur": 5469.627,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 5469627.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "mcr": {
+        "valeur": 2461.332,
+        "unite": "M€",
+        "categorie": "mcr",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 2461332.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_eligibles": {
+        "valeur": 8671.479,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 8671479.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_nr": {
+        "valeur": 8643.185,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 8643185.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 28.293,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 9,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 28293.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "best_estimate": {
+        "valeur": 138213.354,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 2,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 138213354.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0580",
+            "valeur": 9578.299,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0630",
+            "valeur": 4824.582,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0670",
+            "valeur": 81797.686,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0710",
+            "valeur": 42012.787,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          }
+        ]
+      },
+      "marge_risque": {
+        "valeur": 1429.969,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 2,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 1429969.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0590",
+            "valeur": 178.476,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0640",
+            "valeur": 219.339,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0680",
+            "valeur": 716.838,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0720",
+            "valeur": 315.316,
+            "unite": "M€",
+            "pageSource": 2,
+            "operation": "+"
+          }
+        ]
+      },
+      "provisions_techniques": {
+        "valeur": 139643.323,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 2,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 139643323.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "primes_acquises_brutes": {
+        "valeur": 20560.331,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 4,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 20560331.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises brutes — directe (non-vie, Total)",
+            "codeQrt": "R0210",
+            "valeur": 4975.797,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes — réassurance proportionnelle acceptée (non-vie, Total)",
+            "codeQrt": "R0220",
+            "valeur": 3290.341,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes — réassurance non-proportionnelle acceptée (non-vie, Total)",
+            "codeQrt": "R0230",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes (vie, Total)",
+            "codeQrt": "R1510",
+            "valeur": 12294.193,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          }
+        ]
+      },
+      "charge_sinistres": {
+        "valeur": 20985.964,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 4,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 20985964.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge de sinistres — directe (non-vie, Total)",
+            "codeQrt": "R0310",
+            "valeur": 3749.686,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres — réassurance proportionnelle acceptée (non-vie, Total)",
+            "codeQrt": "R0320",
+            "valeur": 2828.066,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres — réassurance non-proportionnelle acceptée (non-vie, Total)",
+            "codeQrt": "R0330",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres (vie, Total)",
+            "codeQrt": "R1610",
+            "valeur": 14408.212,
+            "unite": "M€",
+            "pageSource": 4,
+            "operation": "+"
+          }
+        ]
+      },
+      "scr_operationnel": {
+        "valeur": 955.99861,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 10,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 955998.61,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 10,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_diversification": {
+        "valeur": -7722.5406299999995,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 10,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": -7722540.63,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null
@@ -3930,6 +4717,852 @@
         "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0060 (mapping, formule standard)",
         "valide": false,
         "valeurBrute": -34405.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      }
+    },
+    "BPCE Assurances IARD": {
+      "ratio_scr": {
+        "valeur": 128.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 77,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "ratio_mcr": {
+        "valeur": 213.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 77,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_total": {
+        "valeur": 527.994,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 77,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 527994.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "mcr": {
+        "valeur": 237.597,
+        "unite": "M€",
+        "categorie": "mcr",
+        "annee": 2025,
+        "pageSource": 77,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 237597.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_eligibles": {
+        "valeur": 678.325,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 77,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 678325.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_nr": {
+        "valeur": 458.66,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 458660.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 219.664,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 219664.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "best_estimate": {
+        "valeur": 2214.043,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 68,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 2214043.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "BE non-vie hors santé",
+            "codeQrt": null,
+            "valeur": 1924.471,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "BE santé (similaire non-vie)",
+            "codeQrt": null,
+            "valeur": 263.816,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "BE santé (similaire vie)",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "BE vie (hors santé/UC/indexés)",
+            "codeQrt": null,
+            "valeur": 25.756,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "BE UC et indexés",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          }
+        ]
+      },
+      "marge_risque": {
+        "valeur": 102.813,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 68,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 102813.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "RM non-vie hors santé",
+            "codeQrt": null,
+            "valeur": 81.302,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "RM santé (similaire non-vie)",
+            "codeQrt": null,
+            "valeur": 20.296,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "RM santé (similaire vie)",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "RM vie (hors santé/UC/indexés)",
+            "codeQrt": null,
+            "valeur": 1.215,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          },
+          {
+            "label": "RM UC et indexés",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 68,
+            "operation": "+"
+          }
+        ]
+      },
+      "provisions_techniques": {
+        "valeur": 2316.856,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 68,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 2316856.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "primes_acquises_brutes": {
+        "valeur": 1956.753,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 69,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 1956753.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises brutes — directe (non-vie, Total)",
+            "codeQrt": null,
+            "valeur": 1933.958,
+            "unite": "M€",
+            "pageSource": 69,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes — réass. proportionnelle acceptée (non-vie, Total)",
+            "codeQrt": null,
+            "valeur": 22.795,
+            "unite": "M€",
+            "pageSource": 69,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes — réass. non-proportionnelle acceptée (non-vie)",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 69,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes (vie, Total)",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 70,
+            "operation": "+"
+          }
+        ]
+      },
+      "charge_sinistres": {
+        "valeur": 1282.994,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 69,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 1282994.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge de sinistres — directe (non-vie, Total)",
+            "codeQrt": null,
+            "valeur": 1268.473,
+            "unite": "M€",
+            "pageSource": 69,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres — réass. proportionnelle acceptée (non-vie, Total)",
+            "codeQrt": null,
+            "valeur": 13.128,
+            "unite": "M€",
+            "pageSource": 69,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres — réass. non-proportionnelle acceptée (non-vie)",
+            "codeQrt": null,
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 69,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres (vie, Total)",
+            "codeQrt": null,
+            "valeur": 1.393,
+            "unite": "M€",
+            "pageSource": 70,
+            "operation": "+"
+          }
+        ]
+      },
+      "scr_operationnel": {
+        "valeur": 65.765,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 65765.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_marche": {
+        "valeur": 163.214,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 163214.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_sante": {
+        "valeur": 68.682,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 68682.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_contrepartie": {
+        "valeur": 82.866,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 82866.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_vie": {
+        "valeur": 1.311,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 1311.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 526.509,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 526509.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_diversification": {
+        "valeur": -196.476,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 78,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": -196476.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      }
+    },
+    "BPCE Vie": {
+      "ratio_scr": {
+        "valeur": 249.00000000000003,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "ratio_mcr": {
+        "valeur": 507.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_total": {
+        "valeur": 2957.205,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 2957205.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "mcr": {
+        "valeur": 1330.742,
+        "unite": "M€",
+        "categorie": "mcr",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 1330742.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_eligibles": {
+        "valeur": 7363.314,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 7363314.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_nr": {
+        "valeur": 6210.148,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 6210148.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 264.225,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 264225.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 888.941,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 888941.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 84,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "best_estimate": {
+        "valeur": 113837.694,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 113837694.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0580",
+            "valeur": 32.527,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0630",
+            "valeur": 197.074,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0670",
+            "valeur": 72336.288,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0710",
+            "valeur": 41271.805,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          }
+        ]
+      },
+      "marge_risque": {
+        "valeur": 1645.554,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 1645554.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0590",
+            "valeur": 12.028,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0640",
+            "valeur": 247.185,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0680",
+            "valeur": 867.5,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0720",
+            "valeur": 518.841,
+            "unite": "M€",
+            "pageSource": 76,
+            "operation": "+"
+          }
+        ]
+      },
+      "provisions_techniques": {
+        "valeur": 115483.248,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 76,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 115483248.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "primes_acquises_brutes": {
+        "valeur": 17225.427,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 79,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 17225427.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Primes acquises brutes — directe (non-vie, Total, 1 LoB active)",
+            "codeQrt": "R0210",
+            "valeur": 50.154,
+            "unite": "M€",
+            "pageSource": 78,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes — réassurance proportionnelle acceptée (non-vie)",
+            "codeQrt": "R0220",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 78,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes — réassurance non-proportionnelle acceptée (non-vie)",
+            "codeQrt": "R0230",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 78,
+            "operation": "+"
+          },
+          {
+            "label": "Primes acquises brutes (vie, Total)",
+            "codeQrt": "R1510",
+            "valeur": 17175.273,
+            "unite": "M€",
+            "pageSource": 79,
+            "operation": "+"
+          }
+        ]
+      },
+      "charge_sinistres": {
+        "valeur": 7644.259,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 79,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 7644259.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Charge de sinistres — directe (non-vie, Total, 1 LoB active)",
+            "codeQrt": "R0310",
+            "valeur": 13.972,
+            "unite": "M€",
+            "pageSource": 78,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres — réassurance proportionnelle acceptée (non-vie)",
+            "codeQrt": "R0320",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 78,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres — réassurance non-proportionnelle acceptée (non-vie)",
+            "codeQrt": "R0330",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 78,
+            "operation": "+"
+          },
+          {
+            "label": "Charge de sinistres (vie, Total)",
+            "codeQrt": "R1610",
+            "valeur": 7630.287,
+            "unite": "M€",
+            "pageSource": 79,
+            "operation": "+"
+          }
+        ]
+      },
+      "scr_operationnel": {
+        "valeur": 396.323,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 396323.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_marche": {
+        "valeur": 9593.49,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 9593490.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_sante": {
+        "valeur": 362.991,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 362991.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_contrepartie": {
+        "valeur": 488.8,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 488800.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_vie": {
+        "valeur": 5743.182,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 5743182.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_diversification": {
+        "valeur": -3556.596,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 86,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": -3556596.0,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null
@@ -13289,6 +14922,381 @@
         "valide": false,
         "valeurBrute": -4122288641.0,
         "uniteBrute": "euros bruts",
+        "estCompose": false,
+        "composants": null
+      }
+    },
+    "SwissLife Assurance et Patrimoine": {
+      "ratio_scr": {
+        "valeur": 160.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "ratio_mcr": {
+        "valeur": 576.0,
+        "unite": "pct",
+        "categorie": "solvabilité",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": null,
+        "uniteBrute": null,
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_total": {
+        "valeur": 1692.097,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 1692097.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "mcr": {
+        "valeur": 423.024,
+        "unite": "M€",
+        "categorie": "mcr",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 423024.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_eligibles": {
+        "valeur": 2703.042,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 2703042.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_nr": {
+        "valeur": 2353.042,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 2353042.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 200.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 200000.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 150.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 105,
+        "chapitreSource": "E.1",
+        "valide": true,
+        "valeurBrute": 150000.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "best_estimate": {
+        "valeur": 29429.205,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 99,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 29429205.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0540",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0580",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0630",
+            "valeur": 30.923,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0670",
+            "valeur": 11783.861,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Best Estimate | Meilleure estimation",
+            "codeQrt": "R0710",
+            "valeur": 17614.421,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          }
+        ]
+      },
+      "marge_risque": {
+        "valeur": 519.977,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 99,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 519977.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0550",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0590",
+            "valeur": 0.0,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0640",
+            "valeur": 0.526,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0680",
+            "valeur": 221.395,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          },
+          {
+            "label": "Risk margin | Marge de risque",
+            "codeQrt": "R0720",
+            "valeur": 298.056,
+            "unite": "M€",
+            "pageSource": 100,
+            "operation": "+"
+          }
+        ]
+      },
+      "provisions_techniques": {
+        "valeur": 29949.182,
+        "unite": "M€",
+        "categorie": "provisions",
+        "annee": 2025,
+        "pageSource": 99,
+        "chapitreSource": "D.2",
+        "valide": true,
+        "valeurBrute": 29949182.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "primes_acquises_brutes": {
+        "valeur": 4456.122,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 101,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 4456122.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Premiums earned | Primes acquises",
+            "codeQrt": "R1510",
+            "valeur": 4456.122,
+            "unite": "M€",
+            "pageSource": 101,
+            "operation": "+"
+          }
+        ]
+      },
+      "charge_sinistres": {
+        "valeur": 2619.108,
+        "unite": "M€",
+        "categorie": "activité",
+        "annee": 2025,
+        "pageSource": 101,
+        "chapitreSource": "A.2",
+        "valide": false,
+        "valeurBrute": 2619108.0,
+        "uniteBrute": "K€",
+        "estCompose": true,
+        "composants": [
+          {
+            "label": "Claims incurred | Charge des sinistres",
+            "codeQrt": "R1610",
+            "valeur": 2619.108,
+            "unite": "M€",
+            "pageSource": 101,
+            "operation": "+"
+          }
+        ]
+      },
+      "scr_operationnel": {
+        "valeur": 105.322,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 105322.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_marche": {
+        "valeur": 2851.424,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 2851424.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_sante": {
+        "valeur": 13.206,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 13206.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_contrepartie": {
+        "valeur": 158.169,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 158169.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_vie": {
+        "valeur": 983.224,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": 983224.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_diversification": {
+        "valeur": -711.488,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 106,
+        "chapitreSource": "E.2",
+        "valide": false,
+        "valeurBrute": -711488.0,
+        "uniteBrute": "K€",
         "estCompose": false,
         "composants": null
       }

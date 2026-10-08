@@ -6348,5 +6348,888 @@
       "raw_value": 0.0,
       "raw_unit": "K€"
     }
+  },
+  "AXA France Vie": {
+    "ratio_scr": {
+      "value": 159.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "ratio_mcr": {
+      "value": 351.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "scr_total": {
+      "value": 5469.627,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.2",
+      "raw_value": 5469627.0,
+      "raw_unit": "K€"
+    },
+    "mcr": {
+      "value": 2461.332,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.2",
+      "raw_value": 2461332.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_eligibles": {
+      "value": 8671.479,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": 8671479.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 8643.185,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": 8643185.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_r": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t2": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t3": {
+      "value": 28.293,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.1",
+      "raw_value": 28293.0,
+      "raw_unit": "K€"
+    },
+    "best_estimate": {
+      "value": 138213.354,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 2,
+      "source_chapter": "D.2",
+      "raw_value": 138213354.0,
+      "raw_unit": "K€"
+    },
+    "marge_risque": {
+      "value": 1429.969,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 2,
+      "source_chapter": "D.2",
+      "raw_value": 1429969.0,
+      "raw_unit": "K€"
+    },
+    "provisions_techniques": {
+      "value": 139643.323,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 2,
+      "source_chapter": "D.2",
+      "raw_value": 139643323.0,
+      "raw_unit": "K€"
+    },
+    "primes_acquises_brutes": {
+      "value": 20560.331,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 4,
+      "source_chapter": "A.2",
+      "raw_value": 20560331.0,
+      "raw_unit": "K€"
+    },
+    "charge_sinistres": {
+      "value": 20985.964,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 4,
+      "source_chapter": "A.2",
+      "raw_value": 20985964.0,
+      "raw_unit": "K€"
+    },
+    "scr_operationnel": {
+      "value": 955.99861,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 10,
+      "source_chapter": "E.2",
+      "raw_value": 955998.61,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_nonvie": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 10,
+      "source_chapter": "E.2",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "scr_diversification": {
+      "value": -7722.5406299999995,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 10,
+      "source_chapter": "E.2",
+      "raw_value": -7722540.63,
+      "raw_unit": "K€"
+    }
+  },
+  "AXA France IARD": {
+    "ratio_scr": {
+      "value": 167.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "ratio_mcr": {
+      "value": 355.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "scr_total": {
+      "value": 2621.463,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.2",
+      "raw_value": 2621463.0,
+      "raw_unit": "K€"
+    },
+    "mcr": {
+      "value": 1179.658,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.2",
+      "raw_value": 1179658.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_eligibles": {
+      "value": 4390.846,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": 4390846.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 4193.094,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": 4193094.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_r": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t2": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t3": {
+      "value": 197.752,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 8,
+      "source_chapter": "E.1",
+      "raw_value": 197752.0,
+      "raw_unit": "K€"
+    },
+    "best_estimate": {
+      "value": 16371.02919,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 2,
+      "source_chapter": "D.2",
+      "raw_value": 16371029.19,
+      "raw_unit": "K€"
+    },
+    "marge_risque": {
+      "value": 446.60908,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 2,
+      "source_chapter": "D.2",
+      "raw_value": 446609.08,
+      "raw_unit": "K€"
+    },
+    "provisions_techniques": {
+      "value": 16817.63827,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 2,
+      "source_chapter": "D.2",
+      "raw_value": 16817638.27,
+      "raw_unit": "K€"
+    },
+    "primes_acquises_brutes": {
+      "value": 9637.327859999996,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 3,
+      "source_chapter": "A.2",
+      "raw_value": 9637327.859999996,
+      "raw_unit": "K€"
+    },
+    "charge_sinistres": {
+      "value": 11517.61947,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 3,
+      "source_chapter": "A.2",
+      "raw_value": 11517619.469999999,
+      "raw_unit": "K€"
+    },
+    "scr_operationnel": {
+      "value": 620.30477,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.2",
+      "raw_value": 620304.77,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_nonvie": {
+      "value": 2398.72765,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.2",
+      "raw_value": 2398727.65,
+      "raw_unit": "K€"
+    },
+    "scr_diversification": {
+      "value": -3717.87106,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 9,
+      "source_chapter": "E.2",
+      "raw_value": -3717871.06,
+      "raw_unit": "K€"
+    }
+  },
+  "SwissLife Assurance et Patrimoine": {
+    "ratio_scr": {
+      "value": 160.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "ratio_mcr": {
+      "value": 576.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "scr_total": {
+      "value": 1692.097,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.2",
+      "raw_value": 1692097.0,
+      "raw_unit": "K€"
+    },
+    "mcr": {
+      "value": 423.024,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.2",
+      "raw_value": 423024.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_eligibles": {
+      "value": 2703.042,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": 2703042.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 2353.042,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": 2353042.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_r": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t2": {
+      "value": 200.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": 200000.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t3": {
+      "value": 150.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 105,
+      "source_chapter": "E.1",
+      "raw_value": 150000.0,
+      "raw_unit": "K€"
+    },
+    "best_estimate": {
+      "value": 29429.205,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 99,
+      "source_chapter": "D.2",
+      "raw_value": 29429205.0,
+      "raw_unit": "K€"
+    },
+    "marge_risque": {
+      "value": 519.977,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 99,
+      "source_chapter": "D.2",
+      "raw_value": 519977.0,
+      "raw_unit": "K€"
+    },
+    "provisions_techniques": {
+      "value": 29949.182,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 99,
+      "source_chapter": "D.2",
+      "raw_value": 29949182.0,
+      "raw_unit": "K€"
+    },
+    "primes_acquises_brutes": {
+      "value": 4456.122,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 101,
+      "source_chapter": "A.2",
+      "raw_value": 4456122.0,
+      "raw_unit": "K€"
+    },
+    "charge_sinistres": {
+      "value": 2619.108,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 101,
+      "source_chapter": "A.2",
+      "raw_value": 2619108.0,
+      "raw_unit": "K€"
+    },
+    "scr_operationnel": {
+      "value": 105.322,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": 105322.0,
+      "raw_unit": "K€"
+    },
+    "scr_marche": {
+      "value": 2851.424,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": 2851424.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_sante": {
+      "value": 13.206,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": 13206.0,
+      "raw_unit": "K€"
+    },
+    "scr_contrepartie": {
+      "value": 158.169,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": 158169.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_vie": {
+      "value": 983.224,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": 983224.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_nonvie": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "scr_diversification": {
+      "value": -711.488,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 106,
+      "source_chapter": "E.2",
+      "raw_value": -711488.0,
+      "raw_unit": "K€"
+    }
+  },
+  "BPCE Vie": {
+    "ratio_scr": {
+      "value": 249.00000000000003,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "ratio_mcr": {
+      "value": 507.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "scr_total": {
+      "value": 2957.205,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.2",
+      "raw_value": 2957205.0,
+      "raw_unit": "K€"
+    },
+    "mcr": {
+      "value": 1330.742,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.2",
+      "raw_value": 1330742.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_eligibles": {
+      "value": 7363.314,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": 7363314.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 6210.148,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": 6210148.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_r": {
+      "value": 264.225,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": 264225.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t2": {
+      "value": 888.941,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": 888941.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t3": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 84,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "best_estimate": {
+      "value": 113837.694,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "D.2",
+      "raw_value": 113837694.0,
+      "raw_unit": "K€"
+    },
+    "marge_risque": {
+      "value": 1645.554,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "D.2",
+      "raw_value": 1645554.0,
+      "raw_unit": "K€"
+    },
+    "provisions_techniques": {
+      "value": 115483.248,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "D.2",
+      "raw_value": 115483248.0,
+      "raw_unit": "K€"
+    },
+    "primes_acquises_brutes": {
+      "value": 17225.427,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 79,
+      "source_chapter": "A.2",
+      "raw_value": 17225427.0,
+      "raw_unit": "K€"
+    },
+    "charge_sinistres": {
+      "value": 7644.259,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 79,
+      "source_chapter": "A.2",
+      "raw_value": 7644259.0,
+      "raw_unit": "K€"
+    },
+    "scr_operationnel": {
+      "value": 396.323,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": 396323.0,
+      "raw_unit": "K€"
+    },
+    "scr_marche": {
+      "value": 9593.49,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": 9593490.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_sante": {
+      "value": 362.991,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": 362991.0,
+      "raw_unit": "K€"
+    },
+    "scr_contrepartie": {
+      "value": 488.8,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": 488800.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_vie": {
+      "value": 5743.182,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": 5743182.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_nonvie": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "scr_diversification": {
+      "value": -3556.596,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 86,
+      "source_chapter": "E.2",
+      "raw_value": -3556596.0,
+      "raw_unit": "K€"
+    }
+  },
+  "BPCE Assurances IARD": {
+    "ratio_scr": {
+      "value": 128.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 77,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "ratio_mcr": {
+      "value": 213.0,
+      "unit": "pct",
+      "year": 2025,
+      "source_page": 77,
+      "source_chapter": "E.1",
+      "raw_value": null,
+      "raw_unit": null
+    },
+    "scr_total": {
+      "value": 527.994,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 77,
+      "source_chapter": "E.2",
+      "raw_value": 527994.0,
+      "raw_unit": "K€"
+    },
+    "mcr": {
+      "value": 237.597,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 77,
+      "source_chapter": "E.2",
+      "raw_value": 237597.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_eligibles": {
+      "value": 678.325,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 77,
+      "source_chapter": "E.1",
+      "raw_value": 678325.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_nr": {
+      "value": 458.66,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "E.1",
+      "raw_value": 458660.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t1_r": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t2": {
+      "value": 219.664,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "E.1",
+      "raw_value": 219664.0,
+      "raw_unit": "K€"
+    },
+    "fonds_propres_t3": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 76,
+      "source_chapter": "E.1",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
+    "best_estimate": {
+      "value": 2214.043,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 68,
+      "source_chapter": "D.2",
+      "raw_value": 2214043.0,
+      "raw_unit": "K€"
+    },
+    "marge_risque": {
+      "value": 102.813,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 68,
+      "source_chapter": "D.2",
+      "raw_value": 102813.0,
+      "raw_unit": "K€"
+    },
+    "provisions_techniques": {
+      "value": 2316.856,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 68,
+      "source_chapter": "D.2",
+      "raw_value": 2316856.0,
+      "raw_unit": "K€"
+    },
+    "primes_acquises_brutes": {
+      "value": 1956.753,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 69,
+      "source_chapter": "A.2",
+      "raw_value": 1956753.0,
+      "raw_unit": "K€"
+    },
+    "charge_sinistres": {
+      "value": 1282.994,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 69,
+      "source_chapter": "A.2",
+      "raw_value": 1282994.0,
+      "raw_unit": "K€"
+    },
+    "scr_operationnel": {
+      "value": 65.765,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": 65765.0,
+      "raw_unit": "K€"
+    },
+    "scr_marche": {
+      "value": 163.214,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": 163214.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_sante": {
+      "value": 68.682,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": 68682.0,
+      "raw_unit": "K€"
+    },
+    "scr_contrepartie": {
+      "value": 82.866,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": 82866.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_vie": {
+      "value": 1.311,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": 1311.0,
+      "raw_unit": "K€"
+    },
+    "scr_souscription_nonvie": {
+      "value": 526.509,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": 526509.0,
+      "raw_unit": "K€"
+    },
+    "scr_diversification": {
+      "value": -196.476,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 78,
+      "source_chapter": "E.2",
+      "raw_value": -196476.0,
+      "raw_unit": "K€"
+    }
   }
 }
