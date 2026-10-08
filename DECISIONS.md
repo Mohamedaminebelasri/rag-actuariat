@@ -8492,3 +8492,41 @@ revue humaine cette nuit, même convention que `extraire_un_pdf.py`).
 
 `extract_kpis_afv.py` (nouveau), `kpis.db` (société + 22 KPIs + 18
 lignes `kpi_composants` insérés).
+
+## Décision 124 — Extraction AXA France IARD (AFI), 2/5
+
+Même structure qu'AFV (annexes QRT seules, modèle interne complet
+S.25.05.21 seul présent, mêmes 4 KPIs SCR fusionnés/NULL). Unité K€
+confirmée par en-tête explicite ("in Thousand EUR"/"In Thousand
+euros"). Recoupement arithmétique exact sur la page 9 : R0070
+(2 803 513,40)+R0190(337 472,64)+R0270(0)+R0310(2 398 727,65)+R0400
+(179 315,47)+R0480(620 304,77) = 6 339 333,93 ; + R0060 (diversification,
+-3 717 871,06) = 2 621 462,87 = scr_total, confirmé identique.
+
+**Contrairement à AFV, `extract_qrt_native()` fonctionne normalement
+sur S.05.01.02 ici** — pas d'override nécessaire. Une 1re vérification
+manuelle du texte brut avait semblé donner un écart (~489 K€) sur
+primes_acquises_brutes ; `capturer_composants` (extraction par
+POSITION) confirme que l'écart venait d'une erreur de LECTURE humaine
+sur un flux de texte à 17 colonnes très dense (mauvaise association
+token→colonne pour R0230), pas du code — le total du code
+(9 637 327,86 K€) est le bon. Leçon pour les 3 sociétés restantes :
+ne jamais arbitrer un désaccord code/lecture manuelle sans
+`capturer_composants`, qui donne la valeur réellement matchée par
+position plutôt que par ordre d'apparition dans le texte.
+
+type_activite='Non-vie' malgré une composante "vie" non négligeable
+dans best_estimate (R0670=1 263 122,78 K€, ~8% du total — rentes
+découlant de sinistres non-vie classées en TP "vie" par convention
+EIOPA, pas une activité vie commerciale réelle ; scr_souscription_vie
+reste non isolable dans le modèle interne de toute façon).
+
+Résultat : 17/22 KPIs remplis, 5 NULL (identique au pattern AFV).
+`kpi_composants` : 18 lignes (5+5+4+4). 39/40 contrôles
+`validate_kpis.py` (1 échec attendu, même pattern qu'AFV/Allianz Vie).
+`validated` forcé à 0.
+
+### Fichiers modifiés
+
+`extract_kpis_afi.py` (nouveau), `kpis.db` (société + 22 KPIs + 18
+lignes `kpi_composants` insérés).
