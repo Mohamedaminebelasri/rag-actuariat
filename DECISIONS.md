@@ -8530,3 +8530,40 @@ Résultat : 17/22 KPIs remplis, 5 NULL (identique au pattern AFV).
 
 `extract_kpis_afi.py` (nouveau), `kpis.db` (société + 22 KPIs + 18
 lignes `kpi_composants` insérés).
+
+## Décision 125 — Extraction SwissLife Assurance et Patrimoine, 3/5
+
+Document le plus propre des 5 : rapport narratif complet (109 pages),
+formule standard (S.25.01.21), tous les KPIs résolubles par le mapping
+générique sauf resultat_technique (universel). 21/22 remplis.
+
+Unité confirmée par en-tête explicite ("en milliers d'euros"), pas
+par magnitude. Entité 100% vie : S.05.01.02 n'imprime QUE la section
+"engagements d'assurance vie" — la section non-vie n'est pas à 0,
+elle est ABSENTE du document (vérifié sur le texte brut), d'où "somme
+1 variante" au lieu de 2 pour primes_acquises_brutes/charge_sinistres,
+normal et non une anomalie.
+
+Recoupements manuels effectués avant insertion (texte brut pages
+99/105/106) : fonds_propres (somme des 4 tiers exacte) ; ratio_mcr=
+576% recoupé avec le plafond Tier 2 à 20% du MCR (règle EIOPA) :
+(2353,042+min(200,20%×423,024))/423,024×100=576,24%≈576%, confirme
+que le taux publié applique bien le plafond ; best_estimate/
+marge_risque (somme des 5 lignes R05x0, exacte) ; **scr_total ne
+vérifie PAS l'heuristique "somme modules+diversification+opérationnel
+≈ scr_total ±2%"** (3 399,857 M€ naïf vs 1 692,097 M€ réel) — écart
+expliqué et vérifié ligne à ligne : 2 ajustements d'absorption de
+pertes (LAC provisions techniques -1 376 057 K€, LAC impôts différés
+-331 702 K€) interviennent entre le SCR de base et le SCR final,
+non capturés par l'heuristique simple. Pas une erreur d'extraction —
+chaîne R0100→R0130→R0140→R0150→R0200 vérifiée exacte au K€ sur le
+texte brut.
+
+48/48 contrôles `validate_kpis.py` (aucun échec — pas de fusion
+modèle interne ici). `kpi_composants` : 12 lignes (5+5+1+1).
+`validated` forcé à 0.
+
+### Fichiers modifiés
+
+`extract_kpis_swisslife.py` (nouveau), `kpis.db` (société + 22 KPIs +
+12 lignes `kpi_composants` insérés).
