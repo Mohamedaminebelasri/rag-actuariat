@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T01:09:39.213546+00:00",
+  "generated_at": "2026-10-08T01:11:21.127810+00:00",
   "year": 2025,
   "n_companies": 39,
   "companies": [
@@ -257,42 +257,42 @@
         "ratio_scr": {
           "value": 167.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "ratio_mcr": {
           "value": 355.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_eligibles": {
           "value": 4390.846,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_nr": {
           "value": 4193.094,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_r": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t2": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t3": {
           "value": 197.752,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_total": {
           "value": 2621.463,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_marche": {
           "value": null,
@@ -307,7 +307,7 @@
         "scr_souscription_nonvie": {
           "value": 2398.72765,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_souscription_sante": {
           "value": null,
@@ -332,22 +332,22 @@
         "best_estimate": {
           "value": 16371.02919,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "marge_risque": {
           "value": 446.60908,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "provisions_techniques": {
           "value": 16817.63827,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "mcr": {
           "value": 1179.658,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "primes_acquises_brutes": {
           "value": 9637.327859999996,
@@ -378,42 +378,42 @@
         "ratio_scr": {
           "value": 159.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "ratio_mcr": {
           "value": 351.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_eligibles": {
           "value": 8671.479,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_nr": {
           "value": 8643.185,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_r": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t2": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t3": {
           "value": 28.293,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_total": {
           "value": 5469.627,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_marche": {
           "value": null,
@@ -428,7 +428,7 @@
         "scr_souscription_nonvie": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_souscription_sante": {
           "value": null,
@@ -453,22 +453,22 @@
         "best_estimate": {
           "value": 138213.354,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "marge_risque": {
           "value": 1429.969,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "provisions_techniques": {
           "value": 139643.323,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "mcr": {
           "value": 2461.332,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "primes_acquises_brutes": {
           "value": 20560.331,
@@ -1346,42 +1346,42 @@
         "ratio_scr": {
           "value": 128.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "ratio_mcr": {
           "value": 213.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_eligibles": {
           "value": 678.325,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_nr": {
           "value": 458.66,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_r": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t2": {
           "value": 219.664,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t3": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_total": {
           "value": 527.994,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_marche": {
           "value": 163.214,
@@ -1396,7 +1396,7 @@
         "scr_souscription_nonvie": {
           "value": 526.509,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_souscription_sante": {
           "value": 68.682,
@@ -1421,22 +1421,22 @@
         "best_estimate": {
           "value": 2214.043,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "marge_risque": {
           "value": 102.813,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "provisions_techniques": {
           "value": 2316.856,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "mcr": {
           "value": 237.597,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "primes_acquises_brutes": {
           "value": 1956.753,
@@ -1467,42 +1467,42 @@
         "ratio_scr": {
           "value": 249.00000000000003,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "ratio_mcr": {
           "value": 507.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_eligibles": {
           "value": 7363.314,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_nr": {
           "value": 6210.148,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_r": {
           "value": 264.225,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t2": {
           "value": 888.941,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t3": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_total": {
           "value": 2957.205,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_marche": {
           "value": 9593.49,
@@ -1517,7 +1517,7 @@
         "scr_souscription_nonvie": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_souscription_sante": {
           "value": 362.991,
@@ -1542,22 +1542,22 @@
         "best_estimate": {
           "value": 113837.694,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "marge_risque": {
           "value": 1645.554,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "provisions_techniques": {
           "value": 115483.248,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "mcr": {
           "value": 1330.742,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "primes_acquises_brutes": {
           "value": 17225.427,
@@ -4371,42 +4371,42 @@
         "ratio_scr": {
           "value": 160.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "ratio_mcr": {
           "value": 576.0,
           "unit": "pct",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_eligibles": {
           "value": 2703.042,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_nr": {
           "value": 2353.042,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t1_r": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t2": {
           "value": 200.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "fonds_propres_t3": {
           "value": 150.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_total": {
           "value": 1692.097,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_marche": {
           "value": 2851.424,
@@ -4421,7 +4421,7 @@
         "scr_souscription_nonvie": {
           "value": 0.0,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "scr_souscription_sante": {
           "value": 13.206,
@@ -4446,22 +4446,22 @@
         "best_estimate": {
           "value": 29429.205,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "marge_risque": {
           "value": 519.977,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "provisions_techniques": {
           "value": 29949.182,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "mcr": {
           "value": 423.024,
           "unit": "M€",
-          "validated": true
+          "validated": false
         },
         "primes_acquises_brutes": {
           "value": 4456.122,
