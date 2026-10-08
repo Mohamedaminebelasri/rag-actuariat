@@ -8567,3 +8567,55 @@ modèle interne ici). `kpi_composants` : 12 lignes (5+5+1+1).
 
 `extract_kpis_swisslife.py` (nouveau), `kpis.db` (société + 22 KPIs +
 12 lignes `kpi_composants` insérés).
+
+## Décision 126 — Extraction BPCE Vie, 4/5 : 2 bugs réels trouvés et contournés
+
+Document le plus piégeux des 5 (16 pages QRT, formule standard).
+21/22 KPIs remplis — mais 2 bugs RÉELS trouvés avant insertion (pas
+seulement les pièges attendus de la consigne) :
+
+**Bug 1 — mauvaise page sur best_estimate/marge_risque/
+provisions_techniques.** S.02.01.02 apparaît 3× dans le corpus : page
+51 (chapitre narratif D.1, classify_pages la classe "qrt" par erreur
+mais 0 ligne avec valeur dedans — inoffensif pour le calcul), puis 75
+(actifs) et 76 (passifs, où sont réellement les 5 lignes R05x0/R06x0/
+R07x0). `_page_source()` renvoie la 1re page du corpus pour ce
+template (51, narrative) au lieu de 76 (réelle) — la VALEUR est
+correcte (113 837,694 M€, vérifiée exacte sur le texte brut p.76),
+seule la page citée était fausse. Page forcée à 76 dans le script.
+
+**Bug 2 — double-comptage réel sur primes_acquises_brutes/
+charge_sinistres (exactement le piège B signalé dans la consigne).**
+Page 78 (S.05.01.02, section non-vie) : une seule ligne d'activité a
+une valeur non nulle, donc son Total = sa propre valeur, répété 2×
+dans le flux de texte (même pattern que AFV) — `resoudre_variantes_qrt`
+additionne les 2 occurrences au lieu d'isoler la colonne Total :
+R0210 sort à 100 308 au lieu de 50 154 (×2 exact), R0310 à 27 944 au
+lieu de 13 972 (×2 exact). Vérifié en relisant le texte brut : R0220/
+R0320 (réassurance proportionnelle) sont VIDES (aucun chiffre entre
+les 2 libellés), pas 100 308/27 944. La partie vie (page 79, R1510=
+17 175 273, R1610=7 630 287) est lue correctement. Override manuel :
+primes_acquises_brutes=17 225,427 M€ (50 154+0+0+17 175 273),
+charge_sinistres=7 644,259 M€ (13 972+0+0+7 630 287) — écart avec la
+valeur automatique buguée : +150,462 M€ et +41,915 M€ respectivement,
+tous deux exactement 2×la valeur dupliquée.
+
+Unité confirmée par le texte lui-même : "Devise d'affichage : k EUR"
+en pied de page 78/79. Recoupement complet vérifié sur le texte brut
+page 86 (S.25.01.21) : R0100(SCR base, somme simple des 5 modules+
+diversification, 12 631 867)+R0130(opérationnel,396 323)+R0140(LAC
+provisions techniques,-9 041 127)+R0150(LAC impôts différés,
+-1 029 858)=2 957 205=scr_total, exact — même pattern LAC massif que
+SwissLife (assureur vie), pas une anomalie.
+
+48/48 contrôles `validate_kpis.py` (formule standard, aucune fusion).
+`kpi_composants` : 18 lignes (5+5+4+4, avec les pages correctes 78/79
+pour primes/sinistres). `validated` forcé à 0. AUCUNE modification de
+`resoudre_variantes_qrt()`/`extraire_un_pdf.py` (code partagé, 38
+autres sociétés en dépendent) — les 2 bugs sont scopés à ce document
+via override documenté dans `extract_kpis_bpcevie.py`.
+
+### Fichiers modifiés
+
+`extract_kpis_bpcevie.py` (nouveau), `kpis.db` (société + 22 KPIs +
+18 lignes `kpi_composants` insérés).
