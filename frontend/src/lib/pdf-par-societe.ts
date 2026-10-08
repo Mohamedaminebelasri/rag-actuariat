@@ -34,5 +34,7 @@ export const PDF_PAR_SOCIETE: Record<string, string> = {
   "SGAM AG2R LA MONDIALE": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
   "Sogécap": "Rapport_de_solvabilite_2025_Sogécap_01.pdf",
   "Themis": "Aema-Groupe_RAPPORT-UNIQUE-SUR-LA-SOLVABILITE-ET-LA-SITUATION-FINANCIERE_2025.pdf",
+  "Generali IARD": "Annexe_RSSF_QRT_GIARD_2025.pdf",
+  "Generali Vie": "Annexe_RSSF_QRT_GVIE_2025.pdf",
   "VIASANTE Mutuelle": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
 };
