@@ -8745,3 +8745,38 @@ lignes (5+5+4+4). `validated` forcé à 0.
 
 `extract_kpis_generali_iard.py` (nouveau), `kpis.db` (société + 22
 KPIs + 18 lignes `kpi_composants` insérés).
+
+## Décision 130 — Extraction Generali Vie : 15/15 groupes du marché français désormais en base
+
+Dernière des 5+2 sociétés de la nuit. Même méthodologie que Generali
+IARD (Décision 129) : lecture visuelle directe des 11 pages scannées
++ recoupement arithmétique exhaustif (PP-OCRv6 toujours en cours sans
+résultat confirmé après plus d'1h CPU au moment d'écrire ce script ;
+Gemini Vision indisponible ce soir).
+
+Entité 100% vie confirmée : section non-vie de S.05.01.02 entièrement
+à 0 (pas juste "non trouvée" — visuellement vérifiée vide), scr_
+souscription_nonvie=0 (S.25.05.21/R0310). Recoupements exacts : bilan
+(R0600=R0610+R0650, R0690=R0710+R0720, Total actif-Total passif=
+Excédent publié) ; fonds propres (R0540=somme des 4 tiers, ratio_scr
+et ratio_mcr recoupés exacts, y compris le plafonnement des fonds
+propres auxiliaires T2/T3 hors MCR) ; SCR modèle interne (R0200=
+R0110+R0060=scr_total, identique à la valeur S.23.01.01 — 2 sources
+internes au document, exactes).
+
+17/22 KPIs remplis (5 NULL : 4 fusions modèle interne S.25.05.21 +
+resultat_technique, pattern identique aux 6 autres sociétés modèle
+interne de ce soir). 39/40 contrôles `validate_kpis.py` (1 échec
+attendu). `kpi_composants` : 14 lignes (5+5+2+2). `validated` forcé
+à 0.
+
+**15/15 groupes du marché français visés désormais couverts par au
+moins une extraction réelle en base** (cf. Décision 102 pour la
+définition précise de cette mesure, distincte du score diagnostic
+`/20`) — Generali complète la liste après AXA, BPCE et SwissLife
+(Décisions 123-129, même nuit).
+
+### Fichiers modifiés
+
+`extract_kpis_generali_vie.py` (nouveau), `kpis.db` (société + 22
+KPIs + 14 lignes `kpi_composants` insérés).
