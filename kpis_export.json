@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-08T01:11:21.127810+00:00",
+  "generated_at": "2026-10-08T01:51:59.442775+00:00",
   "year": 2025,
-  "n_companies": 39,
+  "n_companies": 41,
   "companies": [
     {
       "name": "AG.Mut",
@@ -2171,6 +2171,248 @@
         },
         "charge_sinistres": {
           "value": 30255.38,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
+      "name": "Generali IARD",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "modele_interne_complet",
+      "type_activite": "Non-vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 152.66,
+          "unit": "pct",
+          "validated": false
+        },
+        "ratio_mcr": {
+          "value": 367.16,
+          "unit": "pct",
+          "validated": false
+        },
+        "fonds_propres_eligibles": {
+          "value": 1965.218,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t1_nr": {
+          "value": 1827.055,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t1_r": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t2": {
+          "value": 48.163,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t3": {
+          "value": 90.0,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_total": {
+          "value": 1287.348,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_marche": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 732.365,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_sante": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 128.865,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -245.315,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 5003.772,
+          "unit": "M€",
+          "validated": false
+        },
+        "marge_risque": {
+          "value": 157.566,
+          "unit": "M€",
+          "validated": false
+        },
+        "provisions_techniques": {
+          "value": 5161.338,
+          "unit": "M€",
+          "validated": false
+        },
+        "mcr": {
+          "value": 510.73,
+          "unit": "M€",
+          "validated": false
+        },
+        "primes_acquises_brutes": {
+          "value": 2545.754,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 1635.467,
+          "unit": "M€",
+          "validated": false
+        },
+        "resultat_technique": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        }
+      }
+    },
+    {
+      "name": "Generali Vie",
+      "type": "SA",
+      "country": "France",
+      "type_document": "solo",
+      "scr_method": "modele_interne_complet",
+      "type_activite": "Vie",
+      "unite_source": "K€",
+      "kpis": {
+        "ratio_scr": {
+          "value": 198.2,
+          "unit": "pct",
+          "validated": false
+        },
+        "ratio_mcr": {
+          "value": 404.24,
+          "unit": "pct",
+          "validated": false
+        },
+        "fonds_propres_eligibles": {
+          "value": 6082.818,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t1_nr": {
+          "value": 5582.818,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t1_r": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t2": {
+          "value": 250.0,
+          "unit": "M€",
+          "validated": false
+        },
+        "fonds_propres_t3": {
+          "value": 250.0,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_total": {
+          "value": 3069.039,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_marche": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_vie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_nonvie": {
+          "value": 0.0,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_souscription_sante": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_contrepartie": {
+          "value": null,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_operationnel": {
+          "value": 314.864,
+          "unit": "M€",
+          "validated": false
+        },
+        "scr_diversification": {
+          "value": -737.831,
+          "unit": "M€",
+          "validated": false
+        },
+        "best_estimate": {
+          "value": 86302.981,
+          "unit": "M€",
+          "validated": false
+        },
+        "marge_risque": {
+          "value": 481.786,
+          "unit": "M€",
+          "validated": false
+        },
+        "provisions_techniques": {
+          "value": 86784.76699999999,
+          "unit": "M€",
+          "validated": false
+        },
+        "mcr": {
+          "value": 1381.068,
+          "unit": "M€",
+          "validated": false
+        },
+        "primes_acquises_brutes": {
+          "value": 12839.294,
+          "unit": "M€",
+          "validated": false
+        },
+        "charge_sinistres": {
+          "value": 9426.224,
           "unit": "M€",
           "validated": false
         },
@@ -4725,58 +4967,58 @@
   ],
   "corpus_stats": {
     "ratio_scr": {
-      "n": 39,
-      "moyenne": 282.14871794871794,
+      "n": 41,
+      "moyenne": 276.9429268292683,
       "mediane": 227.0,
       "min": 128.0,
       "max": 953.0
     },
     "ratio_mcr": {
-      "n": 39,
-      "moyenne": 664.8815384615384,
-      "mediane": 511.00000000000006,
+      "n": 41,
+      "moyenne": 651.2629268292683,
+      "mediane": 507.0,
       "min": 213.0,
       "max": 2084.0
     },
     "fonds_propres_eligibles": {
-      "n": 39,
-      "moyenne": 6473.079975923077,
+      "n": 41,
+      "moyenne": 6353.61353807317,
       "mediane": 2291.367,
       "min": 9.428,
       "max": 36778.134
     },
     "fonds_propres_t1_nr": {
-      "n": 38,
-      "moyenne": 4709.144889947368,
+      "n": 40,
+      "moyenne": 4658.93447045,
       "mediane": 2065.7979625,
       "min": 9.428,
       "max": 28605.491
     },
     "fonds_propres_t1_r": {
-      "n": 37,
-      "moyenne": 257.0188574324324,
+      "n": 39,
+      "moyenne": 243.8384032051282,
       "mediane": 0.0,
       "min": 0.0,
       "max": 2605.979
     },
     "fonds_propres_t2": {
-      "n": 37,
-      "moyenne": 737.9738596216216,
+      "n": 39,
+      "moyenne": 707.7742514358974,
       "mediane": 134.388583,
       "min": 0.0,
       "max": 5312.775
     },
     "fonds_propres_t3": {
-      "n": 36,
-      "moyenne": 95.17890866666666,
+      "n": 38,
+      "moyenne": 99.11686084210525,
       "mediane": 0.0,
       "min": 0.0,
       "max": 1186.82
     },
     "scr_total": {
-      "n": 39,
-      "moyenne": 2956.0039799230767,
-      "mediane": 974.095,
+      "n": 41,
+      "moyenne": 2918.062005292683,
+      "mediane": 1287.348,
       "min": 1.055,
       "max": 15058.209
     },
@@ -4795,8 +5037,8 @@
       "max": 25147.008
     },
     "scr_souscription_nonvie": {
-      "n": 37,
-      "moyenne": 589.9713419189189,
+      "n": 39,
+      "moyenne": 578.494991051282,
       "mediane": 0.0,
       "min": 0.0,
       "max": 8859.509
@@ -4816,57 +5058,57 @@
       "max": 1267.072
     },
     "scr_operationnel": {
-      "n": 39,
-      "moyenne": 281.83336684615387,
-      "mediane": 105.322,
+      "n": 41,
+      "moyenne": 278.9080562682927,
+      "mediane": 113.265,
       "min": 0.058,
       "max": 1390.927
     },
     "scr_diversification": {
-      "n": 37,
-      "moyenne": -2388.2500376756757,
+      "n": 39,
+      "moyenne": -2290.9845485641026,
       "mediane": -452.607,
       "min": -13960.67,
       "max": -0.093
     },
     "best_estimate": {
-      "n": 39,
-      "moyenne": 45440.32566830769,
+      "n": 41,
+      "moyenne": 45450.718391804876,
       "mediane": 7573.399,
       "min": 1.218,
       "max": 277593.524
     },
     "marge_risque": {
-      "n": 39,
-      "moyenne": 833.4574218205129,
+      "n": 41,
+      "moyenne": 808.3949134390244,
       "mediane": 246.799,
       "min": 0.05,
       "max": 5880.403
     },
     "provisions_techniques": {
-      "n": 39,
-      "moyenne": 46273.78309012821,
+      "n": 41,
+      "moyenne": 46259.1133052439,
       "mediane": 7787.343000000001,
       "min": 1.296,
       "max": 283473.92699999997
     },
     "mcr": {
-      "n": 39,
-      "moyenne": 1245.6784154102563,
-      "mediane": 386.992783,
+      "n": 41,
+      "moyenne": 1231.055029292683,
+      "mediane": 423.024,
       "min": 2.7,
       "max": 6478.904
     },
     "primes_acquises_brutes": {
-      "n": 39,
-      "moyenne": 8124.1642720256405,
+      "n": 41,
+      "moyenne": 8103.108649,
       "mediane": 3220.305,
       "min": 1.92,
       "max": 49173.0
     },
     "charge_sinistres": {
-      "n": 39,
-      "moyenne": 6049.451988974359,
+      "n": 41,
+      "moyenne": 6024.154111463415,
       "mediane": 2393.639,
       "min": -939.552,
       "max": 30255.38
