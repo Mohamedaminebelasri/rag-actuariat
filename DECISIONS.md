@@ -8966,3 +8966,52 @@ annexes QRT) — le fix tient.
 
 `peupler_composants_ag2r.py`, `kpis.db`,
 `frontend/src/data/donnees-extraites.json` (régénéré).
+
+## Décision 134 — Suppression de `extraire_un_pdf.py` : abandon du pipeline automatisé "Ajouter un PDF"
+
+CONTEXTE : après une revue complète du pipeline d'extraction demandée
+par l'utilisateur (quelles étapes, quel degré de confiance pour un
+nouveau PDF), il a été clarifié qu'il existe en réalité DEUX voies
+distinctes (cf. `PIPELINE_EXTRACTION_KPIs.md`) :
+1. `extraire_un_pdf.py` (Décision 106) — pipeline mécanique, sans
+   intervention humaine/Claude au milieu, branché derrière l'onglet
+   front-end "Ajouter un PDF".
+2. Un script dédié par société (`extract_kpis_<societe>.py`), écrit
+   et vérifié par Claude pour chaque nouveau document — la SEULE voie
+   réellement utilisée pour les 41 sociétés en base aujourd'hui,
+   `extraire_un_pdf.py` n'ayant jamais servi à insérer une société
+   qui soit restée en base (seulement un test end-to-end nettoyé
+   après coup, cf. Décision 106).
+
+Décision utilisateur, après cette clarification : supprimer
+entièrement la voie 1, jugée trompeuse (elle laisse penser à une
+extraction fiable "bouton-poussoir" alors que `validated` y est
+systématiquement forcé à 0, sans le recoupement arithmétique manuel
+qui est le vrai garde-fou de la voie 2).
+
+### Ce qui est supprimé côté back-end (cette session)
+
+`extraire_un_pdf.py` (549 lignes) — seul fichier qui implémentait
+réellement le pipeline. Aucun autre fichier `.py` ne l'important
+comme module (invoqué uniquement en sous-processus CLI depuis le
+front-end) ; les quelques mentions dans `ajouter_valeurs_brutes.py`,
+`corriger_source_page.py`, `export_kpis_for_frontend.py`,
+`extract_kpis.py`, `extract_kpis_bpcevie.py`, `validate_kpis.py` sont
+des commentaires historiques (référence à la Décision 106), laissés
+tels quels — ils documentent un fait passé exact, pas du code mort.
+`jobs/` (déjà vide, non suivi par git, `.gitignore` ligne 22)
+inchangé.
+
+### Ce qui reste à supprimer côté front-end (hors périmètre de cette
+### session back-end, délégué à la session front-end parallèle)
+
+Circuit complet "Ajouter un PDF" : `frontend/src/app/upload/page.tsx`,
+`frontend/src/app/api/upload-pdf/route.ts`,
+`frontend/src/app/api/pdf-titre/route.ts` (+ `frontend/src/lib/pdf-titre.ts`),
+`frontend/src/app/api/lancer-extraction/route.ts`,
+`frontend/src/app/api/extraction-statut/[id]/route.ts`, et l'entrée
+de navigation "Ajouter un PDF" dans `frontend/src/components/app-shell.tsx`.
+
+### Fichiers modifiés
+
+`extraire_un_pdf.py` (supprimé).
