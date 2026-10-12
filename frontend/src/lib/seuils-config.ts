@@ -14,13 +14,6 @@ export const SEUIL_LEGAL = 100;
  * règle légale). Valeur par défaut ; modifiable via le panneau Seuils. */
 export const SEUIL_VERT_SCR_DEFAUT = 200;
 
-/** Largeur (en points de %) de la zone "proche du seuil" modifiable, de
- * part et d'autre de celui-ci — évite l'effet de falaise visuel. Élargie
- * de 5 à 10 points (retour utilisateur) pour couvrir SGAM AG2R LA MONDIALE
- * (191 %) et Allianz Vie (192 %), pas seulement Crédit Agricole Assurances
- * (195 %). */
-export const MARGE_PROCHE_SEUIL = 10;
-
 const CLE_STOCKAGE = "iconcilio-analyse-seuil-vert-scr";
 
 /** Lit le seuil vert stocké par l'utilisateur. Jamais d'exception : si le

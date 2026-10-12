@@ -8,7 +8,6 @@ import {
   couleurSeuil,
   formatValeur,
   formatVariation,
-  procheDuSeuilModifiable,
   sentimentVariation,
   statutKpi,
   texteInfobulleSeuil,
@@ -61,9 +60,8 @@ const LIBELLE_TENDANCE: Record<SentimentVariation, string> = {
 /** Port de kpi_card() (individuelle.py, Reflex) — porte le lien intelligent
  * vers /documents?company=...&kpi=... (cf. analyse/page.tsx d'origine).
  * Feu tricolore (bande + pastille + icône) pour ratio_scr/ratio_mcr
- * uniquement ; anneau pointillé "proche du seuil" pour ratio_scr près du
- * seuil vert modifiable ; tendance toujours affichée (même "—" faute de
- * N-1 disponible, jamais une flèche inventée). */
+ * uniquement ; tendance toujours affichée (même "—" faute de N-1
+ * disponible, jamais une flèche inventée). */
 export function KpiCard({
   def,
   valeur,
@@ -77,7 +75,6 @@ export function KpiCard({
 }) {
   const couleur = couleurSeuil(def.id, valeur.valeur, seuilVertScr);
   const statut = statutKpi(def.id, valeur.valeur, seuilVertScr);
-  const procheDuSeuil = procheDuSeuilModifiable(def.id, valeur.valeur, seuilVertScr);
   const infobulleSeuil = statut ? texteInfobulleSeuil(def.id, couleur, seuilVertScr) : null;
   const IconeStatut = statut ? ICONE_STATUT[statut.couleur] : null;
 
@@ -102,10 +99,8 @@ export function KpiCard({
     <div
       className={cn(
         "text-left h-full flex flex-col bg-surface border border-border rounded-[var(--radius-lg)] p-[1.1em] shadow-[var(--shadow-sm)]",
-        statut && BORDURE_STATUT[statut.couleur],
-        procheDuSeuil && "outline outline-2 outline-dashed outline-warning/70 outline-offset-2"
+        statut && BORDURE_STATUT[statut.couleur]
       )}
-      title={procheDuSeuil ? "Proche du seuil" : undefined}
     >
       <div className="flex items-center w-full">
         <span className="font-mono text-[11px] font-bold text-text-tertiary">{def.code}</span>
@@ -134,7 +129,6 @@ export function KpiCard({
           >
             <IconeStatut className="w-3 h-3" aria-hidden="true" />
             {statut.libelle}
-            {procheDuSeuil && <span className="sr-only"> (proche du seuil)</span>}
           </span>
         )}
         {!aVariation ? (

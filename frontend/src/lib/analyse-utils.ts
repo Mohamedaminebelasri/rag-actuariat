@@ -14,7 +14,7 @@ import {
   type ModeleCapital,
   type TypeSociete,
 } from "@/data/analyse-demo";
-import { MARGE_PROCHE_SEUIL, SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
+import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 // Sens de "meilleure valeur" par KPI — utilisé UNIQUEMENT pour la mise en
 // surbrillance meilleur/pire du tableau comparatif. Beaucoup de KPIs en
@@ -92,18 +92,6 @@ export function couleurSeuil(
     return valeur < SEUIL_LEGAL ? "danger" : "success";
   }
   return "neutre";
-}
-
-/** Vrai si `valeur` (ratio_scr) est à moins de `MARGE_PROCHE_SEUIL` points
- * du seuil MODIFIABLE (vert) — jamais du seuil légal, qui est une ligne
- * dure, pas une zone floue. Évite l'effet de falaise visuel. */
-export function procheDuSeuilModifiable(
-  kpiId: string,
-  valeur: number | null | undefined,
-  seuilVertScr: number = SEUIL_VERT_SCR_DEFAUT
-): boolean {
-  if (kpiId !== "ratio_scr" || valeur === null || valeur === undefined || Number.isNaN(valeur)) return false;
-  return Math.abs(valeur - seuilVertScr) <= MARGE_PROCHE_SEUIL;
 }
 
 /** Phrase d'info-bulle adaptée à la zone affichée (point 4 de la mission). */
