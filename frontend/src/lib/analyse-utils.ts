@@ -8,13 +8,13 @@ import {
   DEMO_SFCR,
   KPI_DEFINITIONS,
   KPI_IDS_PAR_CATEGORIE,
-  KPI_PAR_ID,
   kpisSociete,
   toutesLesSocietes,
   type KpiDefinition,
   type ModeleCapital,
   type TypeSociete,
 } from "@/data/analyse-demo";
+import { MARGE_PROCHE_SEUIL, SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 // Sens de "meilleure valeur" par KPI — utilisé UNIQUEMENT pour la mise en
 // surbrillance meilleur/pire du tableau comparatif. Beaucoup de KPIs en
@@ -67,17 +67,57 @@ function formatNombre(valeur: number, decimales: number): string {
 
 export type CouleurSeuil = "success" | "warning" | "danger" | "neutre";
 
-/** Couleur sémantique de la VALEUR principale — uniquement pour les 3 KPIs
- * avec un seuil réglementaire explicite (ratio_scr/mcr/sp). Les autres KPIs
- * utilisent une couleur neutre : leur "bon" niveau ne se juge pas dans
- * l'absolu. */
-export function couleurSeuil(kpiId: string, valeur: number): CouleurSeuil {
-  const def = KPI_PAR_ID[kpiId];
-  if (!def || def.seuilReglementaire === null) return "neutre";
-  // ratio_scr / ratio_mcr : plus haut = meilleur
-  if (valeur >= 150) return "success";
-  if (valeur >= 100) return "warning";
-  return "danger";
+/** Couleur sémantique (feu tricolore) — UNIQUEMENT ratio_scr et ratio_mcr,
+ * les 2 seuls KPIs avec un plancher légal Solvabilité II explicite. Tous
+ * les autres KPIs (montants, parts, ratios calculés) restent neutres : un
+ * montant n'est ni bon ni mauvais dans l'absolu, ça dépend de la taille.
+ *
+ * - ratio_scr : rouge < 100 % (légal, verrouillé) ; orange [100, seuilVert[ ;
+ *   vert ≥ seuilVert (conventionnel, modifiable — 200 % par défaut).
+ * - ratio_mcr : 2 zones seulement, rouge < 100 %, vert ≥ 100 % (pas de zone
+ *   orange, pas de seuil modifiable).
+ */
+export function couleurSeuil(
+  kpiId: string,
+  valeur: number | null | undefined,
+  seuilVertScr: number = SEUIL_VERT_SCR_DEFAUT
+): CouleurSeuil {
+  if (valeur === null || valeur === undefined || Number.isNaN(valeur)) return "neutre";
+  if (kpiId === "ratio_scr") {
+    if (valeur < SEUIL_LEGAL) return "danger";
+    if (valeur < seuilVertScr) return "warning";
+    return "success";
+  }
+  if (kpiId === "ratio_mcr") {
+    return valeur < SEUIL_LEGAL ? "danger" : "success";
+  }
+  return "neutre";
+}
+
+/** Vrai si `valeur` (ratio_scr) est à moins de `MARGE_PROCHE_SEUIL` points
+ * du seuil MODIFIABLE (vert) — jamais du seuil légal, qui est une ligne
+ * dure, pas une zone floue. Évite l'effet de falaise visuel. */
+export function procheDuSeuilModifiable(
+  kpiId: string,
+  valeur: number | null | undefined,
+  seuilVertScr: number = SEUIL_VERT_SCR_DEFAUT
+): boolean {
+  if (kpiId !== "ratio_scr" || valeur === null || valeur === undefined || Number.isNaN(valeur)) return false;
+  return Math.abs(valeur - seuilVertScr) <= MARGE_PROCHE_SEUIL;
+}
+
+/** Phrase d'info-bulle adaptée à la zone affichée (point 4 de la mission). */
+export function texteInfobulleSeuil(kpiId: string, couleur: CouleurSeuil, seuilVertScr: number): string {
+  if (kpiId === "ratio_mcr") {
+    return couleur === "danger"
+      ? "Rouge : sous 100 % = exigence légale non couverte (Solvabilité II, minimum de capital requis)."
+      : "Vert : 100 % ou plus = minimum de capital requis couvert (Solvabilité II).";
+  }
+  // ratio_scr
+  if (couleur === "danger") return "Rouge : sous 100 % = exigence légale non couverte (Solvabilité II).";
+  if (couleur === "warning")
+    return `Orange : entre 100 % et ${formatNombre(seuilVertScr, 0)} % — couvre l'exigence légale, sous le repère de marché.`;
+  return `Vert : ${formatNombre(seuilVertScr, 0)} % ou plus = seuil conventionnel (repère de marché, modifiable), pas une règle légale.`;
 }
 
 export function formatVariation(variation: number, unit: string): string {
@@ -245,8 +285,12 @@ export type StatutKpi = { couleur: Exclude<CouleurSeuil, "neutre">; libelle: str
 
 /** Statut « feu tricolore » — uniquement pour les KPIs qui ont un seuil
  * (ratio SCR, ratio MCR). Seuils réglementaires Solvabilité II. */
-export function statutKpi(kpiId: string, valeur: number): StatutKpi | null {
-  const couleur = couleurSeuil(kpiId, valeur);
+export function statutKpi(
+  kpiId: string,
+  valeur: number | null | undefined,
+  seuilVertScr: number = SEUIL_VERT_SCR_DEFAUT
+): StatutKpi | null {
+  const couleur = couleurSeuil(kpiId, valeur, seuilVertScr);
   if (couleur === "neutre") return null;
   const libelles = { success: "Solide", warning: "Vigilance", danger: "Sous le seuil" };
   return { couleur, libelle: libelles[couleur] };

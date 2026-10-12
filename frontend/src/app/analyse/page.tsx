@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Columns3, FileBarChart, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IndividualTab } from "@/components/analyse/individual-tab";
 import { ComparativeTab } from "@/components/analyse/comparative-tab";
+import { LegendeStatuts } from "@/components/analyse/legende-statuts";
+import { SeuilsPanel } from "@/components/analyse/seuils-panel";
+import {
+  SEUIL_VERT_SCR_DEFAUT,
+  ecrireSeuilVertStocke,
+  lireSeuilVertStocke,
+  reinitialiserSeuilVertStocke,
+} from "@/lib/seuils-config";
 
 /** Port de page_analyse() (test_markdrop/sfcr_app/analyse/page.py, Reflex,
  * commit c83d3ef) — 2 sous-onglets (individuelle/comparative), design
@@ -12,6 +20,22 @@ import { ComparativeTab } from "@/components/analyse/comparative-tab";
  * (analyse-demo.ts). 34 sociétés, 22 types de KPIs. */
 export default function AnalysePage() {
   const [sousOnglet, setSousOnglet] = useState<"individuelle" | "comparative">("individuelle");
+  const [seuilVertScr, setSeuilVertScr] = useState(SEUIL_VERT_SCR_DEFAUT);
+
+  // Lu après montage uniquement (localStorage indisponible côté serveur,
+  // évite un mismatch d'hydratation) ; try/catch déjà géré dans la lib.
+  useEffect(() => {
+    setSeuilVertScr(lireSeuilVertStocke());
+  }, []);
+
+  const changerSeuilVert = (valeur: number) => {
+    setSeuilVertScr(valeur);
+    ecrireSeuilVertStocke(valeur);
+  };
+  const reinitialiserSeuilVert = () => {
+    reinitialiserSeuilVertStocke();
+    setSeuilVertScr(SEUIL_VERT_SCR_DEFAUT);
+  };
 
   return (
     <div className="h-full overflow-auto">
@@ -47,7 +71,14 @@ export default function AnalysePage() {
           />
         </div>
 
-        {sousOnglet === "individuelle" ? <IndividualTab /> : <ComparativeTab />}
+        <LegendeStatuts seuilVertScr={seuilVertScr} />
+        <SeuilsPanel seuilVertScr={seuilVertScr} onChange={changerSeuilVert} onReset={reinitialiserSeuilVert} />
+
+        {sousOnglet === "individuelle" ? (
+          <IndividualTab seuilVertScr={seuilVertScr} />
+        ) : (
+          <ComparativeTab seuilVertScr={seuilVertScr} />
+        )}
       </div>
     </div>
   );

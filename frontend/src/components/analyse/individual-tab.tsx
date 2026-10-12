@@ -6,11 +6,11 @@ import { CATEGORIES, KPI_DEFINITIONS, kpisSociete, listeSfcrDisponibles } from "
 import { KpiCard } from "./kpi-card";
 import { ScrBreakdownChart } from "./scr-breakdown-chart";
 import { PositionMarche } from "./position-marche";
-import { LegendeStatuts } from "./legende-statuts";
 import { exporterCsvIndividuel } from "@/lib/csv-export";
+import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 /** Port de analyse_individuelle() (individuelle.py, Reflex). */
-export function IndividualTab() {
+export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilVertScr?: number }) {
   const [societe, setSociete] = useState("");
   const sfcrDisponibles = listeSfcrDisponibles();
   const label = sfcrDisponibles.find((s) => s.id === societe)?.label ?? "";
@@ -65,7 +65,6 @@ export function IndividualTab() {
           </div>
 
           {/* <PositionMarche key={societe} societe={societe} /> */}
-          <LegendeStatuts />
 
           {CATEGORIES.map((c) => {
             const kpisCategorie = KPI_DEFINITIONS.filter((k) => k.categorie === c.code && kpis[k.id] !== undefined);
@@ -77,7 +76,7 @@ export function IndividualTab() {
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                   {kpisCategorie.map((k) => (
-                    <KpiCard key={k.id} def={k} valeur={kpis[k.id]} societe={societe} />
+                    <KpiCard key={k.id} def={k} valeur={kpis[k.id]} societe={societe} seuilVertScr={seuilVertScr} />
                   ))}
                 </div>
               </div>

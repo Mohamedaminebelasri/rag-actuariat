@@ -6,22 +6,24 @@ import {
   CATEGORIE_LABELS,
   FILTRES_VIDES,
   avertissementComparabilite,
+  couleurSeuil,
   societesFiltrees,
   type FiltresSocietes,
 } from "@/lib/analyse-utils";
-import { listeSfcrDisponibles } from "@/data/analyse-demo";
+import { kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
 import { ComparativeTable } from "./comparative-table";
 import { RadarComparatif } from "./radar-chart";
 import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
 import { FiltresSocietesBar } from "./filtres-societes";
 import { exporterCsvComparatif } from "@/lib/csv-export";
+import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 const MAX_SOCIETES = 8;
 const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A"];
 
 /** Port de analyse_comparative() (comparative.py, Reflex). */
-export function ComparativeTab() {
+export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilVertScr?: number }) {
   const [societes, setSocietes] = useState<string[]>([]);
   const [filtreCategorie, setFiltreCategorie] = useState("Tous");
   const [kpiGraphique, setKpiGraphique] = useState("ratio_scr");
@@ -36,6 +38,19 @@ export function ComparativeTab() {
   const avertissement = avertissementComparabilite(societes);
   const peutComparer = societes.length >= 2;
   const auMaximum = societes.length >= MAX_SOCIETES;
+
+  // Compteur de couleurs (ratio SCR) pour la sélection courante.
+  const compteurCouleurs = societes.reduce(
+    (acc, soc) => {
+      const v = kpisSociete(soc)["ratio_scr"]?.valeur;
+      const c = couleurSeuil("ratio_scr", v, seuilVertScr);
+      if (c === "success") acc.vertes += 1;
+      else if (c === "warning") acc.orange += 1;
+      else if (c === "danger") acc.rouge += 1;
+      return acc;
+    },
+    { vertes: 0, orange: 0, rouge: 0 }
+  );
 
   const ajouter = (id: string) => {
     if (!id || societes.includes(id) || auMaximum) return;
@@ -111,7 +126,24 @@ export function ComparativeTab() {
         </div>
       ) : (
         <div className="flex flex-col gap-4 w-full items-start">
-          <div className="flex items-center w-full">
+          <div className="flex items-center w-full gap-3 flex-wrap">
+            <span
+              className="inline-flex items-center gap-3 text-sm font-mono text-text-secondary bg-surface-secondary rounded-full px-3.5 py-1.5"
+              title="Répartition du ratio SCR pour la sélection courante"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-success" aria-hidden="true" />
+                {compteurCouleurs.vertes} verte{compteurCouleurs.vertes > 1 ? "s" : ""}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-warning" aria-hidden="true" />
+                {compteurCouleurs.orange} orange{compteurCouleurs.orange > 1 ? "s" : ""}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-danger" aria-hidden="true" />
+                {compteurCouleurs.rouge} rouge{compteurCouleurs.rouge > 1 ? "s" : ""}
+              </span>
+            </span>
             <span className="flex-1" />
             <button
               onClick={() => exporterCsvComparatif(societes)}
