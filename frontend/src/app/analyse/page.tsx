@@ -7,6 +7,8 @@ import { IndividualTab } from "@/components/analyse/individual-tab";
 import { ComparativeTab } from "@/components/analyse/comparative-tab";
 import { LegendeStatuts } from "@/components/analyse/legende-statuts";
 import { SeuilsPanel } from "@/components/analyse/seuils-panel";
+import { KPI_DEFINITIONS } from "@/data/analyse-demo";
+import { STATS_GLOBALES } from "@/lib/donnees-extraites-utils";
 import {
   SEUIL_VERT_SCR_DEFAUT,
   ecrireSeuilVertStocke,
@@ -17,7 +19,8 @@ import {
 /** Port de page_analyse() (test_markdrop/sfcr_app/analyse/page.py, Reflex,
  * commit c83d3ef) — 2 sous-onglets (individuelle/comparative), design
  * "Ivory" repris des tokens globaux (globals.css). Données réelles issues de kpis.db via donnees-extraites.json
- * (analyse-demo.ts). 34 sociétés, 22 types de KPIs. */
+ * (analyse-demo.ts). Nombre de sociétés/KPIs lu dynamiquement (STATS_GLOBALES,
+ * KPI_DEFINITIONS) — jamais codé en dur, pour ne pas se figer après ajout de sociétés. */
 export default function AnalysePage() {
   const [sousOnglet, setSousOnglet] = useState<"individuelle" | "comparative">("individuelle");
   const [seuilVertScr, setSeuilVertScr] = useState(SEUIL_VERT_SCR_DEFAUT);
@@ -50,7 +53,7 @@ export default function AnalysePage() {
         <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-300/40 rounded-[10px] px-4 py-2.5 w-full my-4 dark:bg-emerald-950/30 dark:border-emerald-500/20">
           <Info className="w-[15px] h-[15px] text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
           <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-            Données réelles — 34 sociétés, 22 indicateurs extraits des rapports SFCR.
+            Données réelles — {STATS_GLOBALES.nbSocietes} sociétés, {KPI_DEFINITIONS.length} indicateurs extraits des rapports SFCR.
           </p>
         </div>
 
