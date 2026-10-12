@@ -7,7 +7,6 @@ import {
   BarChart3,
   FileText,
   Database,
-  UploadCloud,
   Shield,
   Sun,
   Moon,
@@ -40,13 +39,6 @@ const tabs = [
     href: "/documents",
     icon: FileText,
     description: "Explorer les rapports par chapitre",
-  },
-  {
-    label: "Ajouter un PDF",
-    labelCourt: "Ajouter",
-    href: "/upload",
-    icon: UploadCloud,
-    description: "Déposer un nouveau rapport SFCR",
   },
 ];
 
