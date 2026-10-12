@@ -9015,3 +9015,63 @@ de navigation "Ajouter un PDF" dans `frontend/src/components/app-shell.tsx`.
 ### Fichiers modifiés
 
 `extraire_un_pdf.py` (supprimé).
+
+## Décision 135 — Problème 1 (diagnostic 12/10) : source_page Aéma hors-plage pour 4 entités, cause trouvée et corrigée
+
+CONTEXTE : diagnostic du 12/10/2026 avait trouvé `source_page` hors
+de la plage de pages réelle de l'entité (document combiné Aéma
+Groupe, 621p) pour Abeille Vie, Abeille Épargne Retraite, Aésio
+Mutuelle, MNPAF.
+
+### Cause exacte (pas supposée — vérifiée par comparaison programmatique)
+
+PAS un offset constant. Comparaison systématique de `kpis.source_page`
+contre les pages documentées dans `aema_entites.py` (ENTITES_KPIS,
+écrites et recoupées arithmétiquement au moment de l'extraction
+initiale, Décision 083/085) a montré un sous-ensemble de KPIs par
+entité (best_estimate, marge_risque, fonds_propres_eligibles/t1_nr,
+mcr, scr_total, provisions_techniques, et parfois scr_contrepartie/
+scr_operationnel) pointant vers des pages basses (246-406), hors de
+la plage QRT de l'entité — alors que charge_sinistres, primes_
+acquises_brutes, ratio_scr, ratio_mcr, fonds_propres_t1_r/t2/t3,
+scr_diversification restaient corrects.
+
+**Même mécanisme que la régression déjà diagnostiquée et en partie
+corrigée en Décision 120** (58 cas Aéma + 33 AG2R cette nuit-là) :
+`corriger_source_page.py` (recherche élargie `AEMA_BORNES`, Décisions
+115-117) a dans certains cas trouvé une citation narrative
+COÏNCIDENTE plus tôt dans le document et a écrasé une page QRT déjà
+correcte par cette page narrative fausse. Ces 4 entités (ou un
+sous-ensemble de leurs KPIs) n'avaient pas été couvertes par le
+passage de correction de la Décision 120, ou une régression
+ultérieure les a de nouveau touchées — n'a pas pu être daté
+précisément (pas de log d'exécution conservé), mais le mécanisme et
+la source de vérité sont identiques à la Décision 120.
+
+### Fix
+
+Ré-exécution de `aema_entites.inserer_entite_en_base()` pour les 4
+entités (fonction idempotente, `ON CONFLICT DO UPDATE`, déjà utilisée
+pour l'insertion initiale) — réécrit les 22 `source_page`/`value` de
+chaque entité EXACTEMENT comme documenté dans `ENTITES_KPIS`. Vérifié
+avant/après : **0 valeur changée, uniquement les source_page hors
+plage corrigées** (confirmé par diff programmatique contre une copie
+de sauvegarde pré-fix). Les 9 autres entités Aéma : confirmées
+inchangées (diff exhaustif, 0 écart). `validate_kpis.py --company`
+sur les 4 entités : 48/48 chacune.
+
+**`kpi_composants`** : les composants `provisions_techniques` (2
+lignes par entité, "best_estimate"/"marge_risque") avaient aussi
+l'ancienne page fausse (ce tableau n'est pas réécrit par
+`inserer_entite_en_base`) — corrigés manuellement pour reprendre la
+page de `best_estimate` corrigée, convention déjà utilisée par
+`aema_entites.py` (`page_be` partagé pour `provisions_techniques`).
+Les autres composants (best_estimate, charge_sinistres, marge_risque,
+primes_acquises_brutes) avaient déjà la bonne page, non touchés.
+Recoupement somme(composants)==kpis.value reconfirmé : 0 écart.
+
+### Fichiers modifiés
+
+`kpis.db` (22×4=88 `source_page` vérifiés/corrigés dans `kpis`, 8
+lignes `composant_page` corrigées dans `kpi_composants`, 0 valeur
+modifiée).
