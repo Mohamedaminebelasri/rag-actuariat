@@ -9251,3 +9251,29 @@ mis à `formule_standard`.
 ### Fichiers modifiés
 
 `kpis.db` (`companies.scr_method` MAIF : `''` -> `'formule_standard'`).
+
+## Décision 140 — Problèmes 9-10 (diagnostic 12/10) : 2 corrections front-end explicitement autorisées
+
+Les 2 seuls fichiers front-end listés par le diagnostic comme
+exception au périmètre back-end de cette session.
+
+### Problème 9
+
+`frontend/src/lib/donnees-extraites-utils.ts` : le type `Societe`
+n'avait pas `typeActivite`/`scrMethod` alors que ces 2 champs sont
+dans `donnees-extraites.json` (export côté `companies`, Décision 103).
+Ajoutés en champs optionnels (`typeActivite?: string; scrMethod?: string;`).
+
+### Problème 10
+
+`frontend/src/app/documents/page.tsx` (chemin réel ; le diagnostic
+citait `frontend/src/app/donnees/documents/page.tsx`, qui n'existe
+pas) ligne 43 : commentaire "les 34 sociétés" corrigé en "les 41
+sociétés".
+
+`npx tsc --noEmit` et `eslint` sur les 2 fichiers : aucune erreur.
+
+### Fichiers modifiés
+
+`frontend/src/lib/donnees-extraites-utils.ts`,
+`frontend/src/app/documents/page.tsx`.

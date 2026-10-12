@@ -40,7 +40,7 @@ const KPI_LABELS: Record<string, string> = {
 };
 
 /** Résout la page source d'un KPI : essaie kpi-sources.json (Groupama)
- * puis retombe sur donnees-extraites.json (les 34 sociétés). */
+ * puis retombe sur donnees-extraites.json (les 41 sociétés). */
 function pageSourceKpi(company: string, kpi: string): number | null {
   const via1 = typedKpiSources[company]?.[kpi]?.source_page ?? null;
   if (via1) return via1;

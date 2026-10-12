@@ -18,6 +18,8 @@ export type Societe = {
   type: string;
   groupe: string | null;
   country: string;
+  typeActivite?: string;
+  scrMethod?: string;
 };
 
 export type Composant = {
