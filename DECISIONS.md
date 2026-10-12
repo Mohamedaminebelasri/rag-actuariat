@@ -9168,3 +9168,50 @@ systématique doit être lissé côté UI.
 ### Fichiers modifiés
 
 `kpi_definitions.py`, `validate_kpis.py`.
+
+## Décision 138 — Problème 6 (diagnostic 12/10) : 47 KPIs sans source_page, 38 récupérés sans relire le PDF
+
+CONTEXTE : 47 valeurs non-NULL sans `source_page`, réparties sur 13
+sociétés (CNP ×7, MACSF ×6, SGAM ×5, AG2R Prévoyance ×4, Covéa ×4,
+etc.). Consigne : chercher dans le code/logs d'abord, ne pas relire
+les PDFs un par un.
+
+### Méthode (code, pas de lecture PDF)
+
+**36/47** retrouvés directement dans `kpi_composants` : les 5 KPIs
+concernés (best_estimate, marge_risque, provisions_techniques,
+primes_acquises_brutes, charge_sinistres) sont des sommes de lignes
+QRT déjà capturées avec leur page dans `kpi_composants` (Décision
+131-132) au moment même de l'extraction — seul le parent `kpis.
+source_page` n'avait jamais été renseigné. Page retenue : la plus
+basse des pages composants (convention déjà majoritaire ailleurs en
+base, vérifiée sur 9 sociétés déjà correctes avant ce fix — ex.
+Abeille Vie primes_acquises_brutes : composants 580/581, source_page
+stocké=580).
+
+**2/47 de plus** : `provisions_techniques` pour CNP Assurances et SGAM
+AG2R LA MONDIALE — pas dans `kpi_composants`, mais `provisions_
+techniques = best_estimate + marge_risque` est une identité de
+construction (jamais une page QRT propre, cf. §3 de
+`PIPELINE_EXTRACTION_KPIs.md` et la même convention déjà appliquée en
+Décision 135 pour Aéma) : recoupement arithmétique exact confirmé
+(CNP : 277 208,17+3 740,671=280 948,841 ✓ ; SGAM : 75 674,632+
+1 035,268=76 709,9 ✓) avant d'hériter la page de `best_estimate`
+(84 et 123 respectivement).
+
+**9/47 restent NULL, non récupérables sans relire le PDF** (aucune
+trace dans `kpi_composants`, `source_chapter` générique sans indice
+de page — CNP/`ratio_mcr` et `scr_souscription_nonvie`, Covéa/
+`best_estimate` et `marge_risque`, MACSF prévoyance/`fonds_propres_
+t1_r`/`t2`/`t3`/`scr_souscription_nonvie`/`scr_souscription_sante`,
+ces 5 derniers tous à 0,0 — probablement des valeurs structurellement
+nulles jamais citées individuellement plutôt qu'une vraie lecture
+omise). Laissés `NULL`, documentés ici plutôt que devinés.
+
+0 valeur modifiée (vérifié par diff programmatique avant/après sur
+l'ensemble de `kpis`). `validate_kpis.py --all` : 9 échecs réels
+avant/après, identiques.
+
+### Fichiers modifiés
+
+`kpis.db` (38 `source_page` renseignés, 0 valeur changée).
