@@ -3,6 +3,19 @@
 kpis.db destiné à remplacer les données de démonstration inventées
 actuellement utilisées par l'onglet Analyse de l'interface (Décision 105).
 
+OBSOLÈTE depuis la Décision 106 (diagnostic 12/10/2026, Problème 11) :
+l'objectif de ce script (remplacer les données démo de l'onglet
+Analyse) a finalement été rempli par un mécanisme différent —
+`export_kpis_for_frontend.py::export_donnees_extraites()`, qui génère
+`frontend/src/data/donnees-extraites.json` (lu par `analyse-demo.ts`
+malgré son nom). `kpis_export.json` n'est référencé nulle part ailleurs
+dans le dépôt (ni frontend, ni aucun autre script `.py`) — vérifié par
+recherche exhaustive. Conservé tel quel (script ET fichier généré) sur
+consigne explicite de ne pas supprimer ; ne pas s'y fier comme source
+de données à jour pour le frontend. `kpi-sources.json`/
+`donnees-extraites.json` restent les seuls exports réellement
+consommés par l'interface.
+
 AUCUNE écriture sur kpis.db (lecture seule, via kpi_service.KpiService
 comme le reste du projet, cf. Décision 053). Ne touche à rien d'autre :
 pas de code frontend, pas de RAG.

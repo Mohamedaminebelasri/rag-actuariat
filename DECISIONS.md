@@ -9277,3 +9277,25 @@ sociétés".
 
 `frontend/src/lib/donnees-extraites-utils.ts`,
 `frontend/src/app/documents/page.tsx`.
+
+## Décision 141 — Problème 11 (diagnostic 12/10) : kpis_export.json confirmé obsolète, documenté sans suppression
+
+Recherche exhaustive (`grep` sur tout le dépôt, `.py` et
+`frontend/src`) : `kpis_export.json` n'est référencé nulle part sauf
+par son propre générateur (`export_kpis_json.py`) — aucun script
+externe, aucun code frontend. Son objectif d'origine (Décision 105 :
+remplacer les données démo de l'onglet Analyse) a été rempli
+autrement, par `export_kpis_for_frontend.py::export_donnees_extraites()`
+(Décision 106) qui alimente `donnees-extraites.json`, réellement
+consommé par `analyse-demo.ts`.
+
+Conservé sans suppression (consigne explicite) — docstring de
+`export_kpis_json.py` mis à jour pour marquer le script et son JSON
+"OBSOLÈTE" explicitement, avec le mécanisme de remplacement nommé.
+Pas enrichi avec page/chapitre/valeur brute (inutile vu qu'il n'a
+aucun consommateur).
+
+### Fichiers modifiés
+
+`export_kpis_json.py` (docstring uniquement, aucun changement de
+comportement).
