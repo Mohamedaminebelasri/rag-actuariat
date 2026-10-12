@@ -216,6 +216,29 @@ SEUILS_MAGNITUDE = {
 PLANCHER_MONTANT = 0.5  # M€
 KPIS_MONTANT_PLANCHER = {"scr_total", "fonds_propres_eligibles"}
 
+# Diagnostic 12/10/2026, Problèmes 2-4 — registre extensible (même esprit que
+# CROISEMENTS_GROUPAMA) des échecs déjà vérifiés manuellement et jugés
+# légitimes : ils continuent d'échouer "techniquement" (passed=0, c'est la
+# réalité du calcul) mais ne doivent plus être confondus avec un vrai bug non
+# investigué dans le résumé --all. Clé (company_name, check_name).
+ECHECS_LEGITIMES_CONNUS = {
+    ("Macifilia", "signe_charge_sinistres"): (
+        "Reprise de provision vérifiée pixel par pixel (Décision 094, "
+        "addendum 2026-09-26) : page 511, R0310=-939 552 confirmé exact, "
+        "R0340 (part réassureur) identique -> R0400 (Net)=0, ligne "
+        "intégralement réassurée. Signe négatif économiquement cohérent, "
+        "pas une erreur d'extraction."
+    ),
+    ("Macifilia", "mcr_inferieur_scr_total"): (
+        "Plancher MCR absolu sur petite structure, déjà documenté "
+        "(Décision 085)."
+    ),
+    ("Themis", "mcr_inferieur_scr_total"): (
+        "Plancher MCR absolu sur petite structure, déjà documenté "
+        "(Décision 085)."
+    ),
+}
+
 
 def executer_controles(kpis, company_name):
     """Retourne une liste de dicts {check_name, expected_value,
@@ -371,7 +394,7 @@ def executer_completude(conn, company_id, year):
     ]
 
 
-def inserer_controles(conn, company_id, year, controles):
+def inserer_controles(conn, company_id, year, controles, company_name=None):
     # Décision 104 — sans ce DELETE, chaque ré-exécution de validate_kpis.py
     # (--all ou --company) ACCUMULE indéfiniment des lignes en doublon dans
     # validation_checks (aucune contrainte unique en base) : constaté sur
@@ -381,10 +404,12 @@ def inserer_controles(conn, company_id, year, controles):
     # frais de cette exécution, la rendant idempotente.
     conn.execute("DELETE FROM validation_checks WHERE company_id=? AND year=?", (company_id, year))
     for c in controles:
+        note = ECHECS_LEGITIMES_CONNUS.get((company_name, c["check_name"]))
         conn.execute(
-            """INSERT INTO validation_checks (company_id, year, check_name, expected_value, computed_value, passed, details)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (company_id, year, c["check_name"], c["expected_value"], c["computed_value"], int(c["passed"]), c["details"]),
+            """INSERT INTO validation_checks (company_id, year, check_name, expected_value, computed_value, passed, details, legitime, note_legitimite)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (company_id, year, c["check_name"], c["expected_value"], c["computed_value"], int(c["passed"]), c["details"],
+             int(note is not None), note),
         )
     conn.commit()
 
@@ -426,7 +451,9 @@ def valider_societe(conn, company_name, year, afficher_detail=True):
         return None, None
 
     controles = executer_controles(kpis, company_name) + executer_completude(conn, company_id, year)
-    inserer_controles(conn, company_id, year, controles)
+    for c in controles:
+        c["note_legitimite"] = ECHECS_LEGITIMES_CONNUS.get((company_name, c["check_name"]))
+    inserer_controles(conn, company_id, year, controles, company_name=company_name)
     marquer_valides(conn, company_id, year, controles)
 
     n_passed = sum(1 for c in controles if c["passed"])
@@ -435,8 +462,15 @@ def valider_societe(conn, company_name, year, afficher_detail=True):
         print(f"CONTRÔLES ACTUARIELS — {company_name} {year}")
         print("=" * 100)
         for c in controles:
-            statut = "OK" if c["passed"] else "ÉCHEC"
+            if c["passed"]:
+                statut = "OK"
+            elif c.get("note_legitimite"):
+                statut = "LÉGIT"
+            else:
+                statut = "ÉCHEC"
             print(f"  [{statut:5}] {c['check_name']:32} {c['details']}")
+            if not c["passed"] and c.get("note_legitimite"):
+                print(f"           -> {c['note_legitimite']}")
         print(f"\n  Total : {n_passed}/{len(controles)} contrôles passés\n")
     return n_passed, controles
 
@@ -453,20 +487,39 @@ def main():
             n_passed, controles = valider_societe(conn, nom, args.year)
             if controles is None:
                 continue
-            echecs_reels = [c for c in controles if not c["passed"] and not c["check_name"].startswith("signe_")]
-            echecs_signe_zero = [c for c in controles if not c["passed"] and c["check_name"].startswith("signe_")
-                                  and abs(c["computed_value"]) < 1e-9]
-            recap.append((nom, n_passed, len(controles), echecs_reels, echecs_signe_zero))
+            # Diagnostic 12/10/2026, Problème 2 — l'ancien filtre excluait
+            # TOUS les checks "signe_*" des "échecs réels", pas seulement les
+            # faux signaux à 0 : un vrai échec de signe (valeur non-nulle,
+            # non vérifiée) disparaissait silencieusement du résumé. Ici,
+            # seuls 2 cas sortent des "échecs réels" : (1) le faux signal à 0
+            # (signe "positive" qui échoue uniquement parce que la valeur
+            # vaut exactement 0, cas sans portée actuarielle) et (2) un échec
+            # déjà vérifié et classé légitime (ECHECS_LEGITIMES_CONNUS,
+            # Problèmes 3-4) — les deux restent visibles dans le résumé,
+            # jamais juste supprimés.
+            echecs_signe_zero, echecs_legitimes, echecs_reels = [], [], []
+            for c in controles:
+                if c["passed"]:
+                    continue
+                if c["check_name"].startswith("signe_") and abs(c["computed_value"]) < 1e-9:
+                    echecs_signe_zero.append(c)
+                elif c.get("note_legitimite"):
+                    echecs_legitimes.append(c)
+                else:
+                    echecs_reels.append(c)
+            recap.append((nom, n_passed, len(controles), echecs_reels, echecs_legitimes, echecs_signe_zero))
         conn.close()
 
         print("\n" + "=" * 100)
         print("RÉCAPITULATIF — validate_kpis.py --all")
         print("=" * 100)
-        print(f"  {'Société':30} {'Contrôles':12} {'Échecs réels':14} {'Faux signaux (0,00)'}")
-        for nom, n_passed, n_total, echecs_reels, echecs_zero in recap:
-            print(f"  {nom:30} {n_passed}/{n_total:<9} {len(echecs_reels):<14} {len(echecs_zero)}")
+        print(f"  {'Société':30} {'Contrôles':12} {'Échecs réels':14} {'Connus/légitimes':18} {'Faux signaux (0,00)'}")
+        for nom, n_passed, n_total, echecs_reels, echecs_legitimes, echecs_zero in recap:
+            print(f"  {nom:30} {n_passed}/{n_total:<9} {len(echecs_reels):<14} {len(echecs_legitimes):<18} {len(echecs_zero)}")
             for e in echecs_reels:
                 print(f"      >>> ÉCHEC RÉEL [{e['check_name']}] {e['details']}")
+            for e in echecs_legitimes:
+                print(f"      --- connu/légitime [{e['check_name']}] {e['note_legitimite']}")
         return
 
     n_passed, controles = valider_societe(conn, args.company, args.year)

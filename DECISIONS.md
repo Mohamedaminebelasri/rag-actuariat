@@ -9075,3 +9075,49 @@ Recoupement somme(composants)==kpis.value reconfirmé : 0 écart.
 `kpis.db` (22×4=88 `source_page` vérifiés/corrigés dans `kpis`, 8
 lignes `composant_page` corrigées dans `kpi_composants`, 0 valeur
 modifiée).
+
+## Décision 136 — Problèmes 2-4 (diagnostic 12/10) : validate_kpis.py masquait un vrai échec de signe, mécanisme "échec connu/légitime" ajouté
+
+### Problème 2 — filtre --all corrigé
+
+L'ancien filtre (`echecs_reels = [... and not c["check_name"].startswith("signe_")]`)
+excluait TOUS les checks `signe_*` du résumé des échecs, qu'ils soient de
+vrais faux positifs (valeur exactement 0) ou un vrai signe anormal non
+investigué. Remplacé par une classification à 3 catégories (une seule
+passe) : `echecs_signe_zero` (faux signal, valeur strictement nulle),
+`echecs_legitimes` (voir Problèmes 3-4), `echecs_reels` (tout le reste —
+rien n'est plus silencieusement supprimé). Résumé `--all` et détail
+`--company` mis à jour pour afficher les 3 catégories distinctement
+(`[LÉGIT]` dans le détail, colonne "Connus/légitimes" dans le résumé).
+
+### Problèmes 3-4 — mécanisme "échec connu/légitime"
+
+Ajout de 2 colonnes à `validation_checks` : `legitime INTEGER DEFAULT 0`,
+`note_legitimite TEXT`. Registre `ECHECS_LEGITIMES_CONNUS` (même esprit
+que `CROISEMENTS_GROUPAMA`, extensible par `(company_name, check_name)`),
+résolu à l'insertion (`inserer_controles`) — jamais perdu au
+ré-lancement puisque c'est le script, pas une note manuelle en base, qui
+porte la connaissance (une note manuelle aurait été écrasée au prochain
+`--all`, le DELETE+INSERT étant la défense anti-doublon de la Décision
+104).
+
+2 entrées ajoutées, reprenant les décisions déjà existantes sans rien
+réinventer :
+- `(Macifilia, signe_charge_sinistres)` : reprise de provision vérifiée
+  pixel par pixel, Décision 094 addendum (2026-09-26) — R0310 confirmé
+  exact page 511, R0340 identique -> Net=0, ligne intégralement
+  réassurée.
+- `(Macifilia, mcr_inferieur_scr_total)` et `(Themis, mcr_inferieur_scr_total)` :
+  plancher MCR absolu sur petite structure, Décision 085.
+
+Résultat vérifié : `validate_kpis.py --all` — Macifilia 46/48 (0 échec
+réel, 2 connus/légitimes), Themis 47/48 (0 échec réel, 1 connu/
+légitime). Les échecs `completude_null_attendu` des sociétés modèle
+interne/extraction partielle (AXA France Vie/IARD, Allianz Vie, Covéa,
+Generali IARD/Vie, MAIF, SGAM) restent correctement classés "échec réel"
+— non couverts par ce mécanisme, toujours visibles, aucune régression.
+
+### Fichiers modifiés
+
+`validate_kpis.py`, `kpis.db` (schéma `validation_checks` + données
+régénérées par le --all de vérification).
