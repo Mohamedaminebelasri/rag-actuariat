@@ -191,6 +191,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
             afficherMoyenne={afficherMoyenne}
             afficherMediane={afficherMediane}
             afficherSeuil={afficherSeuil}
+            seuilVertScr={seuilVertScr}
           />
 
           <AlertsPanel societesComparees={societes} />

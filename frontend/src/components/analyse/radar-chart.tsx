@@ -5,7 +5,19 @@ import { cn } from "@/lib/utils";
 import { AXES_RADAR, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { kpiLabelCourt } from "@/lib/analyse-utils";
 
-const PALETTE = ["#2563eb", "#16a34a", "#d97706", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#65a30d"];
+// Palette volontairement SANS signification de risque (pas de vert/orange/
+// rouge, déjà pris par le feu tricolore) : bleu, violet, turquoise, gris
+// ardoise, chacun en 2 teintes pour distinguer jusqu'à 8 sociétés.
+const PALETTE = [
+  "#2563eb", // bleu
+  "#7c3aed", // violet
+  "#0891b2", // turquoise
+  "#475569", // gris ardoise
+  "#60a5fa", // bleu clair
+  "#a78bfa", // violet clair
+  "#22d3ee", // turquoise clair
+  "#94a3b8", // gris ardoise clair
+];
 
 const LARGEUR = 480;
 const HAUTEUR = 340;

@@ -15,7 +15,9 @@ import {
 } from "@/lib/analyse-utils";
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
-const COULEUR_VALEUR: Record<string, string> = {
+// Exportés : réutilisés tels quels par le tableau comparatif (comparative-table.tsx)
+// pour que ratio_scr/ratio_mcr aient EXACTEMENT les mêmes couleurs/icônes que les cartes.
+export const COULEUR_VALEUR: Record<string, string> = {
   success: "text-success",
   warning: "text-warning",
   danger: "text-danger",
@@ -36,7 +38,7 @@ const PASTILLE_STATUT: Record<string, string> = {
 };
 
 // Icône dédoublant la couleur (accessibilité : jamais la couleur seule).
-const ICONE_STATUT: Record<string, typeof CircleCheck> = {
+export const ICONE_STATUT: Record<string, typeof CircleCheck> = {
   success: CircleCheck,
   warning: TriangleAlert,
   danger: CircleX,
