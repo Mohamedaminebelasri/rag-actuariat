@@ -9121,3 +9121,50 @@ Generali IARD/Vie, MAIF, SGAM) restent correctement classés "échec réel"
 
 `validate_kpis.py`, `kpis.db` (schéma `validation_checks` + données
 régénérées par le --all de vérification).
+
+## Décision 137 — Problème 5 (diagnostic 12/10) : resultat_technique NULL à 100%, flag explicite plutôt que suppression du KPI
+
+CONTEXTE : `resultat_technique` est NULL pour les 41/41 sociétés — par
+construction, aucun gabarit QRT EIOPA standardisé ne le porte (déjà
+documenté dans `aema_entites.py`/`ag2r_entites.py` au cas par cas :
+"aucun équivalent standardisé"). Le diagnostic demandait d'évaluer 3
+options : (a) retirer le KPI (22->21), (b) le garder marqué "N/A"
+explicite, (c) ne rien changer.
+
+### Choix : (b), scopé au strict nécessaire
+
+Option (a) écartée après mesure de l'impact : `resultat_technique`
+est référencé dans 28 fichiers (18 `extract_kpis_<societe>.py` +
+`aema_entites.py`/`ag2r_entites.py`/`batch_diagnostic.py`/
+`extract_kpis.py`/`kpi_qrt_mapping.py`/`kpi_service.py`/
+`validate_kpis.py`/`kpi_definitions.py` + 2 fichiers front-end hors
+périmètre back-end de cette mission) — passer à 21 KPIs toucherait
+cette surface entière pour un gain seulement cosmétique (le champ
+reste de toute façon affiché "n/d" dans l'UI aujourd'hui, (a) ne
+change que des compteurs).
+
+Option (b) implémentée a minima : `kpi_definitions.py` porte
+désormais `"toujours_null": True` sur la définition de
+`resultat_technique` (seul champ ajouté, aucune valeur de `kpis.db`
+modifiée — `value` reste `NULL`, sémantique SQL correcte, pas de
+valeur sentinelle inventée). `validate_kpis.py::executer_completude`
+dérive maintenant `KPIS_TOUJOURS_NULL` de ce flag au lieu d'une liste
+`["resultat_technique"]` dupliquée en dur — une seule source de
+vérité, extensible si un futur KPI devait avoir la même propriété.
+Comportement du contrôle `completude_null_attendu` : strictement
+identique (vérifié, même liste de sociétés en échec avant/après,
+`validate_kpis.py --all`).
+
+**Hors périmètre de cette mission (back-end)** : le compteur "X/22
+KPIs extraits" du front-end (`couvertureKpis()`,
+`donnees-extraites-utils.ts`) plafonne de fait à 21/22 pour toute
+société par ailleurs complète, puisque `resultat_technique` n'existe
+jamais comme clé dans `donnees-extraites.json` (KPIs NULL absents du
+JSON par construction). Non corrigé ici — fichier front-end non
+explicitement autorisé pour ce problème (contrairement aux Problèmes
+9/10). À signaler pour une session front-end si l'affichage "21/22"
+systématique doit être lissé côté UI.
+
+### Fichiers modifiés
+
+`kpi_definitions.py`, `validate_kpis.py`.

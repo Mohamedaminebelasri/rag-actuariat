@@ -11,6 +11,20 @@ lui-même, c'est une table de référence statique.
 scr_diversification, un bénéfice de diversification qui SOUSTRAIT du SCR
 total), ou "any" (peut légitimement être positif ou négatif — ex.
 resultat_technique, un solde qui peut être une perte).
+
+`toujours_null` (optionnel, présent uniquement sur resultat_technique) :
+diagnostic 12/10/2026, Problème 5 — documente qu'AUCUN gabarit QRT EIOPA
+standardisé ne porte ce résultat (contrairement aux 21 autres KPIs, tous
+rattachés à un code QRT précis) ; `kpis.value` reste NULL par construction
+pour les 41/41 sociétés en base, jamais une absence d'extraction à
+corriger. Option (a) du diagnostic (retirer le KPI, passer à 21) écartée :
+touche les 18 scripts extract_kpis_*.py + kpi_qrt_mapping.py +
+kpi_service.py + 2 fichiers frontend hors périmètre de cette mission
+back-end, pour un bénéfice cosmétique seulement — bien trop de surface
+pour la valeur. Option retenue : ce flag, lu par validate_kpis.py pour ne
+jamais le traiter comme un gap d'extraction (déjà le cas via
+`completude_null_attendu`) ; kpis.value reste NULL (sémantique SQL
+correcte, pas de valeur sentinelle inventée). Cf. Décision 137.
 """
 
 KPI_DEFINITIONS = [
@@ -222,6 +236,7 @@ KPI_DEFINITIONS = [
         "qrt_source": "S.05.01",
         "sfcr_chapter": "A.2",
         "sign": "any",
+        "toujours_null": True,
     },
 ]
 

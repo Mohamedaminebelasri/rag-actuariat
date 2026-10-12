@@ -378,6 +378,13 @@ def executer_controles(kpis, company_name):
     return controles
 
 
+# Diagnostic 12/10/2026, Problème 5 — dérivé de kpi_definitions.py
+# (`toujours_null`), plutôt qu'une liste ["resultat_technique"] dupliquée
+# en dur ici : une seule source de vérité pour "quel(s) KPI(s) sont NULL
+# par construction, jamais un gap d'extraction à corriger".
+KPIS_TOUJOURS_NULL = sorted(d["kpi_name"] for d in KPI_DEFINITIONS if d.get("toujours_null"))
+
+
 def executer_completude(conn, company_id, year):
     n = conn.execute("SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=?", (company_id, year)).fetchone()[0]
     n_null = conn.execute("SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=? AND value IS NULL",
@@ -385,12 +392,13 @@ def executer_completude(conn, company_id, year):
     noms_null = [r[0] for r in conn.execute(
         "SELECT kpi_name FROM kpis WHERE company_id=? AND year=? AND value IS NULL", (company_id, year)
     ).fetchall()]
+    n_attendu = len(KPIS_TOUJOURS_NULL)
     return [
         {"check_name": "completude_22_kpis", "expected_value": 22, "computed_value": n, "passed": n == 22,
          "details": f"{n} lignes trouvées pour (company_id={company_id}, year={year})"},
-        {"check_name": "completude_null_attendu", "expected_value": 1, "computed_value": n_null,
-         "passed": n_null == 1 and noms_null == ["resultat_technique"],
-         "details": f"{n_null} NULL trouvé(s) : {noms_null} (attendu : uniquement resultat_technique)"},
+        {"check_name": "completude_null_attendu", "expected_value": n_attendu, "computed_value": n_null,
+         "passed": n_null == n_attendu and sorted(noms_null) == KPIS_TOUJOURS_NULL,
+         "details": f"{n_null} NULL trouvé(s) : {noms_null} (attendu : uniquement {KPIS_TOUJOURS_NULL})"},
     ]
 
 
