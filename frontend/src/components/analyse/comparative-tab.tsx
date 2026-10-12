@@ -181,7 +181,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
             </label>
             <label className="flex items-center gap-1.5 text-sm text-text-primary cursor-pointer">
               <input type="checkbox" checked={afficherSeuil} onChange={() => setAfficherSeuil((v) => !v)} />
-              Seuil réglementaire
+              Afficher les seuils
             </label>
           </div>
 

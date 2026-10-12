@@ -72,10 +72,10 @@ export type CouleurSeuil = "success" | "warning" | "danger" | "neutre";
  * les autres KPIs (montants, parts, ratios calculés) restent neutres : un
  * montant n'est ni bon ni mauvais dans l'absolu, ça dépend de la taille.
  *
- * - ratio_scr : rouge < 100 % (légal, verrouillé) ; orange [100, seuilVert[ ;
- *   vert ≥ seuilVert (conventionnel, modifiable — 200 % par défaut).
+ * - ratio_scr : rouge < 100 % (légal) ; orange [100, seuilVert[ ;
+ *   vert ≥ seuilVert (conventionnel, 200 % par défaut).
  * - ratio_mcr : 2 zones seulement, rouge < 100 %, vert ≥ 100 % (pas de zone
- *   orange, pas de seuil modifiable).
+ *   orange).
  */
 export function couleurSeuil(
   kpiId: string,
@@ -105,7 +105,7 @@ export function texteInfobulleSeuil(kpiId: string, couleur: CouleurSeuil, seuilV
   if (couleur === "danger") return "Rouge : sous 100 % = exigence légale non couverte (Solvabilité II).";
   if (couleur === "warning")
     return `Orange : entre 100 % et ${formatNombre(seuilVertScr, 0)} % — couvre l'exigence légale, sous le repère de marché.`;
-  return `Vert : ${formatNombre(seuilVertScr, 0)} % ou plus = seuil conventionnel (repère de marché, modifiable), pas une règle légale.`;
+  return `Vert : ${formatNombre(seuilVertScr, 0)} % ou plus = seuil conventionnel (repère de marché), pas une règle légale.`;
 }
 
 export function formatVariation(variation: number, unit: string): string {
