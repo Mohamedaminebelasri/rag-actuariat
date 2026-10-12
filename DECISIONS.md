@@ -9215,3 +9215,39 @@ avant/après, identiques.
 ### Fichiers modifiés
 
 `kpis.db` (38 `source_page` renseignés, 0 valeur changée).
+
+## Décision 139 — Problèmes 7-8 (diagnostic 12/10) : pages basses confirmées légitimes, scr_method MAIF corrigé
+
+### Problème 7 — 23 source_page entre 2 et 4
+
+Vérifié sans relire les PDFs, par les décisions déjà écrites au
+moment de chaque extraction : les 5 sociétés concernées (AXA France
+IARD/Vie, Cardif Assurance Vie, Cardif Assurances Risques Divers,
+Generali IARD/Vie) ont toutes des documents sources confirmés "annexes
+QRT seules" (Décision 123 : "AFV... document le plus simple : annexes
+QRT seules, 11 pages" ; Décision 097 : "Fichier source purement
+annexes QRT" pour Cardif Assurance Vie, même structure pour Cardif
+Assurances Risques Divers Décision 098 ; Décision 129 : documents
+Generali 100% scannés, 26 pages au total pour les 2). Sur un document
+qui commence directement par les annexes QRT (pas de chapitre
+narratif A-D en préambule), le bilan S.02.01.02 (source de best_
+estimate/marge_risque/provisions_techniques) apparaît légitimement
+dès la page 2-4. **Légitime, aucune correction nécessaire.**
+
+### Problème 8 — scr_method vide pour MAIF
+
+Déterminé par la structure des données elles-mêmes, sans relire le
+PDF : MAIF a ses 5 modules SCR (scr_marche=1710,298,
+scr_contrepartie=60,178, scr_souscription_vie=32,831, scr_
+souscription_nonvie=1349,696, scr_souscription_sante=263,194) tous
+renseignés et DISTINCTS — structurellement impossible en `modele_
+interne_complet` (qui fusionne marché+contrepartie et vie+santé sur
+une seule ligne S.25.05.21, pattern confirmé sur AFV/AFI/Allianz
+Vie/Generali IARD/Vie, Décisions 101/123/124/129/130). Cohérent avec
+Décision 099 : MAIF est en mode `libelles_francais`/`resoudre_scr_
+mcr_maif()`, sans aucune mention de fusion de modules. `scr_method`
+mis à `formule_standard`.
+
+### Fichiers modifiés
+
+`kpis.db` (`companies.scr_method` MAIF : `''` -> `'formule_standard'`).
