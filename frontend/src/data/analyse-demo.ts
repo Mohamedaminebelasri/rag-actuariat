@@ -137,7 +137,7 @@ function buildKpiDefinitions(): KpiDefinition[] {
     if (!KPI_LABELS_REELS[kpiId]) continue;
     const catReelle = detecterCategorieReelle(kpiId);
     const cat = categorieAffichage(kpiId, catReelle);
-    const isPct = kpiId.startsWith("ratio_") || kpiId === "scr_diversification";
+    const isPct = kpiId.startsWith("ratio_");
     defsMap.set(kpiId, {
       id: kpiId,
       categorie: cat,
