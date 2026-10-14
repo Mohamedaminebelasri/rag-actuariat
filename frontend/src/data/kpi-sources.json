@@ -8636,6 +8636,42 @@
       "avertissement": false,
       "note_avertissement": null
     },
+    "scr_marche": {
+      "value": 3168.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 100,
+      "source_chapter": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+      "raw_value": 3168.0,
+      "raw_unit": "M€",
+      "source_pdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+    },
+    "scr_contrepartie": {
+      "value": 628.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 100,
+      "source_chapter": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+      "raw_value": 628.0,
+      "raw_unit": "M€",
+      "source_pdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+    },
+    "scr_souscription_vie": {
+      "value": 2969.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 100,
+      "source_chapter": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+      "raw_value": 2969.0,
+      "raw_unit": "M€",
+      "source_pdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+    },
     "scr_souscription_nonvie": {
       "value": 0.0,
       "unit": "M€",
@@ -8841,6 +8877,42 @@
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
+    },
+    "scr_marche": {
+      "value": 1307.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 89,
+      "source_chapter": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+      "raw_value": 1307.0,
+      "raw_unit": "M€",
+      "source_pdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+    },
+    "scr_contrepartie": {
+      "value": 282.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 89,
+      "source_chapter": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+      "raw_value": 282.0,
+      "raw_unit": "M€",
+      "source_pdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+    },
+    "scr_souscription_vie": {
+      "value": 97.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 89,
+      "source_chapter": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+      "raw_value": 97.0,
+      "raw_unit": "M€",
+      "source_pdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
     },
     "scr_souscription_nonvie": {
       "value": 2398.72765,

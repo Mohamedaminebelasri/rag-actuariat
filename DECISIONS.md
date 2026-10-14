@@ -9576,3 +9576,73 @@ sociétés (830 + les 5 nouvelles valeurs).
 `frontend/src/data/kpi-sources.json`,
 `data/RSSF_Generali_Vie_2025.pdf`, `data/RSSF_Generali_Iard_2025.pdf`
 (nouveaux, ajoutés à data/ et à Vercel Blob).
+
+## Décision 146 — scr_marche/scr_contrepartie/scr_souscription_vie (AXA France Vie/IARD) récupérés, même méthode que Generali
+
+Suite du Problème 2/9. Le rapport narratif complet d'AXA France Vie/IARD
+n'était pas trouvable par recherche web classique (9 requêtes + visite
+directe d'axa.fr/pro/informations-financieres.html, page non mise à
+jour depuis 2018) — trouvé via navigation browser (Claude in Chrome) sur
+`axa.fr/configuration-securite/informations-financieres.html`, qui
+redirige vers la vraie page actuelle
+(`axa.fr/particuliers/informations/rapport-financier-investisseurs.html`),
+non indexée par les moteurs de recherche classiques au moment de cette
+tâche.
+
+### Documents
+
+`AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf`
+(107p) et `AXA_France_IARD-...` (96p), téléchargés depuis axa.fr
+(source officielle), uploadés sur Vercel Blob. Page de couverture et
+préambule vérifiés ("rapport sur la solvabilité et la situation
+financière... d'AXA France Vie/IARD pour l'exercice 2025") avant toute
+extraction.
+
+### Meilleure nouvelle que pour Generali : un vrai tableau texte, pas un graphique image
+
+Chapitre E.2.3 de chaque rapport donne directement un tableau "décomposition
+(avant diversification) en sous-modules de risques" avec des lignes
+**"Risque de Marché" / "Risque de Crédit" / "Risque Vie" / "Risque IARD"
+/ "Risque opérationnel"** — la taxonomie AXA correspond donc exactement
+au découpage vie/non-vie de nos KPIs (contrairement à Generali, qui ne
+donne qu'une "Souscription" fusionnée). Recoupement arithmétique :
+- AFV (p.100) : 3168+628+2969+0+432 = 7197≈7198 (Somme), 7198-1728=5470
+  (Total avant IS = Total après IS, pas d'ajustement impôt cette fois) =
+  scr_total déjà en base (5469.627, rounding).
+- AFI (p.89) : 1307+282+97+1585+263 = 3534 (exact), 3534-912=2622≈2621
+  = scr_total déjà en base (2621.463, rounding).
+
+Comme pour Generali, scr_operationnel/scr_souscription_nonvie/
+scr_diversification restent sur leur valeur officielle post-diversification
+déjà en base (ex. AFV scr_operationnel=955.99 officiel vs 432
+pré-diversification du nouveau tableau — PAS substitué).
+
+### Valeurs insérées (`avertissement=1`)
+
+| Société | KPI | Valeur | Page |
+|---|---|---|---|
+| AXA France Vie | scr_marche | 3168 M€ | 100 |
+| AXA France Vie | scr_contrepartie | 628 M€ | 100 |
+| AXA France Vie | scr_souscription_vie | 2969 M€ | 100 |
+| AXA France IARD | scr_marche | 1307 M€ | 89 |
+| AXA France IARD | scr_contrepartie | 282 M€ | 89 |
+| AXA France IARD | scr_souscription_vie | 97 M€ | 89 |
+
+`scr_souscription_sante` reste NULL pour les 2 (le tableau AXA n'a que
+Vie/IARD, pas de 3e catégorie santé séparée — cohérent avec le fait
+qu'AXA France Vie/IARD n'ont pas de ligne santé distincte dans ce
+découpage).
+
+### Vérification
+
+`validate_kpis.py --company` : AXA France Vie 45/46 (4→1 NULL), AXA
+France IARD 45/46 (4→1 NULL), aucune régression. Exports régénérés :
+841 KPIs/41 sociétés (835+6).
+
+### Fichiers modifiés
+
+`kpis.db` (6 valeurs), `frontend/src/data/donnees-extraites.json`,
+`frontend/src/data/kpi-sources.json`,
+`data/AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf`,
+`data/AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf`
+(nouveaux, ajoutés à data/ et à Vercel Blob).
