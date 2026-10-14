@@ -9646,3 +9646,79 @@ France IARD 45/46 (4→1 NULL), aucune régression. Exports régénérés :
 `data/AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf`,
 `data/AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf`
 (nouveaux, ajoutés à data/ et à Vercel Blob).
+
+## Décision 147 — Allianz Vie (Problème 3/9) : scr_marche/scr_contrepartie/scr_diversification récupérés, PAS de nouveau document nécessaire
+
+Allianz Vie avait 2 causes distinctes documentées en Décision 101 pour
+ses 5 NULL : (a) scr_marche/contrepartie/vie/santé fusionnés dans le
+QRT modèle interne (même famille que les Problèmes 2/AXA/Generali) et
+(b) scr_diversification jamais extrait à cause d'un bug de parsing
+précis (signe négatif physiquement détaché du nombre sur la page QRT,
+tokenizer partagé non corrigé pour ne pas risquer une régression sur
+les 40 autres sociétés).
+
+### Pas besoin de chercher un 2e document
+
+Contrairement à AXA/Generali, le PDF déjà utilisé
+(`Rapport_de_solvabilité_Allianz_Vie_2025.pdf`, 93p — déjà le PDF par
+défaut de la société, aucun changement de mapping nécessaire) EST déjà
+le rapport narratif complet. Son "Tableau 25 — Détail du Capital de
+Solvabilité Requis - SCR" (p.69) donne, en texte propre (pas d'image,
+pas de signe détaché) : Risque de marché 1 653 208, Risque de défaut
+de contrepartie 270 016, Risque opérationnel 119 644, Diversification
+-912 286 (en K€).
+
+### Recoupement arithmétique (exact)
+
+328565 (Risque de souscription) + 681608 (Risque commercial) +
+1653208 (Marché) + 270016 (Contrepartie) + 119644 (Opérationnel) =
+3053041 ≈ 3 053 042 (Total avant diversification/impôts, table) ;
+3053042 + 108969 (IM Capital Buffer) + 20187 (Fonds propres cantonnés)
+- 912286 (Diversification) - 51321 (Impôt différés) = 2 218 591 = SCR
+déjà en base (`scr_total`). `scr_diversification = -912.286 M€` est la
+MÊME valeur que la ligne QRT S.25.05.21/R0060 identifiée en Décision
+101 (donc pas une nouvelle estimation, juste récupérée via un tableau
+texte propre au lieu de la page QRT au signe détaché) — le bug de
+tokenizer partagé n'a pas eu besoin d'être touché.
+
+### Pourquoi PAS de flag avertissement ici (différent d'AXA/Generali)
+
+`scr_operationnel` était déjà en base (119.644 M€, jamais flaggé,
+extrait avant cette tâche) et correspond EXACTEMENT à la ligne du
+Tableau 25 — preuve que ce tableau est sur la même base que le QRT
+officiel pour Allianz Vie. Différence clé avec AXA/Generali : ceux-là
+utilisent un modèle interne COMPLET et leur document avertit
+explicitement d'un écart avec le QRT ("des écarts peuvent être
+présents... présentation des SCR après taxes") ; Allianz Vie utilise
+un modèle interne PARTIEL et aucun avertissement de ce type n'apparaît
+dans son rapport — cohérent avec le fait que seul le sous-module
+souscription semble passer par le modèle interne (d'où "Risque de
+souscription"/"Risque commercial", une taxonomie propre à ce
+sous-module), le reste (marché, contrepartie, opérationnel,
+diversification) restant sur une base standard comparable.
+
+`scr_souscription_vie`/`scr_souscription_sante` restent NULL : "Risque
+de souscription" (328 565) et "Risque commercial" (681 608) ne
+correspondent à aucun mapping évident vie/santé — les deviner serait
+inventer une donnée. Non résolu, documenté comme tel.
+
+### Valeurs insérées (aucun avertissement)
+
+| KPI | Valeur | Page |
+|---|---|---|
+| scr_marche | 1653.208 M€ | 69 |
+| scr_contrepartie | 270.016 M€ | 69 |
+| scr_diversification | -912.286 M€ | 69 |
+
+### Vérification
+
+`validate_kpis.py --company "Allianz Vie"` : 37/38 → **43/44** (5 NULL
+→ 2, seuls scr_souscription_vie/sante restent). Exports régénérés :
+844 KPIs/41 sociétés (841+3).
+
+### Fichiers modifiés
+
+`kpis.db` (3 valeurs), `frontend/src/data/donnees-extraites.json`,
+`frontend/src/data/kpi-sources.json`. Aucun nouveau PDF, aucun
+changement front-end (pas de source_pdf/avertissement nécessaires
+cette fois).

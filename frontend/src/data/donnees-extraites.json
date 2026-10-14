@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-14T21:00:48",
+  "genereLe": "2026-10-14T21:17:31",
   "societes": [
     {
       "id": 67,
@@ -4999,6 +4999,38 @@
         "avertissement": false,
         "noteAvertissement": null
       },
+      "scr_marche": {
+        "valeur": 1653.208,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 69,
+        "chapitreSource": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. scr_operationnel (déjà en base, non flaggé) vaut exactement la même chose dans ce tableau (119644 K€ = 119.644 M€) — preuve que ce tableau est sur la même base que le QRT officiel pour Allianz Vie (modèle interne PARTIEL, contrairement à AXA/Generali en modèle COMPLET où un écart était explicitement signalé par le document lui-même). Pas de avertissement ici. Cf. Décision 147.",
+        "valide": false,
+        "valeurBrute": 1653208.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "scr_contrepartie": {
+        "valeur": 270.016,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 69,
+        "chapitreSource": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. scr_operationnel (déjà en base, non flaggé) vaut exactement la même chose dans ce tableau (119644 K€ = 119.644 M€) — preuve que ce tableau est sur la même base que le QRT officiel pour Allianz Vie (modèle interne PARTIEL, contrairement à AXA/Generali en modèle COMPLET où un écart était explicitement signalé par le document lui-même). Pas de avertissement ici. Cf. Décision 147.",
+        "valide": false,
+        "valeurBrute": 270016.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
         "unite": "M€",
@@ -5008,6 +5040,22 @@
         "chapitreSource": "E.2",
         "valide": true,
         "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "scr_diversification": {
+        "valeur": -912.286,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 69,
+        "chapitreSource": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. Même valeur que la ligne QRT S.25.05.21/R0060 'Diversification' déjà identifiée en Décision 101 (page 90, signe détaché du nombre dans ce gabarit précis, non parsable automatiquement) — récupérée ici depuis un tableau texte propre (signe attaché), sans toucher au code de tokenisation partagé. Recoupement exact : 328565+681608+1653208+270016+119644=3053041≈3053042 (Total avant diversification/impôt) ; 3053042+108969+20187-912286-51321=2218591 = scr_total déjà en base. Cf. Décision 147.",
+        "valide": false,
+        "valeurBrute": -912286.0,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null,
