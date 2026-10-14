@@ -55,7 +55,8 @@ def export_kpis():
 
     resultat = {}
     for row in conn.execute(
-        """SELECT company_id, year, kpi_name, value, unit, source_page, source_chapter, raw_value, raw_unit
+        """SELECT company_id, year, kpi_name, value, unit, source_page, source_chapter, raw_value, raw_unit,
+                  source_pdf, avertissement, note_avertissement
            FROM kpis WHERE value IS NOT NULL ORDER BY company_id, year DESC"""
     ):
         nom_entreprise = companies.get(row["company_id"])
@@ -76,6 +77,11 @@ def export_kpis():
                 # (avant ÷1000/÷1 000 000), None pour les KPIs pct.
                 "raw_value": row["raw_value"],
                 "raw_unit": row["raw_unit"],
+                # Décision 145 — cf. export_donnees_extraites() ci-dessous,
+                # même sémantique (None = PDF par défaut de la société).
+                "source_pdf": row["source_pdf"],
+                "avertissement": bool(row["avertissement"]),
+                "note_avertissement": row["note_avertissement"],
             },
         )
     conn.close()
@@ -149,7 +155,8 @@ def export_donnees_extraites():
 
     id_vers_nom = {s["id"]: s["name"] for s in societes}
     for row in conn.execute(
-        """SELECT company_id, year, kpi_name, value, unit, category, source_page, source_chapter, validated, raw_value, raw_unit
+        """SELECT company_id, year, kpi_name, value, unit, category, source_page, source_chapter, validated,
+                  raw_value, raw_unit, source_pdf, avertissement, note_avertissement
            FROM kpis WHERE value IS NOT NULL ORDER BY company_id, year DESC"""
     ):
         nom = id_vers_nom.get(row["company_id"])
@@ -175,6 +182,17 @@ def export_donnees_extraites():
             # `kpi_composants` (peupler_composants_*.py), jamais déduits.
             "estCompose": composants is not None,
             "composants": composants,
+            # Décision 145 — PDF spécifique à CE KPI quand il diffère du
+            # PDF par défaut de la société (PDF_PAR_SOCIETE côté
+            # front-end) ; None = utiliser le PDF par défaut, comme pour
+            # tous les KPIs qui ne surchargent rien.
+            "sourcePdf": row["source_pdf"],
+            # Décision 145 — KPI calculé sur une base non comparable aux
+            # autres sociétés (ex. modèle interne, avant diversification/
+            # impôt) : signalé à l'utilisateur côté front-end plutôt que
+            # masqué ou laissé NULL. False/None pour l'immense majorité.
+            "avertissement": bool(row["avertissement"]),
+            "noteAvertissement": row["note_avertissement"],
         })
     conn.close()
 

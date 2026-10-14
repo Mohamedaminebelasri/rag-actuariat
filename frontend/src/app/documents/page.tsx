@@ -26,6 +26,7 @@ type KpiSource = {
   year: number;
   source_page: number | null;
   source_chapter: string | null;
+  source_pdf?: string | null;
 };
 type KpiSources = Record<string, Record<string, KpiSource>>;
 const typedKpiSources = kpiSources as KpiSources;
@@ -45,6 +46,18 @@ function pageSourceKpi(company: string, kpi: string): number | null {
   const via1 = typedKpiSources[company]?.[kpi]?.source_page ?? null;
   if (via1) return via1;
   return DONNEES_EXTRAITES.kpisParSociete[company]?.[kpi]?.pageSource ?? null;
+}
+
+/** Décision 145 — un KPI peut avoir son propre PDF source, différent du
+ * PDF par défaut de la société (cf. PDF_PAR_SOCIETE), typiquement pour
+ * une valeur avertissement venant d'un 2e document. null = pas de
+ * surcharge, utiliser le PDF par défaut. */
+function pdfSourceKpi(company: string, kpi: string): string | null {
+  return (
+    typedKpiSources[company]?.[kpi]?.source_pdf ??
+    DONNEES_EXTRAITES.kpisParSociete[company]?.[kpi]?.sourcePdf ??
+    null
+  );
 }
 
 export default function DocumentsPage() {
@@ -74,7 +87,12 @@ export default function DocumentsPage() {
     return societes.filter((s) => s.name.toLowerCase().includes(q));
   }, [societes, recherche]);
 
-  const pdfSociete = societeSelectionnee ? PDF_PAR_SOCIETE[societeSelectionnee] : null;
+  // Décision 145 — si le KPI ciblé a son propre PDF source, il prime sur
+  // le PDF par défaut de la société (sinon on resterait sur le mauvais
+  // document pour une valeur avertissement venant d'un 2e PDF).
+  const pdfSociete = societeSelectionnee
+    ? (kpiCible && pdfSourceKpi(societeSelectionnee, kpiCible)) || PDF_PAR_SOCIETE[societeSelectionnee]
+    : null;
   // URL sans fragment — PdfPageViewer gère la navigation par page en interne
   const urlPdf = pdfSociete
     ? `/api/pdf/${encodeURIComponent(pdfSociete)}`

@@ -34,7 +34,10 @@ function fmtComposant(valeur: number, unite: string): string {
  * Le bouton "Corriger" envoie via le callback onCorrection (hook parent).
  */
 export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection, validationHumaine, onValidation }: Props) {
-  const nomPdf = PDF_PAR_SOCIETE[societe];
+  // Décision 145 — un KPI peut avoir son propre PDF source (ex. une
+  // valeur avertissement venant d'un 2e document), prioritaire sur le
+  // PDF par défaut de la société.
+  const nomPdf = kpi.sourcePdf ?? PDF_PAR_SOCIETE[societe];
   const pdfUrl = nomPdf ? `/api/pdf/${encodeURIComponent(nomPdf)}` : null;
 
   // --- Navigation page PDF ---

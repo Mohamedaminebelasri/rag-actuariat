@@ -43,6 +43,16 @@ export type KpiExtrait = {
   uniteBrute: string | null;
   estCompose?: boolean;
   composants?: Composant[] | null;
+  /** PDF spécifique à CE KPI, quand il diffère du PDF par défaut de la
+   * société (cf. PDF_PAR_SOCIETE). null/absent = utiliser le PDF par
+   * défaut — c'est le cas pour l'immense majorité des KPIs. */
+  sourcePdf?: string | null;
+  /** KPI calculé sur une base non comparable aux autres sociétés (ex.
+   * modèle interne, avant diversification inter-risques et avant impôt)
+   * — à signaler visuellement, jamais à masquer ni traiter comme une
+   * valeur normale. Voir noteAvertissement pour le détail. */
+  avertissement?: boolean;
+  noteAvertissement?: string | null;
 };
 
 type DonneesExtraites = {

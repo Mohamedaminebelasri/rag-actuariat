@@ -34,9 +34,36 @@ connexion live**. Deux pipelines distincts à ne pas confondre :
   `valeurBrute`/`uniteBrute`, `estCompose`/`composants`).
 - **Onglet Documents** : lit `frontend/src/data/kpi-sources.json` (mapping
   page/chapitre par société/KPI) avec repli sur `donnees-extraites.json`.
-  Le lien PDF cliquable ne fonctionne aujourd'hui **que pour Groupama**
-  (limitation connue et documentée dans `kpi-ligne.tsx`, pas un bug à
-  corriger sans qu'on te le demande).
+  Le vrai point d'entrée du clic KPI → PDF est `KpiPdfModal`
+  (`base-donnees/page.tsx` lui passe toujours `onSelect`, donc la
+  restriction "Groupama uniquement" historique de `kpi-ligne.tsx` est du
+  code mort en pratique, cf. Décision 142 — ne pas s'y fier).
+
+### Règle non négociable — le PDF affiché doit toujours être celui qui a servi à l'extraction
+
+`PDF_PAR_SOCIETE` (`pdf-par-societe.ts`) donne le PDF **par défaut** d'une
+société. Mais depuis la Décision 145, un KPI individuel peut avoir son
+propre PDF source (`kpi.sourcePdf` dans `donnees-extraites.json` /
+`kpi-sources.json`), **prioritaire** sur le défaut de la société —
+utilisé quand un 2e document a servi pour CE KPI précis (ex. un KPI
+`avertissement` venant d'un rapport narratif complémentaire à l'annexe
+QRT habituelle). `null`/absent = pas de surcharge, PDF par défaut.
+`KpiPdfModal` et `documents/page.tsx` (`pdfSourceKpi()`) résolvent déjà
+ce cas — tout nouveau composant qui ouvre un PDF depuis un KPI doit
+faire pareil (`kpi.sourcePdf ?? PDF_PAR_SOCIETE[societe]`), jamais
+PDF_PAR_SOCIETE seul.
+
+### KPI `avertissement` — valeur sur une base non comparable
+
+Un KPI peut porter `avertissement: true` + `noteAvertissement` (texte
+actuariel expliquant pourquoi, ex. "calculé avant diversification
+inter-risques et avant impôt, modèle interne"). **Doit être signalé
+visuellement partout où le KPI apparaît** (Base de données, Analyse
+individuelle, Analyse comparative) — un petit symbole d'alerte à côté
+de la valeur, de couleur distincte, cliquable pour afficher
+`noteAvertissement`. Ne jamais masquer ce KPI ni le traiter comme une
+valeur normale : la donnée est réelle et utile, juste pas directement
+comparable aux mêmes KPIs des autres sociétés.
 
 Ces 3 fichiers JSON (`frontend/src/data/donnees-extraites.json`,
 `kpi-sources.json`, et `kpis_export.json` à la racine) sont des snapshots —

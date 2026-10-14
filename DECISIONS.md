@@ -9486,3 +9486,93 @@ autres `extract_kpis_*.py`, `PIPELINE_EXTRACTION_KPIs.md`, `kpis.db`,
 `frontend/src/data/analyse-demo.ts`,
 `frontend/src/data/donnees-extraites.json`,
 `frontend/src/data/kpi-sources.json`, `kpis_export.json`.
+
+## Décision 145 — scr_marche/scr_contrepartie (Generali Vie/IARD) récupérés via un 2e document, mécanisme avertissement + source_pdf par KPI
+
+Suite directe des Décisions 142/143 : Generali Vie et Generali IARD
+utilisent un modèle interne complet, QRT S.25.05 ne publie que des
+lignes fusionnées (Décision 142). Le rapport narratif complet (pas
+l'annexe QRT habituelle) de chaque société a une section E.2.1 dédiée
+avec un graphique de composition du SCR par catégorie — SUR UNE BASE
+DIFFÉRENTE (avant diversification inter-risques, avant impact fiscal),
+le document le dit lui-même explicitement.
+
+### Nouveaux documents
+
+`data/RSSF_Generali_Vie_2025.pdf` (91p) et `data/RSSF_Generali_Iard_2025.pdf`
+(83p), téléchargés depuis generali.fr (sources officielles), uploadés
+sur Vercel Blob (`node scripts/migrer-pdfs-vers-blob.mjs`, idempotent,
+2 fichiers ajoutés sur 37). Les PDF annexe existants (`Annexe_RSSF_QRT_
+GVIE/GIARD_2025.pdf`, 100% scannés) sont CONSERVÉS tels quels, toujours
+utilisés pour 19 des 21 KPIs de chaque société — ils contiennent déjà
+un vrai tableau QRT S.25.05 (post-diversification, comparable) pour
+scr_operationnel/scr_diversification/scr_souscription_nonvie, qu'il ne
+fallait pas écraser avec les chiffres pré-diversification du nouveau
+document.
+
+### Lecture du graphique E.2.1 (page rendue en image, PyMuPDF, lue
+directement — pas d'OCR générique, cohérent avec la pratique déjà
+établie pour Groupama/picture_75)
+
+Recoupement arithmétique avant insertion (le document ne donne jamais
+directement le détail, seulement les totaux d'agrégation) :
+- Generali Vie (p.79) : ΣRisques 4213 + Diversification -1327 = BSCR
+  2886 (exact) ; BSCR 2886 + Model Adj. 735 + Impact fiscal -552 = SCR
+  3069 (exact, = valeur déjà en base). Marché 1509, Crédit 1146,
+  Souscription (vie+santé non séparées) 1045, Opérationnel 424 (non
+  utilisé, cf. ci-dessus), Cross-terms 88.
+- Generali IARD (p.72) : ΣRisques 1539 + Diversification -375 = 1164 ≈
+  BSCR 1164 (écart 0, arrondis individuels) ; 1164+190-67 = SCR 1287
+  (exact, = valeur déjà en base). Souscription Non-Vie 702 (non utilisé,
+  732.365 déjà en base sur base QRT officielle), Marché 385, Crédit 250,
+  **Souscription Vie 11 (séparée du Non-Vie ici, contrairement à
+  Generali Vie — récupérable)**, Opérationnel 174 (non utilisé).
+
+### Valeurs insérées (toutes `avertissement=1`)
+
+| Société | KPI | Valeur | Page | PDF |
+|---|---|---|---|---|
+| Generali Vie | scr_marche | 1509 M€ | 79 | RSSF_Generali_Vie_2025.pdf |
+| Generali Vie | scr_contrepartie | 1146 M€ | 79 | RSSF_Generali_Vie_2025.pdf |
+| Generali IARD | scr_marche | 385 M€ | 72 | RSSF_Generali_Iard_2025.pdf |
+| Generali IARD | scr_contrepartie | 250 M€ | 72 | RSSF_Generali_Iard_2025.pdf |
+| Generali IARD | scr_souscription_vie | 11 M€ | 72 | RSSF_Generali_Iard_2025.pdf |
+
+`scr_souscription_vie`/`scr_souscription_sante` de Generali Vie restent
+NULL (le graphique ne donne qu'un seul "Souscription" fusionné, pas
+séparable sans deviner). `scr_souscription_sante` de Generali IARD
+reste NULL (jamais mentionné, cohérent avec une activité non-vie).
+
+### Mécanisme générique ajouté (pas limité à Generali)
+
+`kpis.db` : 3 colonnes ajoutées à `kpis` — `source_pdf` (TEXT, NULL =
+PDF par défaut de la société), `avertissement` (INTEGER, 0 par défaut),
+`note_avertissement` (TEXT). Exportées dans `donnees-extraites.json` et
+`kpi-sources.json` (`sourcePdf`/`avertissement`/`noteAvertissement`,
+`export_kpis_for_frontend.py`). Règle ajoutée dans `frontend/CLAUDE.md` :
+le PDF affiché pour un KPI doit toujours être celui qui a servi à son
+extraction (`kpi.sourcePdf ?? PDF_PAR_SOCIETE[societe]`), jamais
+`PDF_PAR_SOCIETE` seul — déjà câblé dans `KpiPdfModal` et
+`documents/page.tsx` (`pdfSourceKpi()`). Le badge visuel
+`avertissement` (symbole + note cliquable, dans Base de données ET
+Analyse) est un chantier front-end, pas fait ici — prompt donné à la
+session front-end séparément.
+
+### Vérification
+
+`validate_kpis.py --company` : Generali Vie 43/44 (4→2 NULL),
+Generali IARD 45/46 (4→1 NULL), aucune régression sur les 19/21 KPIs
+inchangés de chaque société. `npx tsc --noEmit` + `eslint` sur les
+fichiers touchés : aucune erreur. Exports régénérés : 835 KPIs/41
+sociétés (830 + les 5 nouvelles valeurs).
+
+### Fichiers modifiés
+
+`kpis.db` (schéma + 5 valeurs), `export_kpis_for_frontend.py`,
+`frontend/src/lib/donnees-extraites-utils.ts` (type `KpiExtrait`),
+`frontend/src/components/donnees/kpi-pdf-modal.tsx`,
+`frontend/src/app/documents/page.tsx`, `frontend/CLAUDE.md`,
+`frontend/src/data/donnees-extraites.json`,
+`frontend/src/data/kpi-sources.json`,
+`data/RSSF_Generali_Vie_2025.pdf`, `data/RSSF_Generali_Iard_2025.pdf`
+(nouveaux, ajoutés à data/ et à Vercel Blob).
