@@ -4,17 +4,18 @@ import { ShieldCheck, Sparkles, Calculator, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
+import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import type { Correction } from "@/lib/use-corrections";
 import type { ValidationHumaine } from "@/lib/use-validations-humaines";
 
 /**
  * Une ligne = un KPI réellement extrait pour une société.
  *
- * Lien vers la source : l'onglet Documents ne sait aujourd'hui naviguer
- * que jusqu'à Groupama (seule société de son arborescence de démonstration
- * — voir sfcrTree dans documents/page.tsx). Pour ne pas proposer un lien
- * mort sur les 33 autres sociétés, la carte n'est cliquable QUE pour
- * Groupama ; ailleurs, chapitre/page restent affichés en texte seul.
+ * Lien vers la source : quand `onSelect` n'est pas fourni, la carte ouvre
+ * l'onglet Documents sur le PDF de la société, à la page du KPI. Le lien
+ * est actif pour toute société ayant un PDF mappé dans PDF_PAR_SOCIETE
+ * (lib/pdf-par-societe.ts) ; il est désactivé pour les sociétés sans PDF
+ * (chapitre/page restent alors affichés en texte seul, sans lien mort).
  */
 export function KpiLigne({
   id,
@@ -38,7 +39,7 @@ export function KpiLigne({
     kpi.chapitreSource && kpi.pageSource
       ? `${kpi.chapitreSource}, p. ${kpi.pageSource}`
       : kpi.chapitreSource ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
-  const lienActif = societe === "Groupama";
+  const lienActif = !!PDF_PAR_SOCIETE[societe];
 
   const contenu = (
     <>
