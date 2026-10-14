@@ -3582,6 +3582,15 @@
       "raw_value": 76644.0,
       "raw_unit": "K€"
     },
+    "scr_souscription_nonvie": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 153,
+      "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0050 (mapping, formule standard) — valeur imprimée '0' (assureur vie pure, risque non-vie nul)",
+      "raw_value": 0.0,
+      "raw_unit": "K€"
+    },
     "scr_diversification": {
       "value": -312.797,
       "unit": "M€",

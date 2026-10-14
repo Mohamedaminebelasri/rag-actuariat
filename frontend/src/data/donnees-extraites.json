@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-12T23:45:35",
+  "genereLe": "2026-10-14T19:32:33",
   "societes": [
     {
       "id": 67,
@@ -1221,6 +1221,19 @@
         "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0030 (mapping, formule standard)",
         "valide": false,
         "valeurBrute": 76644.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 153,
+        "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.21/R0050 (mapping, formule standard) — valeur imprimée '0' (assureur vie pure, risque non-vie nul)",
+        "valide": true,
+        "valeurBrute": 0.0,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null

@@ -54,7 +54,8 @@ class KpiService:
     def get_kpi(self, company_name, year, kpi_name):
         """1 KPI précis : dict (value, unit, category, source_page,
         source_chapter, validated) ou None si absent — value peut être
-        None (KPI présent mais non extractible, ex. resultat_technique)."""
+        None (KPI présent mais non extractible, ex. scr_marche pour une
+        société en modèle interne complet, cf. Décision 142)."""
         with self._connexion() as conn:
             company_id = self._company_id(conn, company_name)
             row = conn.execute(

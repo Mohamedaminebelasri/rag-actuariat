@@ -80,7 +80,6 @@ def extraire_tout_cnp():
         else:
             valeurs[kpi_name] = (None, None, "aucune source disponible pour CNP (pas de picture_75 équivalent)")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama)")
 
     return valeurs, corpus, templates_presents
 

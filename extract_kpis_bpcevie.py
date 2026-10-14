@@ -184,7 +184,6 @@ def extraire_tout():
         else:
             valeurs[kpi_name] = (None, None, "aucune variante ne matche")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     return valeurs, corpus, templates_presents, composants_be_rm
 

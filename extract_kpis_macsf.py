@@ -96,7 +96,6 @@ def extraire_tout_macsf():
             f"-14 137, la version positive ne colle pas)",
         )
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP)")
 
     return valeurs, corpus, templates_presents
 

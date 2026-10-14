@@ -217,7 +217,6 @@ def extraire_tout_entite(corpus):
         else:
             valeurs[kpi_name] = (None, None, "aucune source disponible (pas de picture_75 équivalent)")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP/Predica)")
 
     return valeurs
 

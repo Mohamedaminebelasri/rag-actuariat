@@ -165,7 +165,6 @@ def extraire_tout_creditagricole():
         else:
             valeurs[kpi_name] = (None, None, "aucune source disponible pour Crédit Agricole Assurances")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     return valeurs, corpus, templates_presents
 

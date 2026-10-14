@@ -6,8 +6,8 @@
  * composants d'Analyse continuent de fonctionner sans modification.
  *
  * Différences avec l'ancienne version demo :
- * - 34 sociétés réelles (au lieu de 5 mock + 6 fictives)
- * - 22 types de KPIs réels (au lieu de 20 inventés)
+ * - 41 sociétés réelles (au lieu de 5 mock + 6 fictives)
+ * - 21 types de KPIs réels (au lieu de 20 inventés)
  * - Valeurs en M€ (pas en Md€)
  * - Pas de données de variation N-1 (variation = null)
  * - Confiance = "verified" si kpis.db.validated=true, sinon "extracted"
@@ -94,7 +94,6 @@ const DESCRIPTIONS: Record<string, string> = {
   provisions_techniques: "Best Estimate + marge de risque",
   primes_acquises_brutes: "Primes brutes émises sur l'exercice",
   charge_sinistres: "Charge de sinistres sur l'exercice",
-  resultat_technique: "Résultat technique de l'exercice",
 };
 
 // Seuils réglementaires
@@ -115,7 +114,7 @@ const ORDRE_KPIS = [
   "scr_souscription_nonvie", "scr_souscription_vie", "scr_souscription_sante",
   "scr_marche", "scr_contrepartie", "scr_operationnel", "scr_diversification",
   // A — Activité
-  "primes_acquises_brutes", "charge_sinistres", "resultat_technique",
+  "primes_acquises_brutes", "charge_sinistres",
 ];
 
 // Détermine la catégorie d'un KPI à partir du premier exemple trouvé dans les données

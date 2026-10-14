@@ -68,7 +68,7 @@ def extraire_tout():
     defs_par_nom = {d["kpi_name"]: d for d in ek.KPI_DEFINITIONS}
     RATIOS = {"ratio_scr", "ratio_mcr"}
     for kpi_name in defs_par_nom:
-        if kpi_name in valeurs or kpi_name == "resultat_technique" or kpi_name == "provisions_techniques":
+        if kpi_name in valeurs or kpi_name == "provisions_techniques":
             continue
         labels = KPI_LABELS_FR.get(kpi_name)
         if not labels:
@@ -117,8 +117,6 @@ def extraire_tout():
         )
     else:
         valeurs["provisions_techniques"] = (None, None, "best_estimate ou marge_risque NULL")
-
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     return valeurs
 

@@ -177,7 +177,6 @@ def construire_valeurs():
         valeurs[kpi_name] = (m(keur), PAGE_SCR_MODULES,
                               "S.25.01.01, lecture manuelle — chaîne complète recoupée exacte (base+opérationnel-LAC=scr_total)")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     composants_sommes = {
         "best_estimate": [(label, val, PAGE_BE_RM) for label, val in BE_COMPOSANTS],

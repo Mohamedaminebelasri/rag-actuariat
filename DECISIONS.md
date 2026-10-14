@@ -9414,3 +9414,75 @@ l'insertion en base manquait.
 ### Fichiers modifiés
 
 `kpis.db` (1 ligne mise à jour).
+
+## Décision 144 — resultat_technique retiré du référentiel : 22 → 21 KPIs (renverse la Décision 137)
+
+Contexte : en cherchant une solution pour les 4 KPIs SCR manquants de
+Generali (Décision 142/143), un rapport narratif SFCR complet (pas
+l'annexe QRT habituelle) a été lu pour Generali Vie — et révèle,
+Chapitre A.2, la phrase "Le résultat technique s'est élevé à 584
+millions d'euros". Donc `resultat_technique` N'EST PAS "jamais publié"
+dans l'absolu (l'hypothèse de la Décision 051/137) — il est juste
+absent des annexes QRT, seule source que le pipeline lit aujourd'hui.
+
+Décision explicite de l'utilisateur : ne PAS lancer un chantier de
+récupération de ce KPI sur les 40 autres sociétés (il faudrait
+retrouver et dépouiller ~40 rapports narratifs complets en plus des
+annexes QRT déjà traitées, pour un seul KPI sur 22) — retirer
+`resultat_technique` du référentiel à la place. Renverse l'option (a)
+de la Décision 137 (qui l'avait écartée pour un coût de 28 fichiers vs
+bénéfice cosmétique) : cette fois le retrait est fait pour de bon,
+cause et bénéfice différents (ce n'est plus cosmétique — c'est
+retirer un KPI qu'on a décidé de ne plus jamais chercher à extraire).
+
+### Changements
+
+- `kpi_definitions.py` : entrée `resultat_technique` supprimée de
+  `KPI_DEFINITIONS` (22 → 21). Le mécanisme `toujours_null` (ajouté en
+  Décision 137 spécifiquement pour ce KPI) est retiré : plus aucun KPI
+  du référentiel n'en a besoin.
+- `validate_kpis.py` : `completude_22_kpis`/`completude_null_attendu`
+  renommés `completude_kpis` (attendu dérivé de `len(KPI_DEFINITIONS)`,
+  plus de magic number) / `completude_aucun_null` (0 NULL attendu par
+  défaut — les échecs légitimes restent visibles au cas par cas dans le
+  récapitulatif `--all`, documentés individuellement, pas masqués).
+- Ligne `resultat_technique` retirée des 18 scripts `extract_kpis_*.py`
+  (insertion devenue sans objet), de `extract_kpis.py`
+  (`extraire_tout()`, Groupama), `aema_entites.py`
+  (`inserer_entite_en_base`, idempotent, réutilisé) et `ag2r_entites.py`
+  — plus les gardes mortes dans `extract_kpis_covea.py` et
+  `batch_diagnostic.py` qui l'excluaient explicitement d'une boucle sur
+  `KPI_DEFINITIONS` (devenues inatteignables).
+  `kpi_qrt_mapping.py` : entrée vide retirée.
+- Frontend (autorisé explicitement par l'utilisateur pour cette tâche) :
+  `donnees-extraites-utils.ts` (`KPI_LABELS_REELS`, `NB_KPIS_ATTENDUS`
+  se recalcule automatiquement à 21) et `analyse-demo.ts`
+  (`DESCRIPTIONS`, `ORDRE_KPIS` + commentaire d'en-tête "34→41
+  sociétés" corrigé au passage, stale depuis l'ajout des 7 nouvelles
+  entités).
+- `kpis.db` : 41 lignes supprimées (`DELETE FROM kpis WHERE kpi_name=
+  'resultat_technique'`) — toutes à `value IS NULL` au préalable,
+  vérifié avant suppression (aucune perte de donnée réelle).
+
+### Vérification
+
+`validate_kpis.py --all` après coup : AG2R Prévoyance passe à 48/48 (son
+seul NULL restant après la Décision 143 était resultat_technique),
+SwissLife/BPCE Vie/BPCE Assurances IARD restent 48/48, les 8 autres
+sociétés qui avaient un NULL de plus que resultat_technique montrent
+exactement un NULL de moins qu'avant (ex. AXA France Vie : 5→4 NULL),
+aucune régression. `npx tsc --noEmit` frontend : aucune erreur. Exports
+régénérés : 830 KPIs/41 sociétés (829 + le `scr_souscription_nonvie`
+d'AG2R Prévoyance corrigé en Décision 143), 0 trace de
+`resultat_technique` vérifiée par lecture directe du JSON généré.
+
+### Fichiers modifiés
+
+`kpi_definitions.py`, `validate_kpis.py`, `kpi_service.py`,
+`kpi_qrt_mapping.py`, `batch_diagnostic.py`, `extract_kpis.py`,
+`extract_kpis_covea.py`, `aema_entites.py`, `ag2r_entites.py`, les 17
+autres `extract_kpis_*.py`, `PIPELINE_EXTRACTION_KPIs.md`, `kpis.db`,
+`frontend/src/lib/donnees-extraites-utils.ts`,
+`frontend/src/data/analyse-demo.ts`,
+`frontend/src/data/donnees-extraites.json`,
+`frontend/src/data/kpi-sources.json`, `kpis_export.json`.

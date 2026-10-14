@@ -599,8 +599,6 @@ def diagnostiquer_pdf(pdf_path, qrt_dict_synth, ek, extract_qrt_native, classify
         templates_presents = {e["template_id"] for e in corpus_diag}
         for d in ek.KPI_DEFINITIONS:
             kpi_name = d["kpi_name"]
-            if kpi_name == "resultat_technique":
-                continue  # NULL par construction (Décision 051), pas un signal diagnostique
             if kpi_name == "provisions_techniques":
                 continue  # calculé, pas une cellule QRT directe
             try:

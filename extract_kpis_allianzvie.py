@@ -161,7 +161,6 @@ def extraire_tout():
         else:
             valeurs[kpi_name] = (None, None, f"aucune source disponible pour {COMPANY_NAME} (irréductible confirmé, Décision 084/101)")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     return valeurs, corpus, templates_presents
 

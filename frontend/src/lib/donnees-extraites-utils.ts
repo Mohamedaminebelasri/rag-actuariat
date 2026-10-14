@@ -63,7 +63,7 @@ export const CATEGORIES_REELLES: { code: string; label: string }[] = [
   { code: "activité", label: "Activité et résultats" },
 ];
 
-// Libellés lisibles des 22 kpi_name réels de kpis.db (colonne `kpi_name`).
+// Libellés lisibles des 21 kpi_name réels de kpis.db (colonne `kpi_name`).
 export const KPI_LABELS_REELS: Record<string, string> = {
   ratio_scr: "Ratio SCR",
   ratio_mcr: "Ratio MCR",
@@ -86,7 +86,6 @@ export const KPI_LABELS_REELS: Record<string, string> = {
   provisions_techniques: "Provisions techniques",
   primes_acquises_brutes: "Primes acquises brutes",
   charge_sinistres: "Charge de sinistres",
-  resultat_technique: "Résultat technique",
 };
 
 export const NB_KPIS_ATTENDUS = Object.keys(KPI_LABELS_REELS).length;

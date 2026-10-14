@@ -63,11 +63,13 @@ valeur ou un nom d'entreprise codé en dur) sauf mention contraire ci-dessous :
    (ex. fonds_propres_t3/scr_souscription_nonvie pour Predica/MGEN,
    Décision 085/088) ; un vrai 0 n'est ni positif ni négatif au sens
    strict, mais n'est pas non plus un signe erroné.
-9. Complétude : exactement 22 lignes pour (entreprise, année), exactement
-   les NULL attendus (resultat_technique seul). Contrôle VOLONTAIREMENT
-   NON assoupli (Décision 090) : certaines sociétés (ex. SGAM AG2R LA
-   MONDIALE, 4 NULL) échoueront légitimement ici — c'est un vrai signal
-   de complétude (documenté Décision 087), pas un faux positif à cacher.
+9. Complétude : exactement N lignes pour (entreprise, année), où N =
+   len(KPI_DEFINITIONS), et aucun NULL attendu par défaut (Décision 144 —
+   resultat_technique supprimé du référentiel, cf. kpi_definitions.py).
+   Contrôle VOLONTAIREMENT NON assoupli (Décision 090) : certaines
+   sociétés (ex. SGAM AG2R LA MONDIALE) échoueront légitimement ici —
+   c'est un vrai signal de complétude (documenté Décision 087), pas un
+   faux positif à cacher.
 10. Magnitude (Décision 095) — 1 contrôle par KPI en M€ non-NULL : la
     valeur absolue ne dépasse pas un plafond conservateur selon sa
     catégorie (cf. SEUILS_MAGNITUDE). Objectif : détecter les bugs
@@ -378,13 +380,6 @@ def executer_controles(kpis, company_name):
     return controles
 
 
-# Diagnostic 12/10/2026, Problème 5 — dérivé de kpi_definitions.py
-# (`toujours_null`), plutôt qu'une liste ["resultat_technique"] dupliquée
-# en dur ici : une seule source de vérité pour "quel(s) KPI(s) sont NULL
-# par construction, jamais un gap d'extraction à corriger".
-KPIS_TOUJOURS_NULL = sorted(d["kpi_name"] for d in KPI_DEFINITIONS if d.get("toujours_null"))
-
-
 def executer_completude(conn, company_id, year):
     n = conn.execute("SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=?", (company_id, year)).fetchone()[0]
     n_null = conn.execute("SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=? AND value IS NULL",
@@ -392,13 +387,13 @@ def executer_completude(conn, company_id, year):
     noms_null = [r[0] for r in conn.execute(
         "SELECT kpi_name FROM kpis WHERE company_id=? AND year=? AND value IS NULL", (company_id, year)
     ).fetchall()]
-    n_attendu = len(KPIS_TOUJOURS_NULL)
+    n_total = len(KPI_DEFINITIONS)
     return [
-        {"check_name": "completude_22_kpis", "expected_value": 22, "computed_value": n, "passed": n == 22,
+        {"check_name": "completude_kpis", "expected_value": n_total, "computed_value": n, "passed": n == n_total,
          "details": f"{n} lignes trouvées pour (company_id={company_id}, year={year})"},
-        {"check_name": "completude_null_attendu", "expected_value": n_attendu, "computed_value": n_null,
-         "passed": n_null == n_attendu and sorted(noms_null) == KPIS_TOUJOURS_NULL,
-         "details": f"{n_null} NULL trouvé(s) : {noms_null} (attendu : uniquement {KPIS_TOUJOURS_NULL})"},
+        {"check_name": "completude_aucun_null", "expected_value": 0, "computed_value": n_null,
+         "passed": n_null == 0,
+         "details": f"{n_null} NULL trouvé(s) : {noms_null} (attendu : aucun, Décision 144)"},
     ]
 
 

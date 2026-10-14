@@ -419,10 +419,6 @@ KPI_QRT_MAPPING = {
          "variante": "vie, même codes (FR) — colonne Total déjà peuplée chez CNP, exclue pour éviter le double-comptage",
          "verifie_contre": "CNP Assurances 2025 (extraction réelle)", "exclure_total": True},
     ],
-    "resultat_technique": [
-        # Aucun équivalent QRT standardisé trouvé (Décision 051, audit
-        # exhaustif) — reste NULL par construction, jamais deviné.
-    ],
 }
 
 

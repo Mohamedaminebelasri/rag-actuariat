@@ -163,7 +163,6 @@ def extraire_tout():
         else:
             valeurs[kpi_name] = (None, None, "fusionné avec un autre KPI dans le gabarit modèle interne S.25.05.21 (non séparable, jamais deviné)")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     return valeurs, corpus, templates_presents, composants_sommes
 

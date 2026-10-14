@@ -1,7 +1,7 @@
-"""kpi_definitions.py — Référence unique des 22 KPIs actuariels à extraire
+"""kpi_definitions.py — Référence unique des 21 KPIs actuariels à extraire
 (Phase 3, Décision 050), indépendante du RAG/Qdrant.
 
-KPI_DEFINITIONS : liste de 22 dicts, 6 catégories (solvabilité, fonds
+KPI_DEFINITIONS : liste de 21 dicts, 6 catégories (solvabilité, fonds
 propres, scr, provisions, mcr, activité). Chaque KPI porte sa source QRT
 et son chapitre SFCR narratif correspondant, pour guider l'extraction
 (Phase 3, étapes suivantes) — ce fichier ne fait AUCUNE extraction
@@ -9,22 +9,19 @@ lui-même, c'est une table de référence statique.
 
 `sign` : "positive" (montant/ratio toujours positif), "negative" (ex.
 scr_diversification, un bénéfice de diversification qui SOUSTRAIT du SCR
-total), ou "any" (peut légitimement être positif ou négatif — ex.
-resultat_technique, un solde qui peut être une perte).
+total), ou "any" (peut légitimement être positif ou négatif).
 
-`toujours_null` (optionnel, présent uniquement sur resultat_technique) :
-diagnostic 12/10/2026, Problème 5 — documente qu'AUCUN gabarit QRT EIOPA
-standardisé ne porte ce résultat (contrairement aux 21 autres KPIs, tous
-rattachés à un code QRT précis) ; `kpis.value` reste NULL par construction
-pour les 41/41 sociétés en base, jamais une absence d'extraction à
-corriger. Option (a) du diagnostic (retirer le KPI, passer à 21) écartée :
-touche les 18 scripts extract_kpis_*.py + kpi_qrt_mapping.py +
-kpi_service.py + 2 fichiers frontend hors périmètre de cette mission
-back-end, pour un bénéfice cosmétique seulement — bien trop de surface
-pour la valeur. Option retenue : ce flag, lu par validate_kpis.py pour ne
-jamais le traiter comme un gap d'extraction (déjà le cas via
-`completude_null_attendu`) ; kpis.value reste NULL (sémantique SQL
-correcte, pas de valeur sentinelle inventée). Cf. Décision 137.
+Décision 144 (14/10/2026) : `resultat_technique` retiré du référentiel
+(était 22 KPIs, Décision 137 l'avait gardé avec un flag `toujours_null`
+après avoir chiffré le retrait à 28 fichiers pour un bénéfice jugé
+cosmétique). Renversé : l'audit du 14/10 a confirmé qu'aucun gabarit QRT
+EIOPA ne porte ce résultat — il existe bien en texte libre dans certains
+rapports narratifs complets (ex. Generali Vie, Chapitre A.2), mais
+l'obtenir pour les 41 sociétés demanderait de retrouver et dépouiller
+~40 rapports complets supplémentaires (le pipeline ne lit que les
+annexes QRT) pour un seul KPI — décision explicite de l'utilisateur de
+ne pas poursuivre cette piste et de retirer le KPI plutôt que de le
+garder NULL à 100%. La base passe donc à 21 KPIs.
 """
 
 KPI_DEFINITIONS = [
@@ -227,16 +224,6 @@ KPI_DEFINITIONS = [
         "qrt_source": "S.05.01",
         "sfcr_chapter": "A.2",
         "sign": "positive",
-    },
-    {
-        "kpi_name": "resultat_technique",
-        "label": "Résultat technique",
-        "category": "activité",
-        "unit": "M€",
-        "qrt_source": "S.05.01",
-        "sfcr_chapter": "A.2",
-        "sign": "any",
-        "toujours_null": True,
     },
 ]
 

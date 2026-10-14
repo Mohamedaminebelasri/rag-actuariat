@@ -502,9 +502,9 @@ KPIS_IRREDUCTIBLES = set()  # aucun, les 2 entités faites utilisent la formule 
 def calculer_score(nom_entite):
     """Retourne (kpis_ok, total, statut) pour une entité. statut :
     'fait' si présente dans ENTITES_KPIS, 'non_traite' sinon. total=20 :
-    les 20 KPIs lus manuellement (provisions_techniques calculé et
-    resultat_technique NULL sont ajoutés automatiquement à l'insertion,
-    cf. inserer_entite_en_base, pas comptés comme "lus" ici)."""
+    les 20 KPIs lus manuellement (provisions_techniques, calculé, est
+    ajouté automatiquement à l'insertion, cf. inserer_entite_en_base,
+    pas compté comme "lu" ici)."""
     if nom_entite not in ENTITES_KPIS:
         return None, None, "non_traite"
     kpis = ENTITES_KPIS[nom_entite]
@@ -555,17 +555,16 @@ def inserer_entite_en_base(nom_entite, db_path="kpis.db", year=2025, company_typ
         company_id = row[0]
 
     kpis_entite = dict(ENTITES_KPIS[nom_entite])
-    # Complète les 22 KPIs (Décision 085) : les 20 déjà présents dans
+    # Complète les 21 KPIs (Décision 085, ex-22 avant le retrait de
+    # resultat_technique en Décision 144) : les 20 déjà présents dans
     # ENTITES_KPIS ne couvrent pas provisions_techniques (calculable,
-    # jamais lu directement sur une page) ni resultat_technique (NULL
-    # par construction, cf. Décision 051) — les 2 manquaient pour
-    # MACIF SAM/Aéma Groupe (Décision 083), corrigé ici pour toute
-    # entité, rétroactivement incluses (ON CONFLICT DO UPDATE, idempotent).
+    # jamais lu directement sur une page) — manquait pour MACIF SAM/Aéma
+    # Groupe (Décision 083), corrigé ici pour toute entité,
+    # rétroactivement incluse (ON CONFLICT DO UPDATE, idempotent).
     if "best_estimate" in kpis_entite and "marge_risque" in kpis_entite:
         be, page_be, _ = kpis_entite["best_estimate"]
         rm, _, _ = kpis_entite["marge_risque"]
         kpis_entite["provisions_techniques"] = (be + rm, page_be, "best_estimate + marge_risque")
-    kpis_entite["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP)")
 
     # Décision 093 : 7 entités ont leurs annexes QRT en euros bruts, pas
     # en K€ (cf. ENTITES_UNITE_EUR_BRUT ci-dessus) — diviseur ÷1 000 000

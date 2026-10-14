@@ -888,10 +888,6 @@ def extraire_tout():
     )
     templates_utilises_par_kpi["scr_diversification"] = (div_template_id, "image")
 
-    # --- NULL tranché (Décision 051) ---
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé trouvé (Décision 051)")
-    templates_utilises_par_kpi["resultat_technique"] = ("-", "-")
-
     extras = {
         "scr_total_qrt": valeurs["scr_total"][0] * 1000,
         "mcr_qrt": valeurs["mcr"][0] * 1000,

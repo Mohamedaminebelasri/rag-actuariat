@@ -166,7 +166,6 @@ def construire_valeurs():
     valeurs["scr_souscription_nonvie"] = (m(SCR_SOUSCRIPTION_NONVIE_KEUR), PAGE_SCR, "S.25.05.21/R0310, lecture visuelle directe")
     valeurs["scr_diversification"] = (m(SCR_DIVERSIFICATION_KEUR), PAGE_SCR, "S.25.05.21/R0060, lecture visuelle directe — chaîne recoupée exacte")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     composants_sommes = {
         "best_estimate": [(label, val, PAGE_BE_RM) for label, val in BE_COMPOSANTS],

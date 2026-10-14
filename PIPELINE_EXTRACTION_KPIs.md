@@ -163,7 +163,11 @@ document aurait pu laisser penser.
 | `mcr` | mcr | M€ | S.28.01 | E.2 | positif |
 | `primes_acquises_brutes` | activité | M€ | S.05.01 | A.2 | positif |
 | `charge_sinistres` | activité | M€ | S.05.01 | A.2 | positif |
-| `resultat_technique` | activité | M€ | S.05.01 | A.2 | any (NULL par construction, aucun équivalent QRT standardisé trouvé) |
+
+> `resultat_technique` a été retiré du référentiel (Décision 144,
+> 14/10/2026) : aucun gabarit QRT ne le porte, et l'obtenir depuis les
+> rapports narratifs complets aurait demandé de retrouver ~40 documents
+> supplémentaires pour un seul KPI. La base compte désormais 21 KPIs.
 
 `provisions_techniques` = `best_estimate` + `marge_risque` (calculé,
 jamais lu directement — identité vérifiée par le contrôle 1, cf. §4).
@@ -188,7 +192,7 @@ ci-dessous).
 | 5 | `mcr_inferieur_scr_total` | Invariant de base : MCR < SCR total |
 | 6-7 | Croisements SCR codés en dur | **Groupama uniquement** (valeurs vérifiées manuellement en 2025, Décision 051) |
 | 8 | `signe_<kpi_name>` | 1 contrôle par KPI non-NULL : signe conforme à `kpi_definitions.py` (~16-20 contrôles selon la société) |
-| 9 | `completude_22_kpis` + `completude_null_attendu` | Exactement 22 lignes, exactement les NULL attendus (`resultat_technique` seul, sauf limites documentées) |
+| 9 | `completude_kpis` + `completude_aucun_null` | Exactement 21 lignes, aucun NULL attendu par défaut (Décision 144 ; échecs légitimes au cas par cas, documentés dans DECISIONS.md) |
 | 10 | **`magnitude_<kpi_name>`** (Décision 095, nouveau) | 1 contrôle par KPI en M€ non-NULL : plafond de 100 000 M€ (SCR/MCR/fonds propres/primes/sinistres) ou 1 000 000 M€ (best_estimate/marge_risque/provisions_techniques — structurellement plus grands) |
 
 ### Pourquoi le contrôle de magnitude (10) a été ajouté

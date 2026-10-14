@@ -80,7 +80,6 @@ def extraire_tout():
     else:
         valeurs["provisions_techniques"] = (None, None, "best_estimate ou marge_risque NULL")
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec les autres sociétés)")
 
     # Complète les 22 : toute clé absente de resoudre_scr_mcr_maif() est NULL.
     defs_par_nom = {d["kpi_name"]: d for d in ek.KPI_DEFINITIONS}

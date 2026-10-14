@@ -161,7 +161,6 @@ def extraire_tout_predica():
     # override. Vérifié : la ligne `if valeurs["scr_diversification"][0]
     # == 475/1000` ne se déclenche plus (retiré, code mort).
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP)")
 
     return valeurs, corpus, templates_presents
 

@@ -158,7 +158,6 @@ def extraire_tout_mgen():
     # dès la résolution générique ci-dessus. Vérifié : le override ne se
     # déclenchait plus (retiré, code mort).
 
-    valeurs["resultat_technique"] = (None, None, "aucun équivalent standardisé (cohérent avec Groupama/CNP/Predica)")
 
     return valeurs, corpus, templates_presents
 
