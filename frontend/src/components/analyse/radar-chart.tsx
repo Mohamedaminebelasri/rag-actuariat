@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AXES_RADAR, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { kpiLabelCourt, valeurDisponible } from "@/lib/analyse-utils";
+import { AvertissementKpi } from "./avertissement-kpi";
 
 // Palette volontairement SANS signification de risque (pas de vert/orange/
 // rouge, déjà pris par le feu tricolore) : bleu, violet, turquoise, gris
@@ -34,10 +35,13 @@ function pointSurAxe(indexAxe: number, nbAxes: number, ratio: number) {
 /** Profil d'une société sur les axes du radar. Un module ABSENT (n/d) n'est
  * jamais ramené à 0 : la société est alors « incomplète » et n'est pas
  * dessinée (une forme rétractée vers le centre se lirait « sans risque »).
- * Un 0 réel, lui, reste un 0 dessiné. */
-type Profil =
-  | { soc: string; complet: true; valeurs: number[] }
-  | { soc: string; complet: false; absents: string[] };
+ * Un 0 réel, lui, reste un 0 dessiné.
+ * `avert` : modules extraits avec un avertissement (base non comparable) —
+ * le polygone reste dessiné, la légende porte le marqueur. */
+type Profil = {
+  soc: string;
+  avert: { modules: string[]; note: string } | null;
+} & ({ complet: true; valeurs: number[] } | { complet: false; absents: string[] });
 
 /** Port de radar_comparatif() (charts.py, Reflex) — radar SVG maison
  * (pas de recharts), légende cliquable pour masquer/afficher une société. */
@@ -51,8 +55,19 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
     const kpis = kpisSociete(soc);
     const valeurs = AXES_RADAR.map((id) => valeurDisponible(kpis, id));
     const absents = axesLabels.filter((_, i) => valeurs[i] === null);
-    if (absents.length > 0) return { soc, complet: false, absents };
-    return { soc, complet: true, valeurs: valeurs.filter((v): v is number => v !== null) };
+    const concernes = AXES_RADAR.flatMap((id, i) =>
+      kpis[id]?.avertissement ? [{ label: axesLabels[i], note: kpis[id].noteAvertissement ?? "" }] : []
+    );
+    const avert =
+      concernes.length > 0
+        ? {
+            modules: concernes.map((m) => m.label),
+            // Notes distinctes (souvent identiques pour tous les modules d'une société).
+            note: Array.from(new Set(concernes.map((m) => m.note).filter((n) => n !== ""))).join("\n\n"),
+          }
+        : null;
+    if (absents.length > 0) return { soc, avert, complet: false, absents };
+    return { soc, avert, complet: true, valeurs: valeurs.filter((v): v is number => v !== null) };
   });
   const completes = profils.filter((p): p is Extract<Profil, { complet: true }> => p.complet);
 
@@ -76,35 +91,43 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
       <div className="flex items-center gap-3 flex-wrap mb-2">
         <span className="font-body text-base font-medium text-text-primary">Profil de risque comparé</span>
         <span className="flex-1" />
-        {profils.map((p) =>
-          p.complet ? (
-            <button
-              key={p.soc}
-              onClick={() => toggle(p.soc)}
-              className={cn(
-                "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs hover:bg-surface-hover transition-opacity",
-                masquees.includes(p.soc) ? "opacity-35" : "opacity-100"
-              )}
-            >
-              <span className="w-2.5 h-2.5 rounded-full" style={{ background: couleurs[p.soc] }} />
-              {p.soc}
-            </button>
-          ) : (
-            <span
-              key={p.soc}
-              title={`Modules n/d : ${p.absents.join(", ")}`}
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-text-tertiary cursor-help"
-            >
+        {profils.map((p) => (
+          // Le marqueur d'avertissement est un frère du bouton de légende (jamais
+          // un bouton dans un bouton) ; il garde sa pleine opacité si masquée.
+          <span key={p.soc} className="inline-flex items-center">
+            {p.complet ? (
+              <button
+                onClick={() => toggle(p.soc)}
+                className={cn(
+                  "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs hover:bg-surface-hover transition-opacity",
+                  masquees.includes(p.soc) ? "opacity-35" : "opacity-100"
+                )}
+              >
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: couleurs[p.soc] }} />
+                {p.soc}
+              </button>
+            ) : (
               <span
-                className="w-2.5 h-2.5 rounded-full"
-                style={{ border: "1.5px solid var(--text-tertiary)" }}
-                aria-hidden="true"
+                title={`Modules n/d : ${p.absents.join(", ")}`}
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-text-tertiary cursor-help"
+              >
+                <span
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ border: "1.5px solid var(--text-tertiary)" }}
+                  aria-hidden="true"
+                />
+                {p.soc} — profil incomplet
+                <span className="sr-only">. Modules n/d : {p.absents.join(", ")}</span>
+              </span>
+            )}
+            {p.avert && (
+              <AvertissementKpi
+                titre={`Modules concernés : ${p.avert.modules.join(", ")}`}
+                note={p.avert.note}
               />
-              {p.soc} — profil incomplet
-              <span className="sr-only">. Modules n/d : {p.absents.join(", ")}</span>
-            </span>
-          )
-        )}
+            )}
+          </span>
+        ))}
       </div>
 
       {completes.length === 0 ? (

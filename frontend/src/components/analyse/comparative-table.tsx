@@ -13,6 +13,7 @@ import {
   type LigneKpi,
 } from "@/lib/analyse-utils";
 import { COULEUR_VALEUR, ICONE_STATUT } from "./kpi-card";
+import { AvertissementKpi } from "./avertissement-kpi";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 // KPIs avec seuil réglementaire : couleur par seuil (couleurSeuil), jamais par
@@ -127,6 +128,16 @@ export function ComparativeTable({
   );
 }
 
+/** Infobulle (+ soulignement pointillé) d'une moyenne/médiane calculée hors
+ * valeurs « non comparables » (champ avertissement) ; rien s'il n'y en a pas. */
+function infobulleExclues(n: number) {
+  if (n === 0) return {};
+  return {
+    title: `hors ${n} valeur${n > 1 ? "s" : ""} non comparable${n > 1 ? "s" : ""}`,
+    className: "underline decoration-dotted underline-offset-4 cursor-help",
+  };
+}
+
 function SectionCategorie({
   code,
   label,
@@ -185,6 +196,7 @@ function SectionCategorie({
                   const IconeStatut = statut ? ICONE_STATUT[statut.couleur] : null;
                   return (
                     <td key={soc} className="px-4 py-2.5 text-right font-mono">
+                      {cellule.avertissement && <AvertissementKpi note={cellule.noteAvertissement} className="mr-1" />}
                       <span
                         className={cn("inline-flex items-center gap-1 justify-end", COULEUR_VALEUR[couleur])}
                         title={infobulle}
@@ -202,6 +214,7 @@ function SectionCategorie({
                 const couleurRang = cellule.estMeilleur ? "text-success" : cellule.estPire ? "text-danger" : "text-text-primary";
                 return (
                   <td key={soc} className="px-4 py-2.5 text-right font-mono">
+                    {cellule.avertissement && <AvertissementKpi note={cellule.noteAvertissement} className="mr-1" />}
                     <span className={cn(couleurRang, (cellule.estMeilleur || cellule.estPire) && "font-bold")}>
                       {cellule.valeurStr}
                     </span>
@@ -212,10 +225,14 @@ function SectionCategorie({
                 );
               })}
               {afficherMoyenne && (
-                <td className="px-4 py-2.5 text-right font-mono text-text-secondary">{ligne.moyenneStr}</td>
+                <td className="px-4 py-2.5 text-right font-mono text-text-secondary">
+                  <span {...infobulleExclues(ligne.nbNonComparables)}>{ligne.moyenneStr}</span>
+                </td>
               )}
               {afficherMediane && (
-                <td className="px-4 py-2.5 text-right font-mono text-text-secondary">{ligne.medianeStr}</td>
+                <td className="px-4 py-2.5 text-right font-mono text-text-secondary">
+                  <span {...infobulleExclues(ligne.nbNonComparables)}>{ligne.medianeStr}</span>
+                </td>
               )}
               {afficherSeuil && (
                 <td className="px-4 py-2.5 text-right font-mono whitespace-nowrap">

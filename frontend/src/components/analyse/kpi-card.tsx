@@ -4,6 +4,7 @@ import { CircleCheck, CircleX, Minus, TrendingDown, TriangleAlert, TrendingUp } 
 import { cn } from "@/lib/utils";
 import type { KpiDefinition, KpiValeur } from "@/data/analyse-demo";
 import { ConfidenceBadge } from "./confidence-badge";
+import { AvertissementKpi } from "./avertissement-kpi";
 import {
   couleurSeuil,
   formatValeur,
@@ -118,6 +119,7 @@ export function KpiCard({
           title={infobulleSeuil ?? undefined}
         >
           {formatValeur(valeur.valeur, def.unite, valeur.valeurBrute, valeur.uniteBrute)}
+          {valeur.avertissement && <AvertissementKpi note={valeur.noteAvertissement} className="ml-2" />}
         </p>
       )}
       <div className="flex items-center gap-x-2 gap-y-1 flex-wrap mt-1.5 min-h-[1.4em]">

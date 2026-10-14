@@ -183,6 +183,11 @@ export type KpiValeur = {
   dateExtraction: string;
   valeurBrute: number | null;
   uniteBrute: string | null;
+  /** Valeur calculée sur une base non comparable aux autres sociétés (ex.
+   * modèle interne, avant diversification) : à signaler, jamais à masquer.
+   * Recopié tel quel depuis donnees-extraites.json — jamais déduit du nom. */
+  avertissement?: boolean;
+  noteAvertissement?: string | null;
 };
 
 function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
@@ -196,6 +201,8 @@ function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
     dateExtraction: DONNEES_EXTRAITES.genereLe.split("T")[0],
     valeurBrute: k.valeurBrute ?? null,
     uniteBrute: k.uniteBrute ?? null,
+    avertissement: k.avertissement ?? false,
+    noteAvertissement: k.noteAvertissement ?? null,
   };
 }
 

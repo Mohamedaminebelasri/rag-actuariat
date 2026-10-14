@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Info, X } from "lucide-react";
+import { ChevronDown, Info, Scale, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KPI_DEFINITIONS } from "@/data/analyse-demo";
 import { STATS_GLOBALES } from "@/lib/donnees-extraites-utils";
@@ -182,6 +182,15 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
                 <p>
                   <span className="font-medium text-text-primary">Tendance « — » :</span> un seul exercice (2025) est
                   disponible, donc aucune variation à afficher.
+                </p>
+              </Section>
+
+              <Section titre="Valeurs non comparables" defaultOpen>
+                <p>
+                  <Scale className="inline w-3.5 h-3.5 text-accent align-text-bottom mr-1" aria-hidden="true" />
+                  Le symbole signale un chiffre calculé sur une base non directement comparable (ex. modèle
+                  interne). Cliquer pour lire la note. Ces valeurs sont exclues des moyennes, médianes et
+                  classements.
                 </p>
               </Section>
 

@@ -138,6 +138,10 @@ export type CelluleKpi = {
   rang: number;
   estMeilleur: boolean;
   estPire: boolean;
+  /** Valeur « non comparable » (champ avertissement) : affichée avec un
+   * marqueur, exclue du rang, du meilleur/pire, de la moyenne et de la médiane. */
+  avertissement: boolean;
+  noteAvertissement: string | null;
 };
 
 export type LigneKpi = {
@@ -149,6 +153,8 @@ export type LigneKpi = {
   medianeStr: string;
   seuilStr: string;
   aSeuil: boolean;
+  /** Nombre de valeurs de la ligne exclues de la moyenne/médiane (avertissement). */
+  nbNonComparables: number;
   // clé de tri interne : valeur (ou null) par société, dans le même ordre
   // que `societes`, utilisée par triLignes() ci-dessous.
   valeursParSociete: Record<string, number | null>;
@@ -170,35 +176,59 @@ export function buildTableauComparatif(
   for (const kdef of KPI_DEFINITIONS) {
     if (!idsFiltres.has(kdef.id)) continue;
     const valeursParSociete: Record<string, number> = {};
+    // Sociétés dont la valeur porte un avertissement (base non comparable) :
+    // affichées, mais exclues du rang, du meilleur/pire, de la moyenne et de
+    // la médiane.
+    const nonComparables = new Set<string>();
     for (const soc of societes) {
       const brut = kpisSociete(soc)[kdef.id];
-      if (brut !== undefined) valeursParSociete[soc] = brut.valeur;
+      if (brut !== undefined) {
+        valeursParSociete[soc] = brut.valeur;
+        if (brut.avertissement) nonComparables.add(soc);
+      }
     }
     if (Object.keys(valeursParSociete).length === 0) continue;
 
+    const valeursComparables = Object.entries(valeursParSociete)
+      .filter(([soc]) => !nonComparables.has(soc))
+      .map(([, v]) => v);
+
     const sens = SENS_KPI[kdef.id];
     const valeursTriees = sens
-      ? Object.values(valeursParSociete).sort((a, b) => (sens === "higher" ? b - a : a - b))
+      ? [...valeursComparables].sort((a, b) => (sens === "higher" ? b - a : a - b))
       : [];
 
     const cellules: CelluleKpi[] = societes.map((soc) => {
       const v = valeursParSociete[soc];
       if (v === undefined) {
-        return { societe: soc, valeurStr: "—", rang: 0, estMeilleur: false, estPire: false };
+        return {
+          societe: soc,
+          valeurStr: "—",
+          rang: 0,
+          estMeilleur: false,
+          estPire: false,
+          avertissement: false,
+          noteAvertissement: null,
+        };
       }
-      const rang = sens ? valeursTriees.indexOf(v) + 1 : 0;
+      const avertissement = nonComparables.has(soc);
+      const classable = !!sens && !avertissement;
+      const rang = classable ? valeursTriees.indexOf(v) + 1 : 0;
       return {
         societe: soc,
         valeurStr: formatValeur(v, kdef.unite),
         rang,
-        estMeilleur: !!sens && rang === 1,
-        estPire: !!sens && rang === valeursTriees.length && valeursTriees.length > 1,
+        estMeilleur: classable && rang === 1,
+        estPire: classable && rang === valeursTriees.length && valeursTriees.length > 1,
+        avertissement,
+        noteAvertissement: avertissement ? (kpisSociete(soc)[kdef.id]?.noteAvertissement ?? null) : null,
       };
     });
 
-    const vals = Object.values(valeursParSociete);
-    const moyenne = vals.reduce((a, b) => a + b, 0) / vals.length;
-    const mediane = mediane_(vals);
+    // Moyenne/médiane sur les valeurs comparables seulement ; « — » s'il n'y en a aucune.
+    const aComparables = valeursComparables.length > 0;
+    const moyenne = aComparables ? valeursComparables.reduce((a, b) => a + b, 0) / valeursComparables.length : 0;
+    const mediane = aComparables ? mediane_(valeursComparables) : 0;
     const seuil = kdef.seuilReglementaire;
 
     resultat[kdef.categorie].push({
@@ -206,10 +236,11 @@ export function buildTableauComparatif(
       kpiLabel: kdef.label,
       unite: kdef.unite,
       cellules,
-      moyenneStr: formatValeur(moyenne, kdef.unite),
-      medianeStr: formatValeur(mediane, kdef.unite),
+      moyenneStr: aComparables ? formatValeur(moyenne, kdef.unite) : "—",
+      medianeStr: aComparables ? formatValeur(mediane, kdef.unite) : "—",
       seuilStr: seuil !== null ? formatValeur(seuil, kdef.unite) : "",
       aSeuil: seuil !== null,
+      nbNonComparables: nonComparables.size,
       valeursParSociete: Object.fromEntries(societes.map((s) => [s, valeursParSociete[s] ?? null])),
     });
   }

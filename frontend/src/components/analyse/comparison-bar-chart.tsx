@@ -2,6 +2,7 @@
 
 import { KPI_DEFINITIONS, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { formatValeur, valeurDisponible } from "@/lib/analyse-utils";
+import { AvertissementKpi } from "./avertissement-kpi";
 
 const HAUTEUR = 260;
 
@@ -29,7 +30,16 @@ export function ComparisonBarChart({
   const def = KPI_PAR_ID[kpiId];
   const unite = def?.unite ?? "M€";
   // valeur === null : absente (clé manquante ou non finie). Un 0 réel reste 0.
-  const donnees = societesComparees.map((soc) => ({ societe: soc, valeur: valeurDisponible(kpisSociete(soc), kpiId) }));
+  // avertissement : valeur sur une base non comparable (marqueur, la barre reste dessinée).
+  const donnees = societesComparees.map((soc) => {
+    const kpis = kpisSociete(soc);
+    return {
+      societe: soc,
+      valeur: valeurDisponible(kpis, kpiId),
+      avertissement: !!kpis[kpiId]?.avertissement,
+      note: kpis[kpiId]?.noteAvertissement ?? null,
+    };
+  });
   const seuil = def?.seuilReglementaire ?? null;
   // Échelle : plus grande amplitude parmi les valeurs DISPONIBLES et le seuil
   // éventuel (les barres sont dessinées sur |valeur|). Sans valeur ni seuil, le
@@ -79,6 +89,7 @@ export function ComparisonBarChart({
                 <>
                   <span className="text-xs font-mono text-text-primary text-center leading-tight">
                     {etiquetteValeur(d.valeur, unite)}
+                    {d.avertissement && <AvertissementKpi note={d.note} className="ml-0.5" />}
                   </span>
                   <div
                     className="w-full rounded-t-md bg-accent transition-all"
