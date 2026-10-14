@@ -2,12 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   MessageSquare,
   BarChart3,
   FileText,
   Database,
-  Shield,
   Sun,
   Moon,
 } from "lucide-react";
@@ -42,19 +42,22 @@ const tabs = [
   },
 ];
 
-function Logo() {
+/** Logo Iconcilio (fichier public/iconcilio.jpg, copié depuis data/). Le JPEG
+ * est sur fond blanc : la tuile blanche arrondie le fond dans la surface
+ * claire et le garde lisible (couleurs de marque intactes) en mode sombre. */
+function Logo({ className }: { className?: string }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-        <Shield className="w-4 h-4 text-accent-foreground" />
-      </div>
-      <div>
-        <h1 className="font-heading text-lg leading-tight text-text-primary">
-          Corpus SFCR
-        </h1>
-        <p className="text-xs text-text-tertiary">Iconcilio</p>
-      </div>
-    </div>
+    <h1 className={cn("rounded-[var(--radius-md)] bg-white", className)}>
+      <Image
+        src="/iconcilio.jpg"
+        alt="Iconcilio Corporate — Corpus SFCR"
+        width={369}
+        height={108}
+        priority
+        unoptimized
+        className="block w-full h-auto"
+      />
+    </h1>
   );
 }
 
@@ -97,7 +100,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-dvh flex-col md:flex-row">
       {/* Barre du haut (mobile) */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-surface">
-        <Logo />
+        <Logo className="w-28 p-1" />
         <button
           onClick={toggleTheme}
           aria-label={themeLabel}
@@ -110,8 +113,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar (ordinateur) */}
       <aside className="hidden md:flex w-[var(--sidebar-width)] flex-shrink-0 border-r border-border bg-surface flex-col">
         {/* Logo / Title */}
-        <div className="px-5 py-5 border-b border-border">
-          <Logo />
+        <div className="px-4 py-4 border-b border-border">
+          <Logo className="w-full p-2" />
         </div>
 
         {/* Navigation */}
