@@ -26,3 +26,7 @@ Acronymes (SCR, MCR, ORSA...) résolus via `expand_query` (Décision 006).
 - Si l'info n'est pas dans les articles fournis : refus exact, jamais d'invention
 
 Historique complet des décisions → voir DECISIONS.md. Architecture détaillée → voir ARCHITECTURE.md.
+
+## Notifications
+- Toujours envoyer une notification à l'utilisateur (via le terminal ou Remote Control) quand une tâche est terminée.
+- Si en mode Remote Control (/remote-control), la notification arrive sur le téléphone automatiquement.

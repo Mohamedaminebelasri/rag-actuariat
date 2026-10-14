@@ -9299,3 +9299,88 @@ aucun consommateur).
 
 `export_kpis_json.py` (docstring uniquement, aucun changement de
 comportement).
+
+## Décision 142 — Diagnostic complet des 7 sociétés ajoutées le 08/10/2026 : 1 vrai bug trouvé (lien PDF mort) et corrigé
+
+Demande utilisateur (14/10/2026) : prouver qu'il n'y a aucune faute
+dans l'extraction, les pages sources et les KPIs calculés pour les 7
+sociétés ajoutées le 08/10/2026 (AXA France Vie, AXA France IARD,
+SwissLife Assurance et Patrimoine, BPCE Vie, BPCE Assurances IARD,
+Generali IARD, Generali Vie), et déployer sur Vercel si tout est bon.
+
+### 1. Extraction / complétude (`validate_kpis.py --company` x7)
+
+48/48 contrôles pour SwissLife, BPCE Vie, BPCE Assurances IARD.
+39/40 pour AXA France Vie, AXA France IARD, Generali IARD, Generali
+Vie — le seul "échec" (`completude_null_attendu`) est **légitime et
+documenté dans le code source des 4 scripts d'extraction concernés**
+(`extract_kpis_afv.py`, `extract_kpis_afi.py`,
+`extract_kpis_generali_iard.py`, `extract_kpis_generali_vie.py`) :
+ces 4 sociétés utilisent un modèle interne complet (`scr_method =
+'modele_interne_complet'`) et ne publient que le template S.25.05.21,
+qui fusionne scr_marche+scr_contrepartie et
+scr_souscription_vie+scr_souscription_sante sur une seule ligne —
+non séparable sans deviner, donc laissé NULL (règle non négociable :
+jamais d'invention). Ce sont les 4 seules sociétés `modele_interne_
+complet` de toute la base — le filtre `completude_null_attendu` de
+`validate_kpis.py` ne les connaît pas encore (candidat futur pour le
+mécanisme `ECHECS_LEGITIMES_CONNUS` de la Décision 136, non fait ici
+car non demandé).
+
+### 2. Pages sources (vérification par ouverture réelle des PDF, PyMuPDF)
+
+Pour les 7 sociétés : tous les `source_page`/`composant_page` non-NULL
+sont strictement dans les bornes réelles du PDF correspondant (ex.
+SwissLife : pages utilisées 99-106 sur un PDF de 109 pages). Aucun
+dépassement type régression Décision 120/135 (Problème 1). Aucun
+`source_page` manquant sur un KPI qui a une valeur (0 trou, contrairement
+aux 9 restants chez les anciennes sociétés, Décision 138).
+
+### 3. KPIs calculés
+
+`kpi_composants` : pour les 4 KPIs composés de chaque société
+(best_estimate, marge_risque, provisions_techniques via
+best_estimate+marge_risque, charge_sinistres, primes_acquises_brutes),
+somme des composants = valeur du KPI parent à l'euro près (écart 0.00
+sur les 28 vérifications × 7 sociétés). Page du KPI composé =
+page du premier composant (convention Décision 138), vérifié identique
+pour les 7.
+
+### 4. Bug réel trouvé : lien "voir la source PDF" mort pour 5/7 sociétés
+
+`frontend/src/lib/pdf-par-societe.ts` (mapping société → fichier PDF,
+consommé par `KpiPdfModal` — le modal réellement utilisé par l'onglet
+Base de données, pas la route `/documents` limitée à Groupama du
+Problème 12) n'avait **aucune entrée** pour AXA France Vie, AXA France
+IARD, SwissLife Assurance et Patrimoine, BPCE Vie, BPCE Assurances
+IARD — alors que `kpis.db` a bien leurs `source_page`, et que les 5
+PDF existent dans `data/` (`afv-annexes-2025-etats-quantitatifs.pdf`,
+`Annexe-QRT-Publics-AFI-2025-ok.pdf`,
+`SL_AP_Narrative_Report_PdfProof.pdf`, `bpce-vie-rapport-sfcr-2025.pdf`,
+`bpcea-iard-sfcr-2025.pdf` — noms confirmés dans le `PDF_PATH` de
+chaque script d'extraction). Conséquence concrète : cliquer sur un KPI
+de ces 5 sociétés dans l'onglet Base de données ouvrait le modal avec
+le message "Aucun PDF associé" au lieu d'afficher la bonne page —
+exactly le problème que l'utilisateur voulait vérifier. Corrigé en
+ajoutant les 5 entrées manquantes à `PDF_PAR_SOCIETE` (41/41 sociétés
+couvertes, 0 doublon vérifié).
+
+Vérifié que les 5 PDF étaient déjà tous présents dans Vercel Blob
+(`node scripts/migrer-pdfs-vers-blob.mjs` → "35 PDF locaux, 35 déjà
+dans Blob, 0 uploadés" — aucun upload nécessaire, seul le mapping
+manquait côté frontend).
+
+Note sur le Problème 12 (Décision du diagnostic 12/10) : le commentaire
+de `kpi-ligne.tsx` affirmant que le lien n'est actif que pour Groupama
+est en fait obsolète/inoffensif en pratique — le seul appel de
+`KpiLigne` (dans `base-donnees/page.tsx`) passe toujours `onSelect`,
+qui court-circuite entièrement la condition `societe === "Groupama"`
+(code mort). Le vrai verrou était `PDF_PAR_SOCIETE`, pas `kpi-ligne.tsx`.
+
+`npx tsc --noEmit` et `npm run lint` : aucune erreur introduite
+(erreurs lint préexistantes toutes dans `.next/**`, build généré).
+
+### Fichiers modifiés
+
+`frontend/src/lib/pdf-par-societe.ts` (5 entrées ajoutées, 0 ligne
+supprimée).

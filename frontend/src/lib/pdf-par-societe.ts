@@ -1,5 +1,11 @@
 // Correspondance societe -> nom de fichier PDF dans data/
-// Genere le 2026-09-27 depuis kpis.db (companies.type)
+// Genere le 2026-09-27 depuis kpis.db (companies.type), complete le
+// 14/10/2026 avec les 5 entites ajoutees le 08/10/2026 qui manquaient a
+// l'appel (AXA France Vie/IARD, SwissLife, BPCE Vie/IARD) - voir Decision
+// 142 : leurs PDF existent bien dans data/ et leurs source_page sont
+// renseignes depuis le debut, seul ce mapping manquait, ce qui rendait le
+// lien "voir la source PDF" mort pour ces 5 societes malgre des donnees
+// correctes.
 export const PDF_PAR_SOCIETE: Record<string, string> = {
   "AG.Mut": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
   "AG2R Prevoyance": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
@@ -10,6 +16,10 @@ export const PDF_PAR_SOCIETE: Record<string, string> = {
   "Aesio Mutuelle": "Aema-Groupe_RAPPORT-UNIQUE-SUR-LA-SOLVABILITE-ET-LA-SITUATION-FINANCIERE_2025.pdf",
   "Allianz Vie": "Rapport_de_solvabilité_Allianz_Vie_2025.pdf",
   "Arpege Prevoyance": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
+  "AXA France Vie": "afv-annexes-2025-etats-quantitatifs.pdf",
+  "AXA France IARD": "Annexe-QRT-Publics-AFI-2025-ok.pdf",
+  "BPCE Vie": "bpce-vie-rapport-sfcr-2025.pdf",
+  "BPCE Assurances IARD": "bpcea-iard-sfcr-2025.pdf",
   "CNP Assurances": "sfcr_cnp_assurances_2025.pdf",
   "Cardif Assurance Vie": "Cardif-Assurance-Vie-–-Annexes-2025.pdf",
   "Cardif Assurances Risques Divers": "cardif-assurances-risques-divers-–-annexes-2025.pdf",
@@ -33,6 +43,7 @@ export const PDF_PAR_SOCIETE: Record<string, string> = {
   "Prima": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
   "SGAM AG2R LA MONDIALE": "AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf",
   "Sogécap": "Rapport_de_solvabilite_2025_Sogécap_01.pdf",
+  "SwissLife Assurance et Patrimoine": "SL_AP_Narrative_Report_PdfProof.pdf",
   "Themis": "Aema-Groupe_RAPPORT-UNIQUE-SUR-LA-SOLVABILITE-ET-LA-SITUATION-FINANCIERE_2025.pdf",
   "Generali IARD": "Annexe_RSSF_QRT_GIARD_2025.pdf",
   "Generali Vie": "Annexe_RSSF_QRT_GVIE_2025.pdf",
