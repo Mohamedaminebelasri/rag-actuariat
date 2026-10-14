@@ -9384,3 +9384,33 @@ qui court-circuite entièrement la condition `societe === "Groupama"`
 
 `frontend/src/lib/pdf-par-societe.ts` (5 entrées ajoutées, 0 ligne
 supprimée).
+
+## Décision 143 — Correction du Problème 1/9 : AG2R Prévoyance, scr_souscription_nonvie n'était PAS irréductible
+
+Dans le cadre de la revue "9 échecs documentés" du diagnostic du
+14/10/2026, relecture page par page au lieu de faire confiance à la
+documentation existante (Décision 087 disait "légitime, assureur vie
+pure, pas de risque non-vie").
+
+**Constat** : page 153 (`AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf`,
+S.25.01.21, dans les bornes vérifiées d'AG2R Prévoyance [139-157]),
+la ligne "Risque de souscription en non-vie — R0050" imprime
+explicitement **"0"** — pas un tiret, pas une case vide. Décision 087
+confondait "le risque non-vie vaut légitimement zéro pour un
+assureur vie pure" (vrai, sur le fond) avec "donc la valeur n'est pas
+extractible" (faux — le chiffre est bien imprimé dans le document).
+D'autres sociétés de la base stockent déjà ce même KPI à 0,00 M€
+quand c'est le cas (ex. AXA France Vie, Generali Vie) — rien
+d'inhabituel à le faire ici aussi.
+
+**Corrigé** : `scr_souscription_nonvie = 0.0 M€` (raw 0 K€),
+`source_page=153`, `source_chapter` mis à jour. `validate_kpis.py
+--company "AG2R Prevoyance"` : 48/48 (contre 45/46 avant, le seul
+NULL restant est `resultat_technique`, attendu).
+
+Pas de valeur inventée : le "0" était déjà dans le PDF, seule
+l'insertion en base manquait.
+
+### Fichiers modifiés
+
+`kpis.db` (1 ligne mise à jour).
