@@ -120,6 +120,18 @@ export function kpiLabelCourt(def: KpiDefinition): string {
     .replace("SCR risque ", "");
 }
 
+/** Valeur d'un KPI, ou `null` si elle est ABSENTE : clé manquante dans
+ * `kpis`, valeur null/undefined ou non finie (NaN, ±Infinity). Un zéro réel
+ * reste 0. À utiliser pour tout ce qui est dessiné — jamais `?? 0`, qui
+ * confond « n/d » et « égal à zéro ». */
+export function valeurDisponible(
+  kpis: Record<string, { valeur: number | null | undefined } | undefined>,
+  kpiId: string
+): number | null {
+  const v = kpis[kpiId]?.valeur;
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
 export type CelluleKpi = {
   societe: string;
   valeurStr: string;

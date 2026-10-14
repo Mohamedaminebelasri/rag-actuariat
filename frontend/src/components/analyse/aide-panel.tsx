@@ -91,12 +91,15 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
       </p>
       <p>
         <span className="font-medium text-text-primary">Profil de risque (radar) :</span> six modules du SCR (non-vie,
-        vie, santé, marché, contrepartie, opérationnel), sur une échelle commune par axe. Cliquer sur un assureur
-        dans la légende le masque ou l&apos;affiche.
+        vie, santé, marché, contrepartie, opérationnel), sur une échelle commune par axe (calculée sur les assureurs
+        au profil complet). Un assureur dont un module est n/d n&apos;est pas dessiné : il apparaît en grisé
+        « profil incomplet » dans la légende, car un module absent n&apos;est jamais compté comme zéro. Cliquer sur
+        un assureur dans la légende le masque ou l&apos;affiche.
       </p>
       <p>
         <span className="font-medium text-text-primary">Comparaison par KPI :</span> barres pour l&apos;indicateur
-        choisi ; une ligne pointillée « Seuil réglementaire » apparaît pour les ratios SCR et MCR ({SEUIL_LEGAL} %).
+        choisi, en M€ ou en % ; une valeur absente s&apos;affiche « n/d », sans barre ; une ligne pointillée
+        « Seuil réglementaire » apparaît pour les ratios SCR et MCR ({SEUIL_LEGAL} %).
       </p>
       <p>
         <span className="font-medium text-text-primary">Tableau :</span> sections par catégorie repliables, tri en
