@@ -57,11 +57,24 @@ function valeurAxe(societe: string, axe: AxeCompat, kpiId: string): string | nul
   }
 }
 
+/** Le KPI a-t-il un sens pour l'activité de la société ? (Décision 158,
+ * `compatibilite.activitesApplicables` : ex. S/P non-vie seulement pour les
+ * sociétés Non-vie et Santé/prévoyance.) Vrai pour tout KPI sans restriction. */
+export function kpiApplicable(kpiId: string, societe: string): boolean {
+  const activites = DONNEES_EXTRAITES.compatibilite.activitesApplicables?.[kpiId];
+  if (!activites) return true;
+  const type = DEMO_SFCR[societe]?.type;
+  return !!type && activites.includes(type);
+}
+
 /** Compatibilité d'un KPI pour une sélection : pire verdict de
- * `compatibilite.matrice[kpi][axe]` sur les axes où les sociétés diffèrent. */
-export function compatibiliteKpi(kpiId: string, societes: string[]): CompatKpi {
+ * `compatibilite.matrice[kpi][axe]` sur les axes où les sociétés diffèrent.
+ * Les sociétés pour lesquelles le KPI est sans objet (kpiApplicable) ne
+ * comptent pas : elles n'entrent dans aucune comparaison. */
+export function compatibiliteKpi(kpiId: string, societesSelection: string[]): CompatKpi {
   const { matrice, axes, ordreVerdicts } = DONNEES_EXTRAITES.compatibilite;
   const regles = matrice[kpiId];
+  const societes = societesSelection.filter((s) => kpiApplicable(kpiId, s));
   if (!regles || societes.length < 2) return COMPATIBLE;
 
   let pire: VerdictCompat = "C";
