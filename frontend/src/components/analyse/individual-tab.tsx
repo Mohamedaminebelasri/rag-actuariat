@@ -5,7 +5,11 @@ import { CircleCheck, FileSearch, FileText } from "lucide-react";
 import { CATEGORIES, KPI_DEFINITIONS, kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
 import { KpiCard } from "./kpi-card";
 import { ScrBreakdownChart } from "./scr-breakdown-chart";
-import { IndicateursComparables } from "./indicateurs-comparables";
+import { KpiPdfModal } from "@/components/donnees/kpi-pdf-modal";
+import { kpisDe, labelKpi } from "@/lib/donnees-extraites-utils";
+// Décision 158 — l'ancien bloc « Indicateurs comparables » n'affichait que les
+// 6 indicateurs devenus des KPIs (catégorie I ci-dessous) : masqué, sans doublon.
+// import { IndicateursComparables } from "./indicateurs-comparables";
 // import { PositionMarche } from "./position-marche"; // masqué (cf. JSX commenté plus bas)
 // import { exporterCsvIndividuel } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
@@ -13,9 +17,12 @@ import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 /** Port de analyse_individuelle() (individuelle.py, Reflex). */
 export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilVertScr?: number }) {
   const [societe, setSociete] = useState("");
+  // KPI calculé dont le détail est ouvert (même fenêtre que la Base de données).
+  const [kpiModal, setKpiModal] = useState<string | null>(null);
   const sfcrDisponibles = listeSfcrDisponibles();
   const label = sfcrDisponibles.find((s) => s.id === societe)?.label ?? "";
   const kpis = kpisSociete(societe);
+  const kpisDetail = kpisDe(societe);
 
   return (
     <div className="flex flex-col gap-4 w-full items-start">
@@ -25,7 +32,10 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
           <FileText className="w-[18px] h-[18px] text-text-secondary flex-shrink-0" />
           <select
             value={societe}
-            onChange={(e) => setSociete(e.target.value)}
+            onChange={(e) => {
+              setSociete(e.target.value);
+              setKpiModal(null);
+            }}
             className="flex-1 min-w-0 text-sm border border-border rounded-[var(--radius-md)] px-3 py-2 bg-surface text-text-primary font-body"
           >
             <option value="">Sélectionnez un rapport SFCR…</option>
@@ -78,14 +88,33 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                   {kpisCategorie.map((k) => (
-                    <KpiCard key={k.id} def={k} valeur={kpis[k.id]} societe={societe} seuilVertScr={seuilVertScr} />
+                    <KpiCard
+                      key={k.id}
+                      def={k}
+                      valeur={kpis[k.id]}
+                      societe={societe}
+                      seuilVertScr={seuilVertScr}
+                      onSelect={k.calcule && kpisDetail[k.id] ? () => setKpiModal(k.id) : undefined}
+                    />
                   ))}
                 </div>
               </div>
             );
           })}
 
-          <IndicateursComparables societe={societe} kpis={kpis} />
+          {/* <IndicateursComparables societe={societe} kpis={kpis} /> — remplacé par la catégorie I (Décision 158) */}
+
+          {kpiModal && kpisDetail[kpiModal] && (
+            <KpiPdfModal
+              key={kpiModal}
+              kpiId={kpiModal}
+              label={labelKpi(kpiModal)}
+              kpi={kpisDetail[kpiModal]}
+              societe={societe}
+              onClose={() => setKpiModal(null)}
+              onOuvrirKpi={(id) => kpisDetail[id] && setKpiModal(id)}
+            />
+          )}
 
           <hr className="w-full border-border my-4" />
           <p className="font-heading italic text-lg text-text-primary mb-4">
