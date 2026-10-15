@@ -9992,6 +9992,21 @@ décimale). Vérifiés : 39 / 39 / 4 / 41 / 0 / 34.
 - `definitionsIndicateurs` : textes réécrits en français simple (plus de
   code QRT ni de remarque propre à une société), mêmes clés.
 - Unité `pts` (points de ratio) pour `impact_va` et `impact_transitoires`.
+- `sourceLisible` (bonus) : « Source : » en français simple pour les 40
+  KPIs à avertissement (`corrections_comparabilite.source_lisible`) ;
+  `source_chapter` garde la base technique (Décision 157).
+
+**Front-end** : catégorie « Indicateurs comparables » (code I) dans
+l'Analyse individuelle (cartes `KpiCard` cliquables), comparative
+(tableau, barres, vues agrandies) et dans la Base de données (grand titre,
+seulement les KPIs présents) ; fenêtre de détail additive (règle,
+composants, page sur le bon PDF, lien vers le KPI officiel, recalcul en
+direct). Pas de rang ni de couleur meilleur / pire pour ces KPIs dans le
+tableau comparatif (couleurs neutres) ; l'ancien bloc
+`indicateurs-comparables.tsx` (qui n'affichait que ces 6 indicateurs) est
+masqué, sans doublon. Alertes et tableau des 21 KPIs existants identiques
+(comparaison de la sortie brute de `buildAlertes` et
+`buildTableauComparatif` avant / après).
 
 **Choix** :
 - Un KPI sans donnée n'est pas créé. Société sans VA ni transitoire
