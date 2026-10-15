@@ -156,10 +156,14 @@ def indicateurs(kpis, composants, perimetre, scr_method, lt=None):
     modules = {m: g(m) for m in _MODULES if g(m) is not None}
     somme = sum(modules.values())
     div, op = g("scr_diversification"), g("scr_operationnel")
-    if somme > 0:
+    if scr_method != "formule_standard":
+        # Décision 157 : catégories propres au modèle interne, santé dans vie —
+        # une composition en parts serait trompeuse à côté de la formule standard.
+        out["composition_modules_pct"] = None
+    elif somme > 0:
         out["composition_modules_pct"] = {m: round(v / somme * 100, 1) for m, v in modules.items()}
-        if div is not None:
-            out["diversification_sur_modules_pct"] = round(-div / somme * 100, 1)
+    if somme > 0 and div is not None:
+        out["diversification_sur_modules_pct"] = round(-div / somme * 100, 1)
     if scr and somme > 0 and div is not None and op is not None and len(modules) >= 4:
         out["ajustements_sur_scr_pct"] = round((scr - somme - div - op) / scr * 100, 1) + 0.0
 
@@ -218,7 +222,7 @@ def _indicateurs_mesures_lt(lt, ratio_publie):
 DEFINITIONS_INDICATEURS = {
     "part_t1_non_restreint_pct": "Fonds propres T1 non restreint / fonds propres éligibles. Comparable avec réserve entre formes juridiques.",
     "marge_risque_sur_be_pct": "Marge de risque / best estimate. À comparer à l'intérieur d'une même activité seulement.",
-    "composition_modules_pct": "Part de chaque module dans la somme des modules (pas dans le SCR). Formule standard entre elles.",
+    "composition_modules_pct": "Part de chaque module dans la somme des modules (pas dans le SCR). Formule standard entre elles ; null pour les sociétés en modèle interne.",
     "diversification_sur_modules_pct": "|Diversification| / somme des modules. Formule standard entre elles ; non comparable avec un modèle interne.",
     "ajustements_sur_scr_pct": "(SCR − modules − diversification − opérationnel) / SCR : absorption des pertes par les provisions et impôts différés (+ autres ajustements). Très négatif en vie.",
     "scr_sur_primes_plus_be_pct": "SCR / (primes acquises brutes + best estimate brut), proche de l'indicateur Milliman SCR / (cotisations + BE nets).",

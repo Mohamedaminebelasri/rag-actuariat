@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-15T16:33:08",
+  "genereLe": "2026-10-15T16:43:31",
   "societes": [
     {
       "id": 67,
@@ -2052,7 +2052,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
+        "noteAvertissement": "AXA France IARD calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_marche": {
         "valeur": 1306.93849,
@@ -2068,7 +2068,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
+        "noteAvertissement": "AXA France IARD calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_contrepartie": {
         "valeur": 282.32451000000003,
@@ -2084,7 +2084,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
+        "noteAvertissement": "AXA France IARD calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_souscription_vie": {
         "valeur": 96.94865,
@@ -2100,7 +2100,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
+        "noteAvertissement": "AXA France IARD calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_souscription_nonvie": {
         "valeur": 1584.78706,
@@ -2116,7 +2116,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
+        "noteAvertissement": "AXA France IARD calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_diversification": {
         "valeur": -912.4514899999998,
@@ -2132,7 +2132,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
+        "noteAvertissement": "AXA France IARD calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       }
     },
     "AXA France Vie": {
@@ -2522,7 +2522,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
+        "noteAvertissement": "AXA France Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_marche": {
         "valeur": 3168.16175,
@@ -2538,7 +2538,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
+        "noteAvertissement": "AXA France Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_contrepartie": {
         "valeur": 628.28657,
@@ -2554,7 +2554,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
+        "noteAvertissement": "AXA France Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_souscription_vie": {
         "valeur": 2969.1593599999997,
@@ -2570,7 +2570,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
+        "noteAvertissement": "AXA France Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
@@ -2602,7 +2602,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
+        "noteAvertissement": "AXA France Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       }
     },
     "Abeille Epargne Retraite": {
@@ -4277,7 +4277,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "noteAvertissement": "Pour un groupe, ce chiffre n'est pas un MCR mais le « SCR minimal consolidé », c'est-à-dire la somme des minimums de capital de ses filiales. Ne pas le comparer au MCR d'une société seule.",
         "libelle": "SCR minimal consolidé du groupe"
       },
       "ratio_scr": {
@@ -4310,7 +4310,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "noteAvertissement": "Pour un groupe, ce ratio mesure la couverture du « SCR minimal consolidé », pas d'un MCR. Ne pas le comparer au ratio MCR d'une société seule.",
         "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_marche": {
@@ -5286,7 +5286,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Allianz Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque vie regroupe ici la souscription et le risque commercial (rachats, frais) ; le risque santé y est inclus."
       },
       "scr_marche": {
         "valeur": 1653.208,
@@ -5302,7 +5302,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Allianz Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque vie regroupe ici la souscription et le risque commercial (rachats, frais) ; le risque santé y est inclus."
       },
       "scr_contrepartie": {
         "valeur": 270.016,
@@ -5318,7 +5318,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Allianz Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque vie regroupe ici la souscription et le risque commercial (rachats, frais) ; le risque santé y est inclus."
       },
       "scr_souscription_vie": {
         "valeur": 1010.173,
@@ -5334,7 +5334,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Allianz Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque vie regroupe ici la souscription et le risque commercial (rachats, frais) ; le risque santé y est inclus."
       },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
@@ -5366,7 +5366,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Allianz Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard. Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque vie regroupe ici la souscription et le risque commercial (rachats, frais) ; le risque santé y est inclus."
       }
     },
     "Arpege Prevoyance": {
@@ -8466,7 +8466,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "noteAvertissement": "Pour un groupe, ce ratio mesure la couverture du « SCR minimal consolidé », pas d'un MCR. Ne pas le comparer au ratio MCR d'une société seule.",
         "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "fonds_propres_eligibles": {
@@ -8805,7 +8805,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "noteAvertissement": "Pour un groupe, ce chiffre n'est pas un MCR mais le « SCR minimal consolidé », c'est-à-dire la somme des minimums de capital de ses filiales. Ne pas le comparer au MCR d'une société seule.",
         "libelle": "SCR minimal consolidé du groupe"
       },
       "provisions_techniques": {
@@ -8873,7 +8873,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "noteAvertissement": "Pour un groupe, ce ratio mesure la couverture du « SCR minimal consolidé », pas d'un MCR. Ne pas le comparer au ratio MCR d'une société seule.",
         "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_total": {
@@ -8906,7 +8906,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "noteAvertissement": "Pour un groupe, ce chiffre n'est pas un MCR mais le « SCR minimal consolidé », c'est-à-dire la somme des minimums de capital de ses filiales. Ne pas le comparer au MCR d'une société seule.",
         "libelle": "SCR minimal consolidé du groupe"
       },
       "fonds_propres_eligibles": {
@@ -9734,7 +9734,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Generali IARD calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque non-vie."
       },
       "scr_marche": {
         "valeur": 385.0,
@@ -9750,7 +9750,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Generali IARD calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque non-vie."
       },
       "scr_contrepartie": {
         "valeur": 250.0,
@@ -9766,7 +9766,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Generali IARD calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque non-vie."
       },
       "scr_souscription_vie": {
         "valeur": 11.0,
@@ -9782,7 +9782,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Generali IARD calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque non-vie."
       },
       "scr_souscription_nonvie": {
         "valeur": 702.0,
@@ -9798,7 +9798,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Generali IARD calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque non-vie."
       },
       "scr_diversification": {
         "valeur": -375.0,
@@ -9814,7 +9814,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
+        "noteAvertissement": "Generali IARD calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque non-vie."
       }
     },
     "Generali Vie": {
@@ -10172,7 +10172,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+        "noteAvertissement": "Generali Vie calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_marche": {
         "valeur": 1509.0,
@@ -10188,7 +10188,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+        "noteAvertissement": "Generali Vie calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_contrepartie": {
         "valeur": 1146.0,
@@ -10204,7 +10204,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+        "noteAvertissement": "Generali Vie calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_souscription_vie": {
         "valeur": 1045.0,
@@ -10220,7 +10220,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+        "noteAvertissement": "Generali Vie calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
@@ -10252,7 +10252,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+        "noteAvertissement": "Generali Vie calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est inclus dans le risque vie."
       }
     },
     "Groupama": {
@@ -10286,7 +10286,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "noteAvertissement": "Pour un groupe, ce ratio mesure la couverture du « SCR minimal consolidé », pas d'un MCR. Ne pas le comparer au ratio MCR d'une société seule.",
         "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_total": {
@@ -10319,7 +10319,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "noteAvertissement": "Pour un groupe, ce chiffre n'est pas un MCR mais le « SCR minimal consolidé », c'est-à-dire la somme des minimums de capital de ses filiales. Ne pas le comparer au MCR d'une société seule.",
         "libelle": "SCR minimal consolidé du groupe"
       },
       "fonds_propres_eligibles": {
@@ -10741,7 +10741,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 « montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, calculée sur des composantes non diversifiées, incohérente avec ces modules)."
+        "noteAvertissement": "Groupama calcule une partie de son SCR (les risques non-vie) avec son propre modèle interne. Ce chiffre n'est donc pas directement comparable à celui des sociétés qui utilisent la formule standard."
       },
       "scr_diversification": {
         "valeur": -1249.678,
@@ -10757,7 +10757,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 « montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, calculée sur des composantes non diversifiées, incohérente avec ces modules)."
+        "noteAvertissement": "Groupama calcule une partie de son SCR (les risques non-vie) avec son propre modèle interne. Ce chiffre n'est donc pas directement comparable à celui des sociétés qui utilisent la formule standard."
       }
     },
     "La Mondiale": {
@@ -17720,7 +17720,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "noteAvertissement": "Pour un groupe, ce ratio mesure la couverture du « SCR minimal consolidé », pas d'un MCR. Ne pas le comparer au ratio MCR d'une société seule.",
         "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_total": {
@@ -17753,7 +17753,7 @@
         "composants": null,
         "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "noteAvertissement": "Pour un groupe, ce chiffre n'est pas un MCR mais le « SCR minimal consolidé », c'est-à-dire la somme des minimums de capital de ses filiales. Ne pas le comparer au MCR d'une société seule.",
         "libelle": "SCR minimal consolidé du groupe"
       },
       "fonds_propres_eligibles": {
@@ -20046,12 +20046,7 @@
     "AXA France IARD": {
       "part_t1_non_restreint_pct": 95.5,
       "marge_risque_sur_be_pct": 2.73,
-      "composition_modules_pct": {
-        "scr_marche": 40.0,
-        "scr_contrepartie": 8.6,
-        "scr_souscription_vie": 3.0,
-        "scr_souscription_nonvie": 48.4
-      },
+      "composition_modules_pct": null,
       "diversification_sur_modules_pct": 27.9,
       "ajustements_sur_scr_pct": 0.0,
       "scr_sur_primes_plus_be_pct": 10.08,
@@ -20067,12 +20062,7 @@
     "AXA France Vie": {
       "part_t1_non_restreint_pct": 99.7,
       "marge_risque_sur_be_pct": 1.03,
-      "composition_modules_pct": {
-        "scr_marche": 46.8,
-        "scr_contrepartie": 9.3,
-        "scr_souscription_vie": 43.9,
-        "scr_souscription_nonvie": 0.0
-      },
+      "composition_modules_pct": null,
       "diversification_sur_modules_pct": 25.5,
       "ajustements_sur_scr_pct": 0.0,
       "scr_sur_primes_plus_be_pct": 3.44,
@@ -20195,12 +20185,7 @@
     "Allianz Vie": {
       "part_t1_non_restreint_pct": 100.0,
       "marge_risque_sur_be_pct": 1.26,
-      "composition_modules_pct": {
-        "scr_marche": 56.4,
-        "scr_contrepartie": 9.2,
-        "scr_souscription_vie": 34.4,
-        "scr_souscription_nonvie": 0.0
-      },
+      "composition_modules_pct": null,
       "diversification_sur_modules_pct": 31.1,
       "ajustements_sur_scr_pct": 3.5,
       "scr_sur_primes_plus_be_pct": 3.71,
@@ -20387,12 +20372,7 @@
     "Generali IARD": {
       "part_t1_non_restreint_pct": 93.0,
       "marge_risque_sur_be_pct": 3.15,
-      "composition_modules_pct": {
-        "scr_marche": 28.6,
-        "scr_contrepartie": 18.5,
-        "scr_souscription_vie": 0.8,
-        "scr_souscription_nonvie": 52.1
-      },
+      "composition_modules_pct": null,
       "diversification_sur_modules_pct": 27.8,
       "ajustements_sur_scr_pct": 10.9,
       "scr_sur_primes_plus_be_pct": 17.05,
@@ -20408,12 +20388,7 @@
     "Generali Vie": {
       "part_t1_non_restreint_pct": 91.8,
       "marge_risque_sur_be_pct": 0.56,
-      "composition_modules_pct": {
-        "scr_marche": 40.8,
-        "scr_contrepartie": 31.0,
-        "scr_souscription_vie": 28.2,
-        "scr_souscription_nonvie": 0.0
-      },
+      "composition_modules_pct": null,
       "diversification_sur_modules_pct": 35.9,
       "ajustements_sur_scr_pct": 8.9,
       "scr_sur_primes_plus_be_pct": 3.1,
@@ -20428,13 +20403,7 @@
     "Groupama": {
       "part_t1_non_restreint_pct": 80.9,
       "marge_risque_sur_be_pct": 3.45,
-      "composition_modules_pct": {
-        "scr_marche": 43.8,
-        "scr_contrepartie": 7.4,
-        "scr_souscription_vie": 13.7,
-        "scr_souscription_sante": 11.9,
-        "scr_souscription_nonvie": 23.2
-      },
+      "composition_modules_pct": null,
       "diversification_sur_modules_pct": 11.7,
       "ajustements_sur_scr_pct": -67.6,
       "scr_sur_primes_plus_be_pct": 6.8,
@@ -20883,7 +20852,7 @@
   "definitionsIndicateurs": {
     "part_t1_non_restreint_pct": "Fonds propres T1 non restreint / fonds propres éligibles. Comparable avec réserve entre formes juridiques.",
     "marge_risque_sur_be_pct": "Marge de risque / best estimate. À comparer à l'intérieur d'une même activité seulement.",
-    "composition_modules_pct": "Part de chaque module dans la somme des modules (pas dans le SCR). Formule standard entre elles.",
+    "composition_modules_pct": "Part de chaque module dans la somme des modules (pas dans le SCR). Formule standard entre elles ; null pour les sociétés en modèle interne.",
     "diversification_sur_modules_pct": "|Diversification| / somme des modules. Formule standard entre elles ; non comparable avec un modèle interne.",
     "ajustements_sur_scr_pct": "(SCR − modules − diversification − opérationnel) / SCR : absorption des pertes par les provisions et impôts différés (+ autres ajustements). Très négatif en vie.",
     "scr_sur_primes_plus_be_pct": "SCR / (primes acquises brutes + best estimate brut), proche de l'indicateur Milliman SCR / (cotisations + BE nets).",

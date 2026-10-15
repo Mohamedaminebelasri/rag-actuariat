@@ -118,8 +118,24 @@ MODELES_INTERNES = {
     },
 }
 
-NOTE_MI = ("Valeur de modèle interne ({societe}) : non comparable au même KPI des sociétés en formule "
-           "standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : {base}")
+# Notes affichées à l'utilisateur, en français simple (Décision 157) ; la
+# base technique de chaque valeur reste dans source_chapter (spec["base"]).
+_NOTE_AXA = ("{s} calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques "
+             "y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en "
+             "formule standard. Le risque santé est inclus dans le risque vie.")
+_NOTE_GENERALI = ("{s} calcule son SCR avec son propre modèle interne. Les montants sont présentés avant impôt "
+                  "et ne sont pas comparables à ceux des sociétés en formule standard. Le risque santé est "
+                  "inclus dans le risque {branche}.")
+NOTES_MI = {
+    "AXA France IARD": _NOTE_AXA.format(s="AXA France IARD"),
+    "AXA France Vie": _NOTE_AXA.format(s="AXA France Vie"),
+    "Allianz Vie": ("Allianz Vie calcule son SCR avec son propre modèle interne, pas avec la formule standard. "
+                    "Ne pas comparer ces montants à ceux des sociétés en formule standard. Le risque vie "
+                    "regroupe ici la souscription et le risque commercial (rachats, frais) ; le risque santé "
+                    "y est inclus."),
+    "Generali IARD": _NOTE_GENERALI.format(s="Generali IARD", branche="non-vie"),
+    "Generali Vie": _NOTE_GENERALI.format(s="Generali Vie", branche="vie"),
+}
 
 # Groupama : modèle interne PARTIEL (souscription non-vie modélisée). Jeu
 # cohérent = schéma E.2.1 p.74 (modules nets de la diversification entre
@@ -133,19 +149,21 @@ GROUPAMA = {
         "scr_diversification": (9_412_239 - (4_675_236 + 1_271_055 + 785_108 + 1_455_724 + 2_474_794)) / _K,
     },
     "avertir": ("scr_souscription_nonvie", "scr_diversification"),
-    "note": ("Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 "
-             "« montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement "
-             "comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de "
-             "base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, "
-             "calculée sur des composantes non diversifiées, incohérente avec ces modules)."),
+    # Modèle interne PARTIEL : souscription non-vie modélisée (S.25.05.22 p.87
+    # « montant modélisé »). scr_diversification = SCR de base (9 412 M€) −
+    # somme des modules ; l'ancienne valeur −4 612 M€ venait du S.25.05.22,
+    # calculée sur des composantes non diversifiées, incohérente avec ces modules.
+    "note": ("Groupama calcule une partie de son SCR (les risques non-vie) avec son propre modèle interne. "
+             "Ce chiffre n'est donc pas directement comparable à celui des sociétés qui utilisent la "
+             "formule standard."),
 }
 
 GROUPES_MCR = ("Aema Groupe", "Covéa", "Crédit Agricole Assurances", "Groupama", "SGAM AG2R LA MONDIALE")
-NOTE_MCR = ("Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme "
-            "des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des "
-            "sociétés solo.")
-NOTE_RATIO_MCR = ("Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 "
-                  "R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.")
+# Source : S.23.01.22 R0610 (SCR minimal consolidé = somme des MCR des entités) et R0650 (ratio).
+NOTE_MCR = ("Pour un groupe, ce chiffre n'est pas un MCR mais le « SCR minimal consolidé », c'est-à-dire la "
+            "somme des minimums de capital de ses filiales. Ne pas le comparer au MCR d'une société seule.")
+NOTE_RATIO_MCR = ("Pour un groupe, ce ratio mesure la couverture du « SCR minimal consolidé », pas d'un MCR. "
+                  "Ne pas le comparer au ratio MCR d'une société seule.")
 
 # 3. Zéros vrais, page vérifiée (« 0 » ou « - » imprimé).
 ZEROS_TRACES = {
@@ -247,7 +265,7 @@ def _maj(conn, cid, kpi, valeur, page, chapitre, source_pdf, avert, note):
 def appliquer_modeles_internes(conn):
     for societe, spec in MODELES_INTERNES.items():
         cid = _cid(conn, societe)
-        note = NOTE_MI.format(societe=societe, base=spec["base"])
+        note = NOTES_MI[societe]
         for kpi in MODULES:
             v = spec["valeurs"][kpi]
             if v == 0:
