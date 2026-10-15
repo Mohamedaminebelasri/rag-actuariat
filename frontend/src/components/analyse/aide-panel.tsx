@@ -108,9 +108,11 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         pour la diversification, le meilleur et le pire sont en gras.
       </p>
       <p>
-        <span className="font-medium text-text-primary">Alertes :</span> ratio SCR sous {SEUIL_LEGAL} %, ratio MCR
-        d&apos;au moins 200 % (« solide »), diversification moins favorable que la moyenne du panel + 5, et baisse du
-        ratio SCR d&apos;au moins 10 points (nécessite un exercice précédent, absent aujourd&apos;hui).
+        <span className="font-medium text-text-primary">Alertes</span> (par ordre de gravité : critique, attention,
+        information) : ratio SCR sous {SEUIL_LEGAL} %, y compris sans correction pour volatilité ni mesure
+        transitoire ; ratio SCR très dépendant des mesures de long terme ; mesure transitoire en cours ; fonds propres
+        de niveau 2 et 3 au plafond d&apos;éligibilité de 50 % du SCR ; sinistres / primes très élevé en non-vie ; MCR
+        collé au plancher absolu. Aucune alerte n&apos;est déclenchée sur une valeur non comparable.
       </p>
     </Section>
   );

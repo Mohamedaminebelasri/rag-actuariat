@@ -1,12 +1,14 @@
 "use client";
 
-import { CircleAlert, CircleCheck, TriangleAlert } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, TriangleAlert } from "lucide-react";
 import { buildAlertes, type Alerte } from "@/lib/analyse-utils";
 
 const ICONES: Record<Alerte["type"], React.ReactNode> = {
   critique: <CircleAlert className="w-4 h-4 text-danger flex-shrink-0" />,
   conforme: <CircleCheck className="w-4 h-4 text-success flex-shrink-0" />,
   attention: <TriangleAlert className="w-4 h-4 text-warning flex-shrink-0" />,
+  // Niveau « info » : neutre (rouge/orange/vert restent réservés au feu tricolore).
+  info: <Info className="w-4 h-4 text-text-tertiary flex-shrink-0" />,
 };
 
 /** Port de section_alertes()/ligne_alerte() (comparative.py, Reflex). */

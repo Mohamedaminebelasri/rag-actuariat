@@ -16,6 +16,7 @@ import {
   type TypeSociete,
 } from "@/data/analyse-demo";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
+import { DONNEES_EXTRAITES } from "@/lib/donnees-extraites-utils";
 
 // Sens de "meilleure valeur" par KPI — utilisé UNIQUEMENT pour la mise en
 // surbrillance meilleur/pire du tableau comparatif. Beaucoup de KPIs en
@@ -296,47 +297,130 @@ function mediane_(vals: number[]): number {
   return n % 2 === 0 ? (triees[milieu - 1] + triees[milieu]) / 2 : triees[milieu];
 }
 
-export type Alerte = { type: "critique" | "attention" | "conforme"; texte: string };
+export type Alerte = { type: "critique" | "attention" | "info" | "conforme"; texte: string };
 
-/** Port de AnalyseState.alertes (state.py, Reflex) — règles simples et
- * transparentes (pas de modèle statistique complexe) : variation négative
- * significative, écart notable à la moyenne du panel sur un KPI à seuil. */
+// Ordre d'affichage : critique, puis attention, puis info (conforme en dernier).
+const ORDRE_ALERTES: Record<Alerte["type"], number> = { critique: 0, attention: 1, info: 2, conforme: 3 };
+
+/** Part maximale de fonds propres de niveaux 2 + 3 dans la couverture du SCR
+ * (plafond d'éligibilité de 50 %) ; seuil de déclenchement légèrement en
+ * dessous pour absorber les arrondis des états publiés. */
+const SEUIL_NIVEAUX_2_3_PCT = 49.5;
+/** S/P non-vie au-delà duquel la marge pour couvrir les frais est faible. */
+const SEUIL_SP_NONVIE_PCT = 85;
+
+function nombreFr(valeur: number, decimales = 1): string {
+  return valeur.toLocaleString("fr-FR", { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
+}
+
+/** Règles d'alerte de l'Analyse comparative (validées, Décision 157), par
+ * société de la sélection, à partir des KPI et des indicateurs normalisés
+ * (indicateursParSociete). Aucune alerte sur une valeur qui porte un
+ * avertissement (base non comparable). Pas de règle sur le ratio MCR (collé à
+ * une borne réglementaire pour la plupart des solos) ni sur une évolution
+ * (pas d'exercice N-1 aujourd'hui). */
 export function buildAlertes(societes: string[]): Alerte[] {
   if (societes.length < 2) return [];
   const resultat: Alerte[] = [];
 
   for (const soc of societes) {
     const kpis = kpisSociete(soc);
+    const ind = DONNEES_EXTRAITES.indicateursParSociete[soc];
+    const fiable = (...ids: string[]) => ids.every((id) => !kpis[id]?.avertissement);
+    const num = (v: unknown): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
 
-    const ratioScr = kpis["ratio_scr"];
-    if (ratioScr?.variation !== null && ratioScr?.variation !== undefined && ratioScr.variation <= -10) {
-      resultat.push({
-        type: "attention",
-        texte: `${soc} : ratio SCR en baisse de ${Math.abs(ratioScr.variation).toFixed(0)} pts sur la période`,
-      });
-    }
-    if (ratioScr && ratioScr.valeur < 100) {
+    // Seuil légal : ratio SCR publié sous 100 %.
+    const ratioScr = valeurDisponible(kpis, "ratio_scr");
+    if (ratioScr !== null && fiable("ratio_scr") && ratioScr < SEUIL_LEGAL) {
       resultat.push({
         type: "critique",
-        texte: `${soc} : ratio SCR sous le seuil réglementaire de 100 % (${ratioScr.valeur.toFixed(0)} %)`,
+        texte: `${soc} : ratio SCR sous le seuil réglementaire de ${SEUIL_LEGAL} % (${ratioScr.toFixed(0)} %)`,
       });
     }
 
-    const div = kpis["scr_diversification"];
-    if (div) {
-      const valeursDiv = societes.map((s) => kpisSociete(s)["scr_diversification"]?.valeur ?? 0);
-      const moyenneDiv = valeursDiv.reduce((a, b) => a + b, 0) / valeursDiv.length;
-      if (div.valeur > moyenneDiv + 5) {
-        resultat.push({ type: "attention", texte: `${soc} : effet de diversification inférieur à la moyenne du panel` });
+    // R1 : sans correction pour volatilité ni mesure transitoire, sous 100 %.
+    const sansMesures = num(ind?.ratio_scr_sans_mesures_lt_pct);
+    if (sansMesures !== null && fiable("ratio_scr") && sansMesures < SEUIL_LEGAL) {
+      resultat.push({
+        type: "critique",
+        texte: `${soc} : sans correction pour volatilité ni mesure transitoire, le ratio SCR tombe à ${nombreFr(sansMesures)} % (sous ${SEUIL_LEGAL} %)`,
+      });
+    }
+
+    // R2 : ratio SCR très dépendant des mesures de long terme.
+    const impactLt = num(ind?.impact_mesures_lt_pts);
+    if (impactLt !== null && impactLt <= -30 && fiable("ratio_scr")) {
+      resultat.push({
+        type: "attention",
+        texte:
+          `${soc} : le ratio SCR dépend fortement des mesures de long terme (${nombreFr(impactLt)} pts)` +
+          (sansMesures !== null ? ` ; sans elles il serait de ${nombreFr(sansMesures)} %` : ""),
+      });
+    }
+
+    // R3 : mesure transitoire en cours (attention si l'effet est important).
+    const impactTransitoires = num(ind?.impact_transitoires_pts);
+    if (ind?.mesure_transitoire === true && impactTransitoires !== null && fiable("ratio_scr")) {
+      if (impactTransitoires <= -15) {
+        resultat.push({
+          type: "attention",
+          texte: `${soc} : mesure transitoire en cours, qui s'éteint jusqu'en 2032 : le ratio publié baissera mécaniquement (${nombreFr(impactTransitoires)} pts)`,
+        });
+      } else {
+        resultat.push({
+          type: "info",
+          texte: `${soc} : mesure transitoire en cours (effet faible : ${nombreFr(impactTransitoires)} pts)`,
+        });
       }
     }
 
-    const ratioMcr = kpis["ratio_mcr"];
-    if (ratioMcr && ratioMcr.valeur >= 200) {
-      resultat.push({ type: "conforme", texte: `${soc} : ratio MCR solide (${ratioMcr.valeur.toFixed(0)} %)` });
+    // R4 : fonds propres de niveaux 2 + 3 au plafond d'éligibilité (50 % du SCR).
+    const t2 = valeurDisponible(kpis, "fonds_propres_t2");
+    const t3 = valeurDisponible(kpis, "fonds_propres_t3");
+    const scrTotal = valeurDisponible(kpis, "scr_total");
+    if (
+      t2 !== null &&
+      t3 !== null &&
+      scrTotal !== null &&
+      scrTotal > 0 &&
+      fiable("fonds_propres_t2", "fonds_propres_t3", "scr_total")
+    ) {
+      const part = ((t2 + t3) / scrTotal) * 100;
+      if (part >= SEUIL_NIVEAUX_2_3_PCT) {
+        resultat.push({
+          type: "attention",
+          texte: `${soc} : les fonds propres de niveau 2 et 3 représentent ${nombreFr(part)} % du SCR, au plafond d'éligibilité de 50 %`,
+        });
+      }
+    }
+
+    // R5 : sinistres / primes très élevé, sociétés non-vie seulement.
+    const sp = num(ind?.sp_nonvie_pct);
+    if (
+      sp !== null &&
+      sp > SEUIL_SP_NONVIE_PCT &&
+      DEMO_SFCR[soc]?.type === "Non-vie" &&
+      fiable("charge_sinistres", "primes_acquises_brutes")
+    ) {
+      resultat.push({
+        type: "attention",
+        texte: `${soc} : sinistres / primes de ${nombreFr(sp)} % en non-vie, peu de marge pour couvrir les frais`,
+      });
+    }
+
+    // R7 : MCR collé au plancher absolu → ratio MCR non significatif.
+    if (ind?.position_mcr === "plancher_absolu" && fiable("mcr", "ratio_mcr")) {
+      resultat.push({
+        type: "info",
+        texte: `${soc} : MCR collé au plancher absolu, le ratio MCR n'est pas significatif`,
+      });
     }
   }
-  return resultat;
+  // Tri stable : l'ordre de la sélection est conservé à niveau égal.
+  return resultat
+    .map((a, i) => ({ a, i }))
+    .sort((x, y) => ORDRE_ALERTES[x.a.type] - ORDRE_ALERTES[y.a.type] || x.i - y.i)
+    .map(({ a }) => a);
 }
 
 /** Trie les lignes d'une catégorie par la colonne (société) donnée. */

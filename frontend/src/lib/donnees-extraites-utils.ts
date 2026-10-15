@@ -65,6 +65,8 @@ export type IndicateursSociete = {
   marge_risque_sur_be_pct?: number;
   sp_nonvie_pct?: number;
   position_mcr?: string | null;
+  /** La société applique une mesure transitoire (provisions techniques ou taux). */
+  mesure_transitoire?: boolean;
   [cle: string]: unknown;
 };
 
