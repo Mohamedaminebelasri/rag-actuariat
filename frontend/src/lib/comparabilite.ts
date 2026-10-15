@@ -103,3 +103,32 @@ export function groupePairsCommun(societes: string[]): GroupePairs | null {
   if (!premier) return null;
   return societes.every((s) => DEMO_SFCR[s]?.groupePairs === premier.id) ? premier : null;
 }
+
+// ───────────────────── Périmètre solo / groupe ─────────────────────
+
+export type PartitionPerimetre = {
+  /** Sociétés du périmètre retenu (toutes si la liste n'est pas mélangée). */
+  gardees: string[];
+  /** Sociétés de l'autre périmètre, écartées (vide si la liste n'est pas mélangée). */
+  ecartees: string[];
+  /** Périmètre retenu : le plus représenté, solo en cas d'égalité. */
+  perimetre: "solo" | "groupe";
+  /** La liste mélange solo et groupe. */
+  melange: boolean;
+};
+
+/** Règle du périmètre majoritaire : solo et groupe ne se comparent ni ne se
+ * moyennent entre eux (un groupe consolide ses filiales). Si la liste mélange
+ * les deux, on ne garde que le périmètre le plus représenté (solo en cas
+ * d'égalité) ; l'ordre d'entrée est conservé. */
+export function perimetreMajoritaire(societes: string[]): PartitionPerimetre {
+  const estGroupe = (s: string) => DEMO_SFCR[s]?.perimetre === "groupe";
+  const groupes = societes.filter(estGroupe);
+  const solos = societes.filter((s) => !estGroupe(s));
+  const melange = solos.length > 0 && groupes.length > 0;
+  const perimetre = groupes.length > solos.length ? "groupe" : "solo";
+  if (!melange) return { gardees: societes, ecartees: [], perimetre, melange };
+  return perimetre === "groupe"
+    ? { gardees: groupes, ecartees: solos, perimetre, melange }
+    : { gardees: solos, ecartees: groupes, perimetre, melange };
+}

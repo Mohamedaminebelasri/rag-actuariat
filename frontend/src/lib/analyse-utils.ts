@@ -17,6 +17,7 @@ import {
 } from "@/data/analyse-demo";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 import { DONNEES_EXTRAITES } from "@/lib/donnees-extraites-utils";
+import { perimetreMajoritaire } from "@/lib/comparabilite";
 
 // Sens de "meilleure valeur" par KPI — utilisé UNIQUEMENT pour la mise en
 // surbrillance meilleur/pire du tableau comparatif. Beaucoup de KPIs en
@@ -242,16 +243,12 @@ export function buildTableauComparatif(
       return !!parent && parent !== s && valeursParSociete[parent] !== undefined && societes.includes(parent);
     });
     socsAgregat = socsAgregat.filter((s) => !consolidees.includes(s));
-    const parPerimetre = (p: "solo" | "groupe") => socsAgregat.filter((s) => (DEMO_SFCR[s]?.perimetre ?? "solo") === p);
-    const solo = parPerimetre("solo");
-    const groupe = parPerimetre("groupe");
-    let autrePerimetre: { n: number; nature: string } | null = null;
-    if (solo.length > 0 && groupe.length > 0) {
-      const garderGroupe = groupe.length > solo.length;
-      const exclues = garderGroupe ? solo : groupe;
-      autrePerimetre = { n: exclues.length, nature: garderGroupe ? "solo" : "de groupe" };
-      socsAgregat = garderGroupe ? groupe : solo;
-    }
+    const partition = perimetreMajoritaire(socsAgregat);
+    const autrePerimetre =
+      partition.ecartees.length > 0
+        ? { n: partition.ecartees.length, nature: partition.perimetre === "groupe" ? "solo" : "de groupe" }
+        : null;
+    socsAgregat = partition.gardees;
     const valeursAgregat = socsAgregat.map((s) => valeursParSociete[s]);
     const pluriel = (n: number, mot: string, motPluriel = `${mot}s`) => `${n} ${n > 1 ? motPluriel : mot}`;
     const exclusions: string[] = [];

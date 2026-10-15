@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { AXES_RADAR, DEMO_SFCR, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { kpiLabelCourt } from "@/lib/analyse-utils";
 import { DONNEES_EXTRAITES } from "@/lib/donnees-extraites-utils";
+import { perimetreMajoritaire } from "@/lib/comparabilite";
 import { AvertissementKpi } from "./avertissement-kpi";
 
 // Palette volontairement SANS signification de risque (pas de vert/orange/
@@ -82,14 +83,10 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
   });
 
   // 2. Périmètre : si solo et groupe se mélangent parmi les sociétés
-  // dessinables, on garde le périmètre le plus représenté (solo en cas
-  // d'égalité) — même règle que les moyennes du tableau comparatif.
-  const dessinables = brut.filter((b) => b.parts !== null);
-  const perimetreDe = (soc: string) => DEMO_SFCR[soc]?.perimetre ?? "solo";
-  const nbSolo = dessinables.filter((b) => perimetreDe(b.soc) === "solo").length;
-  const nbGroupe = dessinables.length - nbSolo;
-  const melange = nbSolo > 0 && nbGroupe > 0;
-  const perimetreRetenu: "solo" | "groupe" = nbGroupe > nbSolo ? "groupe" : "solo";
+  // dessinables, seul le périmètre majoritaire est dessiné (règle partagée avec
+  // les moyennes du tableau comparatif).
+  const partition = perimetreMajoritaire(brut.filter((b) => b.parts !== null).map((b) => b.soc));
+  const { melange, perimetre: perimetreRetenu } = partition;
 
   const profils: Profil[] = brut.map(({ soc, parts }) => {
     const kpis = kpisSociete(soc);
@@ -115,7 +112,7 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
           }
         : { soc, avert, etat: "parts-absentes", info: "parts du SCR de base non disponibles" };
     }
-    if (melange && perimetreDe(soc) !== perimetreRetenu) {
+    if (partition.ecartees.includes(soc)) {
       return { soc, avert, etat: "autre-perimetre", info: "périmètre différent : non comparable" };
     }
     return { soc, avert, etat: "dessine", parts };
