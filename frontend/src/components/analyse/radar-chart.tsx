@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AXES_RADAR, DEMO_SFCR, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { kpiLabelCourt } from "@/lib/analyse-utils";
 import { DONNEES_EXTRAITES } from "@/lib/donnees-extraites-utils";
 import { perimetreMajoritaire } from "@/lib/comparabilite";
 import { AvertissementKpi } from "./avertissement-kpi";
+import { RadarAgrandi, type SerieRadar, type SocieteNonTracee } from "./radar-agrandi";
 
 // Palette volontairement SANS signification de risque (pas de vert/orange/
 // rouge, déjà pris par le feu tricolore) : bleu, violet, turquoise, gris
@@ -66,6 +68,17 @@ type Profil = {
  * (pas de recharts), légende cliquable pour masquer/afficher une société. */
 export function RadarComparatif({ societesComparees }: { societesComparees: string[] }) {
   const [masquees, setMasquees] = useState<string[]>([]);
+  const [agrandi, setAgrandi] = useState(false);
+  // Élément qui a ouvert la vue agrandie : le focus lui est rendu à la fermeture.
+  const declencheurRef = useRef<HTMLElement | null>(null);
+  const ouvrirAgrandi = (e: { currentTarget: Element }) => {
+    declencheurRef.current = e.currentTarget as HTMLElement;
+    setAgrandi(true);
+  };
+  const fermerAgrandi = () => {
+    setAgrandi(false);
+    requestAnimationFrame(() => declencheurRef.current?.focus());
+  };
 
   const axesLabels = AXES_PARTS.map((id) => kpiLabelCourt(KPI_PAR_ID[id]));
   const nbAxes = AXES_PARTS.length;
@@ -124,7 +137,8 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
   // redimensionne pas), arrondi à la dizaine supérieure. Jamais 0 ni NaN.
   const maxPct = Math.max(0, ...dessinees.flatMap((p) => p.parts));
   const echelle = Math.min(100, Math.max(10, Math.ceil(maxPct / 10) * 10));
-  const pasAnneau = echelle > 50 ? 20 : 10;
+  // Pas des anneaux : divise l'échelle (pas d'anneau final tassé contre le précédent).
+  const pasAnneau = echelle <= 50 ? 10 : echelle % 20 === 0 ? 20 : echelle % 30 === 0 ? 30 : 10;
   const anneaux: number[] = [];
   for (let v = pasAnneau; v <= echelle; v += pasAnneau) anneaux.push(v);
   if (anneaux[anneaux.length - 1] !== echelle) anneaux.push(echelle);
@@ -141,12 +155,40 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
   const visibles = dessinees.filter((p) => !masquees.includes(p.soc));
   const libelleEtat = (p: Profil) =>
     p.etat === "modele-interne" ? "modèle interne" : p.etat === "autre-perimetre" ? "périmètre différent" : "parts indisponibles";
+  const noteMelange = melange
+    ? `Solo et groupes sont mélangés : seul le périmètre « ${perimetreRetenu === "solo" ? "solo" : "groupe"} » est dessiné, un radar de groupe ne se compare qu'à d'autres groupes.`
+    : null;
+
+  // Données de la vue agrandie : mêmes parts, même échelle, même palette ; la
+  // forme du point suit le rang de la société dans la sélection.
+  const series: SerieRadar[] = dessinees.map((p) => ({
+    soc: p.soc,
+    couleur: couleurs[p.soc],
+    forme: societesComparees.indexOf(p.soc),
+    parts: p.parts,
+    avert: p.avert,
+  }));
+  const nonTracees: SocieteNonTracee[] = profils.flatMap((p) =>
+    p.etat === "dessine" ? [] : [{ soc: p.soc, libelle: libelleEtat(p), info: p.info, avert: p.avert }]
+  );
 
   return (
     <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-5 w-full">
-      <div className="flex items-center gap-3 flex-wrap mb-2">
+      <div className="flex items-center gap-3 mb-2">
         <span className="font-body text-base font-medium text-text-primary">Profil de risque (parts du SCR de base)</span>
         <span className="flex-1" />
+        {dessinees.length > 0 && (
+          <button
+            onClick={ouvrirAgrandi}
+            aria-label="Agrandir le radar"
+            title="Agrandir le radar"
+            className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-text-secondary hover:bg-surface-hover hover:text-text-primary transition-colors"
+          >
+            <Maximize2 className="w-4 h-4" aria-hidden="true" />
+          </button>
+        )}
+      </div>
+      <div className="flex items-center gap-x-3 gap-y-1 flex-wrap mb-2">
         {profils.map((p) => (
           // Le marqueur d'avertissement est un frère du bouton de légende (jamais
           // un bouton dans un bouton) ; il garde sa pleine opacité si masquée.
@@ -192,7 +234,22 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
         </p>
       ) : (
         <>
-          <svg viewBox={`0 0 ${LARGEUR} ${HAUTEUR}`} width="100%" style={{ height: "auto", maxHeight: HAUTEUR }} className="mx-auto block overflow-visible" role="img" aria-label="Radar comparatif du profil de risque, en parts du SCR de base">
+          <svg
+            viewBox={`0 0 ${LARGEUR} ${HAUTEUR}`}
+            width="100%"
+            style={{ height: "auto", maxHeight: HAUTEUR }}
+            className="mx-auto block overflow-visible cursor-zoom-in rounded-md focus-visible:outline-2 focus-visible:outline-accent"
+            role="button"
+            tabIndex={0}
+            aria-label="Agrandir le radar : profil de risque comparé, en parts du SCR de base"
+            onClick={ouvrirAgrandi}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                ouvrirAgrandi(e);
+              }
+            }}
+          >
             {/* Grille polaire : anneaux gradués en % de la somme des modules */}
             {anneaux.map((v) => (
               <polygon
@@ -269,10 +326,9 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
             })}
           </svg>
 
-          {melange && (
+          {noteMelange && (
             <p role="note" className="mt-2 text-xs leading-relaxed text-text-secondary">
-              Solo et groupes sont mélangés : seul le périmètre « {perimetreRetenu === "solo" ? "solo" : "groupe"} » est
-              dessiné, un radar de groupe ne se compare qu&apos;à d&apos;autres groupes.
+              {noteMelange}
             </p>
           )}
 
@@ -321,6 +377,18 @@ export function RadarComparatif({ societesComparees }: { societesComparees: stri
             </table>
           </div>
         </>
+      )}
+
+      {agrandi && dessinees.length > 0 && (
+        <RadarAgrandi
+          axes={axesLabels.map((l) => l.replace(/^SCR — /, ""))}
+          series={series}
+          nonTracees={nonTracees}
+          echelle={echelle}
+          anneaux={anneaux}
+          noteMelange={noteMelange}
+          onClose={fermerAgrandi}
+        />
       )}
     </div>
   );
