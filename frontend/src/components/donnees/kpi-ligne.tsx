@@ -3,7 +3,7 @@
 import { ShieldCheck, Sparkles, Calculator, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
+import { DECIMALES_KPIS, formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import type { Correction } from "@/lib/use-corrections";
 import type { ValidationHumaine } from "@/lib/use-validations-humaines";
@@ -26,6 +26,7 @@ export function KpiLigne({
   onSelect,
   correction,
   validationHumaine,
+  description,
 }: {
   id: string;
   label: string;
@@ -34,12 +35,18 @@ export function KpiLigne({
   onSelect?: (id: string) => void;
   correction?: Correction | null;
   validationHumaine?: ValidationHumaine | null;
+  /** Définition affichée en bas de carte (KPIs calculés, Décision 158). */
+  description?: string | null;
 }) {
   const router = useRouter();
+  // « Source : » en français simple quand il existe (KPIs à avertissement).
+  const chapitre = kpi.sourceLisible ?? kpi.chapitreSource;
   const source =
-    kpi.chapitreSource && kpi.pageSource
-      ? `${kpi.chapitreSource}, p. ${kpi.pageSource}`
-      : kpi.chapitreSource ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
+    chapitre && kpi.pageSource
+      ? `${chapitre}, p. ${kpi.pageSource}`
+      : chapitre ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
+  // KPI calculé à partir d'autres KPIs (Décision 158) : jamais « extrait ».
+  const calcule = !!kpi.formule;
   const lienActif = !!PDF_PAR_SOCIETE[societe];
   // Libellé propre à la valeur (ex. « SCR minimal consolidé du groupe ») à la
   // place du nom générique du KPI.
@@ -62,7 +69,11 @@ export function KpiLigne({
             <>
               {kpi.estCompose && kpi.composants && kpi.composants.length > 0 && (
                 <span
-                  title="Valeur calculée à partir de sous-lignes QRT"
+                  title={
+                    calcule
+                      ? "Valeur calculée à partir d'autres KPIs et de lignes du rapport"
+                      : "Valeur calculée à partir de sous-lignes QRT"
+                  }
                   className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium text-blue-700 bg-blue-50"
                 >
                   <Calculator className="w-2.5 h-2.5" />
@@ -70,21 +81,29 @@ export function KpiLigne({
                 </span>
               )}
               <span
-                title={kpi.valide ? "Recoupé automatiquement (triple validation)" : "Extrait par IA, non recoupé"}
+                title={
+                  calcule
+                    ? kpi.valide
+                      ? "Tous les composants sont vérifiés et le recalcul retrouve la valeur"
+                      : "Calculé à partir de composants qui ne sont pas tous vérifiés"
+                    : kpi.valide
+                      ? "Recoupé automatiquement (triple validation)"
+                      : "Extrait par IA, non recoupé"
+                }
                 className={cn(
                   "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium",
                   kpi.valide ? "text-success bg-success-light" : "text-warning bg-warning-light"
                 )}
               >
                 {kpi.valide ? <ShieldCheck className="w-2.5 h-2.5" /> : <Sparkles className="w-2.5 h-2.5" />}
-                {kpi.valide ? "Vérifié" : "Extrait"}
+                {kpi.valide ? "Vérifié" : calcule ? "Non vérifié" : "Extrait"}
               </span>
             </>
           )}
         </div>
       </div>
       <p className="font-mono text-xl font-bold text-text-primary mt-1">
-        {formatValeurReelle(kpi.valeur, kpi.unite)}
+        {formatValeurReelle(kpi.valeur, kpi.unite, DECIMALES_KPIS[id])}
         {/* Valeur non comparable : bouton frère de l'overlay cliquable (jamais
             imbriqué dans un bouton), au-dessus de lui (z-10). */}
         {kpi.avertissement && (
@@ -97,6 +116,7 @@ export function KpiLigne({
           Corrigé : {correction.valeurCorrigee}{correction.commentaire ? ` — ${correction.commentaire}` : ""}
         </p>
       )}
+      {description && <p className="text-xs text-text-tertiary mt-2 leading-relaxed">{description}</p>}
     </>
   );
 
