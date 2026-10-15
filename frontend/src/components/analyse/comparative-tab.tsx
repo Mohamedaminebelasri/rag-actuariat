@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info, TriangleAlert, Users, X } from "lucide-react";
+import { Info, RotateCcw, TriangleAlert, Users, X } from "lucide-react";
 import {
   CATEGORIE_LABELS,
   FILTRES_VIDES,
@@ -55,6 +55,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
     setSocietes((prev) => [...prev, id]);
   };
   const retirer = (soc: string) => setSocietes((prev) => prev.filter((s) => s !== soc));
+  const reinitialiser = () => setSocietes([]);
 
   return (
     <div className="flex flex-col gap-4 w-full items-start">
@@ -114,6 +115,16 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
             <Users className="w-3.5 h-3.5" aria-hidden="true" />
             Comparer à ses pairs
           </button>
+          {societes.length > 0 && (
+            <button
+              onClick={reinitialiser}
+              title="Retirer toutes les sociétés sélectionnées"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-danger/40 bg-danger-light text-sm font-medium text-danger hover:border-danger transition-colors"
+            >
+              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+              Réinitialiser
+            </button>
+          )}
           <span className="text-sm font-mono text-text-tertiary whitespace-nowrap">
             {societes.length}/{MAX_SOCIETES} assureurs sélectionnés
           </span>
