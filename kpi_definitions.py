@@ -228,6 +228,84 @@ KPI_DEFINITIONS = [
 ]
 
 
+# Décision 158 — 6 indicateurs calculés promus en KPIs officiels de la base
+# (table `kpis` + composants dans `kpi_composants` + règle dans
+# `kpi_formules`), peuplés par peupler_kpis_officiels_indicateurs.py.
+# Liste SÉPARÉE de KPI_DEFINITIONS : ces KPIs ne sont pas extraits des PDF
+# mais calculés à partir de KPIs et de lignes déjà en base ; les contrôles
+# d'extraction de validate_kpis.py (signe, complétude des 21) ne les
+# concernent pas. `indicateur` = clé d'origine dans indicateursParSociete
+# (comparabilite.py), dont la valeur doit être identique.
+# `classement` : "higher"/"lower" (plus haut / plus bas = mieux), "neutre"
+# (position affichée sans « mieux / moins bien ») ou "aucun" (jamais classé).
+# Descriptions en français simple : aucun code QRT, aucun nom de société.
+CATEGORIE_INDICATEURS = "indicateurs_comparables"
+LIBELLE_CATEGORIE_INDICATEURS = "Indicateurs comparables"
+
+KPI_INDICATEURS_OFFICIELS = [
+    {
+        "kpi_name": "ratio_scr_sans_mesures_lt",
+        "label": "Ratio SCR sans mesures de long terme",
+        "unit": "pct",
+        "indicateur": "ratio_scr_sans_mesures_lt_pct",
+        "classement": "higher",
+        "description": "Ratio de couverture du SCR recalculé sans la correction pour volatilité ni les mesures "
+                       "transitoires. Toutes les sociétés n'appliquent pas ces mécanismes, qui améliorent le "
+                       "ratio publié : sans eux, les ratios se comparent sur une base homogène.",
+    },
+    {
+        "kpi_name": "impact_va",
+        "label": "Impact de la correction pour volatilité",
+        "unit": "pts",
+        "indicateur": "impact_va_pts",
+        "classement": "neutre",
+        "description": "Effet de la correction pour volatilité sur le ratio SCR, en points. Négatif : sans "
+                       "cette correction, le ratio serait plus bas. Mesuré après retrait des mesures "
+                       "transitoires.",
+    },
+    {
+        "kpi_name": "impact_transitoires",
+        "label": "Impact des mesures transitoires",
+        "unit": "pts",
+        "indicateur": "impact_transitoires_pts",
+        "classement": "neutre",
+        "description": "Effet des mesures transitoires sur le ratio SCR, en points. Négatif : sans elles, le "
+                       "ratio serait plus bas. Ces mesures s'éteignent progressivement jusqu'en 2032 ; seules "
+                       "quelques sociétés les appliquent.",
+    },
+    {
+        "kpi_name": "marge_risque_sur_be",
+        "label": "Marge de risque / best estimate",
+        "unit": "pct",
+        "indicateur": "marge_risque_sur_be_pct",
+        "classement": "neutre",
+        "description": "Marge de risque rapportée au best estimate des provisions techniques. Elle dépend "
+                       "surtout du métier (faible en vie, élevée en santé) : à comparer entre sociétés de même "
+                       "activité.",
+    },
+    {
+        "kpi_name": "sp_nonvie",
+        "label": "Ratio sinistres / primes non-vie",
+        "unit": "pct",
+        "indicateur": "sp_nonvie_pct",
+        "classement": "lower",
+        "description": "Charge de sinistres rapportée aux primes acquises, sur les seules activités non-vie "
+                       "(santé non-vie comprise). Calculé quand ces activités pèsent au moins 10 % des primes "
+                       "et 10 M€.",
+    },
+    {
+        "kpi_name": "mcr_en_pct_scr",
+        "label": "MCR en % du SCR",
+        "unit": "pct",
+        "indicateur": None,  # remplace la catégorie textuelle position_mcr (conservée dans les indicateurs)
+        "classement": "aucun",
+        "description": "Minimum de capital requis rapporté au SCR. La réglementation l'encadre entre 25 % et "
+                       "45 % du SCR, avec un plancher absolu en euros : un MCR collé à une borne rend le ratio "
+                       "MCR peu informatif. Ce n'est pas un indicateur de solidité.",
+    },
+]
+
+
 if __name__ == "__main__":
     print(f"{len(KPI_DEFINITIONS)} KPIs définis")
     from collections import Counter
@@ -237,3 +315,6 @@ if __name__ == "__main__":
     noms = [k["kpi_name"] for k in KPI_DEFINITIONS]
     assert len(noms) == len(set(noms)), "kpi_name dupliqué détecté"
     print("  kpi_name tous uniques : OK")
+    noms_calcules = [k["kpi_name"] for k in KPI_INDICATEURS_OFFICIELS]
+    assert not set(noms) & set(noms_calcules), "KPI calculé homonyme d'un KPI extrait"
+    print(f"{len(KPI_INDICATEURS_OFFICIELS)} KPIs calculés (Décision 158) : {', '.join(noms_calcules)}")
