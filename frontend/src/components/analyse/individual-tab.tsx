@@ -5,6 +5,7 @@ import { CircleCheck, FileSearch, FileText } from "lucide-react";
 import { CATEGORIES, KPI_DEFINITIONS, kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
 import { KpiCard } from "./kpi-card";
 import { ScrBreakdownChart } from "./scr-breakdown-chart";
+import { IndicateursComparables } from "./indicateurs-comparables";
 // import { PositionMarche } from "./position-marche"; // masqué (cf. JSX commenté plus bas)
 // import { exporterCsvIndividuel } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
@@ -83,6 +84,8 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
               </div>
             );
           })}
+
+          <IndicateursComparables societe={societe} kpis={kpis} />
 
           <hr className="w-full border-border my-4" />
           <p className="font-heading italic text-lg text-text-primary mb-4">

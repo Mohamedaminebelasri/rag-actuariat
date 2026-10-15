@@ -192,6 +192,14 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
                   interne). Cliquer pour lire la note. Ces valeurs sont exclues des moyennes, médianes et
                   classements.
                 </p>
+                <p>
+                  <span className="font-medium text-text-primary">Comparabilité :</span> selon la sélection, une ligne
+                  grisée signale un KPI non comparable (activité, modèle de capital, périmètre ou forme juridique
+                  différents), une icône « i » une comparaison avec réserve ; la note en donne la raison. Les moyennes
+                  et médianes excluent les sociétés déjà consolidées dans un groupe sélectionné et ne mélangent pas
+                  solo et groupe. « Comparer à ses pairs » sélectionne les sociétés de même activité, modèle et
+                  périmètre que la première sélectionnée.
+                </p>
               </Section>
 
               {sousOnglet === "individuelle" ? (
