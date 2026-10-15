@@ -92,8 +92,8 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         table sous le graphique. Les sociétés en modèle interne ne sont pas dessinées (parts non comparables à la
         formule standard) ; un groupe ne se compare qu&apos;à d&apos;autres groupes (si solo et groupes sont mélangés,
         seul le périmètre majoritaire est dessiné). Cliquer sur un assureur dans la légende le masque ou l&apos;affiche.
-        Cliquez sur le radar (ou sur l&apos;icône d&apos;agrandissement) pour l&apos;agrandir : chaque société y a sa forme
-        de point, et survoler ou toucher une société dans la légende met son tracé en avant.
+        Dans la vue agrandie, chaque société a sa forme de point, et survoler ou toucher une société (légende ou
+        tableau) met son tracé en avant.
       </p>
       <p>
         <span className="font-medium text-text-primary">Comparaison par KPI :</span> barres pour l&apos;indicateur
@@ -101,10 +101,17 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         « Seuil réglementaire » apparaît pour les ratios SCR et MCR ({SEUIL_LEGAL} %).
       </p>
       <p>
-        <span className="font-medium text-text-primary">Tableau :</span> sections par catégorie repliables, tri en
-        cliquant sur la colonne d&apos;un assureur, filtre de catégorie, colonnes Moyenne, Médiane et Seuil
-        (« Afficher les seuils »). Un rang (#1…) est affiché pour le ratio SCR, le ratio MCR et la diversification ;
+        <span className="font-medium text-text-primary">Tableau :</span> les 4 catégories sont fermées à l&apos;ouverture
+        (avec leur nombre de KPIs) : cliquer pour les ouvrir. Tri en cliquant sur la colonne d&apos;un assureur, filtre de
+        catégorie (la catégorie choisie s&apos;affiche ouverte), colonne Moyenne. Les seuils légal et vert figurent sous
+        le ratio SCR et le ratio MCR. Un rang (#1…) est affiché pour le ratio SCR, le ratio MCR et la diversification ;
         pour la diversification, le meilleur et le pire sont en gras.
+      </p>
+      <p>
+        <span className="font-medium text-text-primary">Agrandir :</span> le radar (avec son tableau de parts), la
+        comparaison par KPI et le tableau comparatif ont une flèche en haut à droite de leur carte pour les agrandir ;
+        la flèche de réduction (ou Échap, ou un clic sur le fond) ramène à la page. Le radar s&apos;agrandit aussi d&apos;un
+        clic sur le graphique. Rien n&apos;est réinitialisé (KPI choisi, catégories ouvertes, filtre).
       </p>
       <p>
         <span className="font-medium text-text-primary">Alertes</span> (par ordre de gravité : critique, attention,
@@ -190,14 +197,14 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
                 <p>
                   <Scale className="inline w-3.5 h-3.5 text-accent align-text-bottom mr-1" aria-hidden="true" />
                   Le symbole signale un chiffre calculé sur une base non directement comparable (ex. modèle
-                  interne). Cliquer pour lire la note. Ces valeurs sont exclues des moyennes, médianes et
+                  interne). Cliquer pour lire la note. Ces valeurs sont exclues de la moyenne et des
                   classements.
                 </p>
                 <p>
                   <span className="font-medium text-text-primary">Comparabilité :</span> selon la sélection, une ligne
                   grisée signale un KPI non comparable (activité, modèle de capital, périmètre ou forme juridique
-                  différents), une icône « i » une comparaison avec réserve ; la note en donne la raison. Les moyennes
-                  et médianes excluent les sociétés déjà consolidées dans un groupe sélectionné et ne mélangent pas
+                  différents), une icône « i » une comparaison avec réserve ; la note en donne la raison. La moyenne
+                  exclut les sociétés déjà consolidées dans un groupe sélectionné et ne mélange pas
                   solo et groupe. « Comparer à ses pairs » sélectionne les sociétés de même activité, modèle et
                   périmètre que la première sélectionnée.
                 </p>
