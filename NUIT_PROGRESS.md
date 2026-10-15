@@ -41,4 +41,4 @@ Tag de départ : `avant-nuit-kpis-officiels` (voir toute la nuit :
 - [x] PORTE 3 + push
 
 ## Rapport final
-- [ ] `RAPPORT_nuit_kpis_officiels.md`
+- [x] `RAPPORT_nuit_kpis_officiels.md`
