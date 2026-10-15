@@ -130,11 +130,12 @@ export function ComparativeTable({
 }
 
 /** Infobulle (+ soulignement pointillé) d'une moyenne/médiane calculée hors
- * valeurs « non comparables » (champ avertissement) ; rien s'il n'y en a pas. */
-function infobulleExclues(n: number) {
-  if (n === 0) return {};
+ * valeurs non comparables, sociétés déjà consolidées et autre périmètre ;
+ * rien s'il n'y a aucune exclusion. */
+function infobulleExclues(note: string | null) {
+  if (!note) return {};
   return {
-    title: `hors ${n} valeur${n > 1 ? "s" : ""} non comparable${n > 1 ? "s" : ""}`,
+    title: note,
     className: "underline decoration-dotted underline-offset-4 cursor-help",
   };
 }
@@ -278,12 +279,12 @@ function SectionCategorie({
               })}
               {afficherMoyenne && (
                 <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
-                  <span {...infobulleExclues(ligne.nbNonComparables)}>{ligne.moyenneStr}</span>
+                  <span {...infobulleExclues(ligne.noteAgregat)}>{ligne.moyenneStr}</span>
                 </td>
               )}
               {afficherMediane && (
                 <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
-                  <span {...infobulleExclues(ligne.nbNonComparables)}>{ligne.medianeStr}</span>
+                  <span {...infobulleExclues(ligne.noteAgregat)}>{ligne.medianeStr}</span>
                 </td>
               )}
               {afficherSeuil && (

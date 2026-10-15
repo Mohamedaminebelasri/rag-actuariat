@@ -158,8 +158,9 @@ export type LigneKpi = {
   medianeStr: string;
   seuilStr: string;
   aSeuil: boolean;
-  /** Nombre de valeurs de la ligne exclues de la moyenne/médiane (avertissement). */
-  nbNonComparables: number;
+  /** Exclusions de la moyenne/médiane (valeurs non comparables, sociétés déjà
+   * consolidées, solo/groupe non mélangés) : texte d'infobulle, null si aucune. */
+  noteAgregat: string | null;
   // clé de tri interne : valeur (ou null) par société, dans le même ordre
   // que `societes`, utilisée par triLignes() ci-dessous.
   valeursParSociete: Record<string, number | null>;
@@ -230,10 +231,46 @@ export function buildTableauComparatif(
       };
     });
 
-    // Moyenne/médiane sur les valeurs comparables seulement ; « — » s'il n'y en a aucune.
-    const aComparables = valeursComparables.length > 0;
-    const moyenne = aComparables ? valeursComparables.reduce((a, b) => a + b, 0) / valeursComparables.length : 0;
-    const mediane = aComparables ? mediane_(valeursComparables) : 0;
+    // Agrégats (moyenne/médiane du panel) : hors valeurs non comparables, hors
+    // sociétés dont le groupe consolidant est aussi dans la sélection (double
+    // comptage), et sans mélanger solo et groupe (on garde le périmètre le plus
+    // représenté, solo en cas d'égalité). « — » s'il ne reste rien.
+    let socsAgregat = Object.keys(valeursParSociete).filter((s) => !nonComparables.has(s));
+    const consolidees = socsAgregat.filter((s) => {
+      const parent = DEMO_SFCR[s]?.consolideDans;
+      return !!parent && parent !== s && valeursParSociete[parent] !== undefined && societes.includes(parent);
+    });
+    socsAgregat = socsAgregat.filter((s) => !consolidees.includes(s));
+    const parPerimetre = (p: "solo" | "groupe") => socsAgregat.filter((s) => (DEMO_SFCR[s]?.perimetre ?? "solo") === p);
+    const solo = parPerimetre("solo");
+    const groupe = parPerimetre("groupe");
+    let autrePerimetre: { n: number; nature: string } | null = null;
+    if (solo.length > 0 && groupe.length > 0) {
+      const garderGroupe = groupe.length > solo.length;
+      const exclues = garderGroupe ? solo : groupe;
+      autrePerimetre = { n: exclues.length, nature: garderGroupe ? "solo" : "de groupe" };
+      socsAgregat = garderGroupe ? groupe : solo;
+    }
+    const valeursAgregat = socsAgregat.map((s) => valeursParSociete[s]);
+    const pluriel = (n: number, mot: string, motPluriel = `${mot}s`) => `${n} ${n > 1 ? motPluriel : mot}`;
+    const exclusions: string[] = [];
+    if (nonComparables.size > 0) {
+      exclusions.push(`${pluriel(nonComparables.size, "valeur")} non comparable${nonComparables.size > 1 ? "s" : ""}`);
+    }
+    if (consolidees.length > 0) {
+      exclusions.push(
+        `${pluriel(consolidees.length, "société")} déjà consolidée${consolidees.length > 1 ? "s" : ""} dans un groupe sélectionné`
+      );
+    }
+    if (autrePerimetre) {
+      exclusions.push(
+        `${pluriel(autrePerimetre.n, "valeur")} ${autrePerimetre.nature} (solo et groupe ne se mélangent pas)`
+      );
+    }
+    const noteAgregat = exclusions.length > 0 ? `hors ${exclusions.join(", ")}` : null;
+    const aComparables = valeursAgregat.length > 0;
+    const moyenne = aComparables ? valeursAgregat.reduce((a, b) => a + b, 0) / valeursAgregat.length : 0;
+    const mediane = aComparables ? mediane_(valeursAgregat) : 0;
     const seuil = kdef.seuilReglementaire;
 
     resultat[kdef.categorie].push({
@@ -245,7 +282,7 @@ export function buildTableauComparatif(
       medianeStr: aComparables ? formatValeur(mediane, kdef.unite) : "—",
       seuilStr: seuil !== null ? formatValeur(seuil, kdef.unite) : "",
       aSeuil: seuil !== null,
-      nbNonComparables: nonComparables.size,
+      noteAgregat,
       valeursParSociete: Object.fromEntries(societes.map((s) => [s, valeursParSociete[s] ?? null])),
     });
   }
