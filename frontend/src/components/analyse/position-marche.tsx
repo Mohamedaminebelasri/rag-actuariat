@@ -1,20 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Info } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { KPI_PAR_ID, kpisSociete, type KpiDefinition } from "@/data/analyse-demo";
+import { formatValeur, statutKpi } from "@/lib/analyse-utils";
 import {
-  FILTRES_VIDES,
-  KPIS_CLASSABLES,
-  SENS_KPI,
-  classement,
-  formatValeur,
-  societesFiltrees,
-  statutKpi,
-  type Classement,
-  type FiltresSocietes,
-} from "@/lib/analyse-utils";
-import { FiltresSocietesBar } from "./filtres-societes";
+  INDICATEUR_POSITION_PAR_ID,
+  SEUIL_PAIRS,
+  indicateursPositionPour,
+  positionParmiPairs,
+  type IndicateurPosition,
+  type PointPosition,
+} from "@/lib/position-pairs";
 
 const PASTILLE_STATUT: Record<string, string> = {
   success: "bg-success-light text-success",
@@ -24,74 +21,109 @@ const PASTILLE_STATUT: Record<string, string> = {
 
 const ordinal = (n: number) => (n === 1 ? "1er" : `${n}e`);
 
-function valeurCourte(v: number, unite: string): string {
-  if (unite === "%") return `${Math.round(v)} %`;
-  return `${Math.abs(v) < 10 ? v.toFixed(1) : Math.round(v)} Md€`;
+const LIBELLE_SENS: Record<IndicateurPosition["sens"], string> = {
+  higher: "plus haut = mieux",
+  lower: "plus bas = mieux",
+  zero: "plus proche de 0 = mieux",
+  neutre: "indicateur neutre : ni mieux ni moins bien",
+};
+
+/** Valeur d'axe : unité réelle de l'indicateur (jamais « Md€ »), décimales
+ * adaptées à l'étendue affichée. */
+function valeurCourte(v: number, ind: IndicateurPosition, etendue: number): string {
+  const decimales = etendue < 2 ? 2 : etendue < 20 ? 1 : 0;
+  return formatValeur(v, ind.unite, null, null, decimales);
 }
 
-/** Idée 2 : classement de la société parmi ses pairs + distribution du
- * marché (chaque point = une société ; la société analysée est en couleur). */
+/** Position de la société dans SON groupe de pairs (activité · modèle ·
+ * périmètre), classement seulement à partir de 5 sociétés comparables
+ * (lib/position-pairs.ts). Couleurs neutres ; seuls le ratio SCR (pastille
+ * du feu tricolore) et le trait rouge du seuil de 100 % des ratios SCR
+ * reprennent les couleurs réglementaires. */
 export function PositionMarche({ societe }: { societe: string }) {
-  const [kpiId, setKpiId] = useState("ratio_scr");
-  const [filtres, setFiltres] = useState<FiltresSocietes>(FILTRES_VIDES);
-
-  const def = KPI_PAR_ID[kpiId];
-  const groupe = useMemo(() => societesFiltrees(filtres), [filtres]);
-  const cls = useMemo(() => classement(kpiId, societe, groupe), [kpiId, societe, groupe]);
-  const valeurSociete = kpisSociete(societe)[kpiId]?.valeur;
-  const statut = valeurSociete !== undefined ? statutKpi(kpiId, valeurSociete) : null;
-  const sens = SENS_KPI[kpiId];
+  const indicateurs = useMemo(() => indicateursPositionPour(societe), [societe]);
+  const [indicateurId, setIndicateurId] = useState("ratio_scr_sans_mesures_lt");
+  const ind = INDICATEUR_POSITION_PAR_ID[indicateurId] ?? indicateurs[0];
+  const res = useMemo(() => positionParmiPairs(ind.id, societe), [ind.id, societe]);
+  const statut = res.statut === "ok" && ind.id === "ratio_scr" ? statutKpi("ratio_scr", res.valeur) : null;
+  const classe = ind.sens !== "neutre";
 
   return (
     <section
       aria-label="Position parmi les pairs"
       className="bg-surface border border-border rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] p-5 w-full mb-6"
     >
-      <div className="flex items-center gap-3 flex-wrap mb-3">
+      <div className="flex items-center gap-3 flex-wrap mb-1">
         <h3 className="font-heading italic text-lg text-text-primary">Position parmi les pairs</h3>
         <span className="flex-1" />
         <select
-          aria-label="Indicateur à classer"
-          value={kpiId}
-          onChange={(e) => setKpiId(e.target.value)}
-          className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-1.5 bg-surface text-text-primary font-body"
+          aria-label="Indicateur à situer"
+          value={ind.id}
+          onChange={(e) => setIndicateurId(e.target.value)}
+          className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-1.5 bg-surface text-text-primary font-body max-w-full"
         >
-          {KPIS_CLASSABLES.map((k) => (
-            <option key={k.id} value={k.id}>
-              {k.label}
-            </option>
-          ))}
+          <optgroup label="Classés">
+            {indicateurs
+              .filter((i) => i.sens !== "neutre")
+              .map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.label}
+                </option>
+              ))}
+          </optgroup>
+          <optgroup label="Position sans jugement">
+            {indicateurs
+              .filter((i) => i.sens === "neutre")
+              .map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.label}
+                </option>
+              ))}
+          </optgroup>
         </select>
       </div>
 
-      <FiltresSocietesBar
-        filtres={filtres}
-        onChange={setFiltres}
-        resume={`Pairs : ${cls?.total ?? 0} société${(cls?.total ?? 0) > 1 ? "s" : ""}`}
-      />
+      {res.groupe && (
+        <p className="text-xs text-text-tertiary">
+          Pairs : groupe <span className="font-medium text-text-secondary">{res.groupe.id}</span> ({res.groupe.n}{" "}
+          société{res.groupe.n > 1 ? "s" : ""})
+        </p>
+      )}
 
-      {!cls || valeurSociete === undefined ? (
-        <p className="text-sm text-text-secondary mt-6">Pas de donnée pour cet indicateur.</p>
+      {res.statut !== "ok" ? (
+        <p role="note" className="mt-5 flex items-start gap-1.5 text-sm text-text-secondary leading-relaxed">
+          <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-text-tertiary" aria-hidden="true" />
+          <span>{res.raison}</span>
+        </p>
       ) : (
         <>
           <div className="flex items-end gap-x-6 gap-y-2 flex-wrap mt-5">
             <p className="font-mono text-4xl font-bold text-text-primary leading-none">
-              {ordinal(cls.rang)}
-              <span className="text-base font-medium text-text-tertiary"> / {cls.total}</span>
+              {ordinal(res.rang)}
+              <span className="text-base font-medium text-text-tertiary"> / {res.total}</span>
             </p>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 min-w-0">
               <p className="text-sm text-text-primary">
-                {cls.total > 1 ? (
+                {classe && res.percentile !== null ? (
                   <>
-                    Fait mieux que <span className="font-mono font-bold">{cls.percentile} %</span> des autres sociétés
+                    Fait mieux que <span className="font-mono font-bold">{res.percentile} %</span> des autres sociétés
+                    du groupe
                   </>
                 ) : (
-                  "Aucun autre pair avec ces filtres"
+                  <>
+                    {ordinal(res.rang)} valeur la plus élevée du groupe ·{" "}
+                    {res.valeur > res.mediane
+                      ? "au-dessus de la médiane"
+                      : res.valeur < res.mediane
+                        ? "en dessous de la médiane"
+                        : "égale à la médiane"}
+                  </>
                 )}
               </p>
               <p className="text-xs text-text-tertiary">
-                {def.label} : <span className="font-mono">{formatValeur(valeurSociete, def.unite)}</span> ·{" "}
-                {sens === "higher" ? "plus haut = meilleur" : "plus bas = meilleur"}
+                {ind.label} :{" "}
+                <span className="font-mono">{formatValeur(res.valeur, ind.unite, null, null, ind.decimales)}</span> ·{" "}
+                {LIBELLE_SENS[ind.sens]}
               </p>
             </div>
             {statut && (
@@ -107,17 +139,24 @@ export function PositionMarche({ societe }: { societe: string }) {
             )}
           </div>
 
-          {cls.total < 3 && (
-            <p className="text-xs text-warning mt-3" role="note">
-              Échantillon trop petit (moins de 3 sociétés) : le classement n&apos;est pas fiable. Élargis les filtres.
+          {ind.note && <p className="text-xs text-text-secondary mt-3 leading-relaxed">{ind.note}</p>}
+          {res.nonComparables.length > 0 && (
+            <p className="text-xs text-text-tertiary mt-1.5">
+              Hors classement (valeur non comparable) : {res.nonComparables.join(", ")}.
+            </p>
+          )}
+          {res.sansValeur.length > 0 && (
+            <p className="text-xs text-text-tertiary mt-1.5">
+              Sans valeur pour cet indicateur : {res.sansValeur.join(", ")}.
             </p>
           )}
 
-          <DotPlot cls={cls} societe={societe} def={def} />
+          <DotPlot points={res.points} mediane={res.mediane} societe={societe} ind={ind} rang={res.rang} total={res.total} />
 
           <p className="text-[11px] text-text-tertiary mt-1">
-            Chaque point est une société. Trait pointillé gris : médiane du groupe
-            {def.seuilReglementaire !== null ? " · trait rouge : seuil réglementaire" : ""}.
+            Chaque point est une société du groupe de pairs (classement à partir de {SEUIL_PAIRS} valeurs
+            comparables). Trait pointillé gris : médiane du groupe
+            {ind.seuil !== undefined ? " · trait rouge : seuil réglementaire" : ""}.
           </p>
         </>
       )}
@@ -125,16 +164,44 @@ export function PositionMarche({ societe }: { societe: string }) {
   );
 }
 
-function DotPlot({ cls, societe, def }: { cls: Classement; societe: string; def: KpiDefinition }) {
-  const L = 720;
-  const H = 176;
-  const PAD = 40;
-  const AXE = 120;
-  const R = 7;
-  const NB_BINS = 14;
+/** Largeur réelle du conteneur : le graphique est dessiné à sa taille (texte
+ * lisible sur mobile, pas un SVG réduit). */
+function useLargeur(): [React.RefObject<HTMLDivElement | null>, number] {
+  const ref = useRef<HTMLDivElement>(null);
+  const [largeur, setLargeur] = useState(720);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new ResizeObserver(([e]) => setLargeur(Math.max(240, Math.round(e.contentRect.width))));
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, largeur];
+}
 
-  const valeurs = cls.points.map((p) => p.valeur);
-  const seuil = def.seuilReglementaire;
+function DotPlot({
+  points: pointsGroupe,
+  mediane,
+  societe,
+  ind,
+  rang,
+  total,
+}: {
+  points: PointPosition[];
+  mediane: number;
+  societe: string;
+  ind: IndicateurPosition;
+  rang: number;
+  total: number;
+}) {
+  const [ref, L] = useLargeur();
+  const PAD = L < 480 ? 24 : 40;
+  const R = 7;
+  const PAS = 2 * R + 2;
+  const NB_BINS = Math.max(6, Math.round(L / 52));
+
+  const valeurs = pointsGroupe.map((p) => p.valeur);
+  const seuil = ind.seuil ?? null;
   let min = Math.min(...valeurs, ...(seuil !== null ? [seuil] : []));
   let max = Math.max(...valeurs, ...(seuil !== null ? [seuil] : []));
   if (min === max) {
@@ -148,115 +215,126 @@ function DotPlot({ cls, societe, def }: { cls: Classement; societe: string; def:
 
   // Empilement des points dans des « cases » de valeurs voisines.
   const compteurs = new Map<number, number>();
-  const points = [...cls.points]
+  const empiles = [...pointsGroupe]
     .sort((a, b) => a.valeur - b.valeur)
     .map((p) => {
       const bin = Math.min(NB_BINS - 1, Math.floor(((p.valeur - min) / (max - min)) * NB_BINS));
-      const rang = compteurs.get(bin) ?? 0;
-      compteurs.set(bin, rang + 1);
-      return { ...p, cx: x(p.valeur), cy: AXE - R - 4 - rang * (2 * R + 2), moi: p.societe === societe };
+      const niveau = compteurs.get(bin) ?? 0;
+      compteurs.set(bin, niveau + 1);
+      return { ...p, cx: x(p.valeur), niveau, moi: p.societe === societe };
     });
+  const pile = Math.max(1, ...compteurs.values());
+  // Hauteur : libellé de la médiane, nom de la société, pile de points, axe et graduations.
+  const AXE = 44 + pile * PAS;
+  const H = AXE + (seuil !== null ? 44 : 26);
+  const points = empiles.map((p) => ({ ...p, cy: AXE - R - 4 - p.niveau * PAS }));
 
-  const ticks = Array.from({ length: 5 }, (_, i) => min + ((max - min) * i) / 4);
+  const nbTicks = L < 480 ? 3 : 5;
+  const ticks = Array.from({ length: nbTicks }, (_, i) => min + ((max - min) * i) / (nbTicks - 1));
   const ancre = (px: number) => (px < 70 ? "start" : px > L - 70 ? "end" : "middle");
   const moi = points.find((p) => p.moi);
+  const etendue = max - min;
 
   return (
-    <svg
-      viewBox={`0 0 ${L} ${H}`}
-      className="w-full h-auto mt-4"
-      role="img"
-      aria-label={`Distribution de ${def.label} : ${societe} est ${ordinal(cls.rang)} sur ${cls.total}`}
-    >
-      {/* Axe */}
-      <line x1={PAD} y1={AXE} x2={L - PAD} y2={AXE} stroke="var(--border-hover)" strokeWidth={1} />
-      {ticks.map((t, i) => (
-        <g key={i}>
-          <line x1={x(t)} y1={AXE} x2={x(t)} y2={AXE + 4} stroke="var(--border-hover)" />
-          <text
-            x={x(t)}
-            y={AXE + 17}
-            textAnchor={ancre(x(t))}
-            fontSize={12}
-            fontFamily="var(--font-mono)"
-            fill="var(--text-tertiary)"
-          >
-            {valeurCourte(t, def.unite)}
-          </text>
-        </g>
-      ))}
-
-      {/* Médiane */}
-      <line
-        x1={x(cls.mediane)}
-        y1={22}
-        x2={x(cls.mediane)}
-        y2={AXE}
-        stroke="var(--text-secondary)"
-        strokeWidth={1}
-        strokeDasharray="4 4"
-      />
-      <text
-        x={x(cls.mediane)}
-        y={14}
-        textAnchor={ancre(x(cls.mediane))}
-        fontSize={12}
-        fontFamily="var(--font-body)"
-        fill="var(--text-secondary)"
-        stroke="var(--surface)"
-        strokeWidth={4}
-        paintOrder="stroke"
+    <div ref={ref} className="w-full mt-4">
+      <svg
+        width={L}
+        height={H}
+        viewBox={`0 0 ${L} ${H}`}
+        className="block max-w-full h-auto"
+        role="img"
+        aria-label={`Distribution de ${ind.label} dans le groupe de pairs : ${societe} est ${ordinal(rang)} sur ${total}`}
       >
-        Médiane {valeurCourte(cls.mediane, def.unite)}
-      </text>
-
-      {/* Seuil réglementaire */}
-      {seuil !== null && (
-        <g>
-          <line x1={x(seuil)} y1={30} x2={x(seuil)} y2={AXE} stroke="var(--danger)" strokeWidth={1.5} />
-          <text
-            x={x(seuil)}
-            y={AXE + 36}
-            textAnchor={ancre(x(seuil))}
-            fontSize={12}
-            fontFamily="var(--font-body)"
-            fontWeight={600}
-            fill="var(--danger)"
-          >
-            Seuil {valeurCourte(seuil, def.unite)}
-          </text>
-        </g>
-      )}
-
-      {/* Sociétés */}
-      {points
-        .filter((p) => !p.moi)
-        .map((p) => (
-          <circle key={p.societe} cx={p.cx} cy={p.cy} r={R} fill="var(--text-tertiary)" fillOpacity={0.55}>
-            <title>{`${p.societe} : ${formatValeur(p.valeur, def.unite)}`}</title>
-          </circle>
+        {/* Axe */}
+        <line x1={PAD} y1={AXE} x2={L - PAD} y2={AXE} stroke="var(--border-hover)" strokeWidth={1} />
+        {ticks.map((t, i) => (
+          <g key={i}>
+            <line x1={x(t)} y1={AXE} x2={x(t)} y2={AXE + 4} stroke="var(--border-hover)" />
+            <text
+              x={x(t)}
+              y={AXE + 17}
+              textAnchor={ancre(x(t))}
+              fontSize={12}
+              fontFamily="var(--font-mono)"
+              fill="var(--text-tertiary)"
+            >
+              {valeurCourte(t, ind, etendue)}
+            </text>
+          </g>
         ))}
-      {moi && (
-        <g>
-          <circle cx={moi.cx} cy={moi.cy} r={R + 3} fill="var(--accent)" stroke="var(--surface)" strokeWidth={2}>
-            <title>{`${moi.societe} : ${formatValeur(moi.valeur, def.unite)}`}</title>
-          </circle>
-          <text
-            x={moi.cx}
-            y={moi.cy - R - 9}
-            textAnchor={ancre(moi.cx)}
-            fontSize={13}
-            fontWeight={700}
-            fontFamily="var(--font-body)"
-            fill="var(--accent)"
-            stroke="var(--surface)"
-            strokeWidth={4}
-            paintOrder="stroke"
-          >
-            {moi.societe}
-          </text>
-        </g>
-      )}
-    </svg>
+
+        {/* Médiane */}
+        <line
+          x1={x(mediane)}
+          y1={22}
+          x2={x(mediane)}
+          y2={AXE}
+          stroke="var(--text-secondary)"
+          strokeWidth={1}
+          strokeDasharray="4 4"
+        />
+        <text
+          x={x(mediane)}
+          y={14}
+          textAnchor={ancre(x(mediane))}
+          fontSize={12}
+          fontFamily="var(--font-body)"
+          fill="var(--text-secondary)"
+          stroke="var(--surface)"
+          strokeWidth={4}
+          paintOrder="stroke"
+        >
+          Médiane {valeurCourte(mediane, ind, etendue)}
+        </text>
+
+        {/* Seuil réglementaire (ratios SCR) */}
+        {seuil !== null && (
+          <g>
+            <line x1={x(seuil)} y1={30} x2={x(seuil)} y2={AXE} stroke="var(--danger)" strokeWidth={1.5} />
+            <text
+              x={x(seuil)}
+              y={AXE + 36}
+              textAnchor={ancre(x(seuil))}
+              fontSize={12}
+              fontFamily="var(--font-body)"
+              fontWeight={600}
+              fill="var(--danger)"
+            >
+              Seuil {valeurCourte(seuil, ind, etendue)}
+            </text>
+          </g>
+        )}
+
+        {/* Sociétés du groupe */}
+        {points
+          .filter((p) => !p.moi)
+          .map((p) => (
+            <circle key={p.societe} cx={p.cx} cy={p.cy} r={R} fill="var(--text-tertiary)" fillOpacity={0.55}>
+              <title>{`${p.societe} : ${formatValeur(p.valeur, ind.unite, null, null, ind.decimales)}`}</title>
+            </circle>
+          ))}
+        {moi && (
+          <g>
+            <circle cx={moi.cx} cy={moi.cy} r={R + 3} fill="var(--accent)" stroke="var(--surface)" strokeWidth={2}>
+              <title>{`${moi.societe} : ${formatValeur(moi.valeur, ind.unite, null, null, ind.decimales)}`}</title>
+            </circle>
+            <text
+              x={moi.cx}
+              y={moi.cy - R - 9}
+              textAnchor={ancre(moi.cx)}
+              fontSize={13}
+              fontWeight={700}
+              fontFamily="var(--font-body)"
+              fill="var(--accent)"
+              stroke="var(--surface)"
+              strokeWidth={4}
+              paintOrder="stroke"
+            >
+              {moi.societe}
+            </text>
+          </g>
+        )}
+      </svg>
+    </div>
   );
 }
