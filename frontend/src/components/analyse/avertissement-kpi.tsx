@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { Scale } from "lucide-react";
+import { Scale, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Texte affiché quand le KPI porte `avertissement` sans `noteAvertissement`. */
@@ -37,10 +37,21 @@ export function AvertissementKpi({
   note,
   titre,
   className,
+  icone: Icone = Scale,
+  intitule = "Valeur non comparable",
+  infobulle = "Valeur non comparable : cliquer pour lire la note",
+  classeIcone = "text-accent",
 }: {
   note?: string | null;
   titre?: string;
   className?: string;
+  /** Icône du bouton (défaut : balance, valeur non comparable). */
+  icone?: LucideIcon;
+  /** Intitulé du panneau et nom accessible du bouton. */
+  intitule?: string;
+  infobulle?: string;
+  /** Classe de couleur de l'icône (jamais celle du feu tricolore). */
+  classeIcone?: string;
 }) {
   const [ouvert, setOuvert] = useState(false);
   const [style, setStyle] = useState<CSSProperties>({});
@@ -101,16 +112,17 @@ export function AvertissementKpi({
           e.stopPropagation();
           basculer();
         }}
-        aria-label="Valeur non comparable : voir la note"
+        aria-label={`${intitule} : voir la note`}
         aria-expanded={ouvert}
         aria-haspopup="dialog"
-        title="Valeur non comparable : cliquer pour lire la note"
+        title={infobulle}
         className={cn(
-          "inline-flex items-center justify-center align-middle w-6 h-6 -my-1 rounded-full text-accent hover:bg-accent-light focus-visible:outline-2 focus-visible:outline-accent transition-colors",
+          "inline-flex items-center justify-center align-middle w-6 h-6 -my-1 rounded-full hover:bg-accent-light focus-visible:outline-2 focus-visible:outline-accent transition-colors",
+          classeIcone,
           className
         )}
       >
-        <Scale className="w-3.5 h-3.5" aria-hidden="true" />
+        <Icone className="w-3.5 h-3.5" aria-hidden="true" />
       </button>
 
       {ouvert &&
@@ -118,7 +130,7 @@ export function AvertissementKpi({
           <div
             ref={panneauRef}
             role="dialog"
-            aria-label="Valeur non comparable"
+            aria-label={intitule}
             tabIndex={-1}
             style={style}
             onKeyDown={(e) => {
@@ -131,8 +143,8 @@ export function AvertissementKpi({
             className="fixed z-[60] overflow-y-auto rounded-[var(--radius-md)] border border-border bg-surface p-3 shadow-[var(--shadow-lg)] text-left font-body outline-none"
           >
             <p className="flex items-center gap-1.5 text-xs font-medium text-text-primary">
-              <Scale className="w-3.5 h-3.5 text-accent flex-shrink-0" aria-hidden="true" />
-              Valeur non comparable
+              <Icone className={cn("w-3.5 h-3.5 flex-shrink-0", classeIcone)} aria-hidden="true" />
+              {intitule}
             </p>
             {titre && <p className="mt-1.5 text-xs font-medium text-text-primary">{titre}</p>}
             <p className="mt-1.5 text-xs leading-relaxed text-text-secondary whitespace-pre-line">{texte}</p>

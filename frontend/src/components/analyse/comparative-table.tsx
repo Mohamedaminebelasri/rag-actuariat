@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, ArrowUpDown, Lock } from "lucide-react";
+import { Ban, ChevronDown, ChevronRight, ArrowUpDown, Info, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CATEGORIES } from "@/data/analyse-demo";
+import { CATEGORIES, kpisSociete } from "@/data/analyse-demo";
 import {
   buildTableauComparatif,
   couleurSeuil,
@@ -14,6 +14,7 @@ import {
 } from "@/lib/analyse-utils";
 import { COULEUR_VALEUR, ICONE_STATUT } from "./kpi-card";
 import { AvertissementKpi } from "./avertissement-kpi";
+import { compatibiliteKpi, texteNotesCompat } from "@/lib/comparabilite";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 // KPIs avec seuil réglementaire : couleur par seuil (couleurSeuil), jamais par
@@ -181,12 +182,51 @@ function SectionCategorie({
       {!repliee &&
         lignes.map((ligne) => {
           const aSeuilReglementaire = KPIS_AVEC_SEUIL.has(ligne.kpiId);
+          // Compatibilité du KPI pour la sélection : N = grisé + note, R =
+          // marqueur + note, NA = « sans objet » pour les zéros. Couleurs
+          // neutres (rouge/orange/vert restent réservés au feu tricolore).
+          const compat = compatibiliteKpi(ligne.kpiId, societesComparees);
+          const grise = compat.verdict === "N";
+          const noteCompat = texteNotesCompat(compat.notes);
+          const grisee = grise ? "opacity-50" : undefined;
+          // Libellé propre aux groupes (ex. « SCR minimal consolidé du groupe ») :
+          // en titre de ligne s'il est commun, sinon en légende de la cellule.
+          const libelles = societesComparees
+            .map((s) => kpisSociete(s)[ligne.kpiId])
+            .filter((k) => k !== undefined)
+            .map((k) => k.libelle ?? null);
+          const libelleCommun =
+            libelles.length > 0 && libelles[0] && libelles.every((l) => l === libelles[0]) ? libelles[0] : null;
           return (
-            <tr key={ligne.kpiId} className="border-b border-border last:border-0 hover:bg-surface-hover">
-              <td className="px-4 py-2.5 font-medium text-text-primary">{ligne.kpiLabel}</td>
+            <tr
+              key={ligne.kpiId}
+              className="border-b border-border last:border-0 hover:bg-surface-hover"
+              title={grise ? `Non comparable — ${noteCompat}` : undefined}
+            >
+              <td className={cn("px-4 py-2.5 font-medium", grise ? "text-text-tertiary" : "text-text-primary")}>
+                {libelleCommun ?? ligne.kpiLabel}
+                {(compat.verdict === "N" || compat.verdict === "R") && noteCompat && (
+                  <AvertissementKpi
+                    note={noteCompat}
+                    titre={ligne.kpiLabel}
+                    className="ml-1"
+                    icone={compat.verdict === "N" ? Ban : Info}
+                    intitule={compat.verdict === "N" ? "Non comparable" : "À comparer avec réserve"}
+                    infobulle={
+                      compat.verdict === "N"
+                        ? "Non comparable pour cette sélection : cliquer pour lire la note"
+                        : "À comparer avec réserve : cliquer pour lire la note"
+                    }
+                    classeIcone="text-text-secondary"
+                  />
+                )}
+              </td>
               {societesComparees.map((soc) => {
                 const cellule = ligne.cellules.find((c) => c.societe === soc);
                 if (!cellule) return <td key={soc} className="px-4 py-2.5 text-right text-text-tertiary">—</td>;
+                const sansObjet = compat.sansObjet && ligne.valeursParSociete[soc] === 0;
+                const valeurStr = sansObjet ? "sans objet" : cellule.valeurStr;
+                const legende = libelleCommun ? null : kpisSociete(soc)[ligne.kpiId]?.libelle ?? null;
 
                 if (aSeuilReglementaire) {
                   const valeur = ligne.valeursParSociete[soc];
@@ -195,17 +235,20 @@ function SectionCategorie({
                   const infobulle = statut ? texteInfobulleSeuil(ligne.kpiId, couleur, seuilVertScr) : undefined;
                   const IconeStatut = statut ? ICONE_STATUT[statut.couleur] : null;
                   return (
-                    <td key={soc} className="px-4 py-2.5 text-right font-mono">
+                    <td key={soc} className={cn("px-4 py-2.5 text-right font-mono", grisee)}>
                       {cellule.avertissement && <AvertissementKpi note={cellule.noteAvertissement} className="mr-1" />}
                       <span
                         className={cn("inline-flex items-center gap-1 justify-end", COULEUR_VALEUR[couleur])}
                         title={infobulle}
                       >
                         {IconeStatut && <IconeStatut className="w-3 h-3" aria-hidden="true" />}
-                        {cellule.valeurStr}
+                        {valeurStr}
                       </span>
                       {cellule.rang > 0 && (
                         <span className="ml-1.5 text-[11px] font-bold text-text-tertiary">#{cellule.rang}</span>
+                      )}
+                      {legende && (
+                        <span className="block text-[10px] font-body leading-tight text-text-tertiary">{legende}</span>
                       )}
                     </td>
                   );
@@ -213,24 +256,33 @@ function SectionCategorie({
 
                 const couleurRang = cellule.estMeilleur ? "text-success" : cellule.estPire ? "text-danger" : "text-text-primary";
                 return (
-                  <td key={soc} className="px-4 py-2.5 text-right font-mono">
+                  <td key={soc} className={cn("px-4 py-2.5 text-right font-mono", grisee)}>
                     {cellule.avertissement && <AvertissementKpi note={cellule.noteAvertissement} className="mr-1" />}
-                    <span className={cn(couleurRang, (cellule.estMeilleur || cellule.estPire) && "font-bold")}>
-                      {cellule.valeurStr}
+                    <span
+                      className={cn(
+                        couleurRang,
+                        (cellule.estMeilleur || cellule.estPire) && "font-bold",
+                        sansObjet && "italic font-body text-text-tertiary"
+                      )}
+                    >
+                      {valeurStr}
                     </span>
                     {cellule.rang > 0 && (
                       <span className="ml-1.5 text-[11px] font-bold text-text-tertiary">#{cellule.rang}</span>
+                    )}
+                    {legende && (
+                      <span className="block text-[10px] font-body leading-tight text-text-tertiary">{legende}</span>
                     )}
                   </td>
                 );
               })}
               {afficherMoyenne && (
-                <td className="px-4 py-2.5 text-right font-mono text-text-secondary">
+                <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
                   <span {...infobulleExclues(ligne.nbNonComparables)}>{ligne.moyenneStr}</span>
                 </td>
               )}
               {afficherMediane && (
-                <td className="px-4 py-2.5 text-right font-mono text-text-secondary">
+                <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
                   <span {...infobulleExclues(ligne.nbNonComparables)}>{ligne.medianeStr}</span>
                 </td>
               )}

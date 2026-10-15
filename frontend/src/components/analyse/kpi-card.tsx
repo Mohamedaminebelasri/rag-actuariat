@@ -109,7 +109,7 @@ export function KpiCard({
         <span className="flex-1" />
         {/* <ConfidenceBadge confiance={valeur.confiance} chapitre={valeur.chapitreSource} page={valeur.pageSource} /> */}
       </div>
-      <p className="text-sm font-medium text-text-secondary mt-2.5">{def.label}</p>
+      <p className="text-sm font-medium text-text-secondary mt-2.5">{valeur.libelle ?? def.label}</p>
       {valeurManquante ? (
         <p className="font-mono text-[1.75rem] font-bold mt-0.5 leading-tight text-text-tertiary">n/d</p>
       ) : (

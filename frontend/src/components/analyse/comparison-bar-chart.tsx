@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { KPI_DEFINITIONS, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { formatValeur, valeurDisponible } from "@/lib/analyse-utils";
 import { AvertissementKpi } from "./avertissement-kpi";
+import { compatibiliteKpi, texteNotesCompat } from "@/lib/comparabilite";
 
 // Hauteur de la zone de tracé (barres + étiquettes ; les noms sont en dessous).
 const HAUTEUR = 260;
@@ -61,6 +62,9 @@ export function ComparisonBarChart({
     };
   });
   const seuil = def?.seuilReglementaire ?? null;
+  // Compatibilité du KPI choisi pour la sélection (note neutre : N / R).
+  const compat = compatibiliteKpi(kpiId, societesComparees);
+  const noteCompat = texteNotesCompat(compat.notes);
 
   // Échelle sur l'étendue réelle des valeurs DISPONIBLES (+ seuil éventuel),
   // zéro inclus : tout positif → zéro en bas ; tout négatif → zéro en haut,
@@ -94,6 +98,16 @@ export function ComparisonBarChart({
           ))}
         </select>
       </div>
+
+      {(compat.verdict === "N" || compat.verdict === "R") && noteCompat && (
+        <p role="note" className="mb-3 whitespace-pre-line text-xs leading-relaxed text-text-secondary">
+          <span className="font-medium text-text-primary">
+            {compat.verdict === "N" ? "Non comparable pour cette sélection" : "À comparer avec réserve"}
+          </span>
+          {" — "}
+          {noteCompat}
+        </p>
+      )}
 
       {/* Zone de tracé */}
       <div className="relative" style={{ height: HAUTEUR }}>
