@@ -86,6 +86,27 @@ les applique, il ne les recalcule pas :
 - KPI de groupe `mcr` / `ratio_mcr` : champ `libelle` (« SCR minimal
   consolidé ») à afficher à la place du nom générique.
 
+### KPIs calculés « Indicateurs comparables » (Décision 158)
+
+6 KPIs de `kpisParSociete` ne sont pas extraits mais calculés
+(`ratio_scr_sans_mesures_lt`, `impact_va`, `impact_transitoires`,
+`marge_risque_sur_be`, `sp_nonvie`, `mcr_en_pct_scr` ; catégorie
+`indicateurs_comparables`, unités `pct` ou `pts`). Ils portent `formule`
+(`{type: "ratio" | "difference", texte, facteur, note?}`) et des composants
+enrichis (`operation` `num`/`den` ou `+`/`-`, `kpiCode?`, `detail?`,
+`sourcePdf` — null = PDF par défaut de la société —, `valide`). Les KPIs
+« somme » n'ont pas `formule` et leurs composants n'ont pas ces clés :
+leur affichage doit rester identique. Libellés, descriptions et sens de
+classement : `definitionsKpis` (lus par `DEFINITIONS_KPIS_CALCULES`,
+`labelKpi()`), recalcul : `recalculerKpi()` (tolérance 0,05).
+`compatibilite.activitesApplicables` (S/P non-vie : Non-vie et
+Santé/prévoyance) → `kpiApplicable()` dans `comparabilite.ts` : « sans
+objet » ailleurs. Les compteurs « KPIs extraits / vérifiés » ne comptent
+que les 21 extraits (`estKpiExtrait()`). Couleurs neutres (jamais de feu
+tricolore). `sourceLisible` (KPIs à avertissement) remplace
+`chapitreSource` dans « Source : ». `indicateursParSociete` reste exporté
+à l'identique (les alertes en dépendent).
+
 Ces 2 fichiers JSON (`frontend/src/data/donnees-extraites.json` et
 `kpi-sources.json` ; l'ancien `kpis_export.json` a été supprimé) sont des snapshots —
 à régénérer côté back-end après toute mise à jour de `kpis.db`. Une session
