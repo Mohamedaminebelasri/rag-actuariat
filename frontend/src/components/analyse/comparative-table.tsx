@@ -5,6 +5,7 @@ import { Ban, ChevronDown, ChevronRight, ArrowUpDown, Info, Lock } from "lucide-
 import { cn } from "@/lib/utils";
 import { CATEGORIES, kpisSociete } from "@/data/analyse-demo";
 import {
+  CATEGORIE_LABELS,
   buildTableauComparatif,
   couleurSeuil,
   statutKpi,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/analyse-utils";
 import { COULEUR_VALEUR, ICONE_STATUT } from "./kpi-card";
 import { AvertissementKpi } from "./avertissement-kpi";
+import { CarteAgrandissable } from "./carte-agrandissable";
 import { compatibiliteKpi, texteNotesCompat } from "@/lib/comparabilite";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
@@ -21,27 +23,27 @@ import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 // rang — un rang #1 rouge reste un rang #1 rouge si sous le seuil légal.
 const KPIS_AVEC_SEUIL = new Set(["ratio_scr", "ratio_mcr"]);
 
+const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A"];
+
 /** Port de tableau_comparatif_ui() + en_tete_categorie()/ligne_kpi()
- * (comparative.py, Reflex) — sections repliables, tri par colonne,
- * classement meilleur/pire, benchmark moyenne/médiane/seuil. ratio_scr et
+ * (comparative.py, Reflex) — sections repliables (fermées à l'ouverture), tri
+ * par colonne, classement meilleur/pire, colonne Moyenne. ratio_scr et
  * ratio_mcr sont coloriés par couleurSeuil() (même logique que les cartes
- * KPI de l'onglet individuel), pas par rang. */
+ * KPI de l'onglet individuel), pas par rang. Carte agrandissable : le filtre
+ * de catégorie est dans son en-tête (état conservé à l'agrandissement). */
 export function ComparativeTable({
   societesComparees,
   filtreCategorie,
-  afficherMoyenne,
-  afficherMediane,
-  afficherSeuil,
+  onChangeFiltre,
   seuilVertScr = SEUIL_VERT_SCR_DEFAUT,
 }: {
   societesComparees: string[];
   filtreCategorie: string;
-  afficherMoyenne: boolean;
-  afficherMediane: boolean;
-  afficherSeuil: boolean;
+  onChangeFiltre: (categorie: string) => void;
   seuilVertScr?: number;
 }) {
-  const [categoriesRepliees, setCategoriesRepliees] = useState<string[]>([]);
+  // Les 4 catégories sont fermées à l'ouverture ; l'utilisateur les ouvre.
+  const [categoriesRepliees, setCategoriesRepliees] = useState<string[]>(CATEGORIES.map((c) => c.code));
   const [colonneTri, setColonneTri] = useState("");
   const [triAscendant, setTriAscendant] = useState(true);
 
@@ -63,73 +65,83 @@ export function ComparativeTable({
   };
 
   return (
-    <div className="bg-surface border border-border rounded-[var(--radius-lg)] overflow-x-auto w-full">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="text-left px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-text-tertiary">
-              KPI
-            </th>
-            {societesComparees.map((soc) => (
-              <th
-                key={soc}
-                onClick={() => trierParColonne(soc)}
-                className="text-right px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-text-tertiary cursor-pointer select-none hover:text-text-primary"
-              >
-                <span className="inline-flex items-center gap-1 justify-end w-full">
-                  {soc}
-                  <ArrowUpDown className="w-2.5 h-2.5" />
-                </span>
-              </th>
-            ))}
-            {afficherMoyenne && (
-              <th className="text-right px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-text-tertiary">
-                Moyenne
-              </th>
-            )}
-            {afficherMediane && (
-              <th className="text-right px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-text-tertiary">
-                Médiane
-              </th>
-            )}
-            {afficherSeuil && (
-              <th className="text-right px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-text-tertiary whitespace-nowrap min-w-[8rem]">
-                Seuil
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {CATEGORIES.map((c) => {
-            const repliee = categoriesRepliees.includes(c.code);
-            const lignes = colonneTri && societesComparees.includes(colonneTri)
-              ? trierLignes(tableau[c.code] ?? [], colonneTri, triAscendant)
-              : tableau[c.code] ?? [];
-            const nColonnes = 1 + societesComparees.length + Number(afficherMoyenne) + Number(afficherMediane) + Number(afficherSeuil);
-            return (
-              <SectionCategorie
-                key={c.code}
-                code={c.code}
-                label={c.label}
-                repliee={repliee}
-                onToggle={() => basculerCategorie(c.code)}
-                nColonnes={nColonnes}
-                lignes={lignes}
-                societesComparees={societesComparees}
-                afficherMoyenne={afficherMoyenne}
-                afficherMediane={afficherMediane}
-                afficherSeuil={afficherSeuil}
-                seuilVertScr={seuilVertScr}
-              />
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <CarteAgrandissable
+      titre="Tableau comparatif"
+      nom="le tableau comparatif"
+      actions={
+        <select
+          value={filtreCategorie}
+          onChange={(e) => onChangeFiltre(e.target.value)}
+          aria-label="Filtrer par catégorie de KPI"
+          className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-1.5 bg-surface text-text-primary font-body"
+        >
+          {CATEGORIES_FILTRE.map((c) => (
+            <option key={c} value={c}>
+              {CATEGORIE_LABELS[c]}
+            </option>
+          ))}
+        </select>
+      }
+    >
+      {({ agrandi }) => {
+        // En-têtes de colonnes collés en haut quand le tableau défile (vue agrandie).
+        const cellEntete = cn(
+          "px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-text-tertiary",
+          agrandi && "sticky top-0 z-10 bg-surface"
+        );
+        return (
+          <div className={cn("border border-border rounded-[var(--radius-md)]", !agrandi && "overflow-x-auto")}>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className={cn("text-left", cellEntete)}>KPI</th>
+                  {societesComparees.map((soc) => (
+                    <th
+                      key={soc}
+                      onClick={() => trierParColonne(soc)}
+                      className={cn("text-right cursor-pointer select-none hover:text-text-primary", cellEntete)}
+                    >
+                      <span className="inline-flex items-center gap-1 justify-end w-full">
+                        {soc}
+                        <ArrowUpDown className="w-2.5 h-2.5" />
+                      </span>
+                    </th>
+                  ))}
+                  <th className={cn("text-right", cellEntete)}>Moyenne</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CATEGORIES.map((c) => {
+                  // Une catégorie choisie dans le filtre s'affiche ouverte.
+                  const repliee = filtreCategorie === "Tous" && categoriesRepliees.includes(c.code);
+                  const lignes =
+                    colonneTri && societesComparees.includes(colonneTri)
+                      ? trierLignes(tableau[c.code] ?? [], colonneTri, triAscendant)
+                      : tableau[c.code] ?? [];
+                  return (
+                    <SectionCategorie
+                      key={c.code}
+                      code={c.code}
+                      label={c.label}
+                      repliee={repliee}
+                      onToggle={() => basculerCategorie(c.code)}
+                      nColonnes={2 + societesComparees.length}
+                      lignes={lignes}
+                      societesComparees={societesComparees}
+                      seuilVertScr={seuilVertScr}
+                    />
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      }}
+    </CarteAgrandissable>
   );
 }
 
-/** Infobulle (+ soulignement pointillé) d'une moyenne/médiane calculée hors
+/** Infobulle (+ soulignement pointillé) d'une moyenne calculée hors
  * valeurs non comparables, sociétés déjà consolidées et autre périmètre ;
  * rien s'il n'y a aucune exclusion. */
 function infobulleExclues(note: string | null) {
@@ -148,9 +160,6 @@ function SectionCategorie({
   nColonnes,
   lignes,
   societesComparees,
-  afficherMoyenne,
-  afficherMediane,
-  afficherSeuil,
   seuilVertScr,
 }: {
   code: string;
@@ -160,9 +169,6 @@ function SectionCategorie({
   nColonnes: number;
   lignes: LigneKpi[];
   societesComparees: string[];
-  afficherMoyenne: boolean;
-  afficherMediane: boolean;
-  afficherSeuil: boolean;
   seuilVertScr: number;
 }) {
   if (lignes.length === 0) return null;
@@ -177,6 +183,9 @@ function SectionCategorie({
           <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-text-secondary">
             {repliee ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             {code} — {label}
+            <span className="font-medium normal-case tracking-normal text-text-tertiary">
+              · {lignes.length} KPI{lignes.length > 1 ? "s" : ""}
+            </span>
           </span>
         </td>
       </tr>
@@ -206,6 +215,19 @@ function SectionCategorie({
             >
               <td className={cn("px-4 py-2.5 font-medium", grise ? "text-text-tertiary" : "text-text-primary")}>
                 {libelleCommun ?? ligne.kpiLabel}
+                {/* Seuils (légal verrouillé ; vert = repère de marché, seuilVertScr) */}
+                {ligne.kpiId === "ratio_scr" && (
+                  <span className="mt-0.5 flex items-center gap-1 text-[11px] font-normal text-text-tertiary">
+                    <Lock className="w-3 h-3" aria-label="Seuil légal, verrouillé" />
+                    seuil légal {SEUIL_LEGAL} % · vert {seuilVertScr} %
+                  </span>
+                )}
+                {ligne.kpiId === "ratio_mcr" && (
+                  <span className="mt-0.5 flex items-center gap-1 text-[11px] font-normal text-text-tertiary">
+                    <Lock className="w-3 h-3" aria-label="Seuil légal, verrouillé" />
+                    seuil légal {SEUIL_LEGAL} %
+                  </span>
+                )}
                 {(compat.verdict === "N" || compat.verdict === "R") && noteCompat && (
                   <AvertissementKpi
                     note={noteCompat}
@@ -277,33 +299,9 @@ function SectionCategorie({
                   </td>
                 );
               })}
-              {afficherMoyenne && (
-                <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
-                  <span {...infobulleExclues(ligne.noteAgregat)}>{ligne.moyenneStr}</span>
-                </td>
-              )}
-              {afficherMediane && (
-                <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
-                  <span {...infobulleExclues(ligne.noteAgregat)}>{ligne.medianeStr}</span>
-                </td>
-              )}
-              {afficherSeuil && (
-                <td className="px-4 py-2.5 text-right font-mono whitespace-nowrap">
-                  {ligne.kpiId === "ratio_scr" ? (
-                    <span className="inline-flex items-center gap-1 justify-end text-text-secondary">
-                      <Lock className="w-3 h-3 text-text-tertiary" aria-label="Seuil légal, verrouillé" />
-                      {SEUIL_LEGAL} % · {seuilVertScr} %
-                    </span>
-                  ) : ligne.kpiId === "ratio_mcr" ? (
-                    <span className="inline-flex items-center gap-1 justify-end text-text-secondary">
-                      <Lock className="w-3 h-3 text-text-tertiary" aria-label="Seuil légal, verrouillé" />
-                      {SEUIL_LEGAL} %
-                    </span>
-                  ) : (
-                    <span className="text-text-tertiary">—</span>
-                  )}
-                </td>
-              )}
+              <td className={cn("px-4 py-2.5 text-right font-mono text-text-secondary", grisee)}>
+                <span {...infobulleExclues(ligne.noteAgregat)}>{ligne.moyenneStr}</span>
+              </td>
             </tr>
           );
         })}

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Info, RotateCcw, TriangleAlert, Users, X } from "lucide-react";
 import {
-  CATEGORIE_LABELS,
   FILTRES_VIDES,
   avertissementComparabilite,
   societesFiltrees,
@@ -20,16 +19,12 @@ import { groupePairsCommun, groupePairsDe } from "@/lib/comparabilite";
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 const MAX_SOCIETES = 8;
-const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A"];
 
 /** Port de analyse_comparative() (comparative.py, Reflex). */
 export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilVertScr?: number }) {
   const [societes, setSocietes] = useState<string[]>([]);
   const [filtreCategorie, setFiltreCategorie] = useState("Tous");
   const [kpiGraphique, setKpiGraphique] = useState("ratio_scr");
-  const [afficherMoyenne, setAfficherMoyenne] = useState(true);
-  const [afficherMediane, setAfficherMediane] = useState(true);
-  const [afficherSeuil, setAfficherSeuil] = useState(true);
   const [filtres, setFiltres] = useState<FiltresSocietes>(FILTRES_VIDES);
 
   const sfcrDisponibles = listeSfcrDisponibles();
@@ -137,7 +132,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
               {societes.length} sur {pairsSelection.n} société{pairsSelection.n > 1 ? "s" : ""} du groupe
               {pairsSelection.n > MAX_SOCIETES && ` (comparatif limité à ${MAX_SOCIETES} colonnes)`}.
               {pairsSelection.petitEchantillon &&
-                ` Échantillon de ${pairsSelection.n} société${pairsSelection.n > 1 ? "s" : ""} : médiane peu fiable.`}
+                ` Échantillon de ${pairsSelection.n} société${pairsSelection.n > 1 ? "s" : ""} : moyenne peu fiable.`}
             </span>
           </p>
         )}
@@ -174,40 +169,10 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
           <RadarComparatif societesComparees={societes} />
           <ComparisonBarChart societesComparees={societes} kpiId={kpiGraphique} onChangeKpi={setKpiGraphique} />
 
-          {/* Filtre + options benchmark */}
-          <div className="flex items-center gap-4 flex-wrap w-full">
-            <select
-              value={filtreCategorie}
-              onChange={(e) => setFiltreCategorie(e.target.value)}
-              className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-1.5 bg-surface text-text-primary font-body"
-            >
-              {CATEGORIES_FILTRE.map((c) => (
-                <option key={c} value={c}>
-                  {CATEGORIE_LABELS[c]}
-                </option>
-              ))}
-            </select>
-            <span className="flex-1" />
-            <label className="flex items-center gap-1.5 text-sm text-text-primary cursor-pointer">
-              <input type="checkbox" checked={afficherMoyenne} onChange={() => setAfficherMoyenne((v) => !v)} />
-              Moyenne
-            </label>
-            <label className="flex items-center gap-1.5 text-sm text-text-primary cursor-pointer">
-              <input type="checkbox" checked={afficherMediane} onChange={() => setAfficherMediane((v) => !v)} />
-              Médiane
-            </label>
-            <label className="flex items-center gap-1.5 text-sm text-text-primary cursor-pointer">
-              <input type="checkbox" checked={afficherSeuil} onChange={() => setAfficherSeuil((v) => !v)} />
-              Afficher les seuils
-            </label>
-          </div>
-
           <ComparativeTable
             societesComparees={societes}
             filtreCategorie={filtreCategorie}
-            afficherMoyenne={afficherMoyenne}
-            afficherMediane={afficherMediane}
-            afficherSeuil={afficherSeuil}
+            onChangeFiltre={setFiltreCategorie}
             seuilVertScr={seuilVertScr}
           />
 
