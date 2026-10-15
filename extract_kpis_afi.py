@@ -20,17 +20,15 @@ R0400(179 315,47)+R0480(620 304,77) = 6 339 333,93 ; + R0060
 (diversification, -3 717 871,06) = 2 621 462,87 = scr_total (R0030/
 R0040/R0200/R0220, confirmé identique).
 
-CONTRAIREMENT À AFV : extract_qrt_native() fonctionne correctement sur
-le tableau S.05.01.02 de CE document (pas de tableau vide) — vérifié
-via capturer_composants (R0210=8 921 270,19 + R0220=715 080,35 +
-R0230=977,32 + R1510=0,00 = 9 637 327,86, exactement la valeur rendue
-par resoudre_variantes_qrt). Une 1re lecture manuelle du texte brut
-avait semblé donner un total légèrement différent (9 636 839,19) —
-erreur de LECTURE humaine sur un flux de texte à 17 colonnes très
-dense (un token mal associé à sa colonne), pas un bug du code :
-capturer_composants (extraction par position, pas par ordre du texte)
-tranche et confirme le total déjà calculé. Aucun override nécessaire
-ici, contrairement à AFV.
+S.05.01.02 (primes, sinistres) : lecture MANUELLE de la colonne Total
+(Décision 154). L'extraction par position comptait certaines lignes
+deux fois (ligne d'activité + Total : R0230 = 977,32 au lieu de 488,66 ;
+R0310 = 11 158 949 au lieu de 5 577 862,90) et perdait le signe de R0330
+(−12 038,51). Valeurs vérifiées sur rendu image de la page 3 ET par
+l'arithmétique du tableau : brut direct + acceptations − part des
+réassureurs = net imprimé, à l'euro près (primes 5 626 852,98 ; sinistres
+3 526 205,35). La 1re lecture manuelle (9 636 839,19 de primes) était la
+bonne, contrairement à ce que ce commentaire affirmait auparavant.
 
 best_estimate inclut une composante "vie" non négligeable (R0670 =
 1 263 122,78 K€, ~8% du total) : rentes découlant de sinistres non-vie
@@ -44,6 +42,20 @@ dominant dans le modèle interne).
 import sqlite3
 import sys
 from pathlib import Path
+
+# S.05.01.02 p.3, colonne Total (K€), lue sur rendu image (Décision 154).
+PRIMES_COMPOSANTS = [
+    ("R0210", "Primes acquises brutes — directe (non-vie, Total)", 8_921_270.19),
+    ("R0220", "Primes acquises brutes — réassurance proportionnelle acceptée (non-vie, Total)", 715_080.34),
+    ("R0230", "Primes acquises brutes — réassurance non proportionnelle acceptée (non-vie, Total)", 488.66),
+    ("R1510", "Primes acquises brutes (vie, Total)", 0.0),
+]
+SINISTRES_COMPOSANTS = [
+    ("R0310", "Charge de sinistres — directe (non-vie, Total)", 5_577_862.90),
+    ("R0320", "Charge de sinistres — réassurance proportionnelle acceptée (non-vie, Total)", 346_611.98),
+    ("R0330", "Charge de sinistres — réassurance non proportionnelle acceptée (non-vie, Total)", -12_038.51),
+    ("R1610", "Charge de sinistres (vie, Total)", 0.0),
+]
 
 BASE_DIR = Path(__file__).parent
 sys.path.insert(0, str(BASE_DIR))
@@ -141,17 +153,16 @@ def extraire_tout():
     else:
         valeurs["provisions_techniques"] = (None, None, "best_estimate ou marge_risque NULL")
 
-    for kpi_name in ("primes_acquises_brutes", "charge_sinistres"):
-        capturer = []
-        resultats = ek.resoudre_variantes_qrt(kpi_name, corpus, templates_presents, capturer_composants=capturer)
-        if resultats:
-            total = sum(v for v, _, _ in resultats)
-            template_id = resultats[0][1]
-            valeurs[kpi_name] = (total / DIVISEUR_MONTANT, _page_source(corpus, template_id),
-                                  f"{template_id}, somme {len(resultats)} variante(s) (mapping, vérifié via composants)")
-            composants_sommes[kpi_name] = (capturer, _page_source(corpus, template_id))
-        else:
-            valeurs[kpi_name] = (None, None, "aucune variante ne matche")
+    # Décision 154 : lecture manuelle de la colonne Total (C0200 non-vie,
+    # C0300 vie) du S.05.01.02 p.3 — l'extraction par position comptait
+    # certaines lignes deux fois (colonne de ligne d'activité + Total :
+    # R0310 = 11 158 949 au lieu de 5 577 863, R0230 = 977 au lieu de 489)
+    # et perdait le signe de R0330.
+    for kpi_name, composants in (("primes_acquises_brutes", PRIMES_COMPOSANTS),
+                                  ("charge_sinistres", SINISTRES_COMPOSANTS)):
+        valeurs[kpi_name] = (sum(v for _, _, v in composants) / DIVISEUR_MONTANT, 3,
+                             "S.05.01.02 p.3, colonne Total lue manuellement (R02x0/R03x0 non-vie + R1510/R1610 vie) — Décision 154")
+        composants_sommes[kpi_name] = ([{"code": c, "libelle": l, "valeur": v} for c, l, v in composants], 3)
 
     for kpi_name in ("scr_operationnel", "scr_marche", "scr_souscription_sante",
                       "scr_contrepartie", "scr_souscription_vie", "scr_souscription_nonvie", "scr_diversification"):
