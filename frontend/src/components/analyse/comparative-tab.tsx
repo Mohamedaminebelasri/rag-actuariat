@@ -6,11 +6,10 @@ import {
   CATEGORIE_LABELS,
   FILTRES_VIDES,
   avertissementComparabilite,
-  couleurSeuil,
   societesFiltrees,
   type FiltresSocietes,
 } from "@/lib/analyse-utils";
-import { kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
+import { listeSfcrDisponibles } from "@/data/analyse-demo";
 import { ComparativeTable } from "./comparative-table";
 import { RadarComparatif } from "./radar-chart";
 import { ComparisonBarChart } from "./comparison-bar-chart";
@@ -50,19 +49,6 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
     const membres = [reference, ...pairsReference.societes.filter((s) => s !== reference)];
     setSocietes(membres.slice(0, MAX_SOCIETES));
   };
-
-  // Compteur de couleurs (ratio SCR) pour la sélection courante.
-  const compteurCouleurs = societes.reduce(
-    (acc, soc) => {
-      const v = kpisSociete(soc)["ratio_scr"]?.valeur;
-      const c = couleurSeuil("ratio_scr", v, seuilVertScr);
-      if (c === "success") acc.vertes += 1;
-      else if (c === "warning") acc.orange += 1;
-      else if (c === "danger") acc.rouge += 1;
-      return acc;
-    },
-    { vertes: 0, orange: 0, rouge: 0 }
-  );
 
   const ajouter = (id: string) => {
     if (!id || societes.includes(id) || auMaximum) return;
@@ -165,34 +151,14 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
         </div>
       ) : (
         <div className="flex flex-col gap-4 w-full items-start">
-          <div className="flex items-center w-full gap-3 flex-wrap">
-            <span
-              className="inline-flex items-center gap-3 text-sm font-mono text-text-secondary bg-surface-secondary rounded-full px-3.5 py-1.5"
-              title="Répartition du ratio SCR pour la sélection courante"
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-success" aria-hidden="true" />
-                {compteurCouleurs.vertes} verte{compteurCouleurs.vertes > 1 ? "s" : ""}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-warning" aria-hidden="true" />
-                {compteurCouleurs.orange} orange{compteurCouleurs.orange > 1 ? "s" : ""}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-danger" aria-hidden="true" />
-                {compteurCouleurs.rouge} rouge{compteurCouleurs.rouge > 1 ? "s" : ""}
-              </span>
-            </span>
-            {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
-            <span className="flex-1" />
-            <button
-              onClick={() => exporterCsvComparatif(societes)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] border border-border text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors"
-            >
-              <Download className="w-[15px] h-[15px]" />
-              Exporter (CSV)
-            </button> */}
-          </div>
+          {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
+          <button
+            onClick={() => exporterCsvComparatif(societes)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] border border-border text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors"
+          >
+            <Download className="w-[15px] h-[15px]" />
+            Exporter (CSV)
+          </button> */}
 
           <RadarComparatif societesComparees={societes} />
           <ComparisonBarChart societesComparees={societes} kpiId={kpiGraphique} onChangeKpi={setKpiGraphique} />
