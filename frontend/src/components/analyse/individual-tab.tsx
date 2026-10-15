@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { CircleCheck, Download, FileSearch, FileText } from "lucide-react";
+import { CircleCheck, FileSearch, FileText } from "lucide-react";
 import { CATEGORIES, KPI_DEFINITIONS, kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
 import { KpiCard } from "./kpi-card";
 import { ScrBreakdownChart } from "./scr-breakdown-chart";
-import { PositionMarche } from "./position-marche";
-import { exporterCsvIndividuel } from "@/lib/csv-export";
+// import { PositionMarche } from "./position-marche"; // masqué (cf. JSX commenté plus bas)
+// import { exporterCsvIndividuel } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 /** Port de analyse_individuelle() (individuelle.py, Reflex). */
@@ -54,6 +54,7 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
         <div className="w-full flex flex-col items-start">
           <div className="flex items-center w-full mt-6 mb-2">
             <h2 className="font-heading italic text-2xl text-text-primary">{label}</h2>
+            {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
             <span className="flex-1" />
             <button
               onClick={() => exporterCsvIndividuel(societe)}
@@ -61,7 +62,7 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
             >
               <Download className="w-[15px] h-[15px]" />
               Exporter (CSV)
-            </button>
+            </button> */}
           </div>
 
           {/* <PositionMarche key={societe} societe={societe} /> */}

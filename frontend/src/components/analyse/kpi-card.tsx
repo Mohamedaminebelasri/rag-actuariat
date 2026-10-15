@@ -3,7 +3,7 @@
 import { CircleCheck, CircleX, Minus, TrendingDown, TriangleAlert, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { KpiDefinition, KpiValeur } from "@/data/analyse-demo";
-import { ConfidenceBadge } from "./confidence-badge";
+// import { ConfidenceBadge } from "./confidence-badge"; // masqué (cf. JSX commenté plus bas)
 import { AvertissementKpi } from "./avertissement-kpi";
 import {
   couleurSeuil,
@@ -68,7 +68,6 @@ const LIBELLE_TENDANCE: Record<SentimentVariation, string> = {
 export function KpiCard({
   def,
   valeur,
-  societe,
   seuilVertScr = SEUIL_VERT_SCR_DEFAUT,
 }: {
   def: KpiDefinition;

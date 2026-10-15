@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, TriangleAlert, Users, X } from "lucide-react";
+import { TriangleAlert, Users, X } from "lucide-react";
 import {
   CATEGORIE_LABELS,
   FILTRES_VIDES,
@@ -16,7 +16,7 @@ import { RadarComparatif } from "./radar-chart";
 import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
 import { FiltresSocietesBar } from "./filtres-societes";
-import { exporterCsvComparatif } from "@/lib/csv-export";
+// import { exporterCsvComparatif } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 const MAX_SOCIETES = 8;
@@ -144,6 +144,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
                 {compteurCouleurs.rouge} rouge{compteurCouleurs.rouge > 1 ? "s" : ""}
               </span>
             </span>
+            {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
             <span className="flex-1" />
             <button
               onClick={() => exporterCsvComparatif(societes)}
@@ -151,7 +152,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
             >
               <Download className="w-[15px] h-[15px]" />
               Exporter (CSV)
-            </button>
+            </button> */}
           </div>
 
           <RadarComparatif societesComparees={societes} />

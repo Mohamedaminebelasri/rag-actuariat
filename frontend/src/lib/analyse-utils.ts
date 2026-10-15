@@ -55,7 +55,11 @@ export function formatValeur(
   if (unite === "M€") {
     return `${formatNombre(valeur, 1)} M€`;
   }
-  return `${formatNombre(valeur, 2)} Md€`;
+  if (unite === "Md€") {
+    return `${formatNombre(valeur, 2)} Md€`;
+  }
+  // Unité inconnue : jamais de « Md€ » par défaut, on affiche l'unité réelle.
+  return `${formatNombre(valeur, 1)} ${unite}`;
 }
 
 function formatNombre(valeur: number, decimales: number): string {
@@ -110,7 +114,7 @@ export function texteInfobulleSeuil(kpiId: string, couleur: CouleurSeuil, seuilV
 
 export function formatVariation(variation: number, unit: string): string {
   const signe = variation >= 0 ? "+" : "";
-  return `${signe}${variation.toFixed(unit === "Md€" || unit === "M€" ? 1 : 1)} ${unit}`;
+  return `${signe}${variation.toFixed(1)} ${unit}`;
 }
 
 export function kpiLabelCourt(def: KpiDefinition): string {
