@@ -108,7 +108,12 @@ def extraire_tout_creditagricole():
             f"{template_id}/{variante['row']}/{variante['col']} ({variante['variante']})",
         )
 
-    for kpi_name, diviseur in [("best_estimate", 1000), ("marge_risque", 1000)]:
+    # Décision 148 : le S.02.01.02 de ce document (p.66) est étiqueté
+    # « En milliers d'euros » mais ses montants sont en MILLIONS (290 602
+    # d'investissements = 290 Md€ ; le tableau narratif D.2.1 p.53 donne
+    # « (en millions d'euros) … Total Best Estimate brut 342 577 »). Les
+    # autres gabarits (S.23.01.22, S.25.01.22) sont bien en K€.
+    for kpi_name, diviseur in [("best_estimate", 1), ("marge_risque", 1)]:
         try:
             valeur, template_id, variante = ek.valeur_principale(kpi_name, corpus, templates_presents)
             valeurs[kpi_name] = (valeur / diviseur, _page_source(corpus, template_id), f"{template_id}, somme (mapping)")

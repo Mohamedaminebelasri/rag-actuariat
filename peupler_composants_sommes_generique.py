@@ -136,7 +136,10 @@ SOCIETES = {
     # Décision 093/101) — seuls best_estimate/marge_risque sont couverts
     # ici ; le reste est résolu séparément (cf. peupler_composants_manuels.py).
     "Allianz Vie": (_corpus_allianzvie, 1000),
-    "Crédit Agricole Assurances": (_corpus_creditagricole, 1000),
+    # Décision 148 : seuls best_estimate/marge_risque passent ici pour CAA
+    # (primes/sinistres exclus ci-dessus), lus sur un S.02.01.02 en
+    # millions malgré son en-tête « milliers » — diviseur 1, pas 1000.
+    "Crédit Agricole Assurances": (_corpus_creditagricole, 1),
 }
 
 
