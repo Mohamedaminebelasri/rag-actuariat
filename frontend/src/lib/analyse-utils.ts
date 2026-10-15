@@ -12,6 +12,7 @@ import {
   toutesLesSocietes,
   type KpiDefinition,
   type ModeleCapital,
+  type Perimetre,
   type TypeSociete,
 } from "@/data/analyse-demo";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
@@ -347,15 +348,20 @@ export function sentimentVariation(kpiId: string, variation: number, unite: stri
 
 // ───────────────────────── Idée 3 : filtres et comparabilité ─────────────────────────
 
-export type FiltresSocietes = { type: TypeSociete | "Tous"; modele: ModeleCapital | "Tous" };
-export const FILTRES_VIDES: FiltresSocietes = { type: "Tous", modele: "Tous" };
+export type FiltresSocietes = {
+  type: TypeSociete | "Tous";
+  modele: ModeleCapital | "Tous";
+  perimetre: Perimetre | "Tous";
+};
+export const FILTRES_VIDES: FiltresSocietes = { type: "Tous", modele: "Tous", perimetre: "Tous" };
 
 export function societesFiltrees(filtres: FiltresSocietes): string[] {
   return toutesLesSocietes().filter((nom) => {
     const info = DEMO_SFCR[nom];
     return (
       (filtres.type === "Tous" || info.type === filtres.type) &&
-      (filtres.modele === "Tous" || info.modele === filtres.modele)
+      (filtres.modele === "Tous" || info.modele === filtres.modele) &&
+      (filtres.perimetre === "Tous" || info.perimetre === filtres.perimetre)
     );
   });
 }
@@ -373,6 +379,9 @@ export function avertissementComparabilite(societes: string[]): string | null {
   }
   if (types.has("Vie") && types.has("Non-vie")) {
     messages.push("Activités vie et non-vie mélangées : le ratio S/P et le profil de risque sont peu comparables.");
+  }
+  if (new Set(infos.map((i) => i.perimetre)).size > 1) {
+    messages.push("Entités solo et groupes consolidés mélangés : montants, diversification et MCR ne sont pas de même nature.");
   }
   return messages.length > 0 ? messages.join(" ") : null;
 }

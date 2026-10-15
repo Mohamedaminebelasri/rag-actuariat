@@ -188,6 +188,8 @@ export type KpiValeur = {
    * Recopié tel quel depuis donnees-extraites.json — jamais déduit du nom. */
   avertissement?: boolean;
   noteAvertissement?: string | null;
+  /** Libellé propre à cette valeur (ex. mcr d'un groupe) : remplace le nom générique. */
+  libelle?: string | null;
 };
 
 function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
@@ -203,30 +205,33 @@ function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
     uniteBrute: k.uniteBrute ?? null,
     avertissement: k.avertissement ?? false,
     noteAvertissement: k.noteAvertissement ?? null,
+    libelle: k.libelle ?? null,
   };
 }
 
 // ────────────────────────── Filtres société ──────────────────────────
 
-export type TypeSociete = "Vie" | "Non-vie" | "Mixte" | "Mutuelle";
+/** Activité (champ typeActivite du JSON — `type` est la forme juridique). */
+export type TypeSociete = "Vie" | "Non-vie" | "Santé/prévoyance" | "Mixte";
 export type ModeleCapital = "Formule standard" | "Modèle interne";
-export const TYPES_SOCIETE: TypeSociete[] = ["Vie", "Non-vie", "Mixte", "Mutuelle"];
+export type Perimetre = "solo" | "groupe";
+export const TYPES_SOCIETE: TypeSociete[] = ["Vie", "Non-vie", "Santé/prévoyance", "Mixte"];
 export const MODELES_CAPITAL: ModeleCapital[] = ["Formule standard", "Modèle interne"];
-
-// Mapping du champ `type` de kpis.db vers TypeSociete d'affichage
-function typeAffichage(typeDb: string): TypeSociete {
-  const t = typeDb.toLowerCase();
-  if (t === "mutuelle") return "Mutuelle";
-  if (t === "groupe") return "Mixte";
-  return "Mixte"; // "entité" et autres → Mixte par défaut
-}
+export const PERIMETRES: Perimetre[] = ["solo", "groupe"];
 
 // ────────────────────────── Structure société ──────────────────────────
 
 export type SocieteDemo = {
   annee: number;
+  /** Activité (typeActivite). */
   type: TypeSociete;
   modele: ModeleCapital;
+  perimetre: Perimetre;
+  /** Famille juridique (axe « forme » de la matrice de compatibilité). */
+  famille: string;
+  groupePairs: string | null;
+  /** Société du panel qui la consolide déjà. */
+  consolideDans: string | null;
   kpis: Record<string, KpiValeur>;
 };
 
@@ -242,8 +247,12 @@ function buildSocietes(): Record<string, SocieteDemo> {
     const premierKpi = Object.values(kpisReels)[0];
     resultat[societe.name] = {
       annee: premierKpi?.annee ?? 2025,
-      type: typeAffichage(societe.type),
-      modele: "Formule standard", // par défaut — à enrichir si kpis.db stocke cette info
+      type: (societe.typeActivite as TypeSociete | undefined) ?? "Mixte",
+      modele: (societe.modeleCapital as ModeleCapital | undefined) ?? "Formule standard",
+      perimetre: (societe.perimetre as Perimetre | undefined) ?? "solo",
+      famille: societe.familleJuridique ?? societe.type,
+      groupePairs: societe.groupePairs ?? null,
+      consolideDans: societe.consolideDans ?? null,
       kpis: kpisConvertis,
     };
   }

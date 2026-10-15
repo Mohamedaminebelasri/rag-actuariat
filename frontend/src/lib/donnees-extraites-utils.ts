@@ -15,11 +15,57 @@ import donneesExtraitesJson from "@/data/donnees-extraites.json";
 export type Societe = {
   id: number;
   name: string;
+  /** Forme juridique courte (SA, SE, SAM, Mutuelle, Groupe…). */
   type: string;
   groupe: string | null;
   country: string;
+  /** Vie / Non-vie / Santé/prévoyance / Mixte. */
   typeActivite?: string;
   scrMethod?: string;
+  formeJuridique?: string;
+  familleJuridique?: string;
+  /** solo / groupe. */
+  perimetre?: string;
+  /** Formule standard / Modèle interne. */
+  modeleCapital?: string;
+  groupeParent?: string | null;
+  /** Société du panel qui la consolide déjà (double comptage à éviter). */
+  consolideDans?: string | null;
+  /** Clé de groupe de pairs : activité · modèle · périmètre. */
+  groupePairs?: string;
+};
+
+export type GroupePairs = {
+  id: string;
+  societes: string[];
+  n: number;
+  /** n < 5 : médiane peu fiable. */
+  petitEchantillon: boolean;
+};
+
+export type VerdictCompat = "C" | "R" | "N" | "NA";
+export type AxeCompat = "activite" | "forme" | "modele" | "perimetre";
+
+export type Compatibilite = {
+  axes: AxeCompat[];
+  /** Ordre de gravité : C < NA < R < N. */
+  ordreVerdicts: Record<VerdictCompat, number>;
+  /** Activité → classe de sinistres (axe « activité » de charge_sinistres). */
+  classeSinistres: Record<string, string>;
+  regle: string;
+  matrice: Record<string, Partial<Record<AxeCompat, { verdict: VerdictCompat; note: string | null }>>>;
+};
+
+/** Ratios normalisés d'une société (clés absentes = non calculables). */
+export type IndicateursSociete = {
+  ratio_scr_sans_mesures_lt_pct?: number;
+  impact_va_pts?: number;
+  impact_transitoires_pts?: number;
+  impact_mesures_lt_pts?: number;
+  marge_risque_sur_be_pct?: number;
+  sp_nonvie_pct?: number;
+  position_mcr?: string | null;
+  [cle: string]: unknown;
 };
 
 export type Composant = {
@@ -53,15 +99,22 @@ export type KpiExtrait = {
    * valeur normale. Voir noteAvertissement pour le détail. */
   avertissement?: boolean;
   noteAvertissement?: string | null;
+  /** Libellé à afficher à la place du nom générique du KPI (ex. « SCR
+   * minimal consolidé du groupe » pour le mcr d'un groupe). */
+  libelle?: string | null;
 };
 
 type DonneesExtraites = {
   genereLe: string;
   societes: Societe[];
   kpisParSociete: Record<string, Record<string, KpiExtrait>>;
+  indicateursParSociete: Record<string, IndicateursSociete>;
+  definitionsIndicateurs: Record<string, string>;
+  groupesPairs: GroupePairs[];
+  compatibilite: Compatibilite;
 };
 
-export const DONNEES_EXTRAITES = donneesExtraitesJson as DonneesExtraites;
+export const DONNEES_EXTRAITES = donneesExtraitesJson as unknown as DonneesExtraites;
 
 // Ordre d'affichage des catégories réelles de kpis.db (colonne `category`).
 export const CATEGORIES_REELLES: { code: string; label: string }[] = [

@@ -1,7 +1,14 @@
 "use client";
 
 import { Filter, X } from "lucide-react";
-import { MODELES_CAPITAL, TYPES_SOCIETE, type ModeleCapital, type TypeSociete } from "@/data/analyse-demo";
+import {
+  MODELES_CAPITAL,
+  PERIMETRES,
+  TYPES_SOCIETE,
+  type ModeleCapital,
+  type Perimetre,
+  type TypeSociete,
+} from "@/data/analyse-demo";
 import { FILTRES_VIDES, type FiltresSocietes } from "@/lib/analyse-utils";
 
 const CLASSE_SELECT =
@@ -17,7 +24,10 @@ export function FiltresSocietesBar({
   onChange: (f: FiltresSocietes) => void;
   resume?: string;
 }) {
-  const actif = filtres.type !== FILTRES_VIDES.type || filtres.modele !== FILTRES_VIDES.modele;
+  const actif =
+    filtres.type !== FILTRES_VIDES.type ||
+    filtres.modele !== FILTRES_VIDES.modele ||
+    filtres.perimetre !== FILTRES_VIDES.perimetre;
 
   return (
     <div className="flex items-center gap-3 flex-wrap w-full">
@@ -48,6 +58,19 @@ export function FiltresSocietesBar({
         {MODELES_CAPITAL.map((m) => (
           <option key={m} value={m}>
             {m}
+          </option>
+        ))}
+      </select>
+      <select
+        aria-label="Filtrer par périmètre"
+        value={filtres.perimetre}
+        onChange={(e) => onChange({ ...filtres, perimetre: e.target.value as Perimetre | "Tous" })}
+        className={CLASSE_SELECT}
+      >
+        <option value="Tous">Tous les périmètres</option>
+        {PERIMETRES.map((p) => (
+          <option key={p} value={p}>
+            {p === "solo" ? "Entités (solo)" : "Groupes (consolidé)"}
           </option>
         ))}
       </select>
