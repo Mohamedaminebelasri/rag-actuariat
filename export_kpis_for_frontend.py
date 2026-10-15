@@ -21,6 +21,8 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 
+import comparabilite
+
 DB_PATH = Path(__file__).parent / "kpis.db"
 OUT_PATH = Path(__file__).parent / "frontend" / "src" / "data" / "kpi-sources.json"
 OUT_PATH_DONNEES = Path(__file__).parent / "frontend" / "src" / "data" / "donnees-extraites.json"
@@ -129,6 +131,15 @@ def export_donnees_extraites():
             # sur la comparabilité entre sociétés.
             "typeActivite": c["type_activite"],
             "scrMethod": c["scr_method"],
+            # Décisions 149/153 — métadonnées contrôlées (populate_company_metadata.py)
+            # et groupe de pairs (activité × modèle × périmètre).
+            "formeJuridique": c["forme_juridique"],
+            "familleJuridique": c["famille_juridique"],
+            "perimetre": c["type_document"],
+            "modeleCapital": comparabilite.libelle_modele(c["scr_method"]),
+            "groupeParent": c["groupe_parent"],
+            "consolideDans": c["groupe_consolide_panel"],
+            "groupePairs": comparabilite.groupe_pairs(c["type_activite"], c["scr_method"], c["type_document"]),
         })
         kpis_par_societe[c["name"]] = {}
 
@@ -194,12 +205,47 @@ def export_donnees_extraites():
             "avertissement": bool(row["avertissement"]),
             "noteAvertissement": row["note_avertissement"],
         })
+    # Décision 155 — impact des mesures de long terme (S.22.01), par société.
+    impact_lt = {r["name"]: dict(r) for r in conn.execute(
+        "SELECT c.name, i.* FROM impact_mesures_lt i JOIN companies c ON c.id = i.company_id WHERE i.year = 2025")}
     conn.close()
+
+    # Décision 153 — libellé propre au « MCR » d'un groupe (ce n'en est pas un).
+    for s in societes:
+        if s["perimetre"] == "groupe":
+            for kpi, libelle in (("mcr", "SCR minimal consolidé du groupe"),
+                                 ("ratio_mcr", "Ratio de couverture du SCR minimal consolidé")):
+                if kpi in kpis_par_societe[s["name"]]:
+                    kpis_par_societe[s["name"]][kpi]["libelle"] = libelle
+
+    # Décision 153 — indicateurs normalisés, groupes de pairs, matrice.
+    indicateurs = {}
+    for s in societes:
+        kp = kpis_par_societe[s["name"]]
+        valeurs = {k: v["valeur"] for k, v in kp.items()}
+        comp = {k: [(c["codeQrt"], c["label"], c["valeur"]) for c in (v.get("composants") or [])] for k, v in kp.items()}
+        indicateurs[s["name"]] = comparabilite.indicateurs(valeurs, comp, s["perimetre"], s["scrMethod"],
+                                                           impact_lt.get(s["name"]))
+    groupes = {}
+    for s in societes:
+        groupes.setdefault(s["groupePairs"], []).append(s["name"])
 
     export = {
         "genereLe": datetime.now().replace(microsecond=0).isoformat(),
         "societes": societes,
         "kpisParSociete": kpis_par_societe,
+        "indicateursParSociete": indicateurs,
+        "definitionsIndicateurs": comparabilite.DEFINITIONS_INDICATEURS,
+        "groupesPairs": [{"id": g, "societes": sorted(n), "n": len(n), "petitEchantillon": len(n) < 5}
+                         for g, n in sorted(groupes.items(), key=lambda x: -len(x[1]))],
+        "compatibilite": {
+            "axes": list(comparabilite.AXES),
+            "ordreVerdicts": comparabilite.ORDRE_VERDICTS,
+            "classeSinistres": comparabilite.CLASSE_SINISTRES,
+            "regle": "Pour un KPI et deux sociétés : pire verdict parmi les axes où elles diffèrent "
+                     "(axe activité de charge_sinistres : comparer classeSinistres, pas l'activité brute).",
+            "matrice": comparabilite.MATRICE,
+        },
     }
 
     OUT_PATH_DONNEES.parent.mkdir(parents=True, exist_ok=True)
