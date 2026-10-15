@@ -69,11 +69,14 @@ export function KpiCard({
   def,
   valeur,
   seuilVertScr = SEUIL_VERT_SCR_DEFAUT,
+  onSelect,
 }: {
   def: KpiDefinition;
   valeur: KpiValeur;
   societe: string;
   seuilVertScr?: number;
+  /** Carte cliquable (KPIs calculés, Décision 158) : ouvre le détail. */
+  onSelect?: () => void;
 }) {
   const couleur = couleurSeuil(def.id, valeur.valeur, seuilVertScr);
   const statut = statutKpi(def.id, valeur.valeur, seuilVertScr);
@@ -101,7 +104,8 @@ export function KpiCard({
     <div
       className={cn(
         "text-left h-full flex flex-col bg-surface border border-border rounded-[var(--radius-lg)] p-[1.1em] shadow-[var(--shadow-sm)]",
-        statut && BORDURE_STATUT[statut.couleur]
+        statut && BORDURE_STATUT[statut.couleur],
+        onSelect && "relative transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-px"
       )}
     >
       <div className="flex items-center w-full">
@@ -117,8 +121,10 @@ export function KpiCard({
           className={cn("font-mono text-[1.75rem] font-bold mt-0.5 leading-tight", COULEUR_VALEUR[couleur])}
           title={infobulleSeuil ?? undefined}
         >
-          {formatValeur(valeur.valeur, def.unite, valeur.valeurBrute, valeur.uniteBrute)}
-          {valeur.avertissement && <AvertissementKpi note={valeur.noteAvertissement} className="ml-2" />}
+          {formatValeur(valeur.valeur, def.unite, valeur.valeurBrute, valeur.uniteBrute, def.decimales)}
+          {valeur.avertissement && (
+            <AvertissementKpi note={valeur.noteAvertissement} className={cn("ml-2", onSelect && "relative z-10")} />
+          )}
         </p>
       )}
       <div className="flex items-center gap-x-2 gap-y-1 flex-wrap mt-1.5 min-h-[1.4em]">
@@ -155,6 +161,17 @@ export function KpiCard({
         )}
       </div>
       <p className="text-xs text-text-tertiary mt-2 leading-relaxed">{def.description}</p>
+      {onSelect && (
+        // Bouton transparent qui recouvre la carte (frère du contenu) : le
+        // marqueur de valeur non comparable reste un vrai bouton au-dessus (z-10).
+        <button
+          type="button"
+          onClick={onSelect}
+          title="Voir la règle de calcul et les composants"
+          aria-label={`${valeur.libelle ?? def.label} : voir la règle de calcul et les composants`}
+          className="absolute inset-0 rounded-[var(--radius-lg)] cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
+        />
+      )}
     </div>
   );
 }
