@@ -9938,3 +9938,106 @@ non-vie < 10 M€, Décision 153).
    fonds propres éligibles, SCR et ratio MCR 2024 lus dans les tableaux
    comparatifs des rapports 2025 ; nécessitera un champ d'export N-1 (à
    annoncer au front). Non lancé.
+
+## Décision 158 — 6 indicateurs calculés promus en KPIs officiels
+
+Six ratios de `indicateursParSociete` (calculés à la volée à l'export,
+Décisions 153 et 155) deviennent de vrais KPIs de `kpis.db`, avec le même
+statut que `provisions_techniques` ou `charge_sinistres` : ligne dans
+`kpis` (catégorie `indicateurs_comparables`, « Indicateurs comparables »),
+composants vérifiables un par un, règle de calcul visible, badge
+« Vérifié » / « Calculé ». Script idempotent
+`peupler_kpis_officiels_indicateurs.py` ; définitions dans
+`kpi_definitions.KPI_INDICATEURS_OFFICIELS` (liste séparée des 21 KPIs
+extraits). `indicateursParSociete` reste exporté **à l'identique** (les
+alertes en dépendent).
+
+| KPI | Unité | Sociétés | Composants |
+|---|---|---|---|
+| `ratio_scr_sans_mesures_lt` | % | 41 | fonds propres et SCR publiés + effets du retrait de la VA (et des transitoires) lus dans le S.22.01 ; ratio publié dans le texte (Generali) ; ratio publié (8 sociétés sans mesure) |
+| `impact_va` | pts | 41 | ratio sans mesures − ratio avant retrait de la VA (approche par étapes) |
+| `impact_transitoires` | pts | 4 | ratio sans transitoire − ratio publié (BPCE Vie, La Mondiale, SGAM AG2R, Groupama) |
+| `marge_risque_sur_be` | % | 41 | `marge_risque` ÷ `best_estimate` × 100 |
+| `sp_nonvie` | % | 25 | lignes non-vie de `charge_sinistres` ÷ lignes non-vie de `primes_acquises_brutes` × 100 |
+| `mcr_en_pct_scr` | % | 36 | `mcr` ÷ `scr_total` × 100, solo seulement |
+
+Valeurs = exactement celles de l'indicateur d'origine (mêmes formules,
+signes et arrondis de `comparabilite.py`) ; recalcul depuis les
+composants à 0,05 près (écart maximal 0,0485, dû à l'arrondi à 1
+décimale). Vérifiés : 39 / 39 / 4 / 41 / 0 / 34.
+
+**Modèle de données (additif)** :
+- Nouvelle table `kpi_formules` (company_id, year, kpi_name, `type`
+  'ratio' ou 'difference', `texte`, `facteur`, `note`).
+- `kpi_composants` : 4 colonnes ajoutées, NULL pour les lignes
+  existantes — `kpi_code` (le composant est ce KPI officiel de la
+  société), `composant_detail` (calcul d'un ratio intermédiaire),
+  `composant_source_pdf` (NULL = PDF par défaut de la société),
+  `composant_valide`. `operation` : '+' / '-' (inchangé) ou
+  'num' / 'den' (ratio = Σ num ÷ Σ den × facteur).
+
+**Contrat JSON** (`kpisParSociete[société][kpi]`, ajouts seulement) :
+- `formule` : `{type, texte, facteur, note?}`, absent pour les KPIs
+  « somme » existants.
+- composants d'un KPI à `formule` : `label, codeQrt, valeur, unite,
+  pageSource, operation` comme avant, plus `kpiCode?`, `detail?`,
+  `sourcePdf` (null = PDF par défaut de la société) et `valide`. Les
+  composants des KPIs « somme » sont inchangés (pas de nouvelle clé).
+- `definitionsKpis[kpi]` : `label, unite, categorie, libelleCategorie,
+  description, classement` (`higher` / `lower` / `neutre` / `aucun`),
+  `indicateur` (clé d'origine).
+- `compatibilite.matrice` : 6 lignes ajoutées ;
+  `compatibilite.activitesApplicables` : `{"sp_nonvie": ["Non-vie",
+  "Santé/prévoyance"]}`.
+- `definitionsIndicateurs` : textes réécrits en français simple (plus de
+  code QRT ni de remarque propre à une société), mêmes clés.
+- Unité `pts` (points de ratio) pour `impact_va` et `impact_transitoires`.
+
+**Choix** :
+- Un KPI sans donnée n'est pas créé. Société sans VA ni transitoire
+  (8) : ratio sans mesures = ratio publié, impact VA = 0, ratio publié en
+  composant et note « n'applique ni correction pour volatilité ni mesure
+  transitoire ». `impact_transitoires` n'existe que pour les 4 sociétés
+  qui appliquent une mesure transitoire, comme l'indicateur d'origine
+  (pas de zéro créé pour les 37 autres).
+- `valide` = tous les composants valides ET recalcul exact. Composants :
+  KPI officiel → son `validated` ; montants du S.22.01 → recoupement des
+  montants publiés avec `fonds_propres_eligibles` / `scr_total` ; ratio
+  sans VA lu dans le texte (Generali) → non vérifié ; lignes de primes /
+  sinistres → `validated` du KPI parent (0 : `validate_kpis.py` ne les
+  contrôle pas), d'où `sp_nonvie` jamais « Vérifié ». Un avertissement de
+  composant est hérité ; un recalcul en écart pose un avertissement. Un
+  composant simplement non recoupé ne pose **pas** d'avertissement de
+  comparabilité (sinon `sp_nonvie` serait exclu de tout classement).
+- `mcr_en_pct_scr` : solo seulement (un groupe n'a pas de MCR mais un SCR
+  minimal consolidé), même périmètre que `position_mcr`, dont la catégorie
+  devient la note de la formule. `position_mcr` reste dans les indicateurs.
+- `sp_nonvie` : lignes non-vie (santé non-vie comprise), mêmes seuils
+  (10 % des primes et 10 M€) ; calculé aussi pour des sociétés Vie ou
+  Mixte qui ont une activité non-vie significative, mais comparé
+  seulement entre sociétés Non-vie et Santé/prévoyance
+  (`activitesApplicables`).
+- Covéa : `best_estimate` et `marge_risque` n'ont pas de page source en
+  base ; les 10 lignes sont imprimées p.85 de `sfcr_covea_2025.pdf`
+  (recherche des montants) : page utilisée pour les composants, KPI
+  existants non modifiés.
+- `validate_kpis.py` ne charge plus que les 21 KPIs extraits (sinon
+  KeyError sur le contrôle de signe et complétude faussée) ; vérifié sur
+  une copie de la base : `validated` et `validation_checks` identiques.
+
+**Matrice de comparabilité** (pire verdict des KPIs dont ils dérivent,
+corrigé par les règles métier) :
+
+| KPI | Activité | Forme | Modèle | Périmètre | Justification |
+|---|---|---|---|---|---|
+| `ratio_scr_sans_mesures_lt` | R | R | R | R | = `ratio_scr` (R partout) ; seules VA et transitoires sont retirées, le SCR du modèle interne reste |
+| `impact_va` | R | R | R | R | dérivé du ratio SCR ; effet lié à la durée des engagements ; VA dynamique ou stochastique en modèle interne |
+| `impact_transitoires` | R | R | R | R | dérivé du ratio SCR ; mesure surtout utilisée en vie |
+| `marge_risque_sur_be` | **N** | C | R | R | `marge_risque` est R sur l'activité, mais le rapport RM/BE est structurel (vie 1 %, non-vie 6 %, santé 11 %) : comparaison à activité égale seulement |
+| `sp_nonvie` | R | C | C | R | `charge_sinistres` est N sur l'activité (prestations vie ≠ sinistres), mais `sp_nonvie` ne garde que les lignes non-vie et ne se compare qu'entre Non-vie et Santé/prévoyance (`activitesApplicables`) ; reste une réserve santé / dommages |
+| `mcr_en_pct_scr` | R | R | R | N | = pire de `mcr` et `scr_total` ; jamais classé « mieux / moins bien » (`classement` = `aucun`) |
+
+Ordre de rejeu complet : extractions → `populate_company_metadata.py` →
+`corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
+`validate_kpis.py --all` → `peupler_kpis_officiels_indicateurs.py` →
+`export_kpis_for_frontend.py` → `test_kpis_officiels.py`.
