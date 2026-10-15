@@ -14,15 +14,19 @@
  */
 
 import {
+  CATEGORIE_INDICATEURS,
+  DECIMALES_KPIS,
+  DEFINITIONS_KPIS_CALCULES,
   DONNEES_EXTRAITES,
   KPI_LABELS_REELS,
+  LIBELLE_CATEGORIE_INDICATEURS,
   type KpiExtrait,
 } from "@/lib/donnees-extraites-utils";
 
 // ────────────────────────── Catégories d'affichage ──────────────────────────
 
 export type Categorie = {
-  code: "E" | "D" | "C" | "A";
+  code: "E" | "D" | "C" | "A" | "I";
   label: string;
 };
 
@@ -31,6 +35,8 @@ export const CATEGORIES: Categorie[] = [
   { code: "D", label: "Valorisation Solvabilité II" },
   { code: "C", label: "Profil de risque" },
   { code: "A", label: "Activité et résultats" },
+  // Décision 158 — KPIs calculés, couleurs neutres.
+  { code: "I", label: LIBELLE_CATEGORIE_INDICATEURS },
 ];
 
 // Mapping catégorie réelle kpis.db → catégorie d'affichage
@@ -41,6 +47,7 @@ const MAPPING_CATEGORIE: Record<string, Categorie["code"]> = {
   mcr: "E",
   provisions: "D",
   activité: "A",
+  [CATEGORIE_INDICATEURS]: "I",
 };
 
 // Exceptions : certains KPIs SCR sont mieux placés dans E (capital)
@@ -59,13 +66,19 @@ export type KpiDefinition = {
   categorie: Categorie["code"];
   code: string;
   label: string;
-  unite: "%" | "M€";
+  /** "pts" : points de ratio (KPIs calculés, Décision 158). */
+  unite: "%" | "M€" | "pts";
   description: string;
   seuilReglementaire: number | null;
+  /** Décimales d'affichage quand elles diffèrent du défaut (1). */
+  decimales?: number;
+  /** KPI calculé à partir d'autres KPIs (Décision 158). */
+  calcule?: boolean;
 };
 
 // Codes d'affichage par catégorie (E1, E2, ... D1, D2, ... etc.)
-const compteurs: Record<string, number> = { E: 0, D: 0, C: 0, A: 0 };
+const compteurs: Record<string, number> = { E: 0, D: 0, C: 0, A: 0, I: 0 };
+
 function codeAffichage(cat: Categorie["code"]): string {
   compteurs[cat] += 1;
   return `${cat}${compteurs[cat]}`;
@@ -128,7 +141,7 @@ function detecterCategorieReelle(kpiId: string): string {
 
 function buildKpiDefinitions(): KpiDefinition[] {
   // Réinitialiser les compteurs
-  compteurs.E = 0; compteurs.D = 0; compteurs.C = 0; compteurs.A = 0;
+  compteurs.E = 0; compteurs.D = 0; compteurs.C = 0; compteurs.A = 0; compteurs.I = 0;
 
   const defsMap = new Map<string, KpiDefinition>();
 
@@ -145,6 +158,22 @@ function buildKpiDefinitions(): KpiDefinition[] {
       unite: isPct ? "%" : "M€",
       description: DESCRIPTIONS[kpiId] ?? KPI_LABELS_REELS[kpiId],
       seuilReglementaire: SEUILS[kpiId] ?? null,
+    });
+  }
+
+  // Décision 158 — KPIs calculés (définitions du JSON), après les 21 extraits.
+  for (const [kpiId, d] of Object.entries(DEFINITIONS_KPIS_CALCULES)) {
+    const cat = MAPPING_CATEGORIE[d.categorie] ?? "I";
+    defsMap.set(kpiId, {
+      id: kpiId,
+      categorie: cat,
+      code: codeAffichage(cat),
+      label: d.label,
+      unite: d.unite === "pts" ? "pts" : "%",
+      description: d.description,
+      seuilReglementaire: null,
+      decimales: DECIMALES_KPIS[kpiId],
+      calcule: true,
     });
   }
 
@@ -196,7 +225,7 @@ function kpiExtraitVersKpiValeur(k: KpiExtrait): KpiValeur {
   return {
     valeur: k.valeur,
     variation: null,
-    variationUnit: k.unite === "pct" ? "pts" : "M€",
+    variationUnit: k.unite === "pct" || k.unite === "pts" ? "pts" : "M€",
     chapitreSource: k.chapitreSource ?? "",
     pageSource: k.pageSource,
     confiance: k.valide ? "verified" : "extracted",
