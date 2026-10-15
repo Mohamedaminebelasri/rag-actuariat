@@ -22,6 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 import comparabilite
+from kpi_definitions import CATEGORIE_INDICATEURS, KPI_INDICATEURS_OFFICIELS, LIBELLE_CATEGORIE_INDICATEURS
 
 DB_PATH = Path(__file__).parent / "kpis.db"
 OUT_PATH = Path(__file__).parent / "frontend" / "src" / "data" / "kpi-sources.json"
@@ -148,21 +149,46 @@ def export_donnees_extraites():
     # table `kpi_composants`), regroupés par (company_id, year, kpi_name)
     # — pas de valeur devinée : un KPI sans ligne dans `kpi_composants`
     # reste `estCompose=False`, jamais un composant inventé.
+    # Décision 158 — KPIs calculés : règle de calcul (kpi_formules) et
+    # colonnes de composant ajoutées (NULL pour les composants « somme »).
+    colonnes_composants = {r[1] for r in conn.execute("PRAGMA table_info(kpi_composants)")}
+    colonnes_158 = ("kpi_code", "composant_detail", "composant_source_pdf", "composant_valide")
+    avec_158 = all(c in colonnes_composants for c in colonnes_158)
+    formules = {}
+    if conn.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='kpi_formules'").fetchone()[0]:
+        for row in conn.execute("SELECT * FROM kpi_formules"):
+            formule = {"type": row["type"], "texte": row["texte"], "facteur": row["facteur"]}
+            if row["note"]:
+                formule["note"] = row["note"]
+            formules[(row["company_id"], row["year"], row["kpi_name"])] = formule
+
     composants_par_cle = {}
     for row in conn.execute(
-        """SELECT company_id, year, kpi_name, composant_label, composant_code_qrt,
+        f"""SELECT company_id, year, kpi_name, composant_label, composant_code_qrt,
                   composant_valeur, composant_unite, composant_page, operation
+                  {', ' + ', '.join(colonnes_158) if avec_158 else ''}
            FROM kpi_composants ORDER BY company_id, year, kpi_name, composant_index"""
     ):
         cle = (row["company_id"], row["year"], row["kpi_name"])
-        composants_par_cle.setdefault(cle, []).append({
+        composant = {
             "label": row["composant_label"],
             "codeQrt": row["composant_code_qrt"],
             "valeur": row["composant_valeur"],
             "unite": row["composant_unite"],
             "pageSource": row["composant_page"],
             "operation": row["operation"],
-        })
+        }
+        if cle in formules and avec_158:
+            # Composant d'un KPI calculé (Décision 158) : clés présentes
+            # seulement ici, les composants « somme » restent inchangés.
+            if row["kpi_code"]:
+                composant["kpiCode"] = row["kpi_code"]
+            if row["composant_detail"]:
+                composant["detail"] = row["composant_detail"]
+            # null = PDF par défaut de la société (pas celui du KPI).
+            composant["sourcePdf"] = row["composant_source_pdf"]
+            composant["valide"] = bool(row["composant_valide"])
+        composants_par_cle.setdefault(cle, []).append(composant)
 
     id_vers_nom = {s["id"]: s["name"] for s in societes}
     for row in conn.execute(
@@ -205,6 +231,10 @@ def export_donnees_extraites():
             "avertissement": bool(row["avertissement"]),
             "noteAvertissement": row["note_avertissement"],
         })
+        formule = formules.get((row["company_id"], row["year"], row["kpi_name"]))
+        if formule is not None and kpis_par_societe[nom][row["kpi_name"]]["annee"] == row["year"]:
+            # Décision 158 — absent pour les KPIs « somme » (inchangés).
+            kpis_par_societe[nom][row["kpi_name"]]["formule"] = formule
     # Décision 155 — impact des mesures de long terme (S.22.01), par société.
     impact_lt = {r["name"]: dict(r) for r in conn.execute(
         "SELECT c.name, i.* FROM impact_mesures_lt i JOIN companies c ON c.id = i.company_id WHERE i.year = 2025")}
@@ -236,6 +266,14 @@ def export_donnees_extraites():
         "kpisParSociete": kpis_par_societe,
         "indicateursParSociete": indicateurs,
         "definitionsIndicateurs": comparabilite.DEFINITIONS_INDICATEURS,
+        # Décision 158 — libellé, unité, catégorie, description et sens de
+        # classement des KPIs calculés (kpi_definitions.KPI_INDICATEURS_OFFICIELS).
+        "definitionsKpis": {
+            d["kpi_name"]: {"label": d["label"], "unite": d["unit"], "categorie": CATEGORIE_INDICATEURS,
+                            "libelleCategorie": LIBELLE_CATEGORIE_INDICATEURS, "description": d["description"],
+                            "classement": d["classement"], "indicateur": d["indicateur"]}
+            for d in KPI_INDICATEURS_OFFICIELS
+        },
         "groupesPairs": [{"id": g, "societes": sorted(n), "n": len(n), "petitEchantillon": len(n) < 5}
                          for g, n in sorted(groupes.items(), key=lambda x: -len(x[1]))],
         "compatibilite": {
@@ -245,6 +283,8 @@ def export_donnees_extraites():
             "regle": "Pour un KPI et deux sociétés : pire verdict parmi les axes où elles diffèrent "
                      "(axe activité de charge_sinistres : comparer classeSinistres, pas l'activité brute).",
             "matrice": comparabilite.MATRICE,
+            # Décision 158 — hors de ces activités, le KPI n'entre dans aucune comparaison.
+            "activitesApplicables": comparabilite.ACTIVITES_APPLICABLES,
         },
     }
 
