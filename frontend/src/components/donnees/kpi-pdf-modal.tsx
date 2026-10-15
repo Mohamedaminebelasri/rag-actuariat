@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight, UserCheck, CheckCircle2 } from "lucide-react";
+import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight, UserCheck, CheckCircle2, Scale } from "lucide-react";
 import { formatValeurBrute, formatValeurReelle, type KpiExtrait, type Composant } from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import type { ValidationHumaine } from "@/lib/use-validations-humaines";
@@ -143,7 +143,7 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
           <div className="flex items-center gap-3 min-w-0">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-heading text-lg text-text-primary truncate">{label}</h3>
+                <h3 className="font-heading text-lg text-text-primary truncate">{kpi.libelle ?? label}</h3>
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium flex-shrink-0 ${
                     kpi.valide
@@ -169,6 +169,16 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
                 {societe}
                 {source ? ` · Source : ${source}` : ""}
               </p>
+              {kpi.avertissement && (
+                <p role="note" className="mt-1.5 flex items-start gap-1.5 text-xs leading-snug text-text-secondary">
+                  <Scale className="w-3.5 h-3.5 mt-px flex-shrink-0 text-accent" aria-hidden="true" />
+                  <span>
+                    <span className="font-medium text-accent">Valeur non comparable.</span>{" "}
+                    {kpi.noteAvertissement?.trim() ||
+                      "Valeur calculée sur une base non directement comparable aux autres sociétés."}
+                  </span>
+                </p>
+              )}
             </div>
           </div>
 

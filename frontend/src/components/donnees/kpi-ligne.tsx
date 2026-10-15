@@ -7,6 +7,7 @@ import { formatValeurReelle, type KpiExtrait } from "@/lib/donnees-extraites-uti
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import type { Correction } from "@/lib/use-corrections";
 import type { ValidationHumaine } from "@/lib/use-validations-humaines";
+import { AvertissementKpi } from "@/components/analyse/avertissement-kpi";
 
 /**
  * Une ligne = un KPI réellement extrait pour une société.
@@ -40,11 +41,14 @@ export function KpiLigne({
       ? `${kpi.chapitreSource}, p. ${kpi.pageSource}`
       : kpi.chapitreSource ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
   const lienActif = !!PDF_PAR_SOCIETE[societe];
+  // Libellé propre à la valeur (ex. « SCR minimal consolidé du groupe ») à la
+  // place du nom générique du KPI.
+  const nom = kpi.libelle ?? label;
 
   const contenu = (
     <>
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm text-text-secondary leading-snug">{label}</p>
+        <p className="text-sm text-text-secondary leading-snug">{nom}</p>
         <div className="flex items-center gap-1 flex-shrink-0">
           {validationHumaine ? (
             <span
@@ -81,6 +85,11 @@ export function KpiLigne({
       </div>
       <p className="font-mono text-xl font-bold text-text-primary mt-1">
         {formatValeurReelle(kpi.valeur, kpi.unite)}
+        {/* Valeur non comparable : bouton frère de l'overlay cliquable (jamais
+            imbriqué dans un bouton), au-dessus de lui (z-10). */}
+        {kpi.avertissement && (
+          <AvertissementKpi note={kpi.noteAvertissement} className="relative z-10 ml-2" />
+        )}
       </p>
       {source && <p className="text-[11px] text-text-tertiary mt-1.5">Source : {source}</p>}
       {correction && (
@@ -105,13 +114,20 @@ export function KpiLigne({
     );
   }
 
+  // La carte est un conteneur ; le clic « ouvrir la source » est un bouton
+  // transparent qui la recouvre (frère du contenu), pour que le marqueur de
+  // valeur non comparable reste un vrai bouton non imbriqué.
+  const infobulle = onSelect ? "Voir le détail et la source PDF" : "Voir la source dans les Annexes QRT";
   return (
-    <button
-      onClick={handleClick}
-      title={onSelect ? "Voir le détail et la source PDF" : "Voir la source dans les Annexes QRT"}
-      className="text-left w-full bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-sm)] transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-px"
-    >
+    <div className="relative text-left w-full bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-[var(--shadow-sm)] transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
       {contenu}
-    </button>
+      <button
+        type="button"
+        onClick={handleClick}
+        title={infobulle}
+        aria-label={`${nom} : ${infobulle.toLowerCase()}`}
+        className="absolute inset-0 rounded-[var(--radius-lg)] cursor-pointer focus-visible:outline-2 focus-visible:outline-accent"
+      />
+    </div>
   );
 }
