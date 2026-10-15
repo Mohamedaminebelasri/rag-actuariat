@@ -326,6 +326,36 @@ ATYPIQUES = {
 }
 
 
+# Décision 158 (bonus) — texte « Source : » en français simple pour les KPIs
+# à avertissement ci-dessus, exporté à côté de source_chapter (qui garde la
+# base technique, Décision 157) ; la page est ajoutée par le front-end.
+_SOURCE_MI = {
+    "AXA France Vie": "Annexe des états quantitatifs : SCR du modèle interne par risque, après diversification "
+                      "au sein de chaque risque",
+    "AXA France IARD": "Annexe des états quantitatifs : SCR du modèle interne par risque, après diversification "
+                       "au sein de chaque risque",
+    "Allianz Vie": "Rapport : tableau du SCR par risque du modèle interne",
+    "Generali Vie": "Rapport narratif : graphique du SCR par risque, avant diversification entre risques et "
+                    "avant impôt",
+    "Generali IARD": "Rapport narratif : graphique du SCR par risque, avant diversification entre risques et "
+                     "avant impôt",
+    "Groupama": "Rapport : schéma du SCR par module (risque non-vie calculé par le modèle interne)",
+}
+_SOURCE_MCR_GROUPE = {"mcr": "Fonds propres du groupe : SCR minimal consolidé",
+                      "ratio_mcr": "Fonds propres du groupe : couverture du SCR minimal consolidé"}
+_SOURCE_ATYPIQUE = {("Macifilia", "charge_sinistres"): "Rapport unique du groupe Aéma : primes et sinistres par "
+                                                       "ligne d'activité de Macifilia"}
+
+
+def source_lisible(societe, kpi):
+    """Libellé de source en français simple pour un KPI à avertissement, ou None."""
+    if kpi in MODULES and societe in _SOURCE_MI:
+        return _SOURCE_MI[societe]
+    if kpi in _SOURCE_MCR_GROUPE and societe in GROUPES_MCR:
+        return _SOURCE_MCR_GROUPE[kpi]
+    return _SOURCE_ATYPIQUE.get((societe, kpi))
+
+
 def appliquer_atypiques(conn):
     for (societe, kpi), note in ATYPIQUES.items():
         n = conn.execute("UPDATE kpis SET avertissement=1, note_avertissement=? WHERE company_id=? AND year=? AND kpi_name=?",
