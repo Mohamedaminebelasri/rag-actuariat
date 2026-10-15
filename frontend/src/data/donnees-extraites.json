@@ -1,23 +1,37 @@
 {
-  "genereLe": "2026-10-14T21:17:31",
+  "genereLe": "2026-10-15T11:52:53",
   "societes": [
     {
       "id": 67,
       "name": "AG.Mut",
-      "type": "entité",
+      "type": "Union de mutuelles",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
-      "typeActivite": "Mutuelle",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Union de mutuelles",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 64,
       "name": "AG2R Prevoyance",
-      "type": "entité",
+      "type": "Institution de prévoyance",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
-      "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Institution de prévoyance",
+      "familleJuridique": "Institution de prévoyance",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 117,
@@ -26,7 +40,14 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Non-vie",
-      "scrMethod": "modele_interne_complet"
+      "scrMethod": "modele_interne_complet",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Modèle interne",
+      "groupeParent": "AXA",
+      "consolideDans": null,
+      "groupePairs": "Non-vie · Modèle interne · solo"
     },
     {
       "id": 116,
@@ -35,52 +56,94 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "modele_interne_complet"
+      "scrMethod": "modele_interne_complet",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Modèle interne",
+      "groupeParent": "AXA",
+      "consolideDans": null,
+      "groupePairs": "Vie · Modèle interne · solo"
     },
     {
       "id": 61,
       "name": "Abeille Epargne Retraite",
-      "type": "mutuelle",
+      "type": "SA",
       "groupe": "Aéma Groupe",
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 62,
       "name": "Abeille IARD Sante",
-      "type": "mutuelle",
+      "type": "SA",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 60,
       "name": "Abeille Vie",
-      "type": "mutuelle",
+      "type": "SA",
       "groupe": "Aéma Groupe",
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 45,
       "name": "Aema Groupe",
-      "type": "mutuelle",
+      "type": "Groupe",
       "groupe": "Aéma Groupe",
       "country": "France",
       "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Groupe (SGAM)",
+      "familleJuridique": "Groupe",
+      "perimetre": "groupe",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": null,
+      "groupePairs": "Mixte · Formule standard · groupe"
     },
     {
       "id": 56,
       "name": "Aesio Mutuelle",
-      "type": "mutuelle",
+      "type": "Mutuelle",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 107,
@@ -89,16 +152,30 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "modele_interne_partiel"
+      "scrMethod": "modele_interne_complet",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Modèle interne",
+      "groupeParent": "Allianz",
+      "consolideDans": null,
+      "groupePairs": "Vie · Modèle interne · solo"
     },
     {
       "id": 65,
       "name": "Arpege Prevoyance",
-      "type": "entité",
+      "type": "Institution de prévoyance",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
-      "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Institution de prévoyance",
+      "familleJuridique": "Institution de prévoyance",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 120,
@@ -107,7 +184,14 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Non-vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "BPCE",
+      "consolideDans": null,
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 119,
@@ -116,7 +200,14 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "BPCE",
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 3,
@@ -125,7 +216,14 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": null,
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 103,
@@ -134,7 +232,14 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "BNP Paribas Cardif",
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 104,
@@ -143,25 +248,46 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Non-vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "BNP Paribas Cardif",
+      "consolideDans": null,
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 106,
       "name": "Covéa",
-      "type": "mutuelle",
+      "type": "Groupe",
       "groupe": null,
       "country": "France",
       "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Groupe (SGAM)",
+      "familleJuridique": "Groupe",
+      "perimetre": "groupe",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Covéa",
+      "consolideDans": null,
+      "groupePairs": "Mixte · Formule standard · groupe"
     },
     {
       "id": 101,
       "name": "Crédit Agricole Assurances",
-      "type": "groupe",
+      "type": "Groupe",
       "groupe": null,
       "country": "France",
-      "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Groupe (SA holding)",
+      "familleJuridique": "Groupe",
+      "perimetre": "groupe",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Crédit Agricole Assurances",
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · groupe"
     },
     {
       "id": 121,
@@ -170,7 +296,14 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Non-vie",
-      "scrMethod": "modele_interne_complet"
+      "scrMethod": "modele_interne_complet",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Modèle interne",
+      "groupeParent": "Generali",
+      "consolideDans": null,
+      "groupePairs": "Non-vie · Modèle interne · solo"
     },
     {
       "id": 122,
@@ -179,133 +312,238 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "modele_interne_complet"
+      "scrMethod": "modele_interne_complet",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Modèle interne",
+      "groupeParent": "Generali",
+      "consolideDans": null,
+      "groupePairs": "Vie · Modèle interne · solo"
     },
     {
       "id": 1,
       "name": "Groupama",
-      "type": "mutuelle",
+      "type": "Groupe",
       "groupe": null,
       "country": "France",
       "typeActivite": "Mixte",
-      "scrMethod": "modele_interne_partiel"
+      "scrMethod": "modele_interne_partiel",
+      "formeJuridique": "Groupe (tête : caisse de réassurance mutuelle)",
+      "familleJuridique": "Groupe",
+      "perimetre": "groupe",
+      "modeleCapital": "Modèle interne",
+      "groupeParent": "Groupama",
+      "consolideDans": null,
+      "groupePairs": "Mixte · Modèle interne · groupe"
     },
     {
       "id": 69,
       "name": "La Mondiale",
-      "type": "entité",
+      "type": "SAM",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SAM",
+      "familleJuridique": "SAM",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 70,
       "name": "La Mondiale Europartner",
-      "type": "entité",
+      "type": "SA",
       "groupe": "Groupe AG2R La Mondiale",
-      "country": "France",
+      "country": "Luxembourg",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA (droit luxembourgeois)",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 71,
       "name": "La Mondiale Partenaire",
-      "type": "entité",
+      "type": "SA",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 44,
       "name": "MACIF SAM",
-      "type": "mutuelle",
+      "type": "SAM",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SAM",
+      "familleJuridique": "SAM",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 10,
       "name": "MACSF prévoyance",
-      "type": "mutuelle",
+      "type": "SAM",
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SAM",
+      "familleJuridique": "SAM",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "MACSF",
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 105,
       "name": "MAIF",
-      "type": "mutuelle",
+      "type": "SAM",
       "groupe": null,
       "country": "France",
-      "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Non-vie",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SAM (cotisations variables)",
+      "familleJuridique": "SAM",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": null,
+      "consolideDans": null,
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 72,
       "name": "MGEN",
-      "type": "mutuelle",
+      "type": "Mutuelle",
       "groupe": null,
       "country": "France",
-      "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": null,
+      "consolideDans": null,
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 58,
       "name": "MMJ",
-      "type": "mutuelle",
+      "type": "Mutuelle",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Mutuelle",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 57,
       "name": "MNPAF",
-      "type": "mutuelle",
+      "type": "Mutuelle",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Mutuelle",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 53,
       "name": "Macif Sante Prevoyance",
-      "type": "mutuelle",
+      "type": "Mutuelle",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 52,
       "name": "Macif Vie",
-      "type": "mutuelle",
+      "type": "SE",
       "groupe": "Aéma Groupe",
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SE (société européenne)",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 55,
       "name": "Macifilia",
-      "type": "mutuelle",
+      "type": "SA",
       "groupe": "Aéma Groupe",
       "country": "France",
       "typeActivite": "Non-vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 59,
       "name": "Nuoma",
-      "type": "mutuelle",
+      "type": "Mutuelle",
       "groupe": "Aéma Groupe",
       "country": "France",
-      "typeActivite": "Mutuelle",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 50,
@@ -314,34 +552,62 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Crédit Agricole Assurances",
+      "consolideDans": "Crédit Agricole Assurances",
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 66,
       "name": "Prima",
-      "type": "entité",
+      "type": "SA",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
-      "typeActivite": "Mutuelle",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     },
     {
       "id": 63,
       "name": "SGAM AG2R LA MONDIALE",
-      "type": "entité",
+      "type": "Groupe",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Groupe (SGAM)",
+      "familleJuridique": "Groupe",
+      "perimetre": "groupe",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · groupe"
     },
     {
       "id": 102,
       "name": "Sogécap",
-      "type": "groupe",
+      "type": "SA",
       "groupe": null,
       "country": "France",
-      "typeActivite": "Mixte",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Vie",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Société Générale",
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 118,
@@ -350,25 +616,46 @@
       "groupe": null,
       "country": "France",
       "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": null,
+      "consolideDans": null,
+      "groupePairs": "Vie · Formule standard · solo"
     },
     {
       "id": 54,
       "name": "Themis",
-      "type": "mutuelle",
+      "type": "SA",
       "groupe": "Aéma Groupe",
       "country": "France",
       "typeActivite": "Non-vie",
-      "scrMethod": "formule_standard"
+      "scrMethod": "formule_standard",
+      "formeJuridique": "SA",
+      "familleJuridique": "SA/SE",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "Aéma Groupe",
+      "consolideDans": "Aema Groupe",
+      "groupePairs": "Non-vie · Formule standard · solo"
     },
     {
       "id": 68,
       "name": "VIASANTE Mutuelle",
-      "type": "entité",
+      "type": "Mutuelle",
       "groupe": "Groupe AG2R La Mondiale",
       "country": "France",
-      "typeActivite": "Vie",
-      "scrMethod": "formule_standard"
+      "typeActivite": "Santé/prévoyance",
+      "scrMethod": "formule_standard",
+      "formeJuridique": "Mutuelle (Livre II)",
+      "familleJuridique": "Mutuelle/UM (code mutualité)",
+      "perimetre": "solo",
+      "modeleCapital": "Formule standard",
+      "groupeParent": "AG2R La Mondiale",
+      "consolideDans": "SGAM AG2R LA MONDIALE",
+      "groupePairs": "Santé/prévoyance · Formule standard · solo"
     }
   ],
   "kpisParSociete": {
@@ -1654,43 +1941,43 @@
         "noteAvertissement": null
       },
       "primes_acquises_brutes": {
-        "valeur": 9637.327859999996,
+        "valeur": 9636.839189999999,
         "unite": "M€",
         "categorie": "activité",
         "annee": 2025,
         "pageSource": 3,
-        "chapitreSource": "A.2",
+        "chapitreSource": "S.05.01.02 p.3, colonne Total lue manuellement — Décision 154",
         "valide": false,
-        "valeurBrute": 9637327.859999996,
+        "valeurBrute": 9636839.19,
         "uniteBrute": "K€",
         "estCompose": true,
         "composants": [
           {
-            "label": "Premiums earned | Primes acquises",
+            "label": "Primes acquises brutes — directe (non-vie, Total)",
             "codeQrt": "R0210",
-            "valeur": 8921.270189999997,
+            "valeur": 8921.27019,
             "unite": "M€",
             "pageSource": 3,
             "operation": "+"
           },
           {
-            "label": "Premiums earned | Primes acquises",
+            "label": "Primes acquises brutes — réassurance proportionnelle acceptée (non-vie, Total)",
             "codeQrt": "R0220",
-            "valeur": 715.08035,
+            "valeur": 715.08034,
             "unite": "M€",
             "pageSource": 3,
             "operation": "+"
           },
           {
-            "label": "Premiums earned | Primes acquises",
+            "label": "Primes acquises brutes — réassurance non proportionnelle acceptée (non-vie, Total)",
             "codeQrt": "R0230",
-            "valeur": 0.9773200000000001,
+            "valeur": 0.48866000000000004,
             "unite": "M€",
             "pageSource": 3,
             "operation": "+"
           },
           {
-            "label": "Premiums earned | Primes acquises",
+            "label": "Primes acquises brutes (vie, Total)",
             "codeQrt": "R1510",
             "valeur": 0.0,
             "unite": "M€",
@@ -1703,43 +1990,43 @@
         "noteAvertissement": null
       },
       "charge_sinistres": {
-        "valeur": 11517.61947,
+        "valeur": 5912.436370000001,
         "unite": "M€",
         "categorie": "activité",
         "annee": 2025,
         "pageSource": 3,
-        "chapitreSource": "A.2",
+        "chapitreSource": "S.05.01.02 p.3, colonne Total lue manuellement — Décision 154",
         "valide": false,
-        "valeurBrute": 11517619.469999999,
+        "valeurBrute": 5912436.370000001,
         "uniteBrute": "K€",
         "estCompose": true,
         "composants": [
           {
-            "label": "Claims incurred | Charge des sinistres",
+            "label": "Charge de sinistres — directe (non-vie, Total)",
             "codeQrt": "R0310",
-            "valeur": 11158.9488,
+            "valeur": 5577.8629,
             "unite": "M€",
             "pageSource": 3,
             "operation": "+"
           },
           {
-            "label": "Claims incurred | Charge des sinistres",
+            "label": "Charge de sinistres — réassurance proportionnelle acceptée (non-vie, Total)",
             "codeQrt": "R0320",
-            "valeur": 346.61197000000004,
+            "valeur": 346.61197999999996,
             "unite": "M€",
             "pageSource": 3,
             "operation": "+"
           },
           {
-            "label": "Claims incurred | Charge des sinistres",
+            "label": "Charge de sinistres — réassurance non proportionnelle acceptée (non-vie, Total)",
             "codeQrt": "R0330",
-            "valeur": 12.0587,
+            "valeur": -12.03851,
             "unite": "M€",
             "pageSource": 3,
             "operation": "+"
           },
           {
-            "label": "Claims incurred | Charge des sinistres",
+            "label": "Charge de sinistres (vie, Total)",
             "codeQrt": "R1610",
             "valeur": 0.0,
             "unite": "M€",
@@ -1752,100 +2039,100 @@
         "noteAvertissement": null
       },
       "scr_operationnel": {
-        "valeur": 620.30477,
+        "valeur": 262.91565,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 9,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
         "valide": false,
-        "valeurBrute": 620304.77,
-        "uniteBrute": "K€",
+        "valeurBrute": 262.91565,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
       },
       "scr_marche": {
-        "valeur": 1307.0,
+        "valeur": 1306.93849,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 89,
-        "chapitreSource": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+        "pageSource": 9,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
         "valide": false,
-        "valeurBrute": 1307.0,
+        "valeurBrute": 1306.93849,
         "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+        "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
       },
       "scr_contrepartie": {
-        "valeur": 282.0,
+        "valeur": 282.32451000000003,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 89,
-        "chapitreSource": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+        "pageSource": 9,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
         "valide": false,
-        "valeurBrute": 282.0,
+        "valeurBrute": 282.32451000000003,
         "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+        "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
       },
       "scr_souscription_vie": {
-        "valeur": 97.0,
+        "valeur": 96.94865,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 89,
-        "chapitreSource": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+        "pageSource": 9,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
         "valide": false,
-        "valeurBrute": 97.0,
+        "valeurBrute": 96.94865,
         "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+        "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
       },
       "scr_souscription_nonvie": {
-        "valeur": 2398.72765,
+        "valeur": 1584.78706,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 9,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
         "valide": true,
-        "valeurBrute": 2398727.65,
-        "uniteBrute": "K€",
+        "valeurBrute": 1584.78706,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
       },
       "scr_diversification": {
-        "valeur": -3717.87106,
+        "valeur": -912.4514899999998,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 9,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
         "valide": false,
-        "valeurBrute": -3717871.06,
-        "uniteBrute": "K€",
+        "valeurBrute": -912.4514899999998,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
       }
     },
     "AXA France Vie": {
@@ -2222,68 +2509,68 @@
         "noteAvertissement": null
       },
       "scr_operationnel": {
-        "valeur": 955.99861,
+        "valeur": 431.97644,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 10,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
         "valide": false,
-        "valeurBrute": 955998.61,
-        "uniteBrute": "K€",
+        "valeurBrute": 431.97644,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
       },
       "scr_marche": {
-        "valeur": 3168.0,
+        "valeur": 3168.16175,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 100,
-        "chapitreSource": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+        "pageSource": 10,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
         "valide": false,
-        "valeurBrute": 3168.0,
+        "valeurBrute": 3168.16175,
         "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+        "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
       },
       "scr_contrepartie": {
-        "valeur": 628.0,
+        "valeur": 628.28657,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 100,
-        "chapitreSource": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+        "pageSource": 10,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
         "valide": false,
-        "valeurBrute": 628.0,
+        "valeurBrute": 628.28657,
         "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+        "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
       },
       "scr_souscription_vie": {
-        "valeur": 2969.0,
+        "valeur": 2969.1593599999997,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 100,
-        "chapitreSource": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
+        "pageSource": 10,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
         "valide": false,
-        "valeurBrute": 2969.0,
+        "valeurBrute": 2969.1593599999997,
         "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+        "sourcePdf": null,
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
       },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
@@ -2302,20 +2589,20 @@
         "noteAvertissement": null
       },
       "scr_diversification": {
-        "valeur": -7722.5406299999995,
+        "valeur": -1727.95696,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 10,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
         "valide": false,
-        "valeurBrute": -7722540.63,
-        "uniteBrute": "K€",
+        "valeurBrute": -1727.95696,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
       }
     },
     "Abeille Epargne Retraite": {
@@ -3989,8 +4276,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "libelle": "SCR minimal consolidé du groupe"
       },
       "ratio_scr": {
         "valeur": 212.0,
@@ -4021,8 +4309,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_marche": {
         "valeur": 10837.399,
@@ -4988,16 +5277,16 @@
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 90,
-        "chapitreSource": "E.2",
+        "pageSource": 69,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
         "valide": false,
-        "valeurBrute": 119644.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 119.644,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
       },
       "scr_marche": {
         "valeur": 1653.208,
@@ -5005,15 +5294,15 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 69,
-        "chapitreSource": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. scr_operationnel (déjà en base, non flaggé) vaut exactement la même chose dans ce tableau (119644 K€ = 119.644 M€) — preuve que ce tableau est sur la même base que le QRT officiel pour Allianz Vie (modèle interne PARTIEL, contrairement à AXA/Generali en modèle COMPLET où un écart était explicitement signalé par le document lui-même). Pas de avertissement ici. Cf. Décision 147.",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
         "valide": false,
-        "valeurBrute": 1653208.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 1653.208,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
       },
       "scr_contrepartie": {
         "valeur": 270.016,
@@ -5021,15 +5310,31 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 69,
-        "chapitreSource": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. scr_operationnel (déjà en base, non flaggé) vaut exactement la même chose dans ce tableau (119644 K€ = 119.644 M€) — preuve que ce tableau est sur la même base que le QRT officiel pour Allianz Vie (modèle interne PARTIEL, contrairement à AXA/Generali en modèle COMPLET où un écart était explicitement signalé par le document lui-même). Pas de avertissement ici. Cf. Décision 147.",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
         "valide": false,
-        "valeurBrute": 270016.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 270.016,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+      },
+      "scr_souscription_vie": {
+        "valeur": 1010.173,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 69,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
+        "valide": false,
+        "valeurBrute": 1010.173,
+        "uniteBrute": "M€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
       },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
@@ -5053,15 +5358,15 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 69,
-        "chapitreSource": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. Même valeur que la ligne QRT S.25.05.21/R0060 'Diversification' déjà identifiée en Décision 101 (page 90, signe détaché du nombre dans ce gabarit précis, non parsable automatiquement) — récupérée ici depuis un tableau texte propre (signe attaché), sans toucher au code de tokenisation partagé. Recoupement exact : 328565+681608+1653208+270016+119644=3053041≈3053042 (Total avant diversification/impôt) ; 3053042+108969+20187-912286-51321=2218591 = scr_total déjà en base. Cf. Décision 147.",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
         "valide": false,
-        "valeurBrute": -912286.0,
-        "uniteBrute": "K€",
+        "valeurBrute": -912.286,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
       }
     },
     "Arpege Prevoyance": {
@@ -6998,8 +7303,8 @@
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": null,
-        "chapitreSource": "E.2",
+        "pageSource": 97,
+        "chapitreSource": "S.25.01.21/R0050 imprimé « 0 » (p.97)",
         "valide": true,
         "valeurBrute": 0.0,
         "uniteBrute": "K€",
@@ -8160,8 +8465,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "fonds_propres_eligibles": {
         "valeur": 33251.714,
@@ -8172,6 +8478,70 @@
         "chapitreSource": "E.1",
         "valide": true,
         "valeurBrute": 33251714.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t1_nr": {
+        "valeur": 32616.281,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 93,
+        "chapitreSource": "S.23.01.22 « fonds propres éligibles pour couvrir le SCR du groupe », colonne Niveau 1 non restreint ; somme des 4 tiers = total 33 251 714 k€ (Décision 152)",
+        "valide": true,
+        "valeurBrute": 32616281.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 134.394,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 93,
+        "chapitreSource": "S.23.01.22, même ligne, Niveau 1 restreint (Décision 152)",
+        "valide": true,
+        "valeurBrute": 134394.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 384.326,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 93,
+        "chapitreSource": "S.23.01.22, même ligne, Niveau 2 (Décision 152)",
+        "valide": true,
+        "valeurBrute": 384326.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 116.712,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 93,
+        "chapitreSource": "S.23.01.22, même ligne, Niveau 3 (Décision 152)",
+        "valide": true,
+        "valeurBrute": 116712.0,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null,
@@ -8434,8 +8804,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "libelle": "SCR minimal consolidé du groupe"
       },
       "provisions_techniques": {
         "valeur": 89296.604,
@@ -8501,8 +8872,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_total": {
         "valeur": 14087.44,
@@ -8533,8 +8905,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "libelle": "SCR minimal consolidé du groupe"
       },
       "fonds_propres_eligibles": {
         "valeur": 27400.137,
@@ -8617,7 +8990,7 @@
         "noteAvertissement": null
       },
       "best_estimate": {
-        "valeur": 342.576,
+        "valeur": 342576.0,
         "unite": "M€",
         "categorie": "provisions",
         "annee": 2025,
@@ -8625,13 +8998,13 @@
         "chapitreSource": "D.2",
         "valide": true,
         "valeurBrute": 342576.0,
-        "uniteBrute": "K€",
+        "uniteBrute": "M€",
         "estCompose": true,
         "composants": [
           {
             "label": "Best Estimate | Meilleure estimation",
             "codeQrt": "R0540",
-            "valeur": 6.493,
+            "valeur": 6493.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8639,7 +9012,7 @@
           {
             "label": "Best Estimate | Meilleure estimation",
             "codeQrt": "R0580",
-            "valeur": 1.817,
+            "valeur": 1817.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8647,7 +9020,7 @@
           {
             "label": "Best Estimate | Meilleure estimation",
             "codeQrt": "R0630",
-            "valeur": 2.61,
+            "valeur": 2610.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8655,7 +9028,7 @@
           {
             "label": "Best Estimate | Meilleure estimation",
             "codeQrt": "R0670",
-            "valeur": 227.453,
+            "valeur": 227453.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8663,7 +9036,7 @@
           {
             "label": "Best Estimate | Meilleure estimation",
             "codeQrt": "R0710",
-            "valeur": 104.203,
+            "valeur": 104203.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8674,7 +9047,7 @@
         "noteAvertissement": null
       },
       "marge_risque": {
-        "valeur": 6.909,
+        "valeur": 6909.0,
         "unite": "M€",
         "categorie": "provisions",
         "annee": 2025,
@@ -8682,13 +9055,13 @@
         "chapitreSource": "D.2",
         "valide": true,
         "valeurBrute": 6909.0,
-        "uniteBrute": "K€",
+        "uniteBrute": "M€",
         "estCompose": true,
         "composants": [
           {
             "label": "Risk margin | Marge de risque",
             "codeQrt": "R0550",
-            "valeur": 0.31,
+            "valeur": 310.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8696,7 +9069,7 @@
           {
             "label": "Risk margin | Marge de risque",
             "codeQrt": "R0590",
-            "valeur": 0.239,
+            "valeur": 239.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8704,7 +9077,7 @@
           {
             "label": "Risk margin | Marge de risque",
             "codeQrt": "R0640",
-            "valeur": 0.196,
+            "valeur": 196.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8712,7 +9085,7 @@
           {
             "label": "Risk margin | Marge de risque",
             "codeQrt": "R0680",
-            "valeur": 4.548,
+            "valeur": 4548.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8720,7 +9093,7 @@
           {
             "label": "Risk margin | Marge de risque",
             "codeQrt": "R0720",
-            "valeur": 1.616,
+            "valeur": 1616.0,
             "unite": "M€",
             "pageSource": 67,
             "operation": "+"
@@ -8731,7 +9104,7 @@
         "noteAvertissement": null
       },
       "provisions_techniques": {
-        "valeur": 349.485,
+        "valeur": 349485.0,
         "unite": "M€",
         "categorie": "provisions",
         "annee": 2025,
@@ -8739,13 +9112,13 @@
         "chapitreSource": "D.2",
         "valide": true,
         "valeurBrute": 349485.0,
-        "uniteBrute": "K€",
+        "uniteBrute": "M€",
         "estCompose": true,
         "composants": [
           {
             "label": "Meilleure estimation (best_estimate)",
             "codeQrt": null,
-            "valeur": 342.576,
+            "valeur": 342576.0,
             "unite": "M€",
             "pageSource": 66,
             "operation": "+"
@@ -8753,7 +9126,7 @@
           {
             "label": "Marge de risque (marge_risque)",
             "codeQrt": null,
-            "valeur": 6.909,
+            "valeur": 6909.0,
             "unite": "M€",
             "pageSource": 53,
             "operation": "+"
@@ -9348,20 +9721,20 @@
         "noteAvertissement": null
       },
       "scr_operationnel": {
-        "valeur": 128.865,
+        "valeur": 174.0,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 14,
-        "chapitreSource": "E.2",
+        "pageSource": 72,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
         "valide": false,
-        "valeurBrute": 128865.00000000001,
-        "uniteBrute": "K€",
+        "valeurBrute": 174.0,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
       },
       "scr_marche": {
         "valeur": 385.0,
@@ -9369,7 +9742,7 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 72,
-        "chapitreSource": "Rapport narratif complet RSSF_Generali_Iard_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
         "valide": false,
         "valeurBrute": 385.0,
         "uniteBrute": "M€",
@@ -9377,7 +9750,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
       },
       "scr_contrepartie": {
         "valeur": 250.0,
@@ -9385,7 +9758,7 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 72,
-        "chapitreSource": "Rapport narratif complet RSSF_Generali_Iard_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
         "valide": false,
         "valeurBrute": 250.0,
         "uniteBrute": "M€",
@@ -9393,7 +9766,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
       },
       "scr_souscription_vie": {
         "valeur": 11.0,
@@ -9401,7 +9774,7 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 72,
-        "chapitreSource": "Rapport narratif complet RSSF_Generali_Iard_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
         "valide": false,
         "valeurBrute": 11.0,
         "uniteBrute": "M€",
@@ -9409,39 +9782,39 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
       },
       "scr_souscription_nonvie": {
-        "valeur": 732.365,
+        "valeur": 702.0,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 14,
-        "chapitreSource": "E.2",
+        "pageSource": 72,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
         "valide": true,
-        "valeurBrute": 732365.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 702.0,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
       },
       "scr_diversification": {
-        "valeur": -245.315,
+        "valeur": -375.0,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 14,
-        "chapitreSource": "E.2",
+        "pageSource": 72,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
         "valide": false,
-        "valeurBrute": -245315.0,
-        "uniteBrute": "K€",
+        "valeurBrute": -375.0,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "sourcePdf": "RSSF_Generali_Iard_2025.pdf",
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
       }
     },
     "Generali Vie": {
@@ -9786,20 +10159,20 @@
         "noteAvertissement": null
       },
       "scr_operationnel": {
-        "valeur": 314.864,
+        "valeur": 424.0,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 10,
-        "chapitreSource": "E.2",
+        "pageSource": 79,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
         "valide": false,
-        "valeurBrute": 314864.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 424.0,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
       },
       "scr_marche": {
         "valeur": 1509.0,
@@ -9807,7 +10180,7 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 79,
-        "chapitreSource": "Rapport narratif complet RSSF_Generali_Vie_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
         "valide": false,
         "valeurBrute": 1509.0,
         "uniteBrute": "M€",
@@ -9815,7 +10188,7 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
       },
       "scr_contrepartie": {
         "valeur": 1146.0,
@@ -9823,7 +10196,7 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 79,
-        "chapitreSource": "Rapport narratif complet RSSF_Generali_Vie_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
         "valide": false,
         "valeurBrute": 1146.0,
         "uniteBrute": "M€",
@@ -9831,7 +10204,23 @@
         "composants": null,
         "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
         "avertissement": true,
-        "noteAvertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+      },
+      "scr_souscription_vie": {
+        "valeur": 1045.0,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 79,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
+        "valide": false,
+        "valeurBrute": 1045.0,
+        "uniteBrute": "M€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
       },
       "scr_souscription_nonvie": {
         "valeur": 0.0,
@@ -9850,20 +10239,20 @@
         "noteAvertissement": null
       },
       "scr_diversification": {
-        "valeur": -737.831,
+        "valeur": -1327.0,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 10,
-        "chapitreSource": "E.2",
+        "pageSource": 79,
+        "chapitreSource": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
         "valide": false,
-        "valeurBrute": -737831.0,
-        "uniteBrute": "K€",
+        "valeurBrute": -1327.0,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
-        "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "sourcePdf": "RSSF_Generali_Vie_2025.pdf",
+        "avertissement": true,
+        "noteAvertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
       }
     },
     "Groupama": {
@@ -9896,8 +10285,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_total": {
         "valeur": 6020.977,
@@ -9928,8 +10318,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "libelle": "SCR minimal consolidé du groupe"
       },
       "fonds_propres_eligibles": {
         "valeur": 16481.186,
@@ -10262,10 +10653,10 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 74,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": false,
-        "valeurBrute": 677423.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 677.423,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
@@ -10278,10 +10669,10 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 74,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": false,
-        "valeurBrute": 4675236.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 4675.236,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
@@ -10294,10 +10685,10 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 74,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": false,
-        "valeurBrute": 1271055.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 1271.055,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
@@ -10310,10 +10701,10 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 74,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": false,
-        "valeurBrute": 785108.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 785.108,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
@@ -10326,10 +10717,10 @@
         "categorie": "scr",
         "annee": 2025,
         "pageSource": 74,
-        "chapitreSource": "E.2",
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": false,
-        "valeurBrute": 1455724.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 1455.724,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
@@ -10341,32 +10732,32 @@
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 87,
-        "chapitreSource": "E.2",
+        "pageSource": 74,
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": true,
-        "valeurBrute": 2474794.0,
-        "uniteBrute": "K€",
+        "valeurBrute": 2474.794,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 « montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, calculée sur des composantes non diversifiées, incohérente avec ces modules)."
       },
       "scr_diversification": {
-        "valeur": -4612.403,
+        "valeur": -1249.678,
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": 87,
-        "chapitreSource": "E.2",
+        "pageSource": 74,
+        "chapitreSource": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
         "valide": false,
-        "valeurBrute": -4612403.0,
-        "uniteBrute": "K€",
+        "valeurBrute": -1249.678,
+        "uniteBrute": "M€",
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 « montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, calculée sur des composantes non diversifiées, incohérente avec ces modules)."
       }
     },
     "La Mondiale": {
@@ -12371,8 +12762,8 @@
         "unite": "M€",
         "categorie": "fonds_propres",
         "annee": 2025,
-        "pageSource": null,
-        "chapitreSource": "E.1",
+        "pageSource": 61,
+        "chapitreSource": "S.23.01.01/R0540/C0030 imprimé « - » (p.61)",
         "valide": true,
         "valeurBrute": 0.0,
         "uniteBrute": "K€",
@@ -12387,8 +12778,8 @@
         "unite": "M€",
         "categorie": "fonds_propres",
         "annee": 2025,
-        "pageSource": null,
-        "chapitreSource": "E.1",
+        "pageSource": 61,
+        "chapitreSource": "S.23.01.01/R0540/C0040 imprimé « - » (p.61)",
         "valide": true,
         "valeurBrute": 0.0,
         "uniteBrute": "K€",
@@ -12403,8 +12794,8 @@
         "unite": "M€",
         "categorie": "fonds_propres",
         "annee": 2025,
-        "pageSource": null,
-        "chapitreSource": "E.1",
+        "pageSource": 61,
+        "chapitreSource": "S.23.01.01/R0540/C0050 imprimé « - » (p.61)",
         "valide": true,
         "valeurBrute": 0.0,
         "uniteBrute": "K€",
@@ -12696,8 +13087,8 @@
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": null,
-        "chapitreSource": "E.2",
+        "pageSource": 62,
+        "chapitreSource": "S.25.01.21/R0040 imprimé « - » (p.62)",
         "valide": false,
         "valeurBrute": 0.0,
         "uniteBrute": "K€",
@@ -12744,8 +13135,8 @@
         "unite": "M€",
         "categorie": "scr",
         "annee": 2025,
-        "pageSource": null,
-        "chapitreSource": "E.2",
+        "pageSource": 62,
+        "chapitreSource": "S.25.01.21/R0050 imprimé « - » (p.62)",
         "valide": true,
         "valeurBrute": 0.0,
         "uniteBrute": "K€",
@@ -13181,6 +13572,54 @@
             "operation": "+"
           }
         ],
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t1_r": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 122,
+        "chapitreSource": "S.23.01.01/R0540, Niveau 1 restreint imprimé « - » (Décision 152)",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t2": {
+        "valeur": 9.725,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 122,
+        "chapitreSource": "S.23.01.01/R0540, Niveau 2 = fonds propres auxiliaires (rappel de cotisations) ; 5 319 982 + 9 725 = total 5 329 707 k€ (Décision 152)",
+        "valide": true,
+        "valeurBrute": 9725.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 122,
+        "chapitreSource": "S.23.01.01/R0540, Niveau 3 imprimé « - » (Décision 152)",
+        "valide": true,
+        "valeurBrute": 0.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
         "sourcePdf": null,
         "avertissement": false,
         "noteAvertissement": null
@@ -17280,8 +17719,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable.",
+        "libelle": "Ratio de couverture du SCR minimal consolidé"
       },
       "scr_total": {
         "valeur": 5234.451,
@@ -17312,8 +17752,9 @@
         "estCompose": false,
         "composants": null,
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo.",
+        "libelle": "SCR minimal consolidé du groupe"
       },
       "fonds_propres_eligibles": {
         "valeur": 10005.273,
@@ -17372,6 +17813,22 @@
         "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0660/C0040 (groupe)",
         "valide": true,
         "valeurBrute": 1967411.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "fonds_propres_t3": {
+        "valeur": 0.0,
+        "unite": "M€",
+        "categorie": "fonds_propres",
+        "annee": 2025,
+        "pageSource": 131,
+        "chapitreSource": "S.23.01.22/R0660, Niveau 3 vide ; T1nr + T1r + T2 = total 10 005 273 k€ exactement (Décision 152)",
+        "valide": true,
+        "valeurBrute": 0.0,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null,
@@ -17681,6 +18138,38 @@
         "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0030 (mapping, formule standard)",
         "valide": false,
         "valeurBrute": 1154216.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "scr_souscription_nonvie": {
+        "valeur": 0.139,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 133,
+        "chapitreSource": "S.25.01.22/R0050 = 139 k€ (Décision 152)",
+        "valide": true,
+        "valeurBrute": 139.0,
+        "uniteBrute": "K€",
+        "estCompose": false,
+        "composants": null,
+        "sourcePdf": null,
+        "avertissement": false,
+        "noteAvertissement": null
+      },
+      "scr_diversification": {
+        "valeur": -1539.439,
+        "unite": "M€",
+        "categorie": "scr",
+        "annee": 2025,
+        "pageSource": 133,
+        "chapitreSource": "S.25.01.22/R0060 ; Σ modules + R0060 = R0100 (6 743 149 k€) (Décision 152)",
+        "valide": false,
+        "valeurBrute": -1539439.0,
         "uniteBrute": "K€",
         "estCompose": false,
         "composants": null,
@@ -19506,6 +19995,1405 @@
         "sourcePdf": null,
         "avertissement": false,
         "noteAvertissement": null
+      }
+    }
+  },
+  "indicateursParSociete": {
+    "AG.Mut": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 0.51,
+      "composition_modules_pct": {
+        "scr_marche": 66.9,
+        "scr_contrepartie": 21.4,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 11.7,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 20.6,
+      "ajustements_sur_scr_pct": -5.2,
+      "scr_sur_primes_plus_be_pct": 5.89,
+      "sp_nonvie_pct": 73.2,
+      "position_mcr": "plancher_absolu",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 709.9,
+      "impact_va_pts": -0.3,
+      "impact_mesures_lt_pts": -0.3
+    },
+    "AG2R Prevoyance": {
+      "part_t1_non_restreint_pct": 74.5,
+      "marge_risque_sur_be_pct": 2.82,
+      "composition_modules_pct": {
+        "scr_marche": 39.9,
+        "scr_contrepartie": 3.1,
+        "scr_souscription_vie": 6.0,
+        "scr_souscription_sante": 51.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 24.7,
+      "ajustements_sur_scr_pct": -9.8,
+      "scr_sur_primes_plus_be_pct": 8.72,
+      "sp_nonvie_pct": 70.7,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 165.1,
+      "impact_va_pts": -3.8,
+      "impact_mesures_lt_pts": -3.8
+    },
+    "AXA France IARD": {
+      "part_t1_non_restreint_pct": 95.5,
+      "marge_risque_sur_be_pct": 2.73,
+      "composition_modules_pct": {
+        "scr_marche": 40.0,
+        "scr_contrepartie": 8.6,
+        "scr_souscription_vie": 3.0,
+        "scr_souscription_nonvie": 48.4
+      },
+      "diversification_sur_modules_pct": 27.9,
+      "ajustements_sur_scr_pct": 0.0,
+      "scr_sur_primes_plus_be_pct": 10.08,
+      "sp_nonvie_pct": 61.4,
+      "position_mcr": "plafond_45",
+      "base_scr": "modele_interne",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 152.9,
+      "impact_va_pts": -14.6,
+      "impact_mesures_lt_pts": -14.6
+    },
+    "AXA France Vie": {
+      "part_t1_non_restreint_pct": 99.7,
+      "marge_risque_sur_be_pct": 1.03,
+      "composition_modules_pct": {
+        "scr_marche": 46.8,
+        "scr_contrepartie": 9.3,
+        "scr_souscription_vie": 43.9,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 25.5,
+      "ajustements_sur_scr_pct": 0.0,
+      "scr_sur_primes_plus_be_pct": 3.44,
+      "sp_nonvie_pct": 79.6,
+      "position_mcr": "plafond_45",
+      "base_scr": "modele_interne",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 141.5,
+      "impact_va_pts": -17.0,
+      "impact_mesures_lt_pts": -17.0
+    },
+    "Abeille Epargne Retraite": {
+      "part_t1_non_restreint_pct": 92.2,
+      "marge_risque_sur_be_pct": 1.41,
+      "composition_modules_pct": {
+        "scr_marche": 54.7,
+        "scr_contrepartie": 1.1,
+        "scr_souscription_vie": 44.2,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 21.2,
+      "ajustements_sur_scr_pct": -524.4,
+      "scr_sur_primes_plus_be_pct": 1.64,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 380.7,
+      "impact_va_pts": -13.4,
+      "impact_mesures_lt_pts": -13.4
+    },
+    "Abeille IARD Sante": {
+      "part_t1_non_restreint_pct": 70.1,
+      "marge_risque_sur_be_pct": 6.61,
+      "composition_modules_pct": {
+        "scr_marche": 28.1,
+        "scr_contrepartie": 8.7,
+        "scr_souscription_vie": 1.2,
+        "scr_souscription_sante": 5.2,
+        "scr_souscription_nonvie": 56.8
+      },
+      "diversification_sur_modules_pct": 24.8,
+      "ajustements_sur_scr_pct": -6.3,
+      "scr_sur_primes_plus_be_pct": 19.95,
+      "sp_nonvie_pct": 69.6,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 165.0,
+      "impact_va_pts": -2.4,
+      "impact_mesures_lt_pts": -2.4
+    },
+    "Abeille Vie": {
+      "part_t1_non_restreint_pct": 80.4,
+      "marge_risque_sur_be_pct": 1.63,
+      "composition_modules_pct": {
+        "scr_marche": 63.1,
+        "scr_contrepartie": 0.7,
+        "scr_souscription_vie": 36.2,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 19.5,
+      "ajustements_sur_scr_pct": -167.5,
+      "scr_sur_primes_plus_be_pct": 3.97,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 244.9,
+      "impact_va_pts": -10.0,
+      "impact_mesures_lt_pts": -10.0
+    },
+    "Aema Groupe": {
+      "part_t1_non_restreint_pct": 83.5,
+      "marge_risque_sur_be_pct": 2.14,
+      "composition_modules_pct": {
+        "scr_marche": 55.2,
+        "scr_contrepartie": 1.3,
+        "scr_souscription_vie": 31.8,
+        "scr_souscription_sante": 3.0,
+        "scr_souscription_nonvie": 8.7
+      },
+      "diversification_sur_modules_pct": 26.1,
+      "ajustements_sur_scr_pct": -149.1,
+      "scr_sur_primes_plus_be_pct": 4.87,
+      "sp_nonvie_pct": 72.8,
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 205.7,
+      "impact_va_pts": -6.4,
+      "impact_mesures_lt_pts": -6.4
+    },
+    "Aesio Mutuelle": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 12.36,
+      "composition_modules_pct": {
+        "scr_marche": 37.4,
+        "scr_contrepartie": 7.0,
+        "scr_souscription_vie": 3.7,
+        "scr_souscription_sante": 51.9,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 25.1,
+      "ajustements_sur_scr_pct": -0.2,
+      "scr_sur_primes_plus_be_pct": 29.49,
+      "sp_nonvie_pct": 75.5,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 270.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "Allianz Vie": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 1.26,
+      "composition_modules_pct": {
+        "scr_marche": 56.4,
+        "scr_contrepartie": 9.2,
+        "scr_souscription_vie": 34.4,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 31.1,
+      "ajustements_sur_scr_pct": 3.5,
+      "scr_sur_primes_plus_be_pct": 3.71,
+      "position_mcr": "plafond_45",
+      "base_scr": "modele_interne",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 151.9,
+      "impact_va_pts": -40.4,
+      "impact_mesures_lt_pts": -40.4
+    },
+    "Arpege Prevoyance": {
+      "part_t1_non_restreint_pct": 94.5,
+      "marge_risque_sur_be_pct": 4.52,
+      "composition_modules_pct": {
+        "scr_marche": 42.5,
+        "scr_contrepartie": 6.9,
+        "scr_souscription_vie": 4.8,
+        "scr_souscription_sante": 45.8,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 26.0,
+      "ajustements_sur_scr_pct": -3.2,
+      "scr_sur_primes_plus_be_pct": 17.08,
+      "sp_nonvie_pct": 69.8,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 266.9,
+      "impact_va_pts": -3.7,
+      "impact_mesures_lt_pts": -3.7
+    },
+    "BPCE Assurances IARD": {
+      "part_t1_non_restreint_pct": 67.6,
+      "marge_risque_sur_be_pct": 4.64,
+      "composition_modules_pct": {
+        "scr_marche": 19.4,
+        "scr_contrepartie": 9.8,
+        "scr_souscription_vie": 0.2,
+        "scr_souscription_sante": 8.2,
+        "scr_souscription_nonvie": 62.5
+      },
+      "diversification_sur_modules_pct": 23.3,
+      "ajustements_sur_scr_pct": -34.8,
+      "scr_sur_primes_plus_be_pct": 12.66,
+      "sp_nonvie_pct": 65.5,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 127.2,
+      "impact_va_pts": -1.3,
+      "impact_mesures_lt_pts": -1.3
+    },
+    "BPCE Vie": {
+      "part_t1_non_restreint_pct": 84.3,
+      "marge_risque_sur_be_pct": 1.45,
+      "composition_modules_pct": {
+        "scr_marche": 59.3,
+        "scr_contrepartie": 3.0,
+        "scr_souscription_vie": 35.5,
+        "scr_souscription_sante": 2.2,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 22.0,
+      "ajustements_sur_scr_pct": -340.6,
+      "scr_sur_primes_plus_be_pct": 2.26,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": true,
+      "ratio_scr_sans_mesures_lt_pct": 159.4,
+      "impact_va_pts": -2.0,
+      "impact_transitoires_pts": -87.6,
+      "impact_mesures_lt_pts": -89.6
+    },
+    "CNP Assurances": {
+      "part_t1_non_restreint_pct": 77.8,
+      "marge_risque_sur_be_pct": 1.35,
+      "composition_modules_pct": {
+        "scr_marche": 68.1,
+        "scr_contrepartie": 2.5,
+        "scr_souscription_vie": 25.7,
+        "scr_souscription_sante": 3.7,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 19.4,
+      "ajustements_sur_scr_pct": -193.0,
+      "scr_sur_primes_plus_be_pct": 4.76,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 251.2,
+      "impact_va_pts": -6.8,
+      "impact_mesures_lt_pts": -6.8
+    },
+    "Cardif Assurance Vie": {
+      "part_t1_non_restreint_pct": 86.6,
+      "marge_risque_sur_be_pct": 1.21,
+      "composition_modules_pct": {
+        "scr_marche": 60.4,
+        "scr_contrepartie": 1.0,
+        "scr_souscription_vie": 37.1,
+        "scr_souscription_sante": 1.4,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 20.8,
+      "ajustements_sur_scr_pct": -246.2,
+      "scr_sur_primes_plus_be_pct": 3.43,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 168.2,
+      "impact_va_pts": -2.0,
+      "impact_mesures_lt_pts": -2.0
+    },
+    "Cardif Assurances Risques Divers": {
+      "part_t1_non_restreint_pct": 65.7,
+      "marge_risque_sur_be_pct": 12.97,
+      "composition_modules_pct": {
+        "scr_marche": 21.3,
+        "scr_contrepartie": 10.9,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 12.9,
+        "scr_souscription_nonvie": 54.9
+      },
+      "diversification_sur_modules_pct": 27.5,
+      "ajustements_sur_scr_pct": -15.5,
+      "scr_sur_primes_plus_be_pct": 27.54,
+      "sp_nonvie_pct": 23.1,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 145.6,
+      "impact_va_pts": -0.2,
+      "impact_mesures_lt_pts": -0.2
+    },
+    "Covéa": {
+      "part_t1_non_restreint_pct": 98.1,
+      "marge_risque_sur_be_pct": 6.26,
+      "composition_modules_pct": {
+        "scr_marche": 39.5,
+        "scr_contrepartie": 2.3,
+        "scr_souscription_vie": 24.9,
+        "scr_souscription_sante": 4.4,
+        "scr_souscription_nonvie": 29.0
+      },
+      "diversification_sur_modules_pct": 33.8,
+      "ajustements_sur_scr_pct": -41.6,
+      "scr_sur_primes_plus_be_pct": 13.51,
+      "sp_nonvie_pct": 63.1,
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 218.6,
+      "impact_va_pts": -2.2,
+      "impact_mesures_lt_pts": -2.2
+    },
+    "Crédit Agricole Assurances": {
+      "part_t1_non_restreint_pct": 77.9,
+      "marge_risque_sur_be_pct": 2.02,
+      "composition_modules_pct": {
+        "scr_marche": 50.4,
+        "scr_contrepartie": 0.9,
+        "scr_souscription_vie": 43.4,
+        "scr_souscription_sante": 1.8,
+        "scr_souscription_nonvie": 3.4
+      },
+      "diversification_sur_modules_pct": 24.1,
+      "ajustements_sur_scr_pct": -221.6,
+      "scr_sur_primes_plus_be_pct": 3.6,
+      "sp_nonvie_pct": 67.2,
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 192.5,
+      "impact_va_pts": -2.0,
+      "impact_mesures_lt_pts": -2.0
+    },
+    "Generali IARD": {
+      "part_t1_non_restreint_pct": 93.0,
+      "marge_risque_sur_be_pct": 3.15,
+      "composition_modules_pct": {
+        "scr_marche": 28.6,
+        "scr_contrepartie": 18.5,
+        "scr_souscription_vie": 0.8,
+        "scr_souscription_nonvie": 52.1
+      },
+      "diversification_sur_modules_pct": 27.8,
+      "ajustements_sur_scr_pct": 10.9,
+      "scr_sur_primes_plus_be_pct": 17.05,
+      "sp_nonvie_pct": 63.9,
+      "position_mcr": "entre_25_45",
+      "base_scr": "modele_interne",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 141.0,
+      "impact_va_pts": -11.7,
+      "impact_mesures_lt_pts": -11.7
+    },
+    "Generali Vie": {
+      "part_t1_non_restreint_pct": 91.8,
+      "marge_risque_sur_be_pct": 0.56,
+      "composition_modules_pct": {
+        "scr_marche": 40.8,
+        "scr_contrepartie": 31.0,
+        "scr_souscription_vie": 28.2,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 35.9,
+      "ajustements_sur_scr_pct": 8.9,
+      "scr_sur_primes_plus_be_pct": 3.1,
+      "position_mcr": "plafond_45",
+      "base_scr": "modele_interne",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 152.0,
+      "impact_va_pts": -46.2,
+      "impact_mesures_lt_pts": -46.2
+    },
+    "Groupama": {
+      "part_t1_non_restreint_pct": 80.9,
+      "marge_risque_sur_be_pct": 3.45,
+      "composition_modules_pct": {
+        "scr_marche": 43.8,
+        "scr_contrepartie": 7.4,
+        "scr_souscription_vie": 13.7,
+        "scr_souscription_sante": 11.9,
+        "scr_souscription_nonvie": 23.2
+      },
+      "diversification_sur_modules_pct": 11.7,
+      "ajustements_sur_scr_pct": -67.6,
+      "scr_sur_primes_plus_be_pct": 6.8,
+      "sp_nonvie_pct": 63.1,
+      "base_scr": "modele_interne",
+      "utilise_va": true,
+      "mesure_transitoire": true,
+      "ratio_scr_sans_mesures_lt_pct": 217.6,
+      "impact_va_pts": -4.2,
+      "impact_transitoires_pts": -51.9,
+      "impact_mesures_lt_pts": -56.1
+    },
+    "La Mondiale": {
+      "part_t1_non_restreint_pct": 66.5,
+      "marge_risque_sur_be_pct": 0.97,
+      "composition_modules_pct": {
+        "scr_marche": 80.7,
+        "scr_contrepartie": 2.3,
+        "scr_souscription_vie": 12.2,
+        "scr_souscription_sante": 4.8,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 13.3,
+      "ajustements_sur_scr_pct": -136.6,
+      "scr_sur_primes_plus_be_pct": 6.84,
+      "sp_nonvie_pct": 79.6,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": true,
+      "ratio_scr_sans_mesures_lt_pct": 261.3,
+      "impact_va_pts": -3.4,
+      "impact_transitoires_pts": -18.9,
+      "impact_mesures_lt_pts": -22.3
+    },
+    "La Mondiale Europartner": {
+      "part_t1_non_restreint_pct": 78.2,
+      "marge_risque_sur_be_pct": 0.85,
+      "composition_modules_pct": {
+        "scr_marche": 71.6,
+        "scr_contrepartie": 3.3,
+        "scr_souscription_vie": 25.1,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 17.4,
+      "ajustements_sur_scr_pct": -217.3,
+      "scr_sur_primes_plus_be_pct": 1.36,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 179.0,
+      "impact_va_pts": -0.9,
+      "impact_mesures_lt_pts": -0.9
+    },
+    "La Mondiale Partenaire": {
+      "part_t1_non_restreint_pct": 75.6,
+      "marge_risque_sur_be_pct": 0.72,
+      "composition_modules_pct": {
+        "scr_marche": 73.7,
+        "scr_contrepartie": 8.2,
+        "scr_souscription_vie": 18.1,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 17.1,
+      "ajustements_sur_scr_pct": -161.3,
+      "scr_sur_primes_plus_be_pct": 2.38,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 141.6,
+      "impact_va_pts": -2.2,
+      "impact_mesures_lt_pts": -2.2
+    },
+    "MACIF SAM": {
+      "part_t1_non_restreint_pct": 83.4,
+      "marge_risque_sur_be_pct": 5.71,
+      "composition_modules_pct": {
+        "scr_marche": 60.1,
+        "scr_contrepartie": 1.4,
+        "scr_souscription_vie": 0.9,
+        "scr_souscription_sante": 5.2,
+        "scr_souscription_nonvie": 32.4
+      },
+      "diversification_sur_modules_pct": 22.9,
+      "ajustements_sur_scr_pct": -22.5,
+      "scr_sur_primes_plus_be_pct": 28.46,
+      "sp_nonvie_pct": 73.1,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 313.4,
+      "impact_va_pts": -5.2,
+      "impact_mesures_lt_pts": -5.2
+    },
+    "MACSF prévoyance": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 16.34,
+      "composition_modules_pct": {
+        "scr_marche": 96.3,
+        "scr_contrepartie": 0.7,
+        "scr_souscription_vie": 3.0,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 2.7,
+      "ajustements_sur_scr_pct": -14.7,
+      "scr_sur_primes_plus_be_pct": 336.78,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 521.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "MAIF": {
+      "part_t1_non_restreint_pct": 99.8,
+      "marge_risque_sur_be_pct": 7.79,
+      "composition_modules_pct": {
+        "scr_marche": 50.1,
+        "scr_contrepartie": 1.8,
+        "scr_souscription_vie": 1.0,
+        "scr_souscription_sante": 7.7,
+        "scr_souscription_nonvie": 39.5
+      },
+      "diversification_sur_modules_pct": 26.1,
+      "ajustements_sur_scr_pct": -12.7,
+      "scr_sur_primes_plus_be_pct": 28.01,
+      "sp_nonvie_pct": 60.4,
+      "position_mcr": "entre_25_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 224.6,
+      "impact_va_pts": -2.7,
+      "impact_mesures_lt_pts": -2.7
+    },
+    "MGEN": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 10.79,
+      "composition_modules_pct": {
+        "scr_marche": 42.2,
+        "scr_contrepartie": 3.7,
+        "scr_souscription_vie": 3.8,
+        "scr_souscription_sante": 50.2,
+        "scr_souscription_nonvie": 0.1
+      },
+      "diversification_sur_modules_pct": 24.2,
+      "ajustements_sur_scr_pct": -3.9,
+      "scr_sur_primes_plus_be_pct": 28.56,
+      "sp_nonvie_pct": 72.3,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 236.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "MMJ": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 28.1,
+      "composition_modules_pct": {
+        "scr_marche": 45.7,
+        "scr_contrepartie": 8.3,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 46.0,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 24.5,
+      "ajustements_sur_scr_pct": 0.0,
+      "scr_sur_primes_plus_be_pct": 29.8,
+      "sp_nonvie_pct": 79.1,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 227.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "MNPAF": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 35.9,
+      "composition_modules_pct": {
+        "scr_marche": 34.2,
+        "scr_contrepartie": 6.3,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 59.5,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 22.1,
+      "ajustements_sur_scr_pct": 0.0,
+      "scr_sur_primes_plus_be_pct": 26.57,
+      "sp_nonvie_pct": 89.0,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 283.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "Macif Sante Prevoyance": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 9.79,
+      "composition_modules_pct": {
+        "scr_marche": 40.1,
+        "scr_contrepartie": 2.7,
+        "scr_souscription_vie": 13.5,
+        "scr_souscription_sante": 43.7,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 27.3,
+      "ajustements_sur_scr_pct": -1.3,
+      "scr_sur_primes_plus_be_pct": 20.64,
+      "sp_nonvie_pct": 73.2,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 253.1,
+      "impact_va_pts": -5.9,
+      "impact_mesures_lt_pts": -5.9
+    },
+    "Macif Vie": {
+      "part_t1_non_restreint_pct": 92.3,
+      "marge_risque_sur_be_pct": 1.08,
+      "composition_modules_pct": {
+        "scr_marche": 60.0,
+        "scr_contrepartie": 0.2,
+        "scr_souscription_vie": 39.3,
+        "scr_souscription_sante": 0.6,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 20.3,
+      "ajustements_sur_scr_pct": -400.8,
+      "scr_sur_primes_plus_be_pct": 2.93,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 215.1,
+      "impact_va_pts": -6.2,
+      "impact_mesures_lt_pts": -6.2
+    },
+    "Macifilia": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 0.44,
+      "composition_modules_pct": {
+        "scr_marche": 92.5,
+        "scr_contrepartie": 2.2,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 5.3
+      },
+      "diversification_sur_modules_pct": 5.4,
+      "ajustements_sur_scr_pct": 0.0,
+      "scr_sur_primes_plus_be_pct": 11.38,
+      "position_mcr": "plancher_absolu",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 953.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "Nuoma": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 16.77,
+      "composition_modules_pct": {
+        "scr_marche": 51.8,
+        "scr_contrepartie": 3.3,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 44.9,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 22.3,
+      "ajustements_sur_scr_pct": -9.0,
+      "scr_sur_primes_plus_be_pct": 32.68,
+      "sp_nonvie_pct": 86.4,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 295.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "Predica": {
+      "part_t1_non_restreint_pct": 77.4,
+      "marge_risque_sur_be_pct": 2.12,
+      "composition_modules_pct": {
+        "scr_marche": 52.0,
+        "scr_contrepartie": 0.7,
+        "scr_souscription_vie": 46.3,
+        "scr_souscription_sante": 1.1,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 21.7,
+      "ajustements_sur_scr_pct": -281.5,
+      "scr_sur_primes_plus_be_pct": 3.3,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 204.5,
+      "impact_va_pts": -1.8,
+      "impact_mesures_lt_pts": -1.8
+    },
+    "Prima": {
+      "part_t1_non_restreint_pct": 74.8,
+      "marge_risque_sur_be_pct": 3.3,
+      "composition_modules_pct": {
+        "scr_marche": 56.5,
+        "scr_contrepartie": 6.2,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 37.2,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 22.9,
+      "ajustements_sur_scr_pct": -4.1,
+      "scr_sur_primes_plus_be_pct": 14.59,
+      "sp_nonvie_pct": 68.9,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 227.8,
+      "impact_va_pts": -3.5,
+      "impact_mesures_lt_pts": -3.5
+    },
+    "SGAM AG2R LA MONDIALE": {
+      "part_t1_non_restreint_pct": 69.4,
+      "marge_risque_sur_be_pct": 1.37,
+      "composition_modules_pct": {
+        "scr_marche": 71.9,
+        "scr_contrepartie": 2.3,
+        "scr_souscription_vie": 13.9,
+        "scr_souscription_sante": 11.9,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 18.6,
+      "ajustements_sur_scr_pct": -35.0,
+      "scr_sur_primes_plus_be_pct": 5.95,
+      "sp_nonvie_pct": 80.0,
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": true,
+      "ratio_scr_sans_mesures_lt_pct": 180.7,
+      "impact_va_pts": -2.6,
+      "impact_transitoires_pts": -7.8,
+      "impact_mesures_lt_pts": -10.4
+    },
+    "Sogécap": {
+      "part_t1_non_restreint_pct": 70.9,
+      "marge_risque_sur_be_pct": 0.92,
+      "composition_modules_pct": {
+        "scr_marche": 68.3,
+        "scr_contrepartie": 2.2,
+        "scr_souscription_vie": 28.7,
+        "scr_souscription_sante": 0.7,
+        "scr_souscription_nonvie": 0.1
+      },
+      "diversification_sur_modules_pct": 18.7,
+      "ajustements_sur_scr_pct": -334.3,
+      "scr_sur_primes_plus_be_pct": 2.65,
+      "position_mcr": "plafond_45",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 215.3,
+      "impact_va_pts": -0.5,
+      "impact_mesures_lt_pts": -0.5
+    },
+    "SwissLife Assurance et Patrimoine": {
+      "part_t1_non_restreint_pct": 87.1,
+      "marge_risque_sur_be_pct": 1.77,
+      "composition_modules_pct": {
+        "scr_marche": 71.2,
+        "scr_contrepartie": 3.9,
+        "scr_souscription_vie": 24.5,
+        "scr_souscription_sante": 0.3,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 17.8,
+      "ajustements_sur_scr_pct": -100.9,
+      "scr_sur_primes_plus_be_pct": 4.99,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 152.6,
+      "impact_va_pts": -7.1,
+      "impact_mesures_lt_pts": -7.1
+    },
+    "Themis": {
+      "part_t1_non_restreint_pct": 100.0,
+      "marge_risque_sur_be_pct": 6.4,
+      "composition_modules_pct": {
+        "scr_marche": 45.8,
+        "scr_contrepartie": 2.7,
+        "scr_souscription_vie": 0.0,
+        "scr_souscription_sante": 0.0,
+        "scr_souscription_nonvie": 51.6
+      },
+      "diversification_sur_modules_pct": 21.6,
+      "ajustements_sur_scr_pct": -2.7,
+      "scr_sur_primes_plus_be_pct": 33.62,
+      "position_mcr": "plancher_absolu",
+      "base_scr": "formule_standard",
+      "utilise_va": false,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 894.0,
+      "impact_va_pts": 0.0,
+      "impact_mesures_lt_pts": 0.0
+    },
+    "VIASANTE Mutuelle": {
+      "part_t1_non_restreint_pct": 97.5,
+      "marge_risque_sur_be_pct": 12.57,
+      "composition_modules_pct": {
+        "scr_marche": 52.7,
+        "scr_contrepartie": 4.1,
+        "scr_souscription_vie": 11.0,
+        "scr_souscription_sante": 32.2,
+        "scr_souscription_nonvie": 0.0
+      },
+      "diversification_sur_modules_pct": 26.1,
+      "ajustements_sur_scr_pct": -0.5,
+      "scr_sur_primes_plus_be_pct": 21.81,
+      "sp_nonvie_pct": 65.7,
+      "position_mcr": "plancher_25",
+      "base_scr": "formule_standard",
+      "utilise_va": true,
+      "mesure_transitoire": false,
+      "ratio_scr_sans_mesures_lt_pct": 348.1,
+      "impact_va_pts": -1.9,
+      "impact_mesures_lt_pts": -1.9
+    }
+  },
+  "definitionsIndicateurs": {
+    "part_t1_non_restreint_pct": "Fonds propres T1 non restreint / fonds propres éligibles. Comparable avec réserve entre formes juridiques.",
+    "marge_risque_sur_be_pct": "Marge de risque / best estimate. À comparer à l'intérieur d'une même activité seulement.",
+    "composition_modules_pct": "Part de chaque module dans la somme des modules (pas dans le SCR). Formule standard entre elles.",
+    "diversification_sur_modules_pct": "|Diversification| / somme des modules. Formule standard entre elles ; non comparable avec un modèle interne.",
+    "ajustements_sur_scr_pct": "(SCR − modules − diversification − opérationnel) / SCR : absorption des pertes par les provisions et impôts différés (+ autres ajustements). Très négatif en vie.",
+    "scr_sur_primes_plus_be_pct": "SCR / (primes acquises brutes + best estimate brut), proche de l'indicateur Milliman SCR / (cotisations + BE nets).",
+    "sp_nonvie_pct": "Charge de sinistres / primes acquises, lignes non-vie (y c. santé non-vie) seulement ; calculé si ces lignes pèsent au moins 10 % des primes et 10 M€. Absent pour la vie.",
+    "position_mcr": "Position du MCR dans le corridor réglementaire (plancher 25 %, plafond 45 % du SCR, plancher absolu). Si borné, le ratio MCR n'est qu'un multiple du ratio SCR.",
+    "base_scr": "Base de calcul du SCR : formule_standard ou modele_interne.",
+    "utilise_va": "La société applique la correction pour volatilité (VA, article 77 quinquies).",
+    "mesure_transitoire": "La société applique une mesure transitoire (provisions techniques ou taux).",
+    "ratio_scr_sans_mesures_lt_pct": "Ratio de couverture du SCR sans VA ni mesure transitoire (S.22.01 : fonds propres et SCR recalculés). Base homogène pour comparer les ratios SCR entre sociétés.",
+    "impact_va_pts": "Effet de la VA sur le ratio SCR, en points (négatif = la VA améliore le ratio publié). Approche par étapes : mesuré après retrait des transitoires. Generali : VA stochastique du modèle interne, valeur publiée dans le texte.",
+    "impact_transitoires_pts": "Effet des mesures transitoires sur le ratio SCR, en points (BPCE Vie, La Mondiale, SGAM AG2R, Groupama).",
+    "impact_mesures_lt_pts": "Effet cumulé VA + transitoires sur le ratio SCR, en points."
+  },
+  "groupesPairs": [
+    {
+      "id": "Vie · Formule standard · solo",
+      "societes": [
+        "Abeille Epargne Retraite",
+        "Abeille Vie",
+        "BPCE Vie",
+        "CNP Assurances",
+        "Cardif Assurance Vie",
+        "La Mondiale",
+        "La Mondiale Europartner",
+        "La Mondiale Partenaire",
+        "MACSF prévoyance",
+        "Macif Vie",
+        "Predica",
+        "Sogécap",
+        "SwissLife Assurance et Patrimoine"
+      ],
+      "n": 13,
+      "petitEchantillon": false
+    },
+    {
+      "id": "Santé/prévoyance · Formule standard · solo",
+      "societes": [
+        "AG.Mut",
+        "AG2R Prevoyance",
+        "Aesio Mutuelle",
+        "Arpege Prevoyance",
+        "MGEN",
+        "MMJ",
+        "MNPAF",
+        "Macif Sante Prevoyance",
+        "Nuoma",
+        "Prima",
+        "VIASANTE Mutuelle"
+      ],
+      "n": 11,
+      "petitEchantillon": false
+    },
+    {
+      "id": "Non-vie · Formule standard · solo",
+      "societes": [
+        "Abeille IARD Sante",
+        "BPCE Assurances IARD",
+        "Cardif Assurances Risques Divers",
+        "MACIF SAM",
+        "MAIF",
+        "Macifilia",
+        "Themis"
+      ],
+      "n": 7,
+      "petitEchantillon": false
+    },
+    {
+      "id": "Vie · Modèle interne · solo",
+      "societes": [
+        "AXA France Vie",
+        "Allianz Vie",
+        "Generali Vie"
+      ],
+      "n": 3,
+      "petitEchantillon": true
+    },
+    {
+      "id": "Non-vie · Modèle interne · solo",
+      "societes": [
+        "AXA France IARD",
+        "Generali IARD"
+      ],
+      "n": 2,
+      "petitEchantillon": true
+    },
+    {
+      "id": "Mixte · Formule standard · groupe",
+      "societes": [
+        "Aema Groupe",
+        "Covéa"
+      ],
+      "n": 2,
+      "petitEchantillon": true
+    },
+    {
+      "id": "Vie · Formule standard · groupe",
+      "societes": [
+        "Crédit Agricole Assurances",
+        "SGAM AG2R LA MONDIALE"
+      ],
+      "n": 2,
+      "petitEchantillon": true
+    },
+    {
+      "id": "Mixte · Modèle interne · groupe",
+      "societes": [
+        "Groupama"
+      ],
+      "n": 1,
+      "petitEchantillon": true
+    }
+  ],
+  "compatibilite": {
+    "axes": [
+      "activite",
+      "forme",
+      "modele",
+      "perimetre"
+    ],
+    "ordreVerdicts": {
+      "C": 0,
+      "NA": 1,
+      "R": 2,
+      "N": 3
+    },
+    "classeSinistres": {
+      "Vie": "vie",
+      "Non-vie": "non-vie",
+      "Santé/prévoyance": "non-vie",
+      "Mixte": "mixte"
+    },
+    "regle": "Pour un KPI et deux sociétés : pire verdict parmi les axes où elles diffèrent (axe activité de charge_sinistres : comparer classeSinistres, pas l'activité brute).",
+    "matrice": {
+      "ratio_scr": {
+        "activite": {
+          "verdict": "R",
+          "note": "Niveau habituel propre à chaque métier (médianes 2025 : santé 270 %, vie 202 %, non-vie 167 %)."
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Mutuelles et SAM sans accès au marché des actions : structurellement plus capitalisées."
+        },
+        "modele": {
+          "verdict": "R",
+          "note": "Calibrage propre au modèle interne ; correction pour volatilité parfois dynamique (jusqu'à +46 pts). Comparer aussi ratio_scr_sans_mesures_lt_pct."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "ratio_mcr": {
+        "activite": {
+          "verdict": "R",
+          "note": "Formule MCR différente vie / non-vie ; ratio surtout dicté par le corridor 25-45 % du SCR."
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Plancher absolu du MCR pour les petites structures."
+        },
+        "modele": {
+          "verdict": "R",
+          "note": "MCR en formule linéaire pour tous, mais corridor appliqué au SCR du modèle interne."
+        },
+        "perimetre": {
+          "verdict": "N",
+          "note": "Groupe : ratio au « SCR minimal consolidé » (S.23.01.22 R0650), pas un ratio MCR."
+        }
+      },
+      "mcr": {
+        "activite": {
+          "verdict": "R",
+          "note": "Formule linéaire différente vie / non-vie."
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Plancher absolu pour les petites structures."
+        },
+        "modele": {
+          "verdict": "R",
+          "note": "Corridor appliqué au SCR du modèle interne."
+        },
+        "perimetre": {
+          "verdict": "N",
+          "note": "Groupe : « SCR minimal consolidé » (S.23.01.22 R0610 = somme des MCR solo), pas un MCR."
+        }
+      },
+      "scr_total": {
+        "activite": {
+          "verdict": "R",
+          "note": "Taille et profil de risque."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "R",
+          "note": "Calibrage propre au modèle interne."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Pas la somme des SCR solo."
+        }
+      },
+      "fonds_propres_eligibles": {
+        "activite": {
+          "verdict": "C",
+          "note": null
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Fonds d'établissement, rappels de cotisations, certificats mutualistes."
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Tests de disponibilité au niveau du groupe."
+        }
+      },
+      "fonds_propres_t1_nr": {
+        "activite": {
+          "verdict": "C",
+          "note": null
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Les mutuelles n'émettent pas d'actions ; T2/T3 peuvent être des fonds propres auxiliaires (rappels de cotisations, engagements du groupe)."
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Disponibilité au niveau du groupe."
+        }
+      },
+      "fonds_propres_t1_r": {
+        "activite": {
+          "verdict": "C",
+          "note": null
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Les mutuelles n'émettent pas d'actions ; T2/T3 peuvent être des fonds propres auxiliaires (rappels de cotisations, engagements du groupe)."
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Disponibilité au niveau du groupe."
+        }
+      },
+      "fonds_propres_t2": {
+        "activite": {
+          "verdict": "C",
+          "note": null
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Les mutuelles n'émettent pas d'actions ; T2/T3 peuvent être des fonds propres auxiliaires (rappels de cotisations, engagements du groupe)."
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Disponibilité au niveau du groupe."
+        }
+      },
+      "fonds_propres_t3": {
+        "activite": {
+          "verdict": "C",
+          "note": null
+        },
+        "forme": {
+          "verdict": "R",
+          "note": "Les mutuelles n'émettent pas d'actions ; T2/T3 peuvent être des fonds propres auxiliaires (rappels de cotisations, engagements du groupe)."
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Disponibilité au niveau du groupe."
+        }
+      },
+      "scr_marche": {
+        "activite": {
+          "verdict": "R",
+          "note": "Montant brut (avant absorption des pertes par les provisions) : en vie il dépasse largement le SCR net. Comparer en part de la somme des modules, pas du SCR."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : pas de modules standard, catégories et diversification propres au modèle."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "scr_contrepartie": {
+        "activite": {
+          "verdict": "R",
+          "note": "Montant brut (avant absorption des pertes par les provisions) : en vie il dépasse largement le SCR net. Comparer en part de la somme des modules, pas du SCR."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : pas de modules standard, catégories et diversification propres au modèle."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "scr_souscription_vie": {
+        "activite": {
+          "verdict": "R",
+          "note": "Nul par construction pour un non-vie pur ; montant brut (cf. scr_marche)."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : vie ET santé confondus, catégories propres."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "scr_souscription_sante": {
+        "activite": {
+          "verdict": "R",
+          "note": "Montant brut ; nul pour un assureur sans santé."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : inclus dans scr_souscription_vie (NULL)."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "scr_souscription_nonvie": {
+        "activite": {
+          "verdict": "NA",
+          "note": "Nul par construction pour les assureurs vie et santé (la santé non-vie va dans le module santé)."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : pas de modules standard, catégories et diversification propres au modèle."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "scr_operationnel": {
+        "activite": {
+          "verdict": "C",
+          "note": "Formule factorielle commune en formule standard."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : approche par scénarios."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Groupe : calcul consolidé (diversification entre entités, fonds propres non disponibles)."
+        }
+      },
+      "scr_diversification": {
+        "activite": {
+          "verdict": "R",
+          "note": "Dépend du nombre de modules actifs (mono-activité ~24 %, groupes mixtes 30-43 % des modules)."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "N",
+          "note": "Modèle interne : diversification calculée sur d'autres catégories."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Inclut la diversification entre entités du groupe."
+        }
+      },
+      "best_estimate": {
+        "activite": {
+          "verdict": "R",
+          "note": "Vie : participation aux bénéfices future, options, UC ≈ actifs ; non-vie : sinistres à court terme."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Éliminations intra-groupe."
+        }
+      },
+      "marge_risque": {
+        "activite": {
+          "verdict": "R",
+          "note": "Rapport au BE structurel (médianes : vie 1 %, non-vie 6 %, santé 11 %)."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "R",
+          "note": "Calculée avec le SCR du modèle."
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Éliminations intra-groupe."
+        }
+      },
+      "provisions_techniques": {
+        "activite": {
+          "verdict": "R",
+          "note": "Cf. best_estimate ; mesure transitoire sur provisions chez La Mondiale / SGAM AG2R."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Éliminations intra-groupe."
+        }
+      },
+      "primes_acquises_brutes": {
+        "activite": {
+          "verdict": "R",
+          "note": "Vie : surtout de la collecte d'épargne ; non-vie : prime de risque. Inclut la réassurance acceptée."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Montants consolidés."
+        }
+      },
+      "charge_sinistres": {
+        "activite": {
+          "verdict": "N",
+          "note": "Vie (S.05.01 R1610) = prestations (rachats, échéances, rentes) ; non-vie = sinistres survenus."
+        },
+        "forme": {
+          "verdict": "C",
+          "note": null
+        },
+        "modele": {
+          "verdict": "C",
+          "note": null
+        },
+        "perimetre": {
+          "verdict": "R",
+          "note": "Montants consolidés."
+        }
       }
     }
   }

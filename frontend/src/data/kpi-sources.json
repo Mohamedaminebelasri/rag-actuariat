@@ -21,8 +21,8 @@
       "raw_value": null,
       "raw_unit": null,
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable."
     },
     "scr_total": {
       "value": 6020.977,
@@ -45,8 +45,8 @@
       "raw_value": 3840840.0,
       "raw_unit": "K€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo."
     },
     "fonds_propres_eligibles": {
       "value": 16481.186,
@@ -173,9 +173,9 @@
       "unit": "M€",
       "year": 2025,
       "source_page": 74,
-      "source_chapter": "E.2",
-      "raw_value": 677423.0,
-      "raw_unit": "K€",
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": 677.423,
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
@@ -185,9 +185,9 @@
       "unit": "M€",
       "year": 2025,
       "source_page": 74,
-      "source_chapter": "E.2",
-      "raw_value": 4675236.0,
-      "raw_unit": "K€",
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": 4675.236,
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
@@ -197,9 +197,9 @@
       "unit": "M€",
       "year": 2025,
       "source_page": 74,
-      "source_chapter": "E.2",
-      "raw_value": 1271055.0,
-      "raw_unit": "K€",
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": 1271.055,
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
@@ -209,9 +209,9 @@
       "unit": "M€",
       "year": 2025,
       "source_page": 74,
-      "source_chapter": "E.2",
-      "raw_value": 785108.0,
-      "raw_unit": "K€",
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": 785.108,
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
@@ -221,9 +221,9 @@
       "unit": "M€",
       "year": 2025,
       "source_page": 74,
-      "source_chapter": "E.2",
-      "raw_value": 1455724.0,
-      "raw_unit": "K€",
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": 1455.724,
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
@@ -232,25 +232,25 @@
       "value": 2474.794,
       "unit": "M€",
       "year": 2025,
-      "source_page": 87,
-      "source_chapter": "E.2",
-      "raw_value": 2474794.0,
-      "raw_unit": "K€",
+      "source_page": 74,
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": 2474.794,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 « montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, calculée sur des composantes non diversifiées, incohérente avec ces modules)."
     },
     "scr_diversification": {
-      "value": -4612.403,
+      "value": -1249.678,
       "unit": "M€",
       "year": 2025,
-      "source_page": 87,
-      "source_chapter": "E.2",
-      "raw_value": -4612403.0,
-      "raw_unit": "K€",
+      "source_page": 74,
+      "source_chapter": "Schéma E.2.1 p.74 (modules nets de la diversification entre sous-modules) — Décision 150",
+      "raw_value": -1249.678,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Groupama utilise un modèle interne PARTIEL (souscription non-vie modélisée, cf. S.25.05.22 p.87 « montant modélisé ») : cette valeur dépend du modèle interne et n'est pas directement comparable à la formule standard. Base : schéma E.2.1 p.74 ; scr_diversification = SCR de base (9 412 M€) − somme des modules (l'ancienne valeur −4 612 M€ venait du S.25.05.22, calculée sur des composantes non diversifiées, incohérente avec ces modules)."
     }
   },
   "CNP Assurances": {
@@ -486,8 +486,8 @@
       "value": 0.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
-      "source_chapter": "E.2",
+      "source_page": 97,
+      "source_chapter": "S.25.01.21/R0050 imprimé « 0 » (p.97)",
       "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
@@ -584,8 +584,8 @@
       "value": 0.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
-      "source_chapter": "E.1",
+      "source_page": 61,
+      "source_chapter": "S.23.01.01/R0540/C0030 imprimé « - » (p.61)",
       "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
@@ -596,8 +596,8 @@
       "value": 0.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
-      "source_chapter": "E.1",
+      "source_page": 61,
+      "source_chapter": "S.23.01.01/R0540/C0040 imprimé « - » (p.61)",
       "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
@@ -608,8 +608,8 @@
       "value": 0.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
-      "source_chapter": "E.1",
+      "source_page": 61,
+      "source_chapter": "S.23.01.01/R0540/C0050 imprimé « - » (p.61)",
       "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
@@ -704,8 +704,8 @@
       "value": 0.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
-      "source_chapter": "E.2",
+      "source_page": 62,
+      "source_chapter": "S.25.01.21/R0040 imprimé « - » (p.62)",
       "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
@@ -740,8 +740,8 @@
       "value": 0.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
-      "source_chapter": "E.2",
+      "source_page": 62,
+      "source_chapter": "S.25.01.21/R0050 imprimé « - » (p.62)",
       "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
@@ -1145,8 +1145,8 @@
       "raw_value": 2836823.0,
       "raw_unit": "K€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo."
     },
     "ratio_scr": {
       "value": 212.0,
@@ -1169,8 +1169,8 @@
       "raw_value": null,
       "raw_unit": null,
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable."
     },
     "scr_marche": {
       "value": 10837.399,
@@ -4339,8 +4339,8 @@
       "raw_value": null,
       "raw_unit": null,
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable."
     },
     "scr_total": {
       "value": 5234.451,
@@ -4363,8 +4363,8 @@
       "raw_value": 1641968.0,
       "raw_unit": "K€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo."
     },
     "fonds_propres_eligibles": {
       "value": 10005.273,
@@ -4409,6 +4409,18 @@
       "source_page": 131,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.23.01.22/R0660/C0040 (groupe)",
       "raw_value": 1967411.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t3": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 131,
+      "source_chapter": "S.23.01.22/R0660, Niveau 3 vide ; T1nr + T1r + T2 = total 10 005 273 k€ exactement (Décision 152)",
+      "raw_value": 0.0,
       "raw_unit": "K€",
       "source_pdf": null,
       "avertissement": false,
@@ -4529,6 +4541,30 @@
       "source_page": 133,
       "source_chapter": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.25.01.22/R0030 (mapping, formule standard)",
       "raw_value": 1154216.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "scr_souscription_nonvie": {
+      "value": 0.139,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 133,
+      "source_chapter": "S.25.01.22/R0050 = 139 k€ (Décision 152)",
+      "raw_value": 139.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "scr_diversification": {
+      "value": -1539.439,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 133,
+      "source_chapter": "S.25.01.22/R0060 ; Σ modules + R0060 = R0100 (6 743 149 k€) (Décision 152)",
+      "raw_value": -1539439.0,
       "raw_unit": "K€",
       "source_pdf": null,
       "avertissement": false,
@@ -6843,8 +6879,8 @@
       "raw_value": null,
       "raw_unit": null,
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable."
     },
     "scr_total": {
       "value": 14087.44,
@@ -6867,8 +6903,8 @@
       "raw_value": 6188486.0,
       "raw_unit": "K€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo."
     },
     "fonds_propres_eligibles": {
       "value": 27400.137,
@@ -6931,37 +6967,37 @@
       "note_avertissement": null
     },
     "best_estimate": {
-      "value": 342.576,
+      "value": 342576.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 66,
       "source_chapter": "D.2",
       "raw_value": 342576.0,
-      "raw_unit": "K€",
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
     },
     "marge_risque": {
-      "value": 6.909,
+      "value": 6909.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 53,
       "source_chapter": "D.2",
       "raw_value": 6909.0,
-      "raw_unit": "K€",
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
     },
     "provisions_techniques": {
-      "value": 349.485,
+      "value": 349485.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 66,
       "source_chapter": "D.2",
       "raw_value": 349485.0,
-      "raw_unit": "K€",
+      "raw_unit": "M€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
@@ -8042,6 +8078,42 @@
       "avertissement": false,
       "note_avertissement": null
     },
+    "fonds_propres_t1_r": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 122,
+      "source_chapter": "S.23.01.01/R0540, Niveau 1 restreint imprimé « - » (Décision 152)",
+      "raw_value": 0.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t2": {
+      "value": 9.725,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 122,
+      "source_chapter": "S.23.01.01/R0540, Niveau 2 = fonds propres auxiliaires (rappel de cotisations) ; 5 319 982 + 9 725 = total 5 329 707 k€ (Décision 152)",
+      "raw_value": 9725.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t3": {
+      "value": 0.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 122,
+      "source_chapter": "S.23.01.01/R0540, Niveau 3 imprimé « - » (Décision 152)",
+      "raw_value": 0.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
     "provisions_techniques": {
       "value": 4750.604,
       "unit": "M€",
@@ -8101,8 +8173,8 @@
       "raw_value": null,
       "raw_unit": null,
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ratio de couverture du « SCR minimal consolidé du groupe » (S.23.01.22 R0650) — pas un ratio MCR au sens d'une société solo ; non comparable."
     },
     "fonds_propres_eligibles": {
       "value": 33251.714,
@@ -8111,6 +8183,54 @@
       "source_page": 91,
       "source_chapter": "E.1",
       "raw_value": 33251714.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t1_nr": {
+      "value": 32616.281,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 93,
+      "source_chapter": "S.23.01.22 « fonds propres éligibles pour couvrir le SCR du groupe », colonne Niveau 1 non restreint ; somme des 4 tiers = total 33 251 714 k€ (Décision 152)",
+      "raw_value": 32616281.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t1_r": {
+      "value": 134.394,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 93,
+      "source_chapter": "S.23.01.22, même ligne, Niveau 1 restreint (Décision 152)",
+      "raw_value": 134394.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t2": {
+      "value": 384.326,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 93,
+      "source_chapter": "S.23.01.22, même ligne, Niveau 2 (Décision 152)",
+      "raw_value": 384326.0,
+      "raw_unit": "K€",
+      "source_pdf": null,
+      "avertissement": false,
+      "note_avertissement": null
+    },
+    "fonds_propres_t3": {
+      "value": 116.712,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 93,
+      "source_chapter": "S.23.01.22, même ligne, Niveau 3 (Décision 152)",
+      "raw_value": 116712.0,
       "raw_unit": "K€",
       "source_pdf": null,
       "avertissement": false,
@@ -8245,8 +8365,8 @@
       "raw_value": 6478904.0,
       "raw_unit": "K€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Pour un groupe, ce chiffre est le « SCR minimal consolidé du groupe » (S.23.01.22 R0610, somme des MCR des entités) — pas un MCR au sens d'une société solo ; non comparable au MCR des sociétés solo."
     },
     "provisions_techniques": {
       "value": 89296.604,
@@ -8434,37 +8554,49 @@
       "value": 119.644,
       "unit": "M€",
       "year": 2025,
-      "source_page": 90,
-      "source_chapter": "E.2",
-      "raw_value": 119644.0,
-      "raw_unit": "K€",
+      "source_page": 69,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
+      "raw_value": 119.644,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
     },
     "scr_marche": {
       "value": 1653.208,
       "unit": "M€",
       "year": 2025,
       "source_page": 69,
-      "source_chapter": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. scr_operationnel (déjà en base, non flaggé) vaut exactement la même chose dans ce tableau (119644 K€ = 119.644 M€) — preuve que ce tableau est sur la même base que le QRT officiel pour Allianz Vie (modèle interne PARTIEL, contrairement à AXA/Generali en modèle COMPLET où un écart était explicitement signalé par le document lui-même). Pas de avertissement ici. Cf. Décision 147.",
-      "raw_value": 1653208.0,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
+      "raw_value": 1653.208,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
     },
     "scr_contrepartie": {
       "value": 270.016,
       "unit": "M€",
       "year": 2025,
       "source_page": 69,
-      "source_chapter": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. scr_operationnel (déjà en base, non flaggé) vaut exactement la même chose dans ce tableau (119644 K€ = 119.644 M€) — preuve que ce tableau est sur la même base que le QRT officiel pour Allianz Vie (modèle interne PARTIEL, contrairement à AXA/Generali en modèle COMPLET où un écart était explicitement signalé par le document lui-même). Pas de avertissement ici. Cf. Décision 147.",
-      "raw_value": 270016.0,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
+      "raw_value": 270.016,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
+    },
+    "scr_souscription_vie": {
+      "value": 1010.173,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 69,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
+      "raw_value": 1010.173,
+      "raw_unit": "M€",
+      "source_pdf": null,
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
     },
     "scr_souscription_nonvie": {
       "value": 0.0,
@@ -8483,12 +8615,12 @@
       "unit": "M€",
       "year": 2025,
       "source_page": 69,
-      "source_chapter": "Document 'Rapport_de_solvabilité_Allianz_Vie_2025.pdf' (93p) — Tableau 25 'Détail du Capital de Solvabilité Requis - SCR', p.69. Même valeur que la ligne QRT S.25.05.21/R0060 'Diversification' déjà identifiée en Décision 101 (page 90, signe détaché du nombre dans ce gabarit précis, non parsable automatiquement) — récupérée ici depuis un tableau texte propre (signe attaché), sans toucher au code de tokenisation partagé. Recoupement exact : 328565+681608+1653208+270016+119644=3053041≈3053042 (Total avant diversification/impôt) ; 3053042+108969+20187-912286-51321=2218591 = scr_total déjà en base. Cf. Décision 147.",
-      "raw_value": -912286.0,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR.",
+      "raw_value": -912.286,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Allianz Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Tableau 25 du rapport (p.69), catégories du modèle interne Allianz (diversification intra-catégorie incluse) ; scr_souscription_vie = « Risque de souscription » + « Risque commercial » (rachats/frais, rangés en souscription vie dans la formule standard) ; IM Capital Buffer (+109), fonds cantonnés (+20) et impôts différés (−51) restent dans l'écart avec le SCR."
     }
   },
   "AXA France Vie": {
@@ -8661,52 +8793,52 @@
       "note_avertissement": null
     },
     "scr_operationnel": {
-      "value": 955.99861,
+      "value": 431.97644,
       "unit": "M€",
       "year": 2025,
       "source_page": 10,
-      "source_chapter": "E.2",
-      "raw_value": 955998.61,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
+      "raw_value": 431.97644,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
     },
     "scr_marche": {
-      "value": 3168.0,
+      "value": 3168.16175,
       "unit": "M€",
       "year": 2025,
-      "source_page": 100,
-      "source_chapter": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
-      "raw_value": 3168.0,
+      "source_page": 10,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
+      "raw_value": 3168.16175,
       "raw_unit": "M€",
-      "source_pdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "source_pdf": null,
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+      "note_avertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
     },
     "scr_contrepartie": {
-      "value": 628.0,
+      "value": 628.28657,
       "unit": "M€",
       "year": 2025,
-      "source_page": 100,
-      "source_chapter": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
-      "raw_value": 628.0,
+      "source_page": 10,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
+      "raw_value": 628.28657,
       "raw_unit": "M€",
-      "source_pdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "source_pdf": null,
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+      "note_avertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
     },
     "scr_souscription_vie": {
-      "value": 2969.0,
+      "value": 2969.1593599999997,
       "unit": "M€",
       "year": 2025,
-      "source_page": 100,
-      "source_chapter": "Rapport narratif complet AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
-      "raw_value": 2969.0,
+      "source_page": 10,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
+      "raw_value": 2969.1593599999997,
       "raw_unit": "M€",
-      "source_pdf": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "source_pdf": null,
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+      "note_avertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
     },
     "scr_souscription_nonvie": {
       "value": 0.0,
@@ -8721,16 +8853,16 @@
       "note_avertissement": null
     },
     "scr_diversification": {
-      "value": -7722.5406299999995,
+      "value": -1727.95696,
       "unit": "M€",
       "year": 2025,
       "source_page": 10,
-      "source_chapter": "E.2",
-      "raw_value": -7722540.63,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables).",
+      "raw_value": -1727.95696,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (AXA France Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.10), lignes « - diversified » (diversification intra-catégorie déjà appliquée) ; scr_diversification = diversification ENTRE catégories = R0030 − somme des lignes diversifiées (−1 728 M€, identique au tableau E.2.3 du rapport narratif p.100). scr_souscription_vie = vie ET santé (R0410, non séparables)."
     }
   },
   "AXA France IARD": {
@@ -8879,100 +9011,100 @@
       "note_avertissement": null
     },
     "primes_acquises_brutes": {
-      "value": 9637.327859999996,
+      "value": 9636.839189999999,
       "unit": "M€",
       "year": 2025,
       "source_page": 3,
-      "source_chapter": "A.2",
-      "raw_value": 9637327.859999996,
+      "source_chapter": "S.05.01.02 p.3, colonne Total lue manuellement — Décision 154",
+      "raw_value": 9636839.19,
       "raw_unit": "K€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
     },
     "charge_sinistres": {
-      "value": 11517.61947,
+      "value": 5912.436370000001,
       "unit": "M€",
       "year": 2025,
       "source_page": 3,
-      "source_chapter": "A.2",
-      "raw_value": 11517619.469999999,
+      "source_chapter": "S.05.01.02 p.3, colonne Total lue manuellement — Décision 154",
+      "raw_value": 5912436.370000001,
       "raw_unit": "K€",
       "source_pdf": null,
       "avertissement": false,
       "note_avertissement": null
     },
     "scr_operationnel": {
-      "value": 620.30477,
+      "value": 262.91565,
       "unit": "M€",
       "year": 2025,
       "source_page": 9,
-      "source_chapter": "E.2",
-      "raw_value": 620304.77,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
+      "raw_value": 262.91565,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
     },
     "scr_marche": {
-      "value": 1307.0,
+      "value": 1306.93849,
       "unit": "M€",
       "year": 2025,
-      "source_page": 89,
-      "source_chapter": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
-      "raw_value": 1307.0,
+      "source_page": 9,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
+      "raw_value": 1306.93849,
       "raw_unit": "M€",
-      "source_pdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "source_pdf": null,
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+      "note_avertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
     },
     "scr_contrepartie": {
-      "value": 282.0,
+      "value": 282.32451000000003,
       "unit": "M€",
       "year": 2025,
-      "source_page": 89,
-      "source_chapter": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
-      "raw_value": 282.0,
+      "source_page": 9,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
+      "raw_value": 282.32451000000003,
       "raw_unit": "M€",
-      "source_pdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "source_pdf": null,
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+      "note_avertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
     },
     "scr_souscription_vie": {
-      "value": 97.0,
+      "value": 96.94865,
       "unit": "M€",
       "year": 2025,
-      "source_page": 89,
-      "source_chapter": "Rapport narratif complet AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf (E.2.3, tableau de décomposition du SCR avant diversification, lecture directe)",
-      "raw_value": 97.0,
+      "source_page": 9,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
+      "raw_value": 96.94865,
       "raw_unit": "M€",
-      "source_pdf": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
+      "source_pdf": null,
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne d'AXA, AVANT diversification inter-risques et AVANT ajustement impôts (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.3), pas l'annexe QRT. Cf. Décision 146."
+      "note_avertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
     },
     "scr_souscription_nonvie": {
-      "value": 2398.72765,
+      "value": 1584.78706,
       "unit": "M€",
       "year": 2025,
       "source_page": 9,
-      "source_chapter": "E.2",
-      "raw_value": 2398727.65,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
+      "raw_value": 1584.78706,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
     },
     "scr_diversification": {
-      "value": -3717.87106,
+      "value": -912.4514899999998,
       "unit": "M€",
       "year": 2025,
       "source_page": 9,
-      "source_chapter": "E.2",
-      "raw_value": -3717871.06,
-      "raw_unit": "K€",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410).",
+      "raw_value": -912.4514899999998,
+      "raw_unit": "M€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (AXA France IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; scr_diversification = R0030 − somme des lignes diversifiées (−912 M€, identique au tableau E.2.3 du rapport narratif p.89). scr_souscription_vie = vie ET santé (R0410)."
     }
   },
   "SwissLife Assurance et Patrimoine": {
@@ -9907,76 +10039,76 @@
       "note_avertissement": null
     },
     "scr_operationnel": {
-      "value": 128.865,
+      "value": 174.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 14,
-      "source_chapter": "E.2",
-      "raw_value": 128865.00000000001,
-      "raw_unit": "K€",
-      "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "source_page": 72,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
+      "raw_value": 174.0,
+      "raw_unit": "M€",
+      "source_pdf": "RSSF_Generali_Iard_2025.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
     },
     "scr_marche": {
       "value": 385.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 72,
-      "source_chapter": "Rapport narratif complet RSSF_Generali_Iard_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
       "raw_value": 385.0,
       "raw_unit": "M€",
       "source_pdf": "RSSF_Generali_Iard_2025.pdf",
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+      "note_avertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
     },
     "scr_contrepartie": {
       "value": 250.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 72,
-      "source_chapter": "Rapport narratif complet RSSF_Generali_Iard_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
       "raw_value": 250.0,
       "raw_unit": "M€",
       "source_pdf": "RSSF_Generali_Iard_2025.pdf",
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+      "note_avertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
     },
     "scr_souscription_vie": {
       "value": 11.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 72,
-      "source_chapter": "Rapport narratif complet RSSF_Generali_Iard_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
       "raw_value": 11.0,
       "raw_unit": "M€",
       "source_pdf": "RSSF_Generali_Iard_2025.pdf",
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+      "note_avertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
     },
     "scr_souscription_nonvie": {
-      "value": 732.365,
+      "value": 702.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 14,
-      "source_chapter": "E.2",
-      "raw_value": 732365.0,
-      "raw_unit": "K€",
-      "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "source_page": 72,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
+      "raw_value": 702.0,
+      "raw_unit": "M€",
+      "source_pdf": "RSSF_Generali_Iard_2025.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
     },
     "scr_diversification": {
-      "value": -245.315,
+      "value": -375.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 14,
-      "source_chapter": "E.2",
-      "raw_value": -245315.0,
-      "raw_unit": "K€",
-      "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "source_page": 72,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR.",
+      "raw_value": -375.0,
+      "raw_unit": "M€",
+      "source_pdf": "RSSF_Generali_Iard_2025.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Generali IARD) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.72, lu sur rendu image), avant diversification inter-risques et avant impact fiscal ; cross-terms (+16), Model Adjustments (+190) et impact fiscal (−67) restent dans l'écart avec le SCR."
     }
   },
   "Generali Vie": {
@@ -10149,40 +10281,52 @@
       "note_avertissement": null
     },
     "scr_operationnel": {
-      "value": 314.864,
+      "value": 424.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 10,
-      "source_chapter": "E.2",
-      "raw_value": 314864.0,
-      "raw_unit": "K€",
-      "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "source_page": 79,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
+      "raw_value": 424.0,
+      "raw_unit": "M€",
+      "source_pdf": "RSSF_Generali_Vie_2025.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
     },
     "scr_marche": {
       "value": 1509.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 79,
-      "source_chapter": "Rapport narratif complet RSSF_Generali_Vie_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
       "raw_value": 1509.0,
       "raw_unit": "M€",
       "source_pdf": "RSSF_Generali_Vie_2025.pdf",
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+      "note_avertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
     },
     "scr_contrepartie": {
       "value": 1146.0,
       "unit": "M€",
       "year": 2025,
       "source_page": 79,
-      "source_chapter": "Rapport narratif complet RSSF_Generali_Vie_2025.pdf (E.2.1, graphique de composition du SCR, lecture directe)",
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
       "raw_value": 1146.0,
       "raw_unit": "M€",
       "source_pdf": "RSSF_Generali_Vie_2025.pdf",
       "avertissement": true,
-      "note_avertissement": "Valeur calculée dans la vision Modèle Interne du Groupe Generali, AVANT diversification inter-risques et AVANT l'effet de l'impact fiscal (contrairement aux figures officielles du QRT S.25.05, présentées après taxes par risque) — non directement comparable à ce même KPI pour les sociétés en formule standard, ni aux autres KPIs SCR de cette société (scr_total, scr_operationnel, scr_diversification, scr_souscription_nonvie restent sur la base officielle post-diversification). Source : rapport narratif complet (chapitre E.2.1), pas l'annexe QRT. Cf. Décision 145."
+      "note_avertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
+    },
+    "scr_souscription_vie": {
+      "value": 1045.0,
+      "unit": "M€",
+      "year": 2025,
+      "source_page": 79,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
+      "raw_value": 1045.0,
+      "raw_unit": "M€",
+      "source_pdf": "RSSF_Generali_Vie_2025.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
     },
     "scr_souscription_nonvie": {
       "value": 0.0,
@@ -10197,16 +10341,16 @@
       "note_avertissement": null
     },
     "scr_diversification": {
-      "value": -737.831,
+      "value": -1327.0,
       "unit": "M€",
       "year": 2025,
-      "source_page": 10,
-      "source_chapter": "E.2",
-      "raw_value": -737831.0,
-      "raw_unit": "K€",
-      "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "source_page": 79,
+      "source_chapter": "Jeu SCR cohérent modèle interne (Décision 150) — Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé).",
+      "raw_value": -1327.0,
+      "raw_unit": "M€",
+      "source_pdf": "RSSF_Generali_Vie_2025.pdf",
+      "avertissement": true,
+      "note_avertissement": "Valeur de modèle interne (Generali Vie) : non comparable au même KPI des sociétés en formule standard (calibrage, taxonomie des risques et diversification propres au modèle). Base : Graphique E.2.1 du rapport narratif (p.79), avant diversification inter-risques et avant impact fiscal ; les cross-terms (+88), Model Adjustments (+735) et l'impact fiscal (−552) restent dans l'écart avec le SCR. scr_souscription_vie = « Souscription » (vie et santé)."
     }
   }
 }
