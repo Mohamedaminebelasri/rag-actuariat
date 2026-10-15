@@ -8,7 +8,12 @@
  */
 
 import { DEMO_SFCR } from "@/data/analyse-demo";
-import { DONNEES_EXTRAITES, type AxeCompat, type VerdictCompat } from "@/lib/donnees-extraites-utils";
+import {
+  DONNEES_EXTRAITES,
+  type AxeCompat,
+  type GroupePairs,
+  type VerdictCompat,
+} from "@/lib/donnees-extraites-utils";
 
 export const LIBELLE_AXE: Record<AxeCompat, string> = {
   activite: "Activité",
@@ -80,4 +85,21 @@ export function compatibiliteKpi(kpiId: string, societes: string[]): CompatKpi {
 /** Texte d'une note de compatibilité (une ligne par axe). */
 export function texteNotesCompat(notes: NoteCompat[]): string {
   return notes.map((n) => `${LIBELLE_AXE[n.axe]} : ${n.note}`).join("\n\n");
+}
+
+// ───────────────────────── Groupes de pairs ─────────────────────────
+
+/** Groupe de pairs (activité · modèle · périmètre) d'une société, ou null. */
+export function groupePairsDe(societe: string): GroupePairs | null {
+  const id = DEMO_SFCR[societe]?.groupePairs;
+  if (!id) return null;
+  return DONNEES_EXTRAITES.groupesPairs.find((g) => g.id === id) ?? null;
+}
+
+/** Groupe de pairs partagé par TOUTES les sociétés données (null sinon). */
+export function groupePairsCommun(societes: string[]): GroupePairs | null {
+  if (societes.length === 0) return null;
+  const premier = groupePairsDe(societes[0]);
+  if (!premier) return null;
+  return societes.every((s) => DEMO_SFCR[s]?.groupePairs === premier.id) ? premier : null;
 }

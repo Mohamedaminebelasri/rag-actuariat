@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TriangleAlert, Users, X } from "lucide-react";
+import { Info, TriangleAlert, Users, X } from "lucide-react";
 import {
   CATEGORIE_LABELS,
   FILTRES_VIDES,
@@ -16,6 +16,7 @@ import { RadarComparatif } from "./radar-chart";
 import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
 import { FiltresSocietesBar } from "./filtres-societes";
+import { groupePairsCommun, groupePairsDe } from "@/lib/comparabilite";
 // import { exporterCsvComparatif } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
@@ -38,6 +39,17 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
   const avertissement = avertissementComparabilite(societes);
   const peutComparer = societes.length >= 2;
   const auMaximum = societes.length >= MAX_SOCIETES;
+
+  // Groupe de pairs (activité · modèle · périmètre) de la société de référence
+  // = la première sélectionnée. Le comparatif est limité à MAX_SOCIETES colonnes.
+  const reference = societes[0];
+  const pairsReference = reference ? groupePairsDe(reference) : null;
+  const pairsSelection = groupePairsCommun(societes);
+  const comparerAuxPairs = () => {
+    if (!reference || !pairsReference) return;
+    const membres = [reference, ...pairsReference.societes.filter((s) => s !== reference)];
+    setSocietes(membres.slice(0, MAX_SOCIETES));
+  };
 
   // Compteur de couleurs (ratio SCR) pour la sélection courante.
   const compteurCouleurs = societes.reduce(
@@ -101,10 +113,37 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
             </select>
           )}
           <span className="flex-1" />
+          <button
+            onClick={comparerAuxPairs}
+            disabled={!pairsReference || pairsReference.n < 2}
+            title={
+              !reference
+                ? "Sélectionnez d'abord un assureur (le premier sert de référence)"
+                : !pairsReference || pairsReference.n < 2
+                  ? "Aucun pair dans le panel pour cet assureur"
+                  : `Sélectionne les pairs de ${reference} : ${pairsReference.id}`
+            }
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-sm text-text-secondary hover:bg-surface-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
+            <Users className="w-3.5 h-3.5" aria-hidden="true" />
+            Comparer à ses pairs
+          </button>
           <span className="text-sm font-mono text-text-tertiary whitespace-nowrap">
             {societes.length}/{MAX_SOCIETES} assureurs sélectionnés
           </span>
         </div>
+        {pairsSelection && (
+          <p role="note" className="mt-2.5 flex items-start gap-1.5 text-xs leading-relaxed text-text-secondary">
+            <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-text-tertiary" aria-hidden="true" />
+            <span>
+              Groupe de pairs : <span className="font-medium text-text-primary">{pairsSelection.id}</span> —{" "}
+              {societes.length} sur {pairsSelection.n} société{pairsSelection.n > 1 ? "s" : ""} du groupe
+              {pairsSelection.n > MAX_SOCIETES && ` (comparatif limité à ${MAX_SOCIETES} colonnes)`}.
+              {pairsSelection.petitEchantillon &&
+                ` Échantillon de ${pairsSelection.n} société${pairsSelection.n > 1 ? "s" : ""} : médiane peu fiable.`}
+            </span>
+          </p>
+        )}
       </div>
 
       {peutComparer && avertissement && (
