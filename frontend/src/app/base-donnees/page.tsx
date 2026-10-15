@@ -9,15 +9,18 @@ import { KpiLigne } from "@/components/donnees/kpi-ligne";
 import { KpiPdfModal } from "@/components/donnees/kpi-pdf-modal";
 import {
   CATEGORIES_REELLES,
+  DEFINITIONS_KPIS_CALCULES,
   DONNEES_EXTRAITES,
   GROUPE_TOUS,
   KPI_LABELS_REELS,
+  LIBELLE_CATEGORIE_INDICATEURS,
   STATS_GLOBALES,
   couvertureKpis,
   estNouvelleSociete,
   exporterCsvSociete,
   groupesDisponibles,
   kpisDe,
+  labelKpi,
   societesFiltrees,
   type Societe,
 } from "@/lib/donnees-extraites-utils";
@@ -194,6 +197,8 @@ function DetailSociete({
   const couverture = couvertureKpis(societe.name);
   const annee = Object.values(kpis)[0]?.annee;
   const nouvelle = estNouvelleSociete(societe.name);
+  // KPIs calculés (Décision 158) présents pour cette société, dans l'ordre des définitions.
+  const idsCalcules = Object.keys(DEFINITIONS_KPIS_CALCULES).filter((id) => kpis[id] !== undefined);
 
   return (
     <div>
@@ -275,6 +280,33 @@ function DetailSociete({
               </div>
             );
           })}
+
+          {/* Décision 158 — KPIs calculés, sous un grand titre ; seulement ceux
+              qui existent pour la société (aucun titre sinon). */}
+          {idsCalcules.length > 0 && (
+            <div className="pt-4 border-t border-border">
+              <h3 className="font-heading italic text-xl text-text-primary mb-1">{LIBELLE_CATEGORIE_INDICATEURS}</h3>
+              <p className="text-xs text-text-tertiary mb-3">
+                Ratios calculés à partir des KPIs ci-dessus : cliquez sur une carte pour voir la règle de calcul et
+                chaque composant.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {idsCalcules.map((id) => (
+                  <KpiLigne
+                    key={id}
+                    id={id}
+                    label={labelKpi(id)}
+                    kpi={kpis[id]}
+                    societe={societe.name}
+                    onSelect={setKpiModal}
+                    correction={getCorrection(societe.name, id)}
+                    validationHumaine={estValideParHumain(societe.name, id)}
+                    description={DEFINITIONS_KPIS_CALCULES[id]?.description}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -287,14 +319,17 @@ function DetailSociete({
 
       {kpiModal && kpis[kpiModal] && (
         <KpiPdfModal
+          // Remonte la fenêtre quand on passe d'un KPI à un composant (kpiCode).
+          key={kpiModal}
           kpiId={kpiModal}
-          label={KPI_LABELS_REELS[kpiModal] ?? kpiModal}
+          label={labelKpi(kpiModal)}
           kpi={kpis[kpiModal]}
           societe={societe.name}
           onClose={() => setKpiModal(null)}
           onCorrection={soumettreCorrection}
           validationHumaine={estValideParHumain(societe.name, kpiModal)}
           onValidation={validerHumain}
+          onOuvrirKpi={(id) => kpis[id] && setKpiModal(id)}
         />
       )}
     </div>
