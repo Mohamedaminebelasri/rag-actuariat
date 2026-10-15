@@ -294,7 +294,12 @@ function mediane_(vals: number[]): number {
   return n % 2 === 0 ? (triees[milieu - 1] + triees[milieu]) / 2 : triees[milieu];
 }
 
-export type Alerte = { type: "critique" | "attention" | "info" | "conforme"; texte: string };
+export type Alerte = {
+  type: "critique" | "attention" | "info" | "conforme";
+  texte: string;
+  /** Société concernée (le texte commence par son nom) : sert au regroupement. */
+  societe: string;
+};
 
 // Ordre d'affichage : critique, puis attention, puis info (conforme en dernier).
 const ORDRE_ALERTES: Record<Alerte["type"], number> = { critique: 0, attention: 1, info: 2, conforme: 3 };
@@ -330,6 +335,7 @@ export function buildAlertes(societes: string[]): Alerte[] {
     const ratioScr = valeurDisponible(kpis, "ratio_scr");
     if (ratioScr !== null && fiable("ratio_scr") && ratioScr < SEUIL_LEGAL) {
       resultat.push({
+        societe: soc,
         type: "critique",
         texte: `${soc} : ratio SCR sous le seuil réglementaire de ${SEUIL_LEGAL} % (${ratioScr.toFixed(0)} %)`,
       });
@@ -339,6 +345,7 @@ export function buildAlertes(societes: string[]): Alerte[] {
     const sansMesures = num(ind?.ratio_scr_sans_mesures_lt_pct);
     if (sansMesures !== null && fiable("ratio_scr") && sansMesures < SEUIL_LEGAL) {
       resultat.push({
+        societe: soc,
         type: "critique",
         texte: `${soc} : sans correction pour volatilité ni mesure transitoire, le ratio SCR tombe à ${nombreFr(sansMesures)} % (sous ${SEUIL_LEGAL} %)`,
       });
@@ -348,6 +355,7 @@ export function buildAlertes(societes: string[]): Alerte[] {
     const impactLt = num(ind?.impact_mesures_lt_pts);
     if (impactLt !== null && impactLt <= -30 && fiable("ratio_scr")) {
       resultat.push({
+        societe: soc,
         type: "attention",
         texte:
           `${soc} : le ratio SCR dépend fortement des mesures de long terme (${nombreFr(impactLt)} pts)` +
@@ -360,11 +368,13 @@ export function buildAlertes(societes: string[]): Alerte[] {
     if (ind?.mesure_transitoire === true && impactTransitoires !== null && fiable("ratio_scr")) {
       if (impactTransitoires <= -15) {
         resultat.push({
+          societe: soc,
           type: "attention",
           texte: `${soc} : mesure transitoire en cours, qui s'éteint jusqu'en 2032 : le ratio publié baissera mécaniquement (${nombreFr(impactTransitoires)} pts)`,
         });
       } else {
         resultat.push({
+          societe: soc,
           type: "info",
           texte: `${soc} : mesure transitoire en cours (effet faible : ${nombreFr(impactTransitoires)} pts)`,
         });
@@ -385,6 +395,7 @@ export function buildAlertes(societes: string[]): Alerte[] {
       const part = ((t2 + t3) / scrTotal) * 100;
       if (part >= SEUIL_NIVEAUX_2_3_PCT) {
         resultat.push({
+          societe: soc,
           type: "attention",
           texte: `${soc} : les fonds propres de niveau 2 et 3 représentent ${nombreFr(part)} % du SCR, au plafond d'éligibilité de 50 %`,
         });
@@ -400,6 +411,7 @@ export function buildAlertes(societes: string[]): Alerte[] {
       fiable("charge_sinistres", "primes_acquises_brutes")
     ) {
       resultat.push({
+        societe: soc,
         type: "attention",
         texte: `${soc} : sinistres / primes de ${nombreFr(sp)} % en non-vie, peu de marge pour couvrir les frais`,
       });
@@ -408,6 +420,7 @@ export function buildAlertes(societes: string[]): Alerte[] {
     // R7 : MCR collé au plancher absolu → ratio MCR non significatif.
     if (ind?.position_mcr === "plancher_absolu" && fiable("mcr", "ratio_mcr")) {
       resultat.push({
+        societe: soc,
         type: "info",
         texte: `${soc} : MCR collé au plancher absolu, le ratio MCR n'est pas significatif`,
       });
