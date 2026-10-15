@@ -6,7 +6,7 @@ import { KPI_DEFINITIONS, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { formatValeur, valeurDisponible } from "@/lib/analyse-utils";
 import { AvertissementKpi } from "./avertissement-kpi";
 import { CarteAgrandissable } from "./carte-agrandissable";
-import { compatibiliteKpi, texteNotesCompat } from "@/lib/comparabilite";
+import { compatibiliteKpi, kpiApplicable, texteNotesCompat } from "@/lib/comparabilite";
 
 // Hauteur de la zone de tracé (barres + étiquettes ; les noms sont en dessous).
 const HAUTEUR_NORMALE = 260;
@@ -31,8 +31,8 @@ function hachureNegative(): CSSProperties {
 /** Étiquette de barre via formatValeur (format français + unité). Les
  * séparateurs de milliers deviennent insécables : seule l'espace avant
  * l'unité peut passer à la ligne dans une colonne étroite (mobile). */
-function etiquetteValeur(valeur: number, unite: string): string {
-  const texte = formatValeur(valeur, unite);
+function etiquetteValeur(valeur: number, unite: string, decimales?: number): string {
+  const texte = formatValeur(valeur, unite, null, null, decimales);
   const i = texte.lastIndexOf(" ");
   return i === -1 ? texte : `${texte.slice(0, i).replace(/ /g, ESPACE_INSECABLE)} ${texte.slice(i + 1)}`;
 }
@@ -57,9 +57,13 @@ function CorpsBarres({
   // avertissement : valeur sur une base non comparable (marqueur, la barre reste dessinée).
   const donnees = societesComparees.map((soc) => {
     const kpis = kpisSociete(soc);
+    // Décision 158 — KPI sans objet pour l'activité (ex. S/P non-vie d'un
+    // assureur vie) : écrit « sans objet », sans barre, hors échelle.
+    const applicable = kpiApplicable(kpiId, soc);
     return {
       societe: soc,
-      valeur: valeurDisponible(kpis, kpiId),
+      valeur: applicable ? valeurDisponible(kpis, kpiId) : null,
+      sansObjet: !applicable && kpis[kpiId] !== undefined,
       avertissement: !!kpis[kpiId]?.avertissement,
       note: kpis[kpiId]?.noteAvertissement ?? null,
     };
@@ -111,9 +115,13 @@ function CorpsBarres({
                         ? { top: yZero + ECART_ETIQUETTE }
                         : { bottom: HAUTEUR - yZero + ECART_ETIQUETTE }
                     }
-                    title="Valeur non extraite du rapport SFCR"
+                    title={
+                      d.sansObjet
+                        ? "Indicateur sans objet pour l'activité de cette société"
+                        : "Valeur non extraite du rapport SFCR"
+                    }
                   >
-                    n/d
+                    {d.sansObjet ? "sans objet" : "n/d"}
                   </span>
                 </div>
               );
@@ -132,7 +140,7 @@ function CorpsBarres({
                       : { top: haut + hauteurBarre + ECART_ETIQUETTE }
                   }
                 >
-                  {etiquetteValeur(d.valeur, unite)}
+                  {etiquetteValeur(d.valeur, unite, def?.decimales)}
                   {d.avertissement && <AvertissementKpi note={d.note} className="ml-0.5" />}
                 </span>
                 <div
