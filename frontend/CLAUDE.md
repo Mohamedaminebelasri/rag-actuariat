@@ -65,6 +65,27 @@ de la valeur, de couleur distincte, cliquable pour afficher
 valeur normale : la donnée est réelle et utile, juste pas directement
 comparable aux mêmes KPIs des autres sociétés.
 
+### Comparabilité entre sociétés (Décisions 149-155)
+
+`donnees-extraites.json` porte les règles de comparaison — le front-end
+les applique, il ne les recalcule pas :
+
+- Par société : `type` = forme juridique courte (SA, SE, SAM, Mutuelle,
+  Union de mutuelles, Institution de prévoyance, Groupe) ;
+  `typeActivite` (Vie / Non-vie / Santé/prévoyance / Mixte) ;
+  `modeleCapital` (Formule standard / Modèle interne) ; `perimetre`
+  (solo / groupe) ; `groupePairs` (activité · modèle · périmètre) ;
+  `consolideDans` (société du panel qui la consolide déjà : à exclure des
+  agrégats avec ce groupe, sinon double comptage).
+- `groupesPairs` (avec `n`, `petitEchantillon` si n < 5),
+  `compatibilite.matrice[kpi][axe]` (verdict C / R / N / NA + note ; règle
+  dans `compatibilite.regle`), `indicateursParSociete` +
+  `definitionsIndicateurs` (ratios normalisés, dont
+  `ratio_scr_sans_mesures_lt_pct` = ratio SCR sans correction pour
+  volatilité ni transitoire).
+- KPI de groupe `mcr` / `ratio_mcr` : champ `libelle` (« SCR minimal
+  consolidé ») à afficher à la place du nom générique.
+
 Ces 3 fichiers JSON (`frontend/src/data/donnees-extraites.json`,
 `kpi-sources.json`, et `kpis_export.json` à la racine) sont des snapshots —
 à régénérer côté back-end après toute mise à jour de `kpis.db`. Une session

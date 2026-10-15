@@ -9722,3 +9722,169 @@ inventer une donnée. Non résolu, documenté comme tel.
 `frontend/src/data/kpi-sources.json`. Aucun nouveau PDF, aucun
 changement front-end (pas de source_pdf/avertissement nécessaires
 cette fois).
+
+## Décision 148 — Crédit Agricole Assurances : provisions techniques ×1/1000 corrigées
+
+Diagnostic de comparabilité du 15/10/2026 (`RAPPORT_comparabilite_KPIs.md`) :
+`best_estimate`, `marge_risque` et `provisions_techniques` de CAA étaient
+1 000 fois trop petits (342,576 M€ au lieu de 342 576 M€) — le S.02.01.02 de
+CAA est déjà en millions, mais `extract_kpis_creditagricole.py` (l.111) et
+`peupler_composants_sommes_generique.py` divisaient encore par 1 000.
+
+- Les deux scripts : diviseur BE/RM 1000 → 1 (commentaire ajouté).
+  Exécution à blanc du script corrigé : 342 576 / 6 909 / 349 485 M€.
+- `kpis.db` : best_estimate 342 576, marge_risque 6 909,
+  provisions_techniques 349 485 M€ (raw_unit M€) ; `kpi_composants` ×1000.
+  Pas de ré-extraction complète (elle écraserait des pages corrigées à la main).
+- Ce type d'erreur est désormais bloqué par le contrôle de la Décision 151
+  (BE/SCR = 0,024 pour CAA avant correction, hors de toute fourchette).
+
+## Décision 149 — Métadonnées des 41 sociétés : source de vérité unique, contrôlée
+
+`populate_company_metadata.py` réécrit : un dictionnaire `METADONNEES`
+contrôlé (une ligne par société, sources dans `FORME_SOURCE`) écrase les
+métadonnées posées par les scripts d'extraction. À rejouer après toute
+ré-extraction.
+
+- `type` = forme juridique courte (SA, SE, SAM, Mutuelle, Union de mutuelles,
+  Institution de prévoyance, Groupe). Avant : mélange de forme et de groupe
+  (« mutuelle (Aéma Groupe) » pour des SA comme Abeille Vie, « entité (Groupe
+  AG2R La Mondiale) » pour des institutions de prévoyance).
+- Nouvelles colonnes : `forme_juridique`, `famille_juridique`,
+  `forme_juridique_source`, `groupe_parent`, `groupe_consolide_panel`
+  (société du panel qui consolide déjà celle-ci : double comptage).
+- `type_activite` en 4 classes (Vie / Non-vie / Santé/prévoyance / Mixte),
+  calculée sur la répartition du best estimate S.02.01 et recoupée avec les
+  primes S.05.01 (règle dans l'en-tête du script). Résultat : 18 Vie,
+  11 Santé/prévoyance, 9 Non-vie, 3 Mixte. 30 sociétés sur 41 changent de
+  type et/ou d'activité (ex. MAIF/MACIF SAM Mixte → Non-vie, MGEN Mixte →
+  Santé/prévoyance, AG2R Prévoyance Vie → Santé/prévoyance).
+- Sogécap : `groupe` → `solo` (son rapport est solo, gabarits .21) ;
+  La Mondiale Europartner : Luxembourg.
+- Allianz Vie : `modele_interne_partiel` → `modele_interne_complet` (tous
+  les risques, y compris l'opérationnel, modélisés ; aucune mention de
+  modèle partiel, rapport p.70 et p.73).
+
+## Décision 150 — Modèles internes : un jeu SCR cohérent par société (révise la Décision 147)
+
+Le diagnostic montrait des modules SCR de modèles internes tirés de bases
+mélangées (lignes « diversifiées » + diversification calculée sur des lignes
+non diversifiées) : la somme ne reconstituait pas le SCR. Règle : un seul
+tableau source par société, et la convention de la formule standard
+SCR = Σ modules + diversification + opérationnel + ajustements.
+Appliqué par `corrections_comparabilite.py` (section 1) ; toutes les valeurs
+non nulles portent `avertissement` + note (non comparables à la formule
+standard).
+
+| Société | Source | Diversification | Écart résiduel avec le SCR |
+|---|---|---|---|
+| AXA France Vie | S.25.05.21 p.10, lignes « diversified » | −1 727,96 (R0030 − Σ) | 0 |
+| AXA France IARD | S.25.05.21 p.9 | −912,45 | 0 |
+| Generali Vie | RSSF p.79 (graphique E.2.1) | −1 327 | +272 (cross-terms, model adjustments, impôt) |
+| Generali IARD | RSSF p.72 | −375 | +140 |
+| Allianz Vie | Tableau 25 p.69 | −912,29 | +77,8 (IM buffer, cantons, impôts) |
+| Groupama (partiel) | schéma E.2.1 p.74 | −1 249,68 (au lieu de −4 612) | −4 068,7 (absorption par PT/ID) |
+
+- Santé incluse dans `scr_souscription_vie` pour les 5 modèles internes
+  complets (catégorie non séparable) : `scr_souscription_sante` reste NULL.
+- Révision de la Décision 147 : Allianz Vie `scr_souscription_vie` =
+  « souscription » + « commercial » (1 010,173 M€) et ses modules sont
+  flaggés (modèle interne complet, cf. Décision 149).
+- Groupama : avertissement sur `scr_souscription_nonvie` (modélisé) et
+  `scr_diversification`.
+
+## Décision 151 — Contrôle de plausibilité best estimate / SCR
+
+`validate_kpis.py` : nouveau contrôle `plausibilite_best_estimate_scr_total`,
+fourchettes par activité (`FOURCHETTE_BE_SUR_SCR` : Vie 0,1-150 ;
+Non-vie 0,1-30 ; Santé 0,02-30 ; Mixte 0,5-80). L'ancienne valeur CAA
+(0,024) aurait échoué. `ECHECS_LEGITIMES_CONNUS` complété pour
+`completude_aucun_null` des 5 modèles internes complets (santé incluse dans
+vie). `validate_kpis.py --all` : **0 échec réel sur 41**.
+
+## Décision 152 — Valeurs imprimées restées NULL récupérées, zéros rendus traçables
+
+`corrections_comparabilite.py` sections 2 à 4. Chaque valeur est lue sur la
+page et recoupée avec un total déjà en base.
+
+- Covéa (S.23.01.22 p.93) : T1 non restreint 32 616,281 ; T1 restreint
+  134,394 ; T2 384,326 ; T3 116,712 M€ (somme = 33 251,714 = FP éligibles).
+- MAIF (S.23.01.01 p.122) : T1 restreint 0 ; T2 9,725 (rappel de
+  cotisations) ; T3 0.
+- SGAM AG2R (p.131, p.133) : T3 0 ; scr_souscription_nonvie 0,139 ;
+  scr_diversification −1 539,439 (Σ modules + R0060 = R0100).
+- Zéros vrais dont la page manquait : CNP scr_souscription_nonvie (p.97),
+  MACSF prévoyance santé/non-vie (p.62) et T1r/T2/T3 (p.61).
+- Groupes (Aéma, Covéa, CAA, Groupama, SGAM AG2R) : `mcr` et `ratio_mcr` =
+  « SCR minimal consolidé » (S.23.01.22 R0610/R0650), marqués
+  `avertissement` ; libellé propre exporté (Décision 153).
+
+## Décision 153 — Export des règles de comparabilité vers le front-end
+
+Nouveau module `comparabilite.py`, utilisé par `export_kpis_for_frontend.py`.
+Ajouts dans `donnees-extraites.json` :
+
+- Par société : `formeJuridique`, `familleJuridique`, `perimetre`,
+  `modeleCapital`, `groupeParent`, `consolideDans`, `groupePairs`
+  (activité · modèle · périmètre).
+- `groupesPairs` : 8 groupes, `n` et `petitEchantillon` (n < 5).
+- `compatibilite` : matrice 21 KPIs × 4 axes (activité, forme, modèle,
+  périmètre), verdict C / R / N / NA + note ; règle = pire verdict parmi
+  les axes où deux sociétés diffèrent (`classeSinistres` pour l'axe
+  activité de charge_sinistres).
+- `indicateursParSociete` + `definitionsIndicateurs` : part T1 non
+  restreint, marge de risque / BE, composition des modules, diversification
+  / modules, ajustements / SCR, SCR / (primes + BE), S/P non-vie (seulement
+  si les lignes non-vie font ≥ 10 % des primes et ≥ 10 M€), position du MCR
+  dans le corridor, base SCR, impacts VA (Décision 155).
+- `libelle` spécifique pour `mcr` / `ratio_mcr` des groupes.
+
+`groupe` (filtre AG2R/Aéma du front) inchangé. Les filtres de l'onglet
+Analyse doivent encore être branchés sur ces champs (session front-end).
+
+## Décision 154 — AXA France IARD : primes et sinistres S.05.01 comptés deux fois
+
+Trouvé en contrôlant le S/P non-vie (119,5 % pour AXA France IARD).
+L'extraction par position du S.05.01.02 (p.3) comptait certaines lignes
+deux fois (colonne de la ligne d'activité + Total) et perdait un signe :
+R0310 = 11 158 949 au lieu de 5 577 862,90 K€, R0230 = 977,32 au lieu de
+488,66, R0330 = +12 038,51 au lieu de −12 038,51.
+
+- `extract_kpis_afi.py` : lecture manuelle de la colonne Total
+  (`PRIMES_COMPOSANTS` / `SINISTRES_COMPOSANTS`), commentaire erroné
+  corrigé. Vérifié sur rendu image ET par l'arithmétique du tableau
+  (brut + acceptations − réassurance = net imprimé, à l'euro près).
+- `kpis.db` (section 5 de `corrections_comparabilite.py`) :
+  primes_acquises_brutes 9 637,328 → 9 636,839 M€ ;
+  charge_sinistres 11 517,619 → 5 912,436 M€. S/P non-vie 119,5 % → 61,4 %.
+
+## Décision 155 — Impact de la correction pour volatilité et des mesures transitoires (S.22.01)
+
+Le ratio SCR publié n'est pas comparable entre une société qui applique la
+correction pour volatilité (VA) ou une mesure transitoire et une société qui
+n'en applique pas. Nouveau script `peupler_impact_mesures_lt.py` → table
+`impact_mesures_lt` (41 sociétés).
+
+- Source : S.22.01 (R0050 fonds propres, R0090 SCR ; C0030/C0050
+  transitoires, C0070 VA à zéro). 30 tableaux lus (texte natif, ou image
+  pour Aéma, BPCE IARD, Groupama — tableaux tournés redressés), C0010
+  identique à `fonds_propres_eligibles` / `scr_total` pour les 30 (contrôle
+  automatique dans le script). MAIF : impacts du texte (p.105-106).
+  Generali Vie/IARD : ratio sans VA publié dans le texte (198 → 152 %,
+  153 → 141 %, VA stochastique du modèle interne).
+- Recoupements avec le texte des rapports : MACIF SAM −5 pts, Abeille Vie
+  −10, Abeille Épargne Retraite −13, Covéa −2 : concordants.
+- 33 sociétés utilisent la VA, 4 une mesure transitoire sur provisions
+  (BPCE Vie, La Mondiale, SGAM AG2R, Groupama), 8 aucune mesure (pas de
+  S.22.01 publié ; Thémis, Macifilia, MACSF déclarent ne pas utiliser la VA).
+- Exporté par société : `utilise_va`, `mesure_transitoire`,
+  `ratio_scr_sans_mesures_lt_pct`, `impact_va_pts`,
+  `impact_transitoires_pts`, `impact_mesures_lt_pts`. Approche par étapes
+  de l'EIOPA : l'impact VA est mesuré après retrait des transitoires.
+- Ordres de grandeur : BPCE Vie 249 → 159 % (transitoire −88 pts),
+  Groupama 274 → 218 %, Generali Vie −46, Allianz Vie −40, AXA France Vie
+  −17, AXA France IARD −15 ; la plupart des autres entre 0 et −7 pts.
+
+Ordre de rejeu complet : extractions → `populate_company_metadata.py` →
+`corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
+`validate_kpis.py --all` → `export_kpis_for_frontend.py`.
