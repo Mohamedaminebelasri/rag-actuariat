@@ -23,7 +23,7 @@ import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 // rang — un rang #1 rouge reste un rang #1 rouge si sous le seuil légal.
 const KPIS_AVEC_SEUIL = new Set(["ratio_scr", "ratio_mcr"]);
 
-const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A"];
+const CATEGORIES_FILTRE = ["Tous", "E", "D", "C", "A", "I"];
 
 /** Port de tableau_comparatif_ui() + en_tete_categorie()/ligne_kpi()
  * (comparative.py, Reflex) — sections repliables (fermées à l'ouverture), tri
@@ -247,7 +247,8 @@ function SectionCategorie({
               {societesComparees.map((soc) => {
                 const cellule = ligne.cellules.find((c) => c.societe === soc);
                 if (!cellule) return <td key={soc} className="px-4 py-2.5 text-right text-text-tertiary">—</td>;
-                const sansObjet = compat.sansObjet && ligne.valeursParSociete[soc] === 0;
+                // KPI sans objet pour l'activité de la société (Décision 158) : texte « sans objet ».
+                const sansObjet = !!cellule.nonApplicable || (compat.sansObjet && ligne.valeursParSociete[soc] === 0);
                 const valeurStr = sansObjet ? "sans objet" : cellule.valeurStr;
                 const legende = libelleCommun ? null : kpisSociete(soc)[ligne.kpiId]?.libelle ?? null;
 
