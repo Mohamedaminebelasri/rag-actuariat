@@ -36,9 +36,9 @@ Tag de départ : `avant-nuit-kpis-officiels` (voir toute la nuit :
 - [x] PORTE 2 + `RAPPORT_nuit_phase2.md` + push
 
 ## Phase 3 — Position parmi les pairs
-- [ ] Réécriture de `position-marche.tsx` et réactivation
-- [ ] Tests sur les sociétés listées
-- [ ] PORTE 3 + push
+- [x] Réécriture de `position-marche.tsx` et réactivation
+- [x] Tests sur les sociétés listées
+- [x] PORTE 3 + push
 
 ## Rapport final
 - [ ] `RAPPORT_nuit_kpis_officiels.md`
