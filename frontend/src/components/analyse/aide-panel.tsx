@@ -75,6 +75,13 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         n&apos;apparaît que si tous les modules sont extraits et que l&apos;écart atteint 1 % du SCR total.
       </p>
       <p>« n/d » signale un module non extrait du rapport.</p>
+      <p>
+        <span className="font-medium text-text-primary">Indicateurs comparables :</span> ratios calculés à partir des
+        indicateurs du rapport (ratio SCR sans mesures de long terme, effet de la correction pour volatilité et des
+        mesures transitoires, marge de risque / best estimate, sinistres / primes non-vie, MCR en % du SCR), sans
+        couleur de statut. Une carte n&apos;apparaît que si la donnée existe pour la société. Cliquer sur une carte ouvre
+        sa règle de calcul, chaque composant avec sa page dans le PDF, et le recalcul comparé à la valeur affichée.
+      </p>
     </Section>
   );
 
@@ -97,11 +104,13 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
       </p>
       <p>
         <span className="font-medium text-text-primary">Comparaison par KPI :</span> barres pour l&apos;indicateur
-        choisi, en M€ ou en % ; une valeur absente s&apos;affiche « n/d », sans barre ; une ligne pointillée
-        « Seuil réglementaire » apparaît pour les ratios SCR et MCR ({SEUIL_LEGAL} %).
+        choisi, en M€, en % ou en points ; une valeur absente s&apos;affiche « n/d », sans barre ; une ligne pointillée
+        « Seuil réglementaire » apparaît pour les ratios SCR et MCR ({SEUIL_LEGAL} %). Le ratio sinistres / primes
+        non-vie ne se compare qu&apos;entre sociétés Non-vie et Santé/prévoyance : « sans objet » pour les autres.
       </p>
       <p>
-        <span className="font-medium text-text-primary">Tableau :</span> les 4 catégories sont fermées à l&apos;ouverture
+        <span className="font-medium text-text-primary">Tableau :</span> les catégories (dont « Indicateurs
+        comparables ») sont fermées à l&apos;ouverture
         (avec leur nombre de KPIs) : cliquer pour les ouvrir. Tri en cliquant sur la colonne d&apos;un assureur, filtre de
         catégorie (la catégorie choisie s&apos;affiche ouverte), colonne Moyenne. Les seuils légal et vert figurent sous
         le ratio SCR et le ratio MCR. Un rang (#1…) est affiché pour le ratio SCR, le ratio MCR et la diversification ;
@@ -161,8 +170,9 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               <Section titre="Données" defaultOpen>
                 <p>
-                  {STATS_GLOBALES.nbSocietes} sociétés, {KPI_DEFINITIONS.length} indicateurs extraits des rapports
-                  SFCR. Valeurs en M€, exercice 2025.
+                  {STATS_GLOBALES.nbSocietes} sociétés, {KPI_DEFINITIONS.filter((k) => !k.calcule).length} indicateurs
+                  extraits des rapports SFCR et {KPI_DEFINITIONS.filter((k) => k.calcule).length} indicateurs
+                  comparables calculés à partir d&apos;eux. Valeurs en M€, exercice 2025.
                 </p>
               </Section>
 
