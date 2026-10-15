@@ -10,7 +10,8 @@ import { kpisDe, labelKpi } from "@/lib/donnees-extraites-utils";
 // Décision 158 — l'ancien bloc « Indicateurs comparables » n'affichait que les
 // 6 indicateurs devenus des KPIs (catégorie I ci-dessous) : masqué, sans doublon.
 // import { IndicateursComparables } from "./indicateurs-comparables";
-// import { PositionMarche } from "./position-marche"; // masqué (cf. JSX commenté plus bas)
+// Réactivé (Phase 3, nuit du 15/10/2026) : réécrit sur les groupes de pairs.
+import { PositionMarche } from "./position-marche";
 // import { exporterCsvIndividuel } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
@@ -76,7 +77,7 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
             </button> */}
           </div>
 
-          {/* <PositionMarche key={societe} societe={societe} /> */}
+          <PositionMarche key={societe} societe={societe} />
 
           {CATEGORIES.map((c) => {
             const kpisCategorie = KPI_DEFINITIONS.filter((k) => k.categorie === c.code && kpis[k.id] !== undefined);
