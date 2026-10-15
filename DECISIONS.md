@@ -10008,6 +10008,23 @@ masqué, sans doublon. Alertes et tableau des 21 KPIs existants identiques
 (comparaison de la sortie brute de `buildAlertes` et
 `buildTableauComparatif` avant / après).
 
+**« Position parmi les pairs » réactivée** (Analyse individuelle,
+`position-marche.tsx` réécrit, logique dans `lib/position-pairs.ts`) :
+pairs = `groupePairs` de la société, jamais tout le panel ; classement
+seulement si le groupe compte au moins 5 sociétés ET au moins 5 valeurs
+comparables (aujourd'hui : Vie · Formule standard · solo 13, Santé ·
+Formule standard · solo 11, Non-vie · Formule standard · solo 7). Modèles
+internes et groupes consolidés : jamais classés, message avec la raison.
+Classés : `ratio_scr_sans_mesures_lt` (par défaut), `ratio_scr`,
+`impact_mesures_lt_pts` (plus proche de 0 = mieux),
+`part_t1_non_restreint_pct`, `sp_nonvie` (Non-vie / Santé). Neutres (rang
+par valeur décroissante, sans « mieux / moins bien ») :
+`diversification_sur_modules_pct`, `scr_sur_primes_plus_be_pct`,
+`marge_risque_sur_be`, `impact_va`, `impact_transitoires`. Jamais classés :
+ratio MCR, MCR en % du SCR, montants. Bugs de l'ancien composant corrigés
+(unité « Md€ » forcée, valeurs null classées, seuil de petit échantillon
+à 3) ; `classement()` ignore désormais aussi les valeurs null / non finies.
+
 **Choix** :
 - Un KPI sans donnée n'est pas créé. Société sans VA ni transitoire
   (8) : ratio sans mesures = ratio publié, impact VA = 0, ratio publié en
