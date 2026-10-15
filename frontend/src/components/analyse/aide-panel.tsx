@@ -114,8 +114,9 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         clic sur le graphique. Rien n&apos;est réinitialisé (KPI choisi, catégories ouvertes, filtre).
       </p>
       <p>
-        <span className="font-medium text-text-primary">Alertes</span> (par ordre de gravité : critique, attention,
-        information) : ratio SCR sous {SEUIL_LEGAL} %, y compris sans correction pour volatilité ni mesure
+        <span className="font-medium text-text-primary">Alertes</span> (regroupées par société : l&apos;alerte la plus
+        grave est affichée, les autres se déplient avec « Voir les autres alertes » ; par ordre de gravité : critique,
+        attention, information) : ratio SCR sous {SEUIL_LEGAL} %, y compris sans correction pour volatilité ni mesure
         transitoire ; ratio SCR très dépendant des mesures de long terme ; mesure transitoire en cours ; fonds propres
         de niveau 2 et 3 au plafond d&apos;éligibilité de 50 % du SCR ; sinistres / primes très élevé en non-vie ; MCR
         collé au plancher absolu. Aucune alerte n&apos;est déclenchée sur une valeur non comparable.
