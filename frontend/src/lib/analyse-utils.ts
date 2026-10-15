@@ -565,8 +565,9 @@ export function classement(kpiId: string, societe: string, groupe: string[]): Cl
   const noms = groupe.includes(societe) ? groupe : [...groupe, societe];
   const points: PointDistribution[] = [];
   for (const nom of noms) {
-    const v = kpisSociete(nom)[kpiId]?.valeur;
-    if (v !== undefined) points.push({ societe: nom, valeur: v });
+    // Valeur absente (clé manquante, null, NaN) : jamais classée comme un 0.
+    const v = valeurDisponible(kpisSociete(nom), kpiId);
+    if (v !== null) points.push({ societe: nom, valeur: v });
   }
   if (!points.some((p) => p.societe === societe)) return null;
 
