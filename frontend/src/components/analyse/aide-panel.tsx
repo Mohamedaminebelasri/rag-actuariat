@@ -90,11 +90,12 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         sélection (vertes / orange / rouges).
       </p>
       <p>
-        <span className="font-medium text-text-primary">Profil de risque (radar) :</span> six modules du SCR (non-vie,
-        vie, santé, marché, contrepartie, opérationnel), sur une échelle commune par axe (calculée sur les assureurs
-        au profil complet). Un assureur dont un module est n/d n&apos;est pas dessiné : il apparaît en grisé
-        « profil incomplet » dans la légende, car un module absent n&apos;est jamais compté comme zéro. Cliquer sur
-        un assureur dans la légende le masque ou l&apos;affiche.
+        <span className="font-medium text-text-primary">Profil de risque (radar) :</span> parts de chaque module de base
+        (non-vie, vie, santé, marché, contrepartie) dans la somme des modules, sur une échelle commune de 0 au plus
+        grand pourcentage de la sélection : il compare le profil de risque, pas la taille. Les valeurs sont dans la
+        table sous le graphique. Les sociétés en modèle interne ne sont pas dessinées (parts non comparables à la
+        formule standard) ; un groupe ne se compare qu&apos;à d&apos;autres groupes (si solo et groupes sont mélangés,
+        seul le périmètre majoritaire est dessiné). Cliquer sur un assureur dans la légende le masque ou l&apos;affiche.
       </p>
       <p>
         <span className="font-medium text-text-primary">Comparaison par KPI :</span> barres pour l&apos;indicateur

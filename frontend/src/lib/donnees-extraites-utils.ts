@@ -67,6 +67,9 @@ export type IndicateursSociete = {
   position_mcr?: string | null;
   /** La société applique une mesure transitoire (provisions techniques ou taux). */
   mesure_transitoire?: boolean;
+  /** Part (%) de chaque module dans la somme des modules de base ; null pour
+   * les modèles internes (parts non comparables). */
+  composition_modules_pct?: Record<string, number> | null;
   [cle: string]: unknown;
 };
 
