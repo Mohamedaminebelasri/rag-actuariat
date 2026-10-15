@@ -1,8 +1,17 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight, UserCheck, CheckCircle2, Scale } from "lucide-react";
-import { formatValeurBrute, formatValeurReelle, type KpiExtrait, type Composant } from "@/lib/donnees-extraites-utils";
+import { X, ExternalLink, ShieldCheck, Sparkles, Pencil, Send, Loader2, Calculator, ArrowRight, UserCheck, CheckCircle2, Scale, Info } from "lucide-react";
+import {
+  DECIMALES_KPIS,
+  TOLERANCE_RECALCUL,
+  formatValeurBrute,
+  formatValeurReelle,
+  labelKpi,
+  recalculerKpi,
+  type KpiExtrait,
+  type Composant,
+} from "@/lib/donnees-extraites-utils";
 import { PDF_PAR_SOCIETE } from "@/lib/pdf-par-societe";
 import type { ValidationHumaine } from "@/lib/use-validations-humaines";
 import { PdfPageViewer } from "./pdf-page-viewer";
@@ -22,6 +31,9 @@ type Props = {
   validationHumaine?: ValidationHumaine | null;
   /** Callback pour marquer comme traité par un humain */
   onValidation?: (societe: string, kpiId: string, par?: string) => Promise<boolean>;
+  /** KPI calculé : ouvre le détail d'un composant qui est lui-même un KPI
+   * officiel de la société (champ kpiCode). */
+  onOuvrirKpi?: (kpiId: string) => void;
 };
 
 /** Formate un nombre avec espaces (séparateur de milliers) et virgule décimale */
@@ -33,12 +45,14 @@ function fmtComposant(valeur: number, unite: string): string {
  * Modal plein écran affichant le PDF source à la page du KPI sélectionné.
  * Le bouton "Corriger" envoie via le callback onCorrection (hook parent).
  */
-export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection, validationHumaine, onValidation }: Props) {
+export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection, validationHumaine, onValidation, onOuvrirKpi }: Props) {
   // Décision 145 — un KPI peut avoir son propre PDF source (ex. une
   // valeur avertissement venant d'un 2e document), prioritaire sur le
   // PDF par défaut de la société.
-  const nomPdf = kpi.sourcePdf ?? PDF_PAR_SOCIETE[societe];
-  const pdfUrl = nomPdf ? `/api/pdf/${encodeURIComponent(nomPdf)}` : null;
+  // Décision 158 — un composant de KPI calculé peut être sur un autre PDF :
+  // pdfCourant suit le document de la page affichée.
+  const [pdfCourant, setPdfCourant] = useState(kpi.sourcePdf ?? PDF_PAR_SOCIETE[societe]);
+  const pdfUrl = pdfCourant ? `/api/pdf/${encodeURIComponent(pdfCourant)}` : null;
 
   // --- Navigation page PDF ---
   // viewingPage contrôle quelle page le PDF viewer affiche.
@@ -46,10 +60,16 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
   const [viewingPage, setViewingPage] = useState(kpi.pageSource ?? 1);
   const [viewKey, setViewKey] = useState(0);
 
-  function naviguerVersPage(page: number) {
+  /** `pdf` absent : même document (composants « somme ») ; null : PDF par
+   * défaut de la société (composants de KPI calculé, Décision 158). */
+  function naviguerVersPage(page: number, pdf?: string | null) {
+    if (pdf !== undefined) setPdfCourant(pdf ?? PDF_PAR_SOCIETE[societe]);
     setViewingPage(page);
     setViewKey((k) => k + 1);
   }
+
+  // KPI calculé (Décision 158) : règle, composants et recalcul en direct.
+  const formule = kpi.formule ?? null;
 
   // --- Décomposition ---
   const [showDecomposition, setShowDecomposition] = useState(true);
@@ -125,10 +145,12 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
     }
   }
 
+  // « Source : » en français simple quand il existe (KPIs à avertissement).
+  const chapitre = kpi.sourceLisible ?? kpi.chapitreSource;
   const source =
-    kpi.chapitreSource && kpi.pageSource
-      ? `${kpi.chapitreSource}, p. ${kpi.pageSource}`
-      : kpi.chapitreSource ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
+    chapitre && kpi.pageSource
+      ? `${chapitre}, p. ${kpi.pageSource}`
+      : chapitre ?? (kpi.pageSource ? `p. ${kpi.pageSource}` : null);
 
   return (
     <div
@@ -185,17 +207,20 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
           <div className="flex items-center gap-3 flex-shrink-0">
             {/* Valeur extraite mise en évidence */}
             <div className="hidden sm:flex items-center gap-2 bg-surface border border-border rounded-lg px-3 py-1.5">
-              <span className="text-xs text-text-tertiary">Valeur extraite :</span>
+              <span className="text-xs text-text-tertiary">{formule ? "Valeur calculée :" : "Valeur extraite :"}</span>
               <span className="font-mono text-base font-bold text-text-primary">
-                {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
+                {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite, DECIMALES_KPIS[kpiId])}
               </span>
-              <button
-                onClick={() => setShowCorrection(!showCorrection)}
-                className="ml-1 w-7 h-7 flex items-center justify-center rounded-md text-text-tertiary hover:text-accent hover:bg-accent/10 transition-colors"
-                title="Corriger cette valeur"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-              </button>
+              {/* Une valeur calculée se corrige par ses composants, pas directement. */}
+              {!formule && (
+                <button
+                  onClick={() => setShowCorrection(!showCorrection)}
+                  className="ml-1 w-7 h-7 flex items-center justify-center rounded-md text-text-tertiary hover:text-accent hover:bg-accent/10 transition-colors"
+                  title="Corriger cette valeur"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
             {/* Ouvrir dans Documents */}
@@ -253,17 +278,19 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
 
         {/* Valeur sur mobile */}
         <div className="sm:hidden flex items-center gap-2 px-4 py-2 border-b border-border bg-surface">
-          <span className="text-xs text-text-tertiary">Valeur extraite :</span>
+          <span className="text-xs text-text-tertiary">{formule ? "Valeur calculée :" : "Valeur extraite :"}</span>
           <span className="font-mono text-base font-bold text-text-primary">
-            {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite)}
+            {formatValeurBrute(kpi.valeurBrute, kpi.uniteBrute, kpi.valeur, kpi.unite, DECIMALES_KPIS[kpiId])}
           </span>
-          <button
-            onClick={() => setShowCorrection(!showCorrection)}
-            className="ml-1 w-7 h-7 flex items-center justify-center rounded-md text-text-tertiary hover:text-accent hover:bg-accent/10 transition-colors"
-            title="Corriger cette valeur"
-          >
-            <Pencil className="w-3.5 h-3.5" />
-          </button>
+          {!formule && (
+            <button
+              onClick={() => setShowCorrection(!showCorrection)}
+              className="ml-1 w-7 h-7 flex items-center justify-center rounded-md text-text-tertiary hover:text-accent hover:bg-accent/10 transition-colors"
+              title="Corriger cette valeur"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
 
         {/* Formulaire de correction */}
@@ -308,8 +335,20 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
           </div>
         )}
 
-        {/* Section décomposition — KPIs composés */}
-        {hasComposants && (
+        {/* KPI calculé (Décision 158) : règle, composants, recalcul en direct */}
+        {hasComposants && formule && (
+          <DecompositionFormule
+            kpi={kpi}
+            decimales={DECIMALES_KPIS[kpiId]}
+            ouverte={showDecomposition}
+            onBasculer={() => setShowDecomposition(!showDecomposition)}
+            onPage={naviguerVersPage}
+            onOuvrirKpi={onOuvrirKpi}
+          />
+        )}
+
+        {/* Section décomposition — KPIs composés (somme), inchangée */}
+        {hasComposants && !formule && (
           <div className="border-b border-border bg-slate-50/50 flex-shrink-0">
             <button
               onClick={() => setShowDecomposition(!showDecomposition)}
@@ -401,6 +440,205 @@ export function KpiPdfModal({ kpiId, label, kpi, societe, onClose, onCorrection,
           )}
         </div>
         </div>{/* fin contenu scrollable */}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Décision 158 — détail d'un KPI calculé : règle en clair, composants
+ * (numérateur / dénominateur pour un ratio, termes +/− pour une différence),
+ * page source cliquable (sur le bon PDF), lien vers le KPI officiel quand le
+ * composant en est un, puis recalcul en direct comparé à la valeur affichée.
+ * Couleurs neutres (accent) : aucun feu tricolore.
+ */
+function DecompositionFormule({
+  kpi,
+  decimales,
+  ouverte,
+  onBasculer,
+  onPage,
+  onOuvrirKpi,
+}: {
+  kpi: KpiExtrait;
+  decimales?: number;
+  ouverte: boolean;
+  onBasculer: () => void;
+  onPage: (page: number, pdf?: string | null) => void;
+  onOuvrirKpi?: (kpiId: string) => void;
+}) {
+  const formule = kpi.formule!;
+  const composants = kpi.composants ?? [];
+  const recalcul = recalculerKpi(kpi);
+  const coherent = recalcul !== null && Math.abs(recalcul - kpi.valeur) <= TOLERANCE_RECALCUL + 1e-9;
+  const ratio = formule.type === "ratio";
+  const groupes = ratio
+    ? [
+        { titre: "Numérateur", items: composants.filter((c) => c.operation === "num") },
+        { titre: "Dénominateur", items: composants.filter((c) => c.operation === "den") },
+      ]
+    : [{ titre: null, items: composants }];
+
+  return (
+    <div className="border-b border-border bg-surface-secondary/50 flex-shrink-0">
+      <button
+        onClick={onBasculer}
+        aria-expanded={ouverte}
+        className="w-full flex items-center gap-2 px-4 sm:px-5 py-2 text-left hover:bg-surface-hover transition-colors"
+      >
+        <Calculator className="w-4 h-4 text-accent flex-shrink-0" aria-hidden="true" />
+        <span className="text-sm font-medium text-text-primary">Règle de calcul</span>
+        <span className="text-xs text-text-tertiary">
+          ({composants.length} composant{composants.length > 1 ? "s" : ""})
+        </span>
+        <svg
+          className={`w-4 h-4 text-text-tertiary ml-auto transition-transform ${ouverte ? "rotate-180" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden="true"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {ouverte && (
+        <div className="px-4 sm:px-5 pb-3 space-y-3">
+          <p className="text-sm font-medium text-text-primary">{formule.texte}</p>
+
+          {groupes.map((g) => (
+            <div key={g.titre ?? "termes"} className="space-y-1.5">
+              {g.titre && (
+                <p className="text-[11px] font-bold uppercase tracking-wide text-text-tertiary">
+                  {g.titre}
+                  {g.items.length > 1 && <span className="font-medium normal-case tracking-normal"> · somme</span>}
+                </p>
+              )}
+              {g.items.map((c, i) => {
+                // Ratio : somme des termes, le signe de la valeur devient l'opérateur.
+                // Différence : l'opérateur est celui du composant.
+                const operateur = ratio
+                  ? i === 0
+                    ? c.valeur < 0
+                      ? "−"
+                      : ""
+                    : c.valeur < 0
+                      ? "−"
+                      : "+"
+                  : c.operation === "-"
+                    ? "−"
+                    : i === 0
+                      ? ""
+                      : "+";
+                const valeurAffichee = operateur === "−" ? Math.abs(c.valeur) : c.valeur;
+                return (
+                  <LigneComposant
+                    key={i}
+                    composant={c}
+                    operateur={operateur}
+                    valeurAffichee={valeurAffichee}
+                    onPage={onPage}
+                    onOuvrirKpi={onOuvrirKpi}
+                  />
+                );
+              })}
+            </div>
+          ))}
+
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-2.5 border-t border-border">
+            <span className="font-mono text-base font-bold text-text-primary">
+              = {recalcul !== null ? formatValeurReelle(recalcul, kpi.unite, decimales) : "—"}
+            </span>
+            {coherent ? (
+              <span className="inline-flex items-center gap-1 text-xs text-text-secondary">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent flex-shrink-0" aria-hidden="true" />
+                cohérent avec la valeur affichée ({formatValeurReelle(kpi.valeur, kpi.unite, decimales)})
+              </span>
+            ) : (
+              <span role="note" className="inline-flex items-start gap-1 text-xs text-text-secondary">
+                <Info className="w-3.5 h-3.5 mt-px text-text-tertiary flex-shrink-0" aria-hidden="true" />
+                Le recalcul s&apos;écarte de la valeur affichée ({formatValeurReelle(kpi.valeur, kpi.unite, decimales)}) :
+                valeur à vérifier.
+              </span>
+            )}
+          </div>
+
+          {formule.note && (
+            <p className="flex items-start gap-1.5 text-xs leading-relaxed text-text-secondary">
+              <Info className="w-3.5 h-3.5 mt-px text-text-tertiary flex-shrink-0" aria-hidden="true" />
+              <span>{formule.note}</span>
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LigneComposant({
+  composant: c,
+  operateur,
+  valeurAffichee,
+  onPage,
+  onOuvrirKpi,
+}: {
+  composant: Composant;
+  operateur: string;
+  valeurAffichee: number;
+  onPage: (page: number, pdf?: string | null) => void;
+  onOuvrirKpi?: (kpiId: string) => void;
+}) {
+  const page = c.pageSource;
+  const kpiCode = c.kpiCode;
+  return (
+    <div className="flex items-start gap-2">
+      <span className="w-4 flex-shrink-0 pt-2 text-center font-mono text-sm font-bold text-accent" aria-hidden="true">
+        {operateur}
+      </span>
+      <div className="flex-1 min-w-0 rounded-lg border border-border bg-surface px-3 py-2">
+        <div className="flex items-start gap-2">
+          {c.codeQrt && (
+            <span className="font-mono text-[11px] font-semibold text-accent bg-accent-light px-1.5 py-0.5 rounded flex-shrink-0">
+              {c.codeQrt}
+            </span>
+          )}
+          <p className="text-sm font-medium text-text-primary min-w-0">{c.label}</p>
+        </div>
+        {c.detail && <p className="text-xs font-mono text-text-tertiary mt-0.5 break-words">{c.detail}</p>}
+        <div className="flex items-center gap-x-3 gap-y-1 flex-wrap mt-1">
+          <span className="font-mono text-sm font-semibold text-text-primary">
+            {operateur === "−" && <span className="sr-only">moins </span>}
+            {formatValeurReelle(valeurAffichee, c.unite)}
+          </span>
+          {page != null && (
+            <button
+              type="button"
+              onClick={() => onPage(page, c.sourcePdf)}
+              className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+              title="Afficher cette page du PDF"
+            >
+              p.&nbsp;{page}
+              <ArrowRight className="w-3 h-3" aria-hidden="true" />
+            </button>
+          )}
+          {kpiCode && onOuvrirKpi && (
+            <button
+              type="button"
+              onClick={() => onOuvrirKpi(kpiCode)}
+              className="text-xs text-accent hover:underline text-left"
+              title="Ouvrir le détail de ce KPI"
+            >
+              Voir le KPI « {labelKpi(kpiCode)} »
+            </button>
+          )}
+          {c.valide !== undefined && (
+            <span className="inline-flex items-center gap-1 text-[11px] text-text-tertiary">
+              {c.valide && <ShieldCheck className="w-3 h-3" aria-hidden="true" />}
+              {c.valide ? "vérifié" : "non vérifié"}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
