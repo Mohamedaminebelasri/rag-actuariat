@@ -86,8 +86,8 @@ les applique, il ne les recalcule pas :
 - KPI de groupe `mcr` / `ratio_mcr` : champ `libelle` (« SCR minimal
   consolidé ») à afficher à la place du nom générique.
 
-Ces 3 fichiers JSON (`frontend/src/data/donnees-extraites.json`,
-`kpi-sources.json`, et `kpis_export.json` à la racine) sont des snapshots —
+Ces 2 fichiers JSON (`frontend/src/data/donnees-extraites.json` et
+`kpi-sources.json` ; l'ancien `kpis_export.json` a été supprimé) sont des snapshots —
 à régénérer côté back-end après toute mise à jour de `kpis.db`. Une session
 front-end ne les régénère pas elle-même sauf consigne explicite.
 

@@ -9902,3 +9902,39 @@ Valeur conservée, marquée `avertissement` avec une note en français simple
 (`corrections_comparabilite.py`, section 6 `ATYPIQUES`). À exclure de tout
 classement. Le S/P non-vie de Macifilia n'est déjà pas calculé (primes
 non-vie < 10 M€, Décision 153).
+
+## Décision 157 — Décisions de l'utilisateur après le rapport de comparabilité
+
+1. **R0140/R0150 (décision 11 du rapport) : non lancée.** L'« ajustement »
+   SCR − modules − diversification − opérationnel reste exporté en total
+   (`ajustements_sur_scr_pct`) ; exact pour la formule standard, sans
+   signification pour les modèles internes.
+2. **Groupe de pairs : seuil n ≥ 5** confirmé (`petitEchantillon`).
+3. **`composition_modules_pct` = null pour les 6 modèles internes**
+   (AXA France Vie/IARD, Generali Vie/IARD, Allianz Vie, Groupama) dans
+   `comparabilite.py` ; reste rempli pour les 35 en formule standard.
+4. **Notes d'avertissement réécrites en français simple** (8 textes sur
+   39 KPI, + Macifilia déjà fait) : plus aucun code QRT, nom de colonne ni
+   numéro de décision dans `note_avertissement`. La base technique reste
+   dans `source_chapter` et en commentaire de `corrections_comparabilite.py`.
+5. **Règles d'alerte de l'onglet Analyse validées** (à implémenter côté
+   front, sur `indicateursParSociete` et les KPI) :
+   | Règle | Condition | Niveau |
+   |---|---|---|
+   | R1 | `ratio_scr_sans_mesures_lt_pct` < 100 % | Critique |
+   | R2 | `impact_mesures_lt_pts` ≤ −30 pts | Attention |
+   | R3 | `mesure_transitoire` ; Attention si `impact_transitoires_pts` ≤ −15, sinon Info | Attention / Info |
+   | R4 | (`fonds_propres_t2` + `fonds_propres_t3`) / `scr_total` ≥ 49,5 % (plafond d'éligibilité 50 %) | Attention |
+   | R5 | `sp_nonvie_pct` > 85 %, **sociétés Non-vie uniquement** | Attention |
+   | R7 | `position_mcr` = `plancher_absolu` : ratio MCR non significatif | Info |
+   R6 (marge de risque / BE > 3 × médiane des pairs) reportée. Les deux
+   anciennes règles (diversification en %, chute du ratio SCR sans N-1)
+   sont à retirer.
+6. **`kpis_export.json` supprimé** (aucun lecteur : vérifié par recherche
+   sur tout le dépôt ; seul `export_kpis_json.py` l'écrivait, docstring mis
+   à jour pour ne pas le relancer). `frontend/CLAUDE.md` et
+   `IDEES_KPI_A_FAIRE_PLUS_TARD.md` mis à jour.
+7. **N-1 : plus tard, variante courte, en tâche de nuit** — ratio SCR,
+   fonds propres éligibles, SCR et ratio MCR 2024 lus dans les tableaux
+   comparatifs des rapports 2025 ; nécessitera un champ d'export N-1 (à
+   annoncer au front). Non lancé.

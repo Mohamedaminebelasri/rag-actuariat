@@ -54,7 +54,8 @@ corrections manuelles saisies via le bouton "Corriger" du modal KPI :
 - Le type d'activité et le modèle de capital des sociétés de
   démonstration (onglet Analyse, `analyse-demo.ts`) sont des attributs
   inventés — à remplacer par les vraies métadonnées
-  (`kpis_export.json`, Décision 105, déjà prêt côté backend mais pas
-  encore câblé côté frontend).
+  (`typeActivite`, `modeleCapital`… de `donnees-extraites.json`,
+  Décisions 149-153, prêtes côté backend mais pas encore câblées côté
+  frontend).
 - Différenciateur produit à mettre en avant : badges de fiabilité
   (triple validation) et lien de chaque KPI vers sa page source.

@@ -10,9 +10,9 @@ Analyse) a finalement été rempli par un mécanisme différent —
 `frontend/src/data/donnees-extraites.json` (lu par `analyse-demo.ts`
 malgré son nom). `kpis_export.json` n'est référencé nulle part ailleurs
 dans le dépôt (ni frontend, ni aucun autre script `.py`) — vérifié par
-recherche exhaustive. Conservé tel quel (script ET fichier généré) sur
-consigne explicite de ne pas supprimer ; ne pas s'y fier comme source
-de données à jour pour le frontend. `kpi-sources.json`/
+recherche exhaustive. Le fichier généré a été SUPPRIMÉ (Décision 157,
+sur consigne de l'utilisateur) ; ne pas relancer ce script, sauf besoin
+explicite d'un export brut de kpis.db. `kpi-sources.json`/
 `donnees-extraites.json` restent les seuls exports réellement
 consommés par l'interface.
 
