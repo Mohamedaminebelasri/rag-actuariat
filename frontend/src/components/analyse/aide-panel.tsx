@@ -92,6 +92,8 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         table sous le graphique. Les sociétés en modèle interne ne sont pas dessinées (parts non comparables à la
         formule standard) ; un groupe ne se compare qu&apos;à d&apos;autres groupes (si solo et groupes sont mélangés,
         seul le périmètre majoritaire est dessiné). Cliquer sur un assureur dans la légende le masque ou l&apos;affiche.
+        Cliquez sur le radar (ou sur l&apos;icône d&apos;agrandissement) pour l&apos;agrandir : chaque société y a sa forme
+        de point, et survoler ou toucher une société dans la légende met son tracé en avant.
       </p>
       <p>
         <span className="font-medium text-text-primary">Comparaison par KPI :</span> barres pour l&apos;indicateur
