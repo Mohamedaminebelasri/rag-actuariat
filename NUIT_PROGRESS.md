@@ -23,17 +23,17 @@ Tag de départ : `avant-nuit-kpis-officiels` (voir toute la nuit :
 - [x] `test_kpis_officiels.py`
 - [x] Décision dans `DECISIONS.md`
 - [x] PORTE 1 + `RAPPORT_nuit_phase1.md` + push
-- [ ] Bonus : `chapitreSource` des cartes à avertissement en français simple
+- [x] Bonus : `chapitreSource` des cartes à avertissement en français simple
 
 ## Phase 2 — Front (Base de données, Analyse individuelle et comparative)
-- [ ] Types et utilitaires
-- [ ] Fenêtre de détail (mode additif)
-- [ ] Base de données
-- [ ] Analyse individuelle (alertes identiques)
-- [ ] Analyse comparative
-- [ ] Aide « i »
-- [ ] Qualité (tsc, eslint, build, captures)
-- [ ] PORTE 2 + `RAPPORT_nuit_phase2.md` + push
+- [x] Types et utilitaires
+- [x] Fenêtre de détail (mode additif)
+- [x] Base de données
+- [x] Analyse individuelle (alertes identiques)
+- [x] Analyse comparative
+- [x] Aide « i »
+- [x] Qualité (tsc, eslint, build, captures)
+- [x] PORTE 2 + `RAPPORT_nuit_phase2.md` + push
 
 ## Phase 3 — Position parmi les pairs
 - [ ] Réécriture de `position-marche.tsx` et réactivation
