@@ -153,9 +153,12 @@ des graphiques.
 
 ## Composants désactivés — ne pas réactiver sans accord
 
-`PositionMarche` et `ConfidenceBadge` sont commentés/désactivés dans le code
-(décision séparée, pas un oubli). Ne pas les réactiver au passage d'une
-autre tâche.
+`ConfidenceBadge` est commenté/désactivé dans le code (décision séparée,
+pas un oubli). Ne pas le réactiver au passage d'une autre tâche.
+`PositionMarche` (« Position parmi les pairs ») a été réactivé à la demande
+de l'utilisateur (nuit du 15/10/2026, Décision 158) et réécrit : pairs =
+`groupePairs` de la société, classement seulement à partir de 5 valeurs
+comparables (`lib/position-pairs.ts`).
 
 ## Style de mission attendu
 
