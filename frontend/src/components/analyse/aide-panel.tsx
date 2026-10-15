@@ -86,10 +86,6 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         non-vie sont mélangés.
       </p>
       <p>
-        <span className="font-medium text-text-primary">Compteur de couleurs :</span> répartition du ratio SCR de la
-        sélection (vertes / orange / rouges).
-      </p>
-      <p>
         <span className="font-medium text-text-primary">Profil de risque (radar) :</span> parts de chaque module de base
         (non-vie, vie, santé, marché, contrepartie) dans la somme des modules, sur une échelle commune de 0 au plus
         grand pourcentage de la sélection : il compare le profil de risque, pas la taille. Les valeurs sont dans la
