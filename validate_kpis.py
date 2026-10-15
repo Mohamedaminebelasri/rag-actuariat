@@ -239,6 +239,14 @@ ECHECS_LEGITIMES_CONNUS = {
         "Plancher MCR absolu sur petite structure, déjà documenté "
         "(Décision 085)."
     ),
+    # Décision 150 — modèles internes complets : le risque de souscription
+    # santé n'existe pas comme catégorie séparée, il est inclus dans
+    # scr_souscription_vie (vie ET santé) ; scr_souscription_sante reste
+    # NULL par construction, jamais deviné.
+    **{(societe, "completude_aucun_null"): (
+        "Seul NULL : scr_souscription_sante, inclus dans scr_souscription_vie "
+        "(modèle interne complet sans catégorie santé séparée, Décision 150)."
+    ) for societe in ("AXA France Vie", "AXA France IARD", "Generali Vie", "Generali IARD", "Allianz Vie")},
 }
 
 
@@ -397,6 +405,32 @@ def executer_completude(conn, company_id, year):
     ]
 
 
+# Décision 151 — fourchettes plausibles de best_estimate / scr_total par
+# activité (companies.type_activite, Décision 149). Observé sur les 41
+# sociétés 2025 : vie 0,2-65, non-vie 0,8-7, santé 0,1-8, mixte 6-18.
+# Bornes larges : le but est d'attraper une erreur d'unité ×1000 (Crédit
+# Agricole Assurances : 0,024, Décision 148), pas de juger un profil.
+FOURCHETTE_BE_SUR_SCR = {
+    "Vie": (0.1, 150), "Non-vie": (0.1, 30), "Santé/prévoyance": (0.02, 30), "Mixte": (0.5, 80),
+}
+
+
+def executer_plausibilite(conn, company_id, kpis):
+    row = conn.execute("SELECT type_activite FROM companies WHERE id=?", (company_id,)).fetchone()
+    activite = row[0] if row else None
+    be, scr = kpis.get("best_estimate", (None,))[0], kpis.get("scr_total", (None,))[0]
+    if activite not in FOURCHETTE_BE_SUR_SCR or not be or not scr:
+        return []
+    bas, haut = FOURCHETTE_BE_SUR_SCR[activite]
+    ratio = be / scr
+    return [{
+        "check_name": "plausibilite_best_estimate_scr_total", "expected_value": None, "computed_value": ratio,
+        "passed": bas <= ratio <= haut,
+        "details": f"best_estimate / scr_total = {ratio:.3f}, attendu entre {bas} et {haut} pour l'activité "
+                   f"{activite} (sinon suspicion d'erreur d'unité, Décision 151)",
+    }]
+
+
 def inserer_controles(conn, company_id, year, controles, company_name=None):
     # Décision 104 — sans ce DELETE, chaque ré-exécution de validate_kpis.py
     # (--all ou --company) ACCUMULE indéfiniment des lignes en doublon dans
@@ -453,7 +487,8 @@ def valider_societe(conn, company_name, year, afficher_detail=True):
         print(f">>> ARRÊT — aucun KPI trouvé pour ({company_name}, {year}). Lance extract_kpis.py d'abord.")
         return None, None
 
-    controles = executer_controles(kpis, company_name) + executer_completude(conn, company_id, year)
+    controles = (executer_controles(kpis, company_name) + executer_completude(conn, company_id, year)
+                 + executer_plausibilite(conn, company_id, kpis))
     for c in controles:
         c["note_legitimite"] = ECHECS_LEGITIMES_CONNUS.get((company_name, c["check_name"]))
     inserer_controles(conn, company_id, year, controles, company_name=company_name)
