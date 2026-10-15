@@ -65,6 +65,15 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         disponible), avec sa définition. Seuls les ratios SCR et MCR portent une pastille de statut.
       </p>
       <p>
+        <span className="font-medium text-text-primary">Position parmi les pairs :</span> rang de la société dans son
+        groupe de pairs (même activité, même modèle de capital, même périmètre), jamais parmi toutes les sociétés.
+        Classement seulement si au moins 5 sociétés du groupe ont une valeur comparable ; sinon (modèle interne,
+        groupe consolidé, petit groupe) un message en donne la raison. Les indicateurs « classés » disent qui fait
+        mieux (ratio SCR sans mesures de long terme à privilégier) ; les autres situent la société sans jugement. Une
+        valeur absente ou non comparable n&apos;est jamais classée. Points : une société chacun ; pointillé : médiane ;
+        trait rouge : seuil de {SEUIL_LEGAL} % des ratios SCR.
+      </p>
+      <p>
         <span className="font-medium text-text-primary">Décomposition du SCR :</span> une barre par module de risque
         (non-vie, santé, vie, marché, contrepartie), la diversification (hachurée, montant négatif), le SCR
         opérationnel et le SCR total.
