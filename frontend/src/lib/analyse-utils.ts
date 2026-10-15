@@ -17,7 +17,7 @@ import {
 } from "@/data/analyse-demo";
 import { SEUIL_LEGAL, SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 import { DONNEES_EXTRAITES } from "@/lib/donnees-extraites-utils";
-import { perimetreMajoritaire } from "@/lib/comparabilite";
+import { kpiApplicable, perimetreMajoritaire } from "@/lib/comparabilite";
 
 // Sens de "meilleure valeur" par KPI — utilisé UNIQUEMENT pour la mise en
 // surbrillance meilleur/pire du tableau comparatif. Beaucoup de KPIs en
@@ -37,16 +37,20 @@ export const CATEGORIE_LABELS: Record<string, string> = {
   D: "Valorisation",
   C: "Risques",
   A: "Activité",
+  I: "Indicateurs comparables",
 };
 
+/** `decimales` : seulement pour les % et les unités sans format dédié (ex.
+ * « pts ») ; 1 par défaut. */
 export function formatValeur(
   valeur: number,
   unite: string,
   valeurBrute?: number | null,
   uniteBrute?: string | null,
+  decimales?: number,
 ): string {
   if (unite === "%") {
-    return `${formatNombre(valeur, 1)} %`;
+    return `${formatNombre(valeur, decimales ?? 1)} %`;
   }
   // Afficher la valeur brute (telle que dans le PDF) quand elle est disponible
   if (valeurBrute != null) {
@@ -62,7 +66,7 @@ export function formatValeur(
     return `${formatNombre(valeur, 2)} Md€`;
   }
   // Unité inconnue : jamais de « Md€ » par défaut, on affiche l'unité réelle.
-  return `${formatNombre(valeur, 1)} ${unite}`;
+  return `${formatNombre(valeur, decimales ?? 1)} ${unite}`;
 }
 
 function formatNombre(valeur: number, decimales: number): string {
@@ -149,6 +153,9 @@ export type CelluleKpi = {
    * marqueur, exclue du rang, du meilleur/pire, de la moyenne et de la médiane. */
   avertissement: boolean;
   noteAvertissement: string | null;
+  /** KPI sans objet pour l'activité de la société (ex. S/P non-vie d'un
+   * assureur vie, Décision 158) : « sans objet », hors de toute comparaison. */
+  nonApplicable?: boolean;
 };
 
 export type LigneKpi = {
@@ -188,14 +195,21 @@ export function buildTableauComparatif(
     // affichées, mais exclues du rang, du meilleur/pire, de la moyenne et de
     // la médiane.
     const nonComparables = new Set<string>();
+    // Décision 158 — KPI sans objet pour l'activité de la société (ex. S/P
+    // non-vie d'un assureur vie) : « sans objet », ni rang ni agrégat.
+    const nonApplicables = new Set<string>();
     for (const soc of societes) {
       const brut = kpisSociete(soc)[kdef.id];
       if (brut !== undefined) {
+        if (!kpiApplicable(kdef.id, soc)) {
+          nonApplicables.add(soc);
+          continue;
+        }
         valeursParSociete[soc] = brut.valeur;
         if (brut.avertissement) nonComparables.add(soc);
       }
     }
-    if (Object.keys(valeursParSociete).length === 0) continue;
+    if (Object.keys(valeursParSociete).length === 0 && nonApplicables.size === 0) continue;
 
     const valeursComparables = Object.entries(valeursParSociete)
       .filter(([soc]) => !nonComparables.has(soc))
@@ -208,6 +222,18 @@ export function buildTableauComparatif(
 
     const cellules: CelluleKpi[] = societes.map((soc) => {
       const v = valeursParSociete[soc];
+      if (nonApplicables.has(soc)) {
+        return {
+          societe: soc,
+          valeurStr: "sans objet",
+          rang: 0,
+          estMeilleur: false,
+          estPire: false,
+          avertissement: false,
+          noteAvertissement: null,
+          nonApplicable: true,
+        };
+      }
       if (v === undefined) {
         return {
           societe: soc,
@@ -224,7 +250,7 @@ export function buildTableauComparatif(
       const rang = classable ? valeursTriees.indexOf(v) + 1 : 0;
       return {
         societe: soc,
-        valeurStr: formatValeur(v, kdef.unite),
+        valeurStr: formatValeur(v, kdef.unite, null, null, kdef.decimales),
         rang,
         estMeilleur: classable && rang === 1,
         estPire: classable && rang === valeursTriees.length && valeursTriees.length > 1,
@@ -276,8 +302,8 @@ export function buildTableauComparatif(
       kpiLabel: kdef.label,
       unite: kdef.unite,
       cellules,
-      moyenneStr: aComparables ? formatValeur(moyenne, kdef.unite) : "—",
-      medianeStr: aComparables ? formatValeur(mediane, kdef.unite) : "—",
+      moyenneStr: aComparables ? formatValeur(moyenne, kdef.unite, null, null, kdef.decimales) : "—",
+      medianeStr: aComparables ? formatValeur(mediane, kdef.unite, null, null, kdef.decimales) : "—",
       seuilStr: seuil !== null ? formatValeur(seuil, kdef.unite) : "",
       aSeuil: seuil !== null,
       noteAgregat,
