@@ -108,6 +108,9 @@ CORPUS_FINAL = BASE_DIR / "test_markdrop" / "output_structure_brute" / "corpus_f
 sys.path.insert(0, str(BASE_DIR))
 from kpi_definitions import KPI_DEFINITIONS
 
+NOMS_KPIS_EXTRAITS = {d["kpi_name"] for d in KPI_DEFINITIONS}
+_FILTRE_EXTRAITS = "kpi_name IN ({})".format(",".join(f"'{n}'" for n in sorted(NOMS_KPIS_EXTRAITS)))
+
 TOLERANCE_PCT_RATIO = 1.0  # % — cf. docstring, contrôles 3/4
 TOLERANCE_ABS_IDENTITE = 0.5  # M€ — arrondis flottants, contrôles 1/2
 
@@ -125,7 +128,9 @@ def charger_kpis(conn, company_id, year):
         "SELECT kpi_name, value, unit FROM kpis WHERE company_id=? AND year=?",
         (company_id, year),
     ).fetchall()
-    return {nom: (valeur, unite) for nom, valeur, unite in lignes}
+    # Décision 158 — seulement les 21 KPIs extraits : les KPIs calculés
+    # (KPI_INDICATEURS_OFFICIELS) ont leur propre contrôle de recalcul.
+    return {nom: (valeur, unite) for nom, valeur, unite in lignes if nom in NOMS_KPIS_EXTRAITS}
 
 
 def r0570_eligibles_mcr():
@@ -389,11 +394,13 @@ def executer_controles(kpis, company_name):
 
 
 def executer_completude(conn, company_id, year):
-    n = conn.execute("SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=?", (company_id, year)).fetchone()[0]
-    n_null = conn.execute("SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=? AND value IS NULL",
+    # Décision 158 — complétude des 21 KPIs extraits seulement (hors KPIs calculés).
+    n = conn.execute(f"SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=? AND {_FILTRE_EXTRAITS}",
+                     (company_id, year)).fetchone()[0]
+    n_null = conn.execute(f"SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=? AND value IS NULL AND {_FILTRE_EXTRAITS}",
                            (company_id, year)).fetchone()[0]
     noms_null = [r[0] for r in conn.execute(
-        "SELECT kpi_name FROM kpis WHERE company_id=? AND year=? AND value IS NULL", (company_id, year)
+        f"SELECT kpi_name FROM kpis WHERE company_id=? AND year=? AND value IS NULL AND {_FILTRE_EXTRAITS}", (company_id, year)
     ).fetchall()]
     n_total = len(KPI_DEFINITIONS)
     return [
