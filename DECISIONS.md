@@ -9888,3 +9888,17 @@ n'en applique pas. Nouveau script `peupler_impact_mesures_lt.py` → table
 Ordre de rejeu complet : extractions → `populate_company_metadata.py` →
 `corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
 `validate_kpis.py --all` → `export_kpis_for_frontend.py`.
+
+## Décision 156 — Macifilia : charge de sinistres négative réelle, signalée
+
+`charge_sinistres` = −939,552 M€ (seule valeur négative des 41). Relu sur
+le rendu image du rapport Aéma p.511 (S.05.01.02.01, colonne Total) :
+R0310 brut = −939 552 K€, R0340 part des réassureurs = −939 552 K€,
+R0400 net = 0 ; primes acquises 5,554 M€ également cédées à 100 %. Ce
+n'est pas une erreur de signe (déjà établi en Décision 094 bis) : reprise
+de provisions sur un portefeuille entièrement réassuré.
+
+Valeur conservée, marquée `avertissement` avec une note en français simple
+(`corrections_comparabilite.py`, section 6 `ATYPIQUES`). À exclure de tout
+classement. Le S/P non-vie de Macifilia n'est déjà pas calculé (primes
+non-vie < 10 M€, Décision 153).

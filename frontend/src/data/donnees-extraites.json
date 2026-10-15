@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-15T11:52:53",
+  "genereLe": "2026-10-15T16:33:08",
   "societes": [
     {
       "id": 67,
@@ -16031,8 +16031,8 @@
           }
         ],
         "sourcePdf": null,
-        "avertissement": false,
-        "noteAvertissement": null
+        "avertissement": true,
+        "noteAvertissement": "Montant négatif réellement publié (page 511) : une reprise de provisions sur un portefeuille entièrement réassuré, la charge restant à Macifilia est nulle. À ne pas comparer ni classer avec les autres sociétés."
       },
       "fonds_propres_eligibles": {
         "valeur": 18.411,

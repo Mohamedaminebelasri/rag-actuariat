@@ -2331,8 +2331,8 @@
       "raw_value": -939552.0,
       "raw_unit": "K€",
       "source_pdf": null,
-      "avertissement": false,
-      "note_avertissement": null
+      "avertissement": true,
+      "note_avertissement": "Montant négatif réellement publié (page 511) : une reprise de provisions sur un portefeuille entièrement réassuré, la charge restant à Macifilia est nulle. À ne pas comparer ni classer avec les autres sociétés."
     },
     "fonds_propres_eligibles": {
       "value": 18.411,

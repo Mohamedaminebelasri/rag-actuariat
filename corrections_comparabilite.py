@@ -22,6 +22,7 @@ Ordre de rejeu après toute ré-extraction :
 3. Zéros vrais dont la page source manquait (CNP, MACSF prévoyance).
 4. Valeurs imprimées restées NULL (Covéa, MAIF, SGAM AG2R).
 5. AXA France IARD : primes et sinistres S.05.01 comptés deux fois.
+6. Valeurs réelles mais atypiques, signalées (Macifilia, charge négative).
 
     python corrections_comparabilite.py
 """
@@ -297,6 +298,25 @@ def appliquer_zeros(conn):
     print(f"  {len(ZEROS_TRACES)} zéros rendus traçables (page source vérifiée)")
 
 
+# 6. Valeurs réelles mais atypiques, signalées (Décision 156).
+ATYPIQUES = {
+    ("Macifilia", "charge_sinistres"): (
+        # Source : rapport Aéma p.511, S.05.01 R0310 = R0340 = −939 552 K€, R0400 (net) = 0.
+        "Montant négatif réellement publié (page 511) : une reprise de provisions sur un portefeuille "
+        "entièrement réassuré, la charge restant à Macifilia est nulle. À ne pas comparer ni classer "
+        "avec les autres sociétés."),
+}
+
+
+def appliquer_atypiques(conn):
+    for (societe, kpi), note in ATYPIQUES.items():
+        n = conn.execute("UPDATE kpis SET avertissement=1, note_avertissement=? WHERE company_id=? AND year=? AND kpi_name=?",
+                         (note, _cid(conn, societe), YEAR, kpi)).rowcount
+        if n != 1:
+            raise SystemExit(f"Ligne KPI introuvable : {societe}/{kpi}")
+    print(f"  {len(ATYPIQUES)} valeur(s) atypique(s) signalée(s)")
+
+
 def main():
     conn = sqlite3.connect(DB_PATH)
     print("=== 1. Jeux SCR cohérents (modèles internes) ===")
@@ -309,6 +329,8 @@ def main():
     appliquer_valeurs_recuperees(conn)
     print("=== 5. AXA France IARD, primes et sinistres (S.05.01) ===")
     appliquer_afi_s0501(conn)
+    print("=== 6. Valeurs atypiques signalées ===")
+    appliquer_atypiques(conn)
     conn.commit()
     conn.close()
 
