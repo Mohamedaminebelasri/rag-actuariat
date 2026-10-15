@@ -54,6 +54,34 @@ export type Compatibilite = {
   classeSinistres: Record<string, string>;
   regle: string;
   matrice: Record<string, Partial<Record<AxeCompat, { verdict: VerdictCompat; note: string | null }>>>;
+  /** Activités pour lesquelles un KPI a un sens (Décision 158, ex. S/P non-vie :
+   * Non-vie et Santé/prévoyance) ; ailleurs il n'entre dans aucune comparaison. */
+  activitesApplicables?: Record<string, string[]>;
+};
+
+/** Règle de calcul d'un KPI calculé (Décision 158) : `ratio` = Σ composants
+ * « num » ÷ Σ composants « den » × facteur ; `difference` = Σ « + » − Σ « - ». */
+export type FormuleKpi = {
+  type: "ratio" | "difference";
+  texte: string;
+  facteur: number;
+  /** Précision propre à la société (ex. « n'applique ni VA ni transitoire »). */
+  note?: string;
+};
+
+/** Définition d'un KPI calculé (champ definitionsKpis du JSON). */
+export type DefinitionKpiCalcule = {
+  label: string;
+  /** "pct" ou "pts" (points de ratio). */
+  unite: string;
+  categorie: string;
+  libelleCategorie: string;
+  description: string;
+  /** higher / lower : plus haut / plus bas = mieux ; neutre : position sans
+   * jugement ; aucun : jamais classé. */
+  classement: "higher" | "lower" | "neutre" | "aucun";
+  /** Clé d'origine dans indicateursParSociete (null si aucune). */
+  indicateur: string | null;
 };
 
 /** Ratios normalisés d'une société (clés absentes = non calculables). */
@@ -79,7 +107,17 @@ export type Composant = {
   valeur: number;
   unite: string;
   pageSource: number | null;
+  /** "+" / "-" (somme, différence) ; "num" / "den" (ratio, KPI calculé). */
   operation: string;
+  /** Champs des composants d'un KPI calculé (Décision 158), absents sinon. */
+  /** Le composant est ce KPI officiel de la société. */
+  kpiCode?: string;
+  /** Calcul d'un ratio intermédiaire (ex. « 1 645,670 ÷ 974,095 × 100 »). */
+  detail?: string;
+  /** PDF de la page du composant ; null = PDF par défaut de la société.
+   * Absent (composants « somme ») = même PDF que le KPI. */
+  sourcePdf?: string | null;
+  valide?: boolean;
 };
 
 export type KpiExtrait = {
@@ -107,6 +145,11 @@ export type KpiExtrait = {
   /** Libellé à afficher à la place du nom générique du KPI (ex. « SCR
    * minimal consolidé du groupe » pour le mcr d'un groupe). */
   libelle?: string | null;
+  /** Règle de calcul — présente seulement pour les KPIs calculés (Décision 158). */
+  formule?: FormuleKpi | null;
+  /** « Source : » en français simple (KPIs à avertissement), à afficher à la
+   * place de chapitreSource, qui garde la base technique. */
+  sourceLisible?: string | null;
 };
 
 type DonneesExtraites = {
@@ -115,6 +158,8 @@ type DonneesExtraites = {
   kpisParSociete: Record<string, Record<string, KpiExtrait>>;
   indicateursParSociete: Record<string, IndicateursSociete>;
   definitionsIndicateurs: Record<string, string>;
+  /** KPIs calculés (Décision 158). */
+  definitionsKpis?: Record<string, DefinitionKpiCalcule>;
   groupesPairs: GroupePairs[];
   compatibilite: Compatibilite;
 };
@@ -158,6 +203,44 @@ export const KPI_LABELS_REELS: Record<string, string> = {
 
 export const NB_KPIS_ATTENDUS = Object.keys(KPI_LABELS_REELS).length;
 
+// ───────────── KPIs calculés « Indicateurs comparables » (Décision 158) ─────────────
+
+export const CATEGORIE_INDICATEURS = "indicateurs_comparables";
+export const LIBELLE_CATEGORIE_INDICATEURS = "Indicateurs comparables";
+
+/** Définitions des KPIs calculés, dans l'ordre d'affichage. */
+export const DEFINITIONS_KPIS_CALCULES: Record<string, DefinitionKpiCalcule> =
+  DONNEES_EXTRAITES.definitionsKpis ?? {};
+
+/** KPI extrait d'un rapport (les 21), par opposition aux KPIs calculés. */
+export function estKpiExtrait(kpiId: string): boolean {
+  return kpiId in KPI_LABELS_REELS;
+}
+
+/** Libellé d'un KPI, extrait ou calculé. */
+export function labelKpi(kpiId: string): string {
+  return KPI_LABELS_REELS[kpiId] ?? DEFINITIONS_KPIS_CALCULES[kpiId]?.label ?? kpiId;
+}
+
+/** KPIs calculés affichés avec plus d'une décimale (petites valeurs, ex. 0,44 %). */
+export const DECIMALES_KPIS: Record<string, number> = { marge_risque_sur_be: 2 };
+
+/** Écart toléré entre la valeur affichée et le recalcul depuis les composants. */
+export const TOLERANCE_RECALCUL = 0.05;
+
+/** Recalcul d'un KPI calculé depuis ses composants (null sans formule). */
+export function recalculerKpi(kpi: KpiExtrait): number | null {
+  const f = kpi.formule;
+  const comps = kpi.composants ?? [];
+  if (!f || comps.length === 0) return null;
+  if (f.type === "ratio") {
+    const num = comps.filter((c) => c.operation === "num").reduce((a, c) => a + c.valeur, 0);
+    const den = comps.filter((c) => c.operation === "den").reduce((a, c) => a + c.valeur, 0);
+    return den === 0 ? null : (num / den) * f.facteur;
+  }
+  return comps.reduce((a, c) => a + (c.operation === "-" ? -c.valeur : c.valeur), 0) * f.facteur;
+}
+
 function formatNombreEspace(valeur: number, decimales: number): string {
   const fixe = valeur.toFixed(decimales);
   const [entier, decimal] = fixe.split(".");
@@ -168,9 +251,12 @@ function formatNombreEspace(valeur: number, decimales: number): string {
 /** kpis.db stocke les unités "pct" et "M€" (pas "%"/"Md€" comme les données
  * de démo de l'onglet Analyse) — formatage dédié pour rester fidèle aux
  * valeurs réelles. */
-export function formatValeurReelle(valeur: number, unite: string): string {
-  if (unite === "pct") return `${formatNombreEspace(valeur, 1)} %`;
+export function formatValeurReelle(valeur: number, unite: string, decimales?: number): string {
+  // `decimales` : seulement pour les % et les points (DECIMALES_KPIS).
+  if (unite === "pct") return `${formatNombreEspace(valeur, decimales ?? 1)} %`;
   if (unite === "M€") return `${formatNombreEspace(valeur, 1)} M€`;
+  // Points de ratio (KPIs calculés, Décision 158).
+  if (unite === "pts") return `${formatNombreEspace(valeur, decimales ?? 1)} pts`;
   return `${formatNombreEspace(valeur, 2)} ${unite}`;
 }
 
@@ -181,8 +267,9 @@ export function formatValeurBrute(
   uniteBrute: string | null,
   valeur: number,
   unite: string,
+  decimales?: number,
 ): string {
-  if (valeurBrute == null) return formatValeurReelle(valeur, unite);
+  if (valeurBrute == null) return formatValeurReelle(valeur, unite, decimales);
   const raw = uniteBrute ?? unite;
   const u = raw === "euros bruts" || raw === "euro brut" ? "€" : raw;
   // Les valeurs brutes K€ sont des entiers — pas de décimales inutiles
@@ -230,8 +317,16 @@ export function kpisDe(nomSociete: string): Record<string, KpiExtrait> {
 
 export type Couverture = { extraits: number; valides: number; total: number };
 
+/** KPIs extraits seulement (les 21) : les KPIs calculés n'entrent pas dans
+ * les compteurs « extraits / vérifiés ». */
+function kpisExtraitsDe(nomSociete: string): KpiExtrait[] {
+  return Object.entries(kpisDe(nomSociete))
+    .filter(([id]) => estKpiExtrait(id))
+    .map(([, k]) => k);
+}
+
 export function couvertureKpis(nomSociete: string): Couverture {
-  const kpis = Object.values(kpisDe(nomSociete));
+  const kpis = kpisExtraitsDe(nomSociete);
   return {
     extraits: kpis.length,
     valides: kpis.filter((k) => k.valide).length,
@@ -249,14 +344,17 @@ export function couvertureKpis(nomSociete: string): Couverture {
  * insérés, donc une nouvelle société est exactement dans ce cas.
  */
 export function estNouvelleSociete(nomSociete: string): boolean {
-  const kpis = Object.values(kpisDe(nomSociete));
+  const kpis = kpisExtraitsDe(nomSociete);
   if (kpis.length === 0) return false; // société sans KPI extrait : pas "nouvelle", juste vide
   return kpis.every((k) => !k.valide);
 }
 
 export const STATS_GLOBALES = {
   nbSocietes: DONNEES_EXTRAITES.societes.length,
-  nbKpis: Object.values(DONNEES_EXTRAITES.kpisParSociete).reduce((acc, k) => acc + Object.keys(k).length, 0),
+  nbKpis: Object.values(DONNEES_EXTRAITES.kpisParSociete).reduce(
+    (acc, k) => acc + Object.keys(k).filter(estKpiExtrait).length,
+    0
+  ),
   nbGroupes: groupesDisponibles().filter((g) => g.valeur !== GROUPE_INDEPENDANTES).length,
 };
 
@@ -276,7 +374,7 @@ export function exporterCsvSociete(nomSociete: string) {
   const kpis = kpisDe(nomSociete);
   const lignes = ["categorie,kpi,valeur,unite,annee,chapitre_source,page_source,valide"];
   for (const [id, k] of Object.entries(kpis)) {
-    const label = KPI_LABELS_REELS[id] ?? id;
+    const label = labelKpi(id);
     lignes.push(
       [k.categorie, label, k.valeur, k.unite, k.annee, k.chapitreSource ?? "", k.pageSource ?? "", k.valide].join(",")
     );
