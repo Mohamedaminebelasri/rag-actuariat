@@ -109,6 +109,58 @@ MATRICE = {
     },
 }
 
+# Décision 158 — les 6 KPIs calculés (peupler_kpis_officiels_indicateurs.py).
+# Règle : pire verdict des KPIs / composants dont ils dérivent, corrigé par
+# les règles métier évidentes (justification dans DECISIONS.md, Décision 158).
+_R_FORME_RATIO = _v("R", "Dérivé du ratio SCR : mutuelles et SAM sans accès au marché des actions, structurellement "
+                         "plus capitalisées.")
+MATRICE.update({
+    "ratio_scr_sans_mesures_lt": {
+        "activite": _v("R", "Niveau habituel propre à chaque métier, comme pour le ratio SCR publié."),
+        "forme": _R_FORME_RATIO,
+        "modele": _v("R", "Le SCR reste celui du modèle interne (calibrage propre) ; seules la correction pour "
+                          "volatilité et les mesures transitoires sont retirées."),
+        "perimetre": _R_PERIM,
+    },
+    "impact_va": {
+        "activite": _v("R", "Effet lié à la durée des engagements : fort en vie (engagements longs), faible en "
+                            "non-vie et en santé."),
+        "forme": _R_FORME_RATIO,
+        "modele": _v("R", "Modèle interne : correction pour volatilité parfois dynamique ou stochastique, d'effet "
+                          "nettement plus grand."),
+        "perimetre": _R_PERIM,
+    },
+    "impact_transitoires": {
+        "activite": _v("R", "Mesure transitoire sur provisions surtout utilisée en vie (engagements anciens à taux "
+                            "garantis)."),
+        "forme": _R_FORME_RATIO,
+        "modele": _v("R", "Calibrage propre au modèle interne."),
+        "perimetre": _R_PERIM,
+    },
+    "marge_risque_sur_be": {
+        "activite": _v("N", "Rapport structurel propre au métier (médianes : vie 1 %, non-vie 6 %, santé 11 %) : à "
+                            "comparer à l'intérieur d'une même activité seulement."),
+        "forme": _v("C"),
+        "modele": _v("R", "Marge de risque calculée avec le SCR du modèle interne."),
+        "perimetre": _v("R", "Éliminations intra-groupe."),
+    },
+    "sp_nonvie": {
+        "activite": _v("R", "Comparable seulement entre sociétés Non-vie et Santé/prévoyance ; la santé a un S/P "
+                            "structurellement plus élevé que l'assurance de biens et de responsabilité."),
+        "forme": _v("C"), "modele": _v("C"), "perimetre": _v("R", "Montants consolidés."),
+    },
+    "mcr_en_pct_scr": {
+        "activite": _v("R", "Formule du MCR différente en vie et en non-vie."),
+        "forme": _v("R", "Plancher absolu du MCR pour les petites structures."),
+        "modele": _v("R", "Corridor appliqué au SCR du modèle interne."),
+        "perimetre": _v("N", "Groupe : pas de MCR (KPI calculé pour les sociétés solo seulement)."),
+    },
+})
+
+# Décision 158 — activités pour lesquelles un KPI a un sens : en dehors, la
+# valeur reste affichée pour la société mais n'entre dans aucune comparaison.
+ACTIVITES_APPLICABLES = {"sp_nonvie": ["Non-vie", "Santé/prévoyance"]}
+
 # Sur l'axe activité, "N" pour charge_sinistres ne s'applique qu'entre une
 # activité « vie » et une activité « non-vie » (la santé non-vie se compare
 # au non-vie). Le front-end compare les classes ci-dessous, pas l'activité brute.
@@ -219,20 +271,22 @@ def _indicateurs_mesures_lt(lt, ratio_publie):
     return out
 
 
+# Textes en français simple (Décision 158) : aucun code QRT, aucune remarque
+# propre à une société — le détail technique reste dans DECISIONS.md.
 DEFINITIONS_INDICATEURS = {
-    "part_t1_non_restreint_pct": "Fonds propres T1 non restreint / fonds propres éligibles. Comparable avec réserve entre formes juridiques.",
-    "marge_risque_sur_be_pct": "Marge de risque / best estimate. À comparer à l'intérieur d'une même activité seulement.",
-    "composition_modules_pct": "Part de chaque module dans la somme des modules (pas dans le SCR). Formule standard entre elles ; null pour les sociétés en modèle interne.",
-    "diversification_sur_modules_pct": "|Diversification| / somme des modules. Formule standard entre elles ; non comparable avec un modèle interne.",
-    "ajustements_sur_scr_pct": "(SCR − modules − diversification − opérationnel) / SCR : absorption des pertes par les provisions et impôts différés (+ autres ajustements). Très négatif en vie.",
-    "scr_sur_primes_plus_be_pct": "SCR / (primes acquises brutes + best estimate brut), proche de l'indicateur Milliman SCR / (cotisations + BE nets).",
-    "sp_nonvie_pct": "Charge de sinistres / primes acquises, lignes non-vie (y c. santé non-vie) seulement ; calculé si ces lignes pèsent au moins 10 % des primes et 10 M€. Absent pour la vie.",
-    "position_mcr": "Position du MCR dans le corridor réglementaire (plancher 25 %, plafond 45 % du SCR, plancher absolu). Si borné, le ratio MCR n'est qu'un multiple du ratio SCR.",
-    "base_scr": "Base de calcul du SCR : formule_standard ou modele_interne.",
-    "utilise_va": "La société applique la correction pour volatilité (VA, article 77 quinquies).",
-    "mesure_transitoire": "La société applique une mesure transitoire (provisions techniques ou taux).",
-    "ratio_scr_sans_mesures_lt_pct": "Ratio de couverture du SCR sans VA ni mesure transitoire (S.22.01 : fonds propres et SCR recalculés). Base homogène pour comparer les ratios SCR entre sociétés.",
-    "impact_va_pts": "Effet de la VA sur le ratio SCR, en points (négatif = la VA améliore le ratio publié). Approche par étapes : mesuré après retrait des transitoires. Generali : VA stochastique du modèle interne, valeur publiée dans le texte.",
-    "impact_transitoires_pts": "Effet des mesures transitoires sur le ratio SCR, en points (BPCE Vie, La Mondiale, SGAM AG2R, Groupama).",
-    "impact_mesures_lt_pts": "Effet cumulé VA + transitoires sur le ratio SCR, en points.",
+    "part_t1_non_restreint_pct": "Part des fonds propres de meilleure qualité (niveau 1 non restreint) dans les fonds propres éligibles. Comparable avec réserve entre formes juridiques.",
+    "marge_risque_sur_be_pct": "Marge de risque rapportée au best estimate. À comparer à l'intérieur d'une même activité seulement.",
+    "composition_modules_pct": "Part de chaque module de risque dans la somme des modules (pas dans le SCR). Comparable entre sociétés en formule standard ; vide pour les modèles internes.",
+    "diversification_sur_modules_pct": "Bénéfice de diversification rapporté à la somme des modules de risque. Comparable entre sociétés en formule standard, pas avec un modèle interne.",
+    "ajustements_sur_scr_pct": "(SCR − modules − diversification − risque opérationnel) ÷ SCR : absorption des pertes par les provisions et les impôts différés, et autres ajustements. Très négatif en vie.",
+    "scr_sur_primes_plus_be_pct": "SCR rapporté à la somme des primes acquises brutes et du best estimate brut : intensité en capital, indépendamment de la taille.",
+    "sp_nonvie_pct": "Charge de sinistres rapportée aux primes acquises, sur les seules activités non-vie (santé non-vie comprise) ; calculé quand ces activités pèsent au moins 10 % des primes et 10 M€. Absent pour la vie.",
+    "position_mcr": "Position du MCR dans le corridor réglementaire (plancher 25 %, plafond 45 % du SCR, plancher absolu en euros). Collé à une borne, le ratio MCR n'est qu'un multiple du ratio SCR.",
+    "base_scr": "Méthode de calcul du SCR : formule standard ou modèle interne.",
+    "utilise_va": "La société applique la correction pour volatilité (ajustement de la courbe des taux).",
+    "mesure_transitoire": "La société applique une mesure transitoire (sur les provisions techniques ou sur les taux).",
+    "ratio_scr_sans_mesures_lt_pct": "Ratio de couverture du SCR sans correction pour volatilité ni mesure transitoire (fonds propres et SCR recalculés). Base homogène pour comparer les ratios SCR entre sociétés.",
+    "impact_va_pts": "Effet de la correction pour volatilité sur le ratio SCR, en points (négatif : elle améliore le ratio publié). Mesuré après retrait des mesures transitoires ; pour certains modèles internes, valeur publiée par la société dans son rapport.",
+    "impact_transitoires_pts": "Effet des mesures transitoires sur le ratio SCR, en points ; seules quelques sociétés les appliquent.",
+    "impact_mesures_lt_pts": "Effet cumulé de la correction pour volatilité et des mesures transitoires sur le ratio SCR, en points.",
 }
