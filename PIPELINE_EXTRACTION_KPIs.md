@@ -172,6 +172,25 @@ document aurait pu laisser penser.
 `provisions_techniques` = `best_estimate` + `marge_risque` (calculé,
 jamais lu directement — identité vérifiée par le contrôle 1, cf. §4).
 
+### KPIs calculés (Décision 158)
+
+Six KPIs supplémentaires ne sont pas extraits des PDF mais **calculés** à
+partir des KPIs ci-dessus, de leurs composants et de la table
+`impact_mesures_lt` (Décision 155), par
+`peupler_kpis_officiels_indicateurs.py` (catégorie
+`indicateurs_comparables`, règle dans `kpi_formules`, composants dans
+`kpi_composants`) : `ratio_scr_sans_mesures_lt` (%), `impact_va` (pts),
+`impact_transitoires` (pts), `marge_risque_sur_be` (%), `sp_nonvie` (%),
+`mcr_en_pct_scr` (%). `validate_kpis.py` ne contrôle que les 21 KPIs
+extraits ; les 6 KPIs calculés ont leur propre contrôle (recalcul depuis
+les composants, `test_kpis_officiels.py`).
+
+Ordre de rejeu complet après une ré-extraction :
+`extract_kpis_*.py` → `populate_company_metadata.py` →
+`corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
+`validate_kpis.py --all` → `peupler_kpis_officiels_indicateurs.py` →
+`export_kpis_for_frontend.py` → `test_kpis_officiels.py`.
+
 ---
 
 ## 4. `validate_kpis.py` — 46 contrôles actuariels (par société complète)
