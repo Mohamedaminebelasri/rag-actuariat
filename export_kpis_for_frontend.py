@@ -22,6 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 import comparabilite
+import corrections_comparabilite
 from kpi_definitions import CATEGORIE_INDICATEURS, KPI_INDICATEURS_OFFICIELS, LIBELLE_CATEGORIE_INDICATEURS
 
 DB_PATH = Path(__file__).parent / "kpis.db"
@@ -231,6 +232,12 @@ def export_donnees_extraites():
             "avertissement": bool(row["avertissement"]),
             "noteAvertissement": row["note_avertissement"],
         })
+        if row["avertissement"]:
+            # Décision 158 (bonus) — « Source : » en français simple ;
+            # chapitreSource garde la base technique (Décision 157).
+            lisible = corrections_comparabilite.source_lisible(nom, row["kpi_name"])
+            if lisible and kpis_par_societe[nom][row["kpi_name"]]["annee"] == row["year"]:
+                kpis_par_societe[nom][row["kpi_name"]]["sourceLisible"] = lisible
         formule = formules.get((row["company_id"], row["year"], row["kpi_name"]))
         if formule is not None and kpis_par_societe[nom][row["kpi_name"]]["annee"] == row["year"]:
             # Décision 158 — absent pour les KPIs « somme » (inchangés).
