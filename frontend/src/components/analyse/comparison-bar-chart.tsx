@@ -5,10 +5,12 @@ import { cn } from "@/lib/utils";
 import { KPI_DEFINITIONS, KPI_PAR_ID, kpisSociete } from "@/data/analyse-demo";
 import { formatValeur, valeurDisponible } from "@/lib/analyse-utils";
 import { AvertissementKpi } from "./avertissement-kpi";
+import { CarteAgrandissable } from "./carte-agrandissable";
 import { compatibiliteKpi, texteNotesCompat } from "@/lib/comparabilite";
 
 // Hauteur de la zone de tracé (barres + étiquettes ; les noms sont en dessous).
-const HAUTEUR = 260;
+const HAUTEUR_NORMALE = 260;
+const HAUTEUR_AGRANDIE = 480;
 // Place réservée aux étiquettes : au-dessus des barres positives, en dessous
 // des barres négatives (2 lignes de texte + écart).
 const MARGE_ETIQUETTE = 36;
@@ -39,15 +41,16 @@ function etiquetteValeur(valeur: number, unite: string): string {
  * maison de part et d'autre d'une ligne zéro, avec ligne de seuil
  * réglementaire optionnelle. Une valeur ABSENTE (n/d) est écrite « n/d » sans
  * barre — jamais dessinée comme un 0. */
-export function ComparisonBarChart({
+function CorpsBarres({
   societesComparees,
   kpiId,
-  onChangeKpi,
+  agrandi,
 }: {
   societesComparees: string[];
   kpiId: string;
-  onChangeKpi: (id: string) => void;
+  agrandi: boolean;
 }) {
+  const HAUTEUR = agrandi ? HAUTEUR_AGRANDIE : HAUTEUR_NORMALE;
   const def = KPI_PAR_ID[kpiId];
   const unite = def?.unite ?? "M€";
   // valeur === null : absente (clé manquante ou non finie). Un 0 réel reste 0.
@@ -82,23 +85,7 @@ export function ComparisonBarChart({
   const yZero = y(0);
 
   return (
-    <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-5 w-full">
-      <div className="flex items-center gap-3 flex-wrap mb-4">
-        <span className="font-body text-base font-medium text-text-primary">Comparaison par KPI</span>
-        <span className="flex-1" />
-        <select
-          value={kpiId}
-          onChange={(e) => onChangeKpi(e.target.value)}
-          className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-1.5 bg-surface text-text-primary font-body"
-        >
-          {KPI_DEFINITIONS.map((k) => (
-            <option key={k.id} value={k.id}>
-              {k.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
+    <>
       {(compat.verdict === "N" || compat.verdict === "R") && noteCompat && (
         <p role="note" className="mb-3 whitespace-pre-line text-xs leading-relaxed text-text-secondary">
           <span className="font-medium text-text-primary">
@@ -118,7 +105,7 @@ export function ComparisonBarChart({
               return (
                 <div key={d.societe} className="relative flex-1 min-w-0 h-full">
                   <span
-                    className="absolute left-0 right-0 text-xs font-mono text-text-tertiary text-center"
+                    className={cn("absolute left-0 right-0 font-mono text-text-tertiary text-center", agrandi ? "text-sm" : "text-xs")}
                     style={
                       toutNegatif
                         ? { top: yZero + ECART_ETIQUETTE }
@@ -138,7 +125,7 @@ export function ComparisonBarChart({
             return (
               <div key={d.societe} className="relative flex-1 min-w-0 h-full">
                 <span
-                  className="absolute left-0 right-0 text-xs font-mono text-text-primary text-center leading-tight"
+                  className={cn("absolute left-0 right-0 font-mono text-text-primary text-center leading-tight", agrandi ? "text-sm" : "text-xs")}
                   style={
                     auDessus
                       ? { bottom: HAUTEUR - haut + ECART_ETIQUETTE }
@@ -179,12 +166,48 @@ export function ComparisonBarChart({
         {donnees.map((d) => (
           <span
             key={d.societe}
-            className="flex-1 min-w-0 text-[11px] text-text-secondary font-body text-center leading-tight"
+            className={cn("flex-1 min-w-0 text-text-secondary font-body text-center leading-tight", agrandi ? "text-sm" : "text-[11px]")}
           >
             {d.societe}
           </span>
         ))}
       </div>
-    </div>
+    </>
+  );
+}
+
+/** Comparaison d'un KPI entre les sociétés sélectionnées : carte agrandissable
+ * avec son sélecteur de KPI (le KPI choisi vit dans le parent : conservé à
+ * l'agrandissement). */
+export function ComparisonBarChart({
+  societesComparees,
+  kpiId,
+  onChangeKpi,
+}: {
+  societesComparees: string[];
+  kpiId: string;
+  onChangeKpi: (id: string) => void;
+}) {
+  return (
+    <CarteAgrandissable
+      titre="Comparaison par KPI"
+      nom="la comparaison par KPI"
+      actions={
+        <select
+          value={kpiId}
+          onChange={(e) => onChangeKpi(e.target.value)}
+          aria-label="KPI comparé"
+          className="text-sm border border-border rounded-[var(--radius-md)] px-2.5 py-1.5 bg-surface text-text-primary font-body max-w-full"
+        >
+          {KPI_DEFINITIONS.map((k) => (
+            <option key={k.id} value={k.id}>
+              {k.label}
+            </option>
+          ))}
+        </select>
+      }
+    >
+      {({ agrandi }) => <CorpsBarres societesComparees={societesComparees} kpiId={kpiId} agrandi={agrandi} />}
+    </CarteAgrandissable>
   );
 }
