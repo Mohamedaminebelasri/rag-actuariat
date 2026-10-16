@@ -23,6 +23,9 @@ Ordre de rejeu après toute ré-extraction :
 4. Valeurs imprimées restées NULL (Covéa, MAIF, SGAM AG2R).
 5. AXA France IARD : primes et sinistres S.05.01 comptés deux fois.
 6. Valeurs réelles mais atypiques, signalées (Macifilia, charge négative).
+7. Signe perdu à l'extraction (MAIF, une ligne de sinistres), Décision 160.
+8. Page source vérifiée mais absente (Covéa, best_estimate / marge_risque),
+   Décision 160.
 
     python corrections_comparabilite.py
 """
@@ -365,6 +368,59 @@ def appliquer_atypiques(conn):
     print(f"  {len(ATYPIQUES)} valeur(s) atypique(s) signalée(s)")
 
 
+# 7. Signe perdu à l'extraction (Décision 160) : en format comptable, le
+#    « - » d'un négatif est détaché du nombre et extraire_par_libelle ne le
+#    voit pas. (société, kpi, index du composant) -> (libellé attendu,
+#    valeur imprimée en K€, page, preuve). Le KPI = somme de ses composants.
+SIGNES_CORRIGES = {
+    ("MAIF", "charge_sinistres", 3): (
+        "Brut – Réassurance non proportionnelle acceptée", -2_097, 113,
+        "Total imprimé −2 097 K€ (Santé −26, Accidents −150, Biens −1 920) ; 2 367 845 + 23 697 − 2 097 "
+        "− 281 401 (part des réassureurs) = 2 108 044 (net imprimé)"),
+}
+
+
+def appliquer_signes(conn):
+    for (societe, kpi, index), (label, valeur_k, page, _preuve) in SIGNES_CORRIGES.items():
+        cid = _cid(conn, societe)
+        row = conn.execute("""SELECT composant_label, composant_valeur FROM kpi_composants
+                              WHERE company_id=? AND year=? AND kpi_name=? AND composant_index=?""",
+                           (cid, YEAR, kpi, index)).fetchone()
+        if row is None or row[0] != label or abs(abs(row[1]) - abs(valeur_k) / 1000) > 1e-9:
+            raise SystemExit(f"{societe}/{kpi} composant {index} inattendu ({row}) — à revoir")
+        conn.execute("""UPDATE kpi_composants SET composant_valeur=?, composant_page=?
+                        WHERE company_id=? AND year=? AND kpi_name=? AND composant_index=?""",
+                     (valeur_k / 1000, page, cid, YEAR, kpi, index))
+        total = conn.execute("SELECT SUM(composant_valeur) FROM kpi_composants WHERE company_id=? AND year=? "
+                             "AND kpi_name=?", (cid, YEAR, kpi)).fetchone()[0]
+        chapitre = conn.execute("SELECT source_chapter FROM kpis WHERE company_id=? AND year=? AND kpi_name=?",
+                                (cid, YEAR, kpi)).fetchone()[0]
+        chapitre = chapitre.split(" — signe d'une ligne corrigé")[0] + \
+            f" — signe d'une ligne corrigé p.{page} (Décision 160)"
+        conn.execute("""UPDATE kpis SET value=?, raw_value=?, raw_unit='K€', source_chapter=?
+                        WHERE company_id=? AND year=? AND kpi_name=?""",
+                     (round(total, 6), round(total * 1000, 3), chapitre, cid, YEAR, kpi))
+        print(f"  {societe} {kpi} : ligne {index} = {valeur_k / 1000:,.3f} M€, total = {total:,.3f} M€")
+
+
+# 8. Page source vérifiée mais absente en base (Décision 160) : Covéa, les 5
+#    lignes « Meilleure estimation » et les 5 « Marge de risque » sont
+#    imprimées p.85 (S.02.01.02, passif) ; aucun total n'est imprimé ailleurs.
+PAGES_VERIFIEES = {("Covéa", "best_estimate"): 85, ("Covéa", "marge_risque"): 85}
+
+
+def appliquer_pages(conn):
+    for (societe, kpi), page in PAGES_VERIFIEES.items():
+        cid = _cid(conn, societe)
+        n = conn.execute("UPDATE kpis SET source_page=? WHERE company_id=? AND year=? AND kpi_name=?",
+                         (page, cid, YEAR, kpi)).rowcount
+        if n != 1:
+            raise SystemExit(f"Ligne KPI introuvable : {societe}/{kpi}")
+        conn.execute("UPDATE kpi_composants SET composant_page=? WHERE company_id=? AND year=? AND kpi_name=?",
+                     (page, cid, YEAR, kpi))
+    print(f"  {len(PAGES_VERIFIEES)} pages source écrites")
+
+
 def main():
     conn = sqlite3.connect(DB_PATH)
     print("=== 1. Jeux SCR cohérents (modèles internes) ===")
@@ -379,6 +435,10 @@ def main():
     appliquer_afi_s0501(conn)
     print("=== 6. Valeurs atypiques signalées ===")
     appliquer_atypiques(conn)
+    print("=== 7. Signes perdus à l'extraction ===")
+    appliquer_signes(conn)
+    print("=== 8. Pages source vérifiées ===")
+    appliquer_pages(conn)
     conn.commit()
     conn.close()
 

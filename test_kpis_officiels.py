@@ -17,9 +17,11 @@ JSON exporté pour le front-end.
 6. Décision 159 — S/P non-vie relu dans le PDF (validate_kpis.py, contrôle
    12) : lecture des montants et identité brut − réassurance = net sur des
    extraits réels (dont la ligne MAIF imprimée −2 097 K€) ; cohérence entre
-   validation_checks, kpis.db et le JSON ; 14 sp_nonvie vérifiés sur 25 ;
-   si la sauvegarde d'avant existe, seuls `validated` de sp_nonvie et
-   `composant_valide` de ses lignes ont changé dans la base.
+   validation_checks, kpis.db et le JSON ; 15 sp_nonvie vérifiés sur 25 ;
+   Décision 160 : ligne MAIF à −2,097 M€, S/P MAIF 60,3 %, page 85 de
+   Covéa. Si la sauvegarde d'avant existe, seuls `validated` de sp_nonvie,
+   `composant_valide` de ses lignes et les corrections de la Décision 160
+   (CORRECTIONS_160) ont changé dans la base.
 
     python test_kpis_officiels.py [ancien_donnees-extraites.json] [ancien_kpi-sources.json]
 
@@ -53,8 +55,18 @@ ATTENDUS = {"ratio_scr_sans_mesures_lt": 41, "impact_va": 41, "impact_transitoir
 # brut − réassurance = net retrouvée pour les primes et les sinistres.
 SP_VERIFIES = {"AG.Mut", "AG2R Prevoyance", "AXA France IARD", "AXA France Vie", "Arpege Prevoyance",
                "BPCE Assurances IARD", "Cardif Assurances Risques Divers", "Covéa", "Crédit Agricole Assurances",
-               "La Mondiale", "MGEN", "Prima", "SGAM AG2R LA MONDIALE", "VIASANTE Mutuelle"}
+               "La Mondiale", "MAIF", "MGEN", "Prima", "SGAM AG2R LA MONDIALE", "VIASANTE Mutuelle"}
 DB_AVANT_159 = RACINE / "archive" / "kpis_avant_sp_covea_20261016.db"
+# Décision 160 — corrections voulues depuis les sauvegardes : signe d'une
+# ligne de sinistres MAIF (p.113), page 85 de Covéa. (société, kpi) ->
+# colonnes de `kpis` autorisées à changer.
+CORRECTIONS_160 = {("MAIF", "charge_sinistres"): {"value", "raw_value", "source_chapter"},
+                   ("MAIF", "sp_nonvie"): {"value", "validated"},
+                   ("Covéa", "best_estimate"): {"source_page"}, ("Covéa", "marge_risque"): {"source_page"}}
+IGNORES_160 = [r"/kpisParSociete/MAIF/charge_sinistres/.*", r"/kpisParSociete/Covéa/(best_estimate|marge_risque)/.*",
+               r"/indicateursParSociete/MAIF/sp_nonvie_pct"]
+IGNORES_160_SOURCES = [r"/MAIF/charge_sinistres/(value|raw_value|source_chapter)", r"/MAIF/sp_nonvie/value",
+                       r"/Covéa/(best_estimate|marge_risque)/source_page"]
 # Extrait réel, rapport-solvabilite-maif-2025.pdf p.113 (texte PyMuPDF).
 EXTRAIT_MAIF = """Primes acquises
  Brut – assurance directe
@@ -190,11 +202,18 @@ def main():
     if JSON_ANCIEN.exists():
         ancien = json.loads(JSON_ANCIEN.read_text(encoding="utf-8"))
         ecarts = []
-        diff_ajouts(ancien, d, "", [r"/genereLe", r"/definitionsIndicateurs/[^/]+"], ecarts)
+        diff_ajouts(ancien, d, "", [r"/genereLe", r"/definitionsIndicateurs/[^/]+", *IGNORES_160], ecarts)
         for e in ecarts:
             print(f"    {e}")
         verifier("donnees-extraites.json : aucun retrait ni modification", not ecarts, f"({len(ecarts)} écarts)")
-        verifier("indicateursParSociete strictement identique", ancien["indicateursParSociete"] == d["indicateursParSociete"])
+        ecarts = []
+        diff_ajouts(ancien["indicateursParSociete"], d["indicateursParSociete"], "/indicateursParSociete",
+                    IGNORES_160, ecarts)
+        verifier("indicateursParSociete identique (hors S/P MAIF, Décision 160)", not ecarts, f"{ecarts}")
+        verifier("indicateursParSociete : mêmes clés", all(
+            ancien["indicateursParSociete"][s].keys() == d["indicateursParSociete"].get(s, {}).keys()
+            for s in ancien["indicateursParSociete"]) and ancien["indicateursParSociete"].keys()
+            == d["indicateursParSociete"].keys())
         verifier("definitionsIndicateurs : mêmes clés", ancien["definitionsIndicateurs"].keys() == d["definitionsIndicateurs"].keys())
         n_ancien = sum(len(v) for v in ancien["kpisParSociete"].values())
         n_nouveau = sum(len(v) for v in kps.values())
@@ -206,7 +225,9 @@ def main():
     if SOURCES_ANCIEN and SOURCES_ANCIEN.exists():
         ecarts = []
         diff_ajouts(json.loads(SOURCES_ANCIEN.read_text(encoding="utf-8")),
-                    json.loads(SOURCES_NOUVEAU.read_text(encoding="utf-8")), "", [], ecarts)
+                    json.loads(SOURCES_NOUVEAU.read_text(encoding="utf-8")), "", IGNORES_160_SOURCES, ecarts)
+        for e in ecarts:
+            print(f"    {e}")
         verifier("kpi-sources.json : aucun retrait ni modification", not ecarts, f"({len(ecarts)} écarts)")
 
     print("=" * 90)
@@ -282,25 +303,58 @@ def main():
     verifier("sp_nonvie vérifiés = liste attendue", sp_verifies == SP_VERIFIES,
              f"(en trop {sorted(sp_verifies - SP_VERIFIES)}, manquants {sorted(SP_VERIFIES - sp_verifies)})")
 
+    # Décision 160 : la correction MAIF et la page Covéa sont bien en base.
+    cid_maif, cid_covea = ids["MAIF"], ids["Covéa"]
+    lignes_maif = conn.execute("SELECT composant_index, composant_valeur FROM kpi_composants WHERE company_id=? "
+                               "AND year=2025 AND kpi_name='charge_sinistres' ORDER BY composant_index",
+                               (cid_maif,)).fetchall()
+    total_maif = conn.execute("SELECT value FROM kpis WHERE company_id=? AND year=2025 AND kpi_name='charge_sinistres'",
+                              (cid_maif,)).fetchone()[0]
+    verifier("MAIF : ligne 3 des sinistres = −2,097 M€ (imprimé p.113)", dict(lignes_maif).get(3) == -2.097)
+    verifier("MAIF : charge_sinistres = somme des lignes", abs(total_maif - sum(v for _, v in lignes_maif)) < 1e-6)
+    verifier("MAIF : S/P non-vie = 60,3 %", kps["MAIF"]["sp_nonvie"]["valeur"] == 60.3)
+    for kpi in ("best_estimate", "marge_risque"):
+        pages = conn.execute("SELECT source_page FROM kpis WHERE company_id=? AND year=2025 AND kpi_name=? UNION ALL "
+                             "SELECT composant_page FROM kpi_composants WHERE company_id=? AND year=2025 AND kpi_name=?",
+                             (cid_covea, kpi, cid_covea, kpi)).fetchall()
+        verifier(f"Covéa/{kpi} : page 85 (KPI et ses 5 lignes)", pages == [(85,)] * 6, f"{pages}")
+        verifier(f"Covéa/{kpi} : page 85 dans le JSON", kps["Covéa"][kpi]["pageSource"] == 85)
+
     if DB_AVANT_159.exists():
         avant = sqlite3.connect(DB_AVANT_159)
-        q = ("SELECT company_id, year, kpi_name, value, unit, source_page, source_chapter, validated, raw_value, "
-             "raw_unit, source_pdf, avertissement, note_avertissement FROM kpis ORDER BY company_id, kpi_name")
+        noms_par_id = {i: n for n, i in ids.items()}
+        cols = ("company_id", "year", "kpi_name", "value", "unit", "source_page", "source_chapter", "validated",
+                "raw_value", "raw_unit", "source_pdf", "avertissement", "note_avertissement")
+        q = f"SELECT {', '.join(cols)} FROM kpis ORDER BY company_id, kpi_name"
         a, b = avant.execute(q).fetchall(), conn.execute(q).fetchall()
-        changes = [(x, y) for x, y in zip(a, b) if x != y]
         verifier("kpis : mêmes lignes qu'avant", len(a) == len(b))
-        verifier("kpis : seul `validated` de sp_nonvie a changé",
-                 all(x[2] == "sp_nonvie" and x[:7] + x[8:] == y[:7] + y[8:] for x, y in changes), f"({len(changes)})")
+        for x, y in zip(a, b):
+            changees = {c for c, u, v in zip(cols, x, y) if u != v}
+            permises = CORRECTIONS_160.get((noms_par_id[x[0]], x[2]), set()) | (
+                {"validated"} if x[2] == "sp_nonvie" else set())
+            verifier(f"kpis {noms_par_id[x[0]]}/{x[2]} : seules les corrections voulues", changees <= permises,
+                     f"{sorted(changees - permises)}")
         # Sans `id` : peupler_kpis_officiels_indicateurs.py réinsère ses lignes.
-        q = ("SELECT company_id, year, kpi_name, composant_index, composant_label, composant_code_qrt, "
-             "composant_valeur, composant_unite, composant_page, operation, kpi_code, composant_detail, "
-             "composant_source_pdf, composant_valide FROM kpi_composants ORDER BY company_id, kpi_name, composant_index")
+        cols = ("company_id", "year", "kpi_name", "composant_index", "composant_label", "composant_code_qrt",
+                "composant_valeur", "composant_unite", "composant_page", "operation", "kpi_code", "composant_detail",
+                "composant_source_pdf", "composant_valide")
+        q = f"SELECT {', '.join(cols)} FROM kpi_composants ORDER BY company_id, kpi_name, composant_index"
         a, b = avant.execute(q).fetchall(), conn.execute(q).fetchall()
-        verifier("kpi_composants : seul composant_valide de sp_nonvie a changé", len(a) == len(b) and all(
-            x[2] == "sp_nonvie" and x[:-1] == y[:-1] for x, y in zip(a, b) if x != y))
+        verifier("kpi_composants : mêmes lignes qu'avant", len(a) == len(b))
+        for x, y in zip(a, b):
+            changees = {c for c, u, v in zip(cols, x, y) if u != v}
+            societe, kpi = noms_par_id[x[0]], x[2]
+            permises = ({"composant_valide"} if kpi == "sp_nonvie" else set()) | (
+                {"composant_valeur"} if (societe, kpi, x[3]) in (("MAIF", "charge_sinistres", 3), ("MAIF", "sp_nonvie", 3))
+                else set()) | ({"composant_page"} if (societe, kpi) in CORRECTIONS_160 and kpi != "sp_nonvie" else set())
+            verifier(f"kpi_composants {societe}/{kpi}#{x[3]} : seules les corrections voulues", changees <= permises,
+                     f"{sorted(changees - permises)}")
         q = ("SELECT company_id, check_name, expected_value, computed_value, passed, details FROM validation_checks "
              "WHERE check_name NOT LIKE 'sp_nonvie_%' ORDER BY company_id, check_name")
-        verifier("validation_checks : contrôles 1-11 inchangés", avant.execute(q).fetchall() == conn.execute(q).fetchall())
+        a, b = avant.execute(q).fetchall(), conn.execute(q).fetchall()
+        verifier("validation_checks : contrôles 1-11 inchangés (hors charge de sinistres MAIF)", len(a) == len(b) and all(
+            x == y or (noms_par_id[x[0]] == "MAIF" and x[1] in ("signe_charge_sinistres", "magnitude_charge_sinistres")
+                       and x[4] == y[4] == 1) for x, y in zip(a, b)))
         avant.close()
     else:
         print(f"  (comparaison sautée : {DB_AVANT_159} introuvable)")

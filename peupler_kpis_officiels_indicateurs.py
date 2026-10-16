@@ -73,11 +73,8 @@ DEFS = {d["kpi_name"]: d for d in KPI_INDICATEURS_OFFICIELS}
 PDF_RATIO_PUBLIE = {"Generali Vie": "RSSF_Generali_Vie_2025.pdf", "Generali IARD": "RSSF_Generali_Iard_2025.pdf"}
 # MAIF : impacts lus dans le texte, fonds propres p.105 (E.1), SCR p.106 (E.2).
 PAGE_DELTA_SCR = {"MAIF": 106}
-# KPI officiels sans page source en base, page retrouvée dans le PDF pour
-# les composants (le KPI existant n'est pas modifié) : Covéa, les 5 lignes
-# « Meilleure estimation » et les 5 « Marge de risque » du S.02.01.02 sont
-# imprimées p.85 de sfcr_covea_2025.pdf (recherche des montants en K€).
-PAGE_VERIFIEE = {("Covéa", "best_estimate"): 85, ("Covéa", "marge_risque"): 85}
+# Covéa best_estimate / marge_risque : page 85 écrite en base depuis la
+# Décision 160 (corrections_comparabilite.PAGES_VERIFIEES), plus de repli ici.
 
 NOTE_SANS_MESURE = ("N'applique ni correction pour volatilité ni mesure transitoire : le ratio sans mesures est "
                     "le ratio publié et l'impact est nul.")
@@ -369,9 +366,6 @@ def calculer_societe(conn, c, lt):
         """SELECT kpi_name, value, unit, source_page, source_pdf, validated, avertissement, note_avertissement
            FROM kpis WHERE company_id=? AND year=? AND value IS NOT NULL AND kpi_name NOT IN ({})""".format(
             ",".join("?" * len(NOMS))), (c["id"], YEAR, *NOMS))}
-    for kpi, k in kp.items():
-        if k["source_page"] is None:
-            k["source_page"] = PAGE_VERIFIEE.get((c["name"], kpi))
     lignes = {}
     for r in conn.execute(
             """SELECT kpi_name, composant_code_qrt, composant_label, composant_valeur, composant_unite, composant_page,
