@@ -456,6 +456,8 @@ def lister_pdfs():
     for p in sorted(DATA_DIR.glob("*.pdf")):
         if p.name in EXCLUSIONS:
             continue
+        if "_entite_" in p.name:
+            continue  # extrait d'entité temporaire, doublon du rapport de groupe (Décision 089)
         taille = p.stat().st_size
         if taille in vus_tailles:
             continue  # doublon exact, probablement un re-téléchargement

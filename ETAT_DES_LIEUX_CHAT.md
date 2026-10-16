@@ -304,6 +304,34 @@ documents à part entière. »
 - Pour le Chat AI : ne jamais les indexer (rappel du 0.3). `documents_sfcr`
   les exclut déjà.
 
+### P2 — résolu (16/10)
+
+- **Retrait.** Les 9 extraits sont retirés de Git et du disque (`git rm`) :
+  `_entite_AG2R_Prevoyance`, `_entite_AG_Mut`, `_entite_Arpege_Prevoyance`,
+  `_entite_La_Mondiale`, `_entite_La_Mondiale_Europartner`,
+  `_entite_La_Mondiale_Partenaire`, `_entite_Prima`,
+  `_entite_SGAM_AG2R_LA_MONDIALE`, `_entite_VIASANTE_Mutuelle` (`.pdf`).
+  `data/` contient désormais **30 PDF** (39 − 9). Aucun autre PDF n'est touché.
+- **Retour empêché.** Une règle `data/_entite_*.pdf` est ajoutée à
+  `.gitignore`, avec un commentaire qui renvoie à la Décision 089 ; elle est
+  testée avec `git check-ignore`. `ag2r_entites.py` et
+  `peupler_composants_ag2r.py` continueront de recréer ces fichiers quand on
+  les lance, mais Git les ignorera.
+- **`batch_diagnostic.py`.** Deux lignes ajoutées dans `lister_pdfs()` : tout
+  fichier dont le nom contient `_entite_` est ignoré. Le diagnostic complet a
+  été relancé sans erreur : 30 PDF, 42 s, aucun `_entite_` dans la sortie. Le
+  rapport du 26/09 en comptait 35, dont les 9 extraits. Le filtre a aussi été
+  testé sur un dossier temporaire contenant un faux `_entite_Test.pdf`, qui
+  est bien écarté. La relance a réécrit `batch_diagnostic_report.json`
+  (fichier local non suivi) ; l'ancien est copié dans le scratchpad.
+- **DECISIONS.md.** Une note « Suivi du 16/10/2026 » est ajoutée à la fin de
+  la Décision 089.
+- **Contrôles.**
+  - `git ls-files | grep _entite_` : rien ;
+  - `data/AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf` est présent et inchangé ;
+  - `documents_sfcr` est intacte (41 lignes, 0 `_entite_`, 41 chemins
+    existants), et `kpis.db` n'a pas changé.
+
 ---
 
 ## 0.4 kpis.db et kpi_service.py

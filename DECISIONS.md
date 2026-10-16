@@ -5802,6 +5802,12 @@ gap confirmé architecturalement permanent" (une affirmation différente,
 au niveau de l'entité, pas du tally) reste vraie et n'a jamais été
 contredite.**
 
+**Suivi du 16/10/2026.** Les 9 extraits AG2R `data/_entite_*.pdf` ont été
+recréés après ce nettoyage par `ag2r_entites.py` et `peupler_composants_ag2r.py`
+(qui les régénèrent avant usage), puis commités le 27/09 (`049c80c`). Ils sont
+retirés de Git et du disque, ignorés par `.gitignore` (`data/_entite_*.pdf`)
+et exclus de `batch_diagnostic.py` (`lister_pdfs()`).
+
 ## Décision 090 — validate_kpis.py généralisé aux 27 sociétés
 
 CONTEXTE : 24 des 27 sociétés de `kpis.db` n'avaient jamais eu leurs

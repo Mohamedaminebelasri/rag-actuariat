@@ -49,3 +49,5 @@ test_markdrop/input/*.pdf
 # suivi explicitement ; le reste (sorties d'extraction régénérables) ne l'est pas
 test_markdrop/output_sectionE_QRT/*
 !test_markdrop/output_sectionE_QRT/qrt_dictionary.json
+# Extraits par entité recréés par extraire_entite() (ag2r_entites.py), jamais à commiter (Décision 089)
+data/_entite_*.pdf
