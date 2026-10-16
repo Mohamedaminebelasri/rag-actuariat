@@ -89,12 +89,20 @@ valeur ou un nom d'entreprise codé en dur) sauf mention contraire ci-dessous :
     brutes, Décision 093) reste indétectable par un simple plafond —
     limite assumée, documentée, pas cachée.
 
+12. Lignes de primes et de sinistres du S/P non-vie (Décision 159) —
+    relues dans le texte de leur page source PDF, cf. `controler_sp_nonvie`.
+    N'agit sur aucun des 21 KPIs extraits : sert à la validité des
+    composants du KPI calculé sp_nonvie (peupler_kpis_officiels_indicateurs.py).
+    Lecture des PDF : PyMuPDF, donc lancer avec le Python du .venv.
+
     python validate_kpis.py [--company Groupama] [--year 2025]
     python validate_kpis.py --all   # toutes les sociétés de companies
+    .venv/Scripts/python.exe -I validate_kpis.py --all   # avec le contrôle 12
 """
 
 import argparse
 import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -106,7 +114,16 @@ DB_PATH = BASE_DIR / "kpis.db"
 CORPUS_FINAL = BASE_DIR / "test_markdrop" / "output_structure_brute" / "corpus_final.json"
 
 sys.path.insert(0, str(BASE_DIR))
+import comparabilite
 from kpi_definitions import KPI_DEFINITIONS
+
+try:  # contrôle 12 seulement (PyMuPDF n'est installé que dans le .venv)
+    import pymupdf as fitz
+except ImportError:
+    try:
+        import fitz
+    except ImportError:
+        fitz = None
 
 NOMS_KPIS_EXTRAITS = {d["kpi_name"] for d in KPI_DEFINITIONS}
 _FILTRE_EXTRAITS = "kpi_name IN ({})".format(",".join(f"'{n}'" for n in sorted(NOMS_KPIS_EXTRAITS)))
@@ -393,6 +410,202 @@ def executer_controles(kpis, company_name):
     return controles
 
 
+# Décision 159 — contrôle 12 : lignes de primes acquises et de charge des
+# sinistres non-vie utilisées par le KPI calculé sp_nonvie, relues dans le
+# texte de leur page source (tableau S.05.01). Pour chaque groupe (primes,
+# sinistres) :
+#   a) chaque montant non nul est imprimé dans la bonne section de la page
+#      (« Primes acquises » ou « Charge des sinistres »), en milliers d'euros
+#      ou en euros, au signe près ;
+#   b) identité du tableau : Σ lignes brutes − part des réassureurs = net,
+#      avec deux montants imprimés dans la même section. C'est elle qui
+#      vérifie les signes (en format comptable, un tiret de signe ne se
+#      distingue pas d'une case vide dans le texte) et qu'aucune ligne ne
+#      manque, montants nuls compris.
+# Une ligne n'est vérifiée que si a) et b) passent. Page image sans texte,
+# PDF introuvable ou PyMuPDF absent : contrôle impossible (« non
+# contrôlable »), ligne non vérifiée, raison écrite — jamais une
+# vérification forcée.
+PDF_PAR_SOCIETE_TS = BASE_DIR / "frontend" / "src" / "lib" / "pdf-par-societe.ts"
+DATA_DIR = BASE_DIR / "data"
+TOLERANCE_SP = 0.05  # points de %, comme les autres KPIs officiels (Décision 158)
+GROUPES_SP = {"primes_acquises_brutes": "primes", "charge_sinistres": "sinistres"}
+ECHELLES_SP = ((1e3, "milliers d'euros"), (1e6, "euros"))
+# En-têtes de section du S.05.01 (français ou anglais) ; None = section
+# sans intérêt ici (primes émises, dépenses, autres provisions).
+SECTIONS_S0501 = (
+    (("primes acquises", "premiums earned"), "primes"),
+    (("charge des sinistres", "claims incurred"), "sinistres"),
+    (("primes émises", "premiums written", "dépenses engagées", "expenses incurred",
+      "variation des autres provisions", "changes in other technical provisions"), None),
+)
+_MONTANT = re.compile(r"\d{1,3}(?:[   .]\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?")
+_PDFS_OUVERTS = {}
+
+
+def pdf_par_societe():
+    """PDF par défaut de chaque société, lu (sans le modifier) dans le
+    mapping du front-end (même source que le lien « voir le PDF »)."""
+    return dict(re.findall(r'"([^"]+)":\s*"([^"]+\.pdf)"', PDF_PAR_SOCIETE_TS.read_text(encoding="utf-8")))
+
+
+def lire_montant(case):
+    """(valeur absolue, nombre de décimales) d'une case de tableau, ou None.
+    Le signe est ignoré (cf. identité b ci-dessus)."""
+    s = case.strip().strip("()").replace("−", "-").lstrip("-").strip()
+    if not _MONTANT.fullmatch(s):
+        return None
+    s = re.sub(r"[   ]", "", s)
+    if "," in s:  # virgule décimale, points éventuels = milliers
+        entier, decimales = s.replace(".", "").split(",")
+    elif re.fullmatch(r"\d{1,3}(?:\.\d{3})+", s):  # points des milliers
+        entier, decimales = s.replace(".", ""), ""
+    else:  # point décimal éventuel
+        entier, _, decimales = s.partition(".")
+    return float(f"{entier}.{decimales or 0}"), len(decimales)
+
+
+def montants_par_section(texte):
+    """{"primes": [...], "sinistres": [...]} : montants imprimés dans les
+    sections « Primes acquises » et « Charge des sinistres » de la page. Une
+    ligne de texte est coupée en cases aux suites d'au moins 2 espaces (un
+    espace seul sépare les milliers)."""
+    sections = {"primes": [], "sinistres": []}
+    courante = None
+    for ligne in texte.splitlines():
+        bas = ligne.lower()
+        for motifs, section in SECTIONS_S0501:
+            if any(m in bas for m in motifs):
+                courante = section
+                break
+        if courante is None:
+            continue
+        for case in re.split(r"\s{2,}|\|", ligne):
+            m = lire_montant(case)
+            if m is not None:
+                sections[courante].append(m)
+    return sections
+
+
+def texte_page(nom_pdf, page):
+    if nom_pdf not in _PDFS_OUVERTS:
+        chemin = DATA_DIR / nom_pdf
+        _PDFS_OUVERTS[nom_pdf] = fitz.open(chemin) if chemin.exists() else None
+    doc = _PDFS_OUVERTS[nom_pdf]
+    if doc is None or not 1 <= page <= doc.page_count:
+        return None
+    return doc[page - 1].get_text()
+
+
+def imprime(montants, cible):
+    """Montant imprimé égal à `cible` (même unité), à l'arrondi d'affichage près."""
+    return next((x for x, d in montants if abs(x - cible) <= 0.5 * 10 ** -d + 1e-6 * max(cible, 1)), None)
+
+
+def identite_s0501(montants, bruts):
+    """Identité b) : (part, net, signe) imprimés dans la section tels que
+    Σ bruts − part = signe × net, ou None. `bruts` : lignes brutes signées,
+    dans l'unité de la page. Part et net : montants non nuls, autres que les
+    lignes brutes elles-mêmes (sinon « brut − brut = 0 » passerait toujours)."""
+    total = sum(bruts)
+    candidats = [(x, d) for x, d in montants if x > 0 and imprime([(abs(b), d) for b in bruts], x) is None]
+    tol = 0.5 * (len(bruts) + 2)  # arrondi d'affichage de chaque montant
+    return next(((p, n, signe) for p, dp in candidats for n, dn in candidats for signe in (1, -1)
+                 if abs(total - p - signe * n) <= tol * 10 ** -min(dp, dn)), None)
+
+
+def controler_sp_nonvie(conn, company_id, company_name, year):
+    """Contrôle 12 (Décision 159) — cf. commentaire ci-dessus. Seulement pour
+    les sociétés où sp_nonvie existe (mêmes règles que comparabilite.py)."""
+    kpis = {r[0]: (r[1], r[2]) for r in conn.execute(
+        "SELECT kpi_name, value, source_pdf FROM kpis WHERE company_id=? AND year=? AND value IS NOT NULL",
+        (company_id, year))}
+    lignes = {}
+    for kpi, index, code, label, valeur, page in conn.execute(
+            """SELECT kpi_name, composant_index, composant_code_qrt, composant_label, composant_valeur, composant_page
+               FROM kpi_composants WHERE company_id=? AND year=? AND kpi_name IN ('primes_acquises_brutes',
+               'charge_sinistres') ORDER BY kpi_name, composant_index""", (company_id, year)):
+        lignes.setdefault(kpi, []).append((index, code, label, valeur, page))
+    perimetre, scr_method = conn.execute("SELECT type_document, scr_method FROM companies WHERE id=?",
+                                         (company_id,)).fetchone()
+    ind = comparabilite.indicateurs({k: v for k, (v, _) in kpis.items()},
+                                    {k: [(c, l, v) for _, c, l, v, _ in ls] for k, ls in lignes.items()},
+                                    perimetre, scr_method)
+    if ind.get("sp_nonvie_pct") is None:
+        return []
+
+    controles = []
+    pdf_defaut = pdf_par_societe().get(company_name)
+    total = {}
+    for kpi, groupe in GROUPES_SP.items():
+        retenues = [l for l in lignes[kpi] if comparabilite._classe_composant(l[1], l[2]) == "non-vie"]
+        total[groupe] = sum(l[3] for l in retenues)
+        nom_pdf = kpis[kpi][1] or pdf_defaut
+
+        def ajouter(nom, attendu, calcule, passe, details, non_controlable=False):
+            controles.append({"check_name": nom, "expected_value": attendu, "computed_value": calcule,
+                              "passed": passe, "details": details, "non_controlable": non_controlable})
+
+        raison = None
+        montants = []
+        if fitz is None:
+            raison = "PyMuPDF absent : relancer avec .venv/Scripts/python.exe -I validate_kpis.py"
+        elif not nom_pdf:
+            raison = "aucun PDF source connu pour la société"
+        else:
+            for page in sorted({l[4] for l in retenues if l[4] is not None}):
+                texte = texte_page(nom_pdf, page)
+                if texte is None:
+                    raison = f"page {page} introuvable dans {nom_pdf}"
+                    break
+                montants += montants_par_section(texte)[groupe]
+            if raison is None and not montants:
+                raison = (f"aucune section « {'Primes acquises' if groupe == 'primes' else 'Charge des sinistres'} » "
+                          f"lisible p.{', '.join(str(p) for p in sorted({l[4] for l in retenues}))} de {nom_pdf} "
+                          "(page image, sans texte)")
+        if raison:
+            for index, code, label, valeur, page in retenues:
+                ajouter(f"sp_nonvie_ligne_{kpi}_{index}", valeur, None, False,
+                        f"NON CONTRÔLABLE — {label} : {raison}", non_controlable=True)
+            continue
+
+        # a) présence de chaque montant non nul, à l'échelle la plus fréquente.
+        echelle, unite = max(ECHELLES_SP, key=lambda e: sum(
+            imprime(montants, abs(l[3]) * e[0]) is not None for l in retenues if l[3]))
+        trouve = {l[0]: imprime(montants, abs(l[3]) * echelle) if l[3] else 0.0 for l in retenues}
+        # b) identité Brut − part des réassureurs = net.
+        brut = total[groupe] * echelle
+        couple = identite_s0501(montants, [l[3] * echelle for l in retenues])
+        if couple:
+            p, n, signe = couple
+            detail_id = (f"brut {brut:,.0f} − part des réassureurs {p:,.0f} = net {signe * n:,.0f} "
+                         f"({unite}, p.{retenues[0][4]})")
+        else:
+            detail_id = (f"aucun couple (part des réassureurs, net) imprimé ne vérifie brut {brut:,.0f} − part = net "
+                         f"({unite}, p.{retenues[0][4]}) : signe ou ligne à revoir")
+        ajouter(f"sp_nonvie_identite_{groupe}", brut / echelle, (brut - p) / echelle if couple else None,
+                couple is not None, f"Identité S.05.01 {groupe} : {detail_id}")
+        for index, code, label, valeur, page in retenues:
+            present = trouve[index] is not None
+            passe = present and couple is not None
+            if not valeur:
+                quoi = "montant nul : vérifié par l'identité du tableau"
+            elif present:
+                quoi = f"{abs(valeur) * echelle:,.0f} imprimé p.{page} ({unite})"
+            else:
+                quoi = f"{abs(valeur) * echelle:,.0f} ({unite}) introuvable dans la section p.{page}"
+            ajouter(f"sp_nonvie_ligne_{kpi}_{index}", valeur, valeur if passe else None, passe,
+                    f"{label} = {valeur:,.3f} M€ — {quoi}" + ("" if couple else " ; identité du tableau non vérifiée"))
+
+    recalcul = total["sinistres"] / total["primes"] * 100
+    controles.append({
+        "check_name": "sp_nonvie_recalcul", "expected_value": ind["sp_nonvie_pct"], "computed_value": round(recalcul, 4),
+        "passed": abs(recalcul - ind["sp_nonvie_pct"]) <= TOLERANCE_SP + 1e-9, "non_controlable": False,
+        "details": f"sinistres non-vie {total['sinistres']:,.3f} ÷ primes non-vie {total['primes']:,.3f} × 100 = "
+                   f"{recalcul:.4f} vs sp_nonvie={ind['sp_nonvie_pct']} (tolérance {TOLERANCE_SP})"})
+    return controles
+
+
 def executer_completude(conn, company_id, year):
     # Décision 158 — complétude des 21 KPIs extraits seulement (hors KPIs calculés).
     n = conn.execute(f"SELECT COUNT(*) FROM kpis WHERE company_id=? AND year=? AND {_FILTRE_EXTRAITS}",
@@ -495,7 +708,8 @@ def valider_societe(conn, company_name, year, afficher_detail=True):
         return None, None
 
     controles = (executer_controles(kpis, company_name) + executer_completude(conn, company_id, year)
-                 + executer_plausibilite(conn, company_id, kpis))
+                 + executer_plausibilite(conn, company_id, kpis)
+                 + controler_sp_nonvie(conn, company_id, company_name, year))
     for c in controles:
         c["note_legitimite"] = ECHECS_LEGITIMES_CONNUS.get((company_name, c["check_name"]))
     inserer_controles(conn, company_id, year, controles, company_name=company_name)
@@ -509,6 +723,8 @@ def valider_societe(conn, company_name, year, afficher_detail=True):
         for c in controles:
             if c["passed"]:
                 statut = "OK"
+            elif c.get("non_controlable"):
+                statut = "N/C"
             elif c.get("note_legitimite"):
                 statut = "LÉGIT"
             else:
@@ -542,29 +758,42 @@ def main():
             # déjà vérifié et classé légitime (ECHECS_LEGITIMES_CONNUS,
             # Problèmes 3-4) — les deux restent visibles dans le résumé,
             # jamais juste supprimés.
-            echecs_signe_zero, echecs_legitimes, echecs_reels = [], [], []
+            # Décision 159 : (3) contrôle impossible (page image, PyMuPDF
+            # absent) — compté à part, ce n'est pas une erreur de donnée.
+            echecs_signe_zero, echecs_legitimes, echecs_reels, non_controlables = [], [], [], []
             for c in controles:
                 if c["passed"]:
                     continue
                 if c["check_name"].startswith("signe_") and abs(c["computed_value"]) < 1e-9:
                     echecs_signe_zero.append(c)
+                elif c.get("non_controlable"):
+                    non_controlables.append(c)
                 elif c.get("note_legitimite"):
                     echecs_legitimes.append(c)
                 else:
                     echecs_reels.append(c)
-            recap.append((nom, n_passed, len(controles), echecs_reels, echecs_legitimes, echecs_signe_zero))
+            recap.append((nom, n_passed, len(controles), echecs_reels, echecs_legitimes, echecs_signe_zero,
+                          non_controlables))
         conn.close()
 
         print("\n" + "=" * 100)
         print("RÉCAPITULATIF — validate_kpis.py --all")
         print("=" * 100)
-        print(f"  {'Société':30} {'Contrôles':12} {'Échecs réels':14} {'Connus/légitimes':18} {'Faux signaux (0,00)'}")
-        for nom, n_passed, n_total, echecs_reels, echecs_legitimes, echecs_zero in recap:
-            print(f"  {nom:30} {n_passed}/{n_total:<9} {len(echecs_reels):<14} {len(echecs_legitimes):<18} {len(echecs_zero)}")
+        if fitz is None:
+            print("  ATTENTION : PyMuPDF absent, contrôle 12 (S/P non-vie) non contrôlable partout — relancer avec "
+                  ".venv/Scripts/python.exe -I validate_kpis.py --all")
+        print(f"  {'Société':30} {'Contrôles':12} {'Échecs réels':14} {'Connus/légitimes':18} {'Faux signaux (0,00)':21}"
+              f" {'Non contrôlables'}")
+        for nom, n_passed, n_total, echecs_reels, echecs_legitimes, echecs_zero, non_ctrl in recap:
+            print(f"  {nom:30} {n_passed}/{n_total:<9} {len(echecs_reels):<14} {len(echecs_legitimes):<18} "
+                  f"{len(echecs_zero):<21} {len(non_ctrl)}")
             for e in echecs_reels:
                 print(f"      >>> ÉCHEC RÉEL [{e['check_name']}] {e['details']}")
             for e in echecs_legitimes:
                 print(f"      --- connu/légitime [{e['check_name']}] {e['note_legitimite']}")
+            if non_ctrl:
+                print(f"      ... non contrôlable [{non_ctrl[0]['check_name']} +{len(non_ctrl) - 1}] "
+                      f"{non_ctrl[0]['details']}")
         return
 
     n_passed, controles = valider_societe(conn, args.company, args.year)

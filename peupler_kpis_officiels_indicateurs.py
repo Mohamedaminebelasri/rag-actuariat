@@ -26,9 +26,10 @@ Règles (Décision 158) :
 - `validated` = 1 seulement si TOUS les composants sont valides ET si le
   recalcul retrouve la valeur. Un avertissement porté par un composant est
   hérité ; un recalcul en écart pose un avertissement. Un composant
-  simplement « non recoupé » (ex. lignes de primes / sinistres, jamais
-  couvertes par validate_kpis.py) rend le KPI non vérifié, sans
-  avertissement de comparabilité.
+  simplement « non recoupé » rend le KPI non vérifié, sans avertissement
+  de comparabilité. Lignes de primes / sinistres de sp_nonvie : valides
+  si validate_kpis.py les a relues dans le PDF (contrôle 12, Décision
+  159) — à lancer AVANT ce script, avec le Python du .venv.
 - Société sans VA ni transitoire : ratio sans mesures = ratio publié,
   impact VA = 0, avec une note. `impact_transitoires` n'existe que pour
   les sociétés qui appliquent une mesure transitoire (comme l'indicateur).
@@ -295,19 +296,21 @@ def libelle_ligne(label, prefixe):
     return propre if prefixe.lower()[:6] in propre.lower() else f"{prefixe} : {propre}"
 
 
-def kpi_sp_nonvie(kp, lignes, ind):
+def kpi_sp_nonvie(kp, lignes, ind, lignes_verifiees):
+    """`lignes_verifiees` : {(kpi, composant_index)} des lignes relues dans
+    le PDF par validate_kpis.py (contrôle 12, Décision 159)."""
     if ind.get("sp_nonvie_pct") is None:
         return None
     comps = []
     for kpi, op, prefixe in (("charge_sinistres", "num", "Sinistres"), ("primes_acquises_brutes", "den", "Primes")):
         parent = kp[kpi]
-        for code, label, valeur, unite, page in lignes[kpi]:
+        for code, label, valeur, unite, page, index in lignes[kpi]:
             if comparabilite._classe_composant(code, label) != "non-vie":
                 continue
             comps.append(Composant(
                 libelle_ligne(label, prefixe), valeur, unite, page, op,
                 code=code if code and code.startswith("R") else None, source_pdf=parent["source_pdf"],
-                valide=bool(parent["validated"]),
+                valide=(kpi, index) in lignes_verifiees,
                 note_avertissement=parent["note_avertissement"] if parent["avertissement"] else None))
     k = kp["charge_sinistres"]
     return finaliser(KpiCalcule(
@@ -371,17 +374,26 @@ def calculer_societe(conn, c, lt):
             k["source_page"] = PAGE_VERIFIEE.get((c["name"], kpi))
     lignes = {}
     for r in conn.execute(
-            """SELECT kpi_name, composant_code_qrt, composant_label, composant_valeur, composant_unite, composant_page
+            """SELECT kpi_name, composant_code_qrt, composant_label, composant_valeur, composant_unite, composant_page,
+                      composant_index
                FROM kpi_composants WHERE company_id=? AND year=? AND kpi_name IN ('primes_acquises_brutes',
                'charge_sinistres') ORDER BY kpi_name, composant_index""", (c["id"], YEAR)):
         lignes.setdefault(r[0], []).append(tuple(r[1:]))
+    # Décision 159 — lignes de primes / sinistres relues dans le PDF
+    # (validate_kpis.py, contrôle 12, check « sp_nonvie_ligne_<kpi>_<index> »).
+    lignes_verifiees = set()
+    for (nom_check,) in conn.execute(
+            "SELECT check_name FROM validation_checks WHERE company_id=? AND year=? AND passed=1 "
+            "AND check_name LIKE 'sp_nonvie_ligne_%'", (c["id"], YEAR)):
+        kpi, _, index = nom_check.removeprefix("sp_nonvie_ligne_").rpartition("_")
+        lignes_verifiees.add((kpi, int(index)))
     # Indicateur de référence : mêmes entrées que export_kpis_for_frontend.py.
     valeurs = {k: v["value"] for k, v in kp.items()}
-    comp = {k: [(code, label, v) for code, label, v, _, _ in ls] for k, ls in lignes.items()}
+    comp = {k: [(code, label, v) for code, label, v, *_ in ls] for k, ls in lignes.items()}
     ind = comparabilite.indicateurs(valeurs, comp, c["type_document"], c["scr_method"], lt)
 
     calcules = kpis_mesures_lt(c["name"], kp, lt, ind) if lt else []
-    for kc in (kpi_marge_sur_be(kp, ind), kpi_sp_nonvie(kp, lignes, ind),
+    for kc in (kpi_marge_sur_be(kp, ind), kpi_sp_nonvie(kp, lignes, ind, lignes_verifiees),
                kpi_mcr_sur_scr(kp, ind, c["type_document"])):
         if kc is not None:
             calcules.append(kc)

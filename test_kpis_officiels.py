@@ -14,11 +14,19 @@ JSON exporté pour le front-end.
    l'ancienne version est fournie.
 4. Aucun KPI nul créé (base et JSON), aucune page source manquante.
 5. Décompte par KPI et par société ; textes sans code QRT ni nom de société.
+6. Décision 159 — S/P non-vie relu dans le PDF (validate_kpis.py, contrôle
+   12) : lecture des montants et identité brut − réassurance = net sur des
+   extraits réels (dont la ligne MAIF imprimée −2 097 K€) ; cohérence entre
+   validation_checks, kpis.db et le JSON ; 14 sp_nonvie vérifiés sur 25 ;
+   si la sauvegarde d'avant existe, seuls `validated` de sp_nonvie et
+   `composant_valide` de ses lignes ont changé dans la base.
 
     python test_kpis_officiels.py [ancien_donnees-extraites.json] [ancien_kpi-sources.json]
 
 Par défaut, l'ancien JSON est archive/donnees-extraites_avant_nuit_kpis_officiels.json
 (sauvegarde locale non suivie par git) ; le contrôle 3 est sauté s'il manque.
+Contrôle 6, comparaison avec archive/kpis_avant_sp_covea_20261016.db : sautée
+si la sauvegarde manque.
 """
 import json
 import math
@@ -41,6 +49,37 @@ NOMS = [d["kpi_name"] for d in KPI_INDICATEURS_OFFICIELS]
 INDICATEUR = {d["kpi_name"]: d["indicateur"] for d in KPI_INDICATEURS_OFFICIELS}
 ATTENDUS = {"ratio_scr_sans_mesures_lt": 41, "impact_va": 41, "impact_transitoires": 4,
             "marge_risque_sur_be": 41, "sp_nonvie": 25, "mcr_en_pct_scr": 36}
+# Décision 159 — sp_nonvie vérifiés : pages S.05.01 avec texte, identité
+# brut − réassurance = net retrouvée pour les primes et les sinistres.
+SP_VERIFIES = {"AG.Mut", "AG2R Prevoyance", "AXA France IARD", "AXA France Vie", "Arpege Prevoyance",
+               "BPCE Assurances IARD", "Cardif Assurances Risques Divers", "Covéa", "Crédit Agricole Assurances",
+               "La Mondiale", "MGEN", "Prima", "SGAM AG2R LA MONDIALE", "VIASANTE Mutuelle"}
+DB_AVANT_159 = RACINE / "archive" / "kpis_avant_sp_covea_20261016.db"
+# Extrait réel, rapport-solvabilite-maif-2025.pdf p.113 (texte PyMuPDF).
+EXTRAIT_MAIF = """Primes acquises
+ Brut – assurance directe
+         69 964            275 152                4 247
+       3 918 623
+Charge des sinistres
+ Brut – assurance directe
+          16 633            132 168                2 952
+       2 367 845
+ Brut – Réassurance proportionnelle acceptée
+                   -                        -                        -
+             23 697
+ Brut – Réassurance non proportionnelle
+acceptée
+-                26   -              150
+                     -     -             1 920   -             2 097
+ Part des réassureurs
+                   -             167 839
+                   -                        -                        -                          -                          -                281 401
+ Net
+          16 633   -         35 671                2 952   -                26   -              150
+                     -     -             1 920          2 108 044
+Dépenses engagées
+         68 094            124 818                  598
+"""
 
 echecs = []
 
@@ -194,6 +233,78 @@ def main():
     for k in NOMS:
         verifier(f"matrice {k}", set(d["compatibilite"]["matrice"].get(k, {})) == set(d["compatibilite"]["axes"]))
         verifier(f"définition {k}", k in d["definitionsKpis"])
+
+    print("=" * 90)
+    print("6. S/P non-vie relu dans le PDF (validate_kpis.py, contrôle 12)")
+    print("=" * 90)
+    import validate_kpis as vk
+    for case, attendu in (("1 610 869", (1610869.0, 0)), ("12 038,51 ", (12038.51, 2)), ("2 097", (2097.0, 0)),
+                          ("1.234.567", (1234567.0, 0)), ("(1 234)", (1234.0, 0)), ("0,5", (0.5, 1)),
+                          ("-", None), ("R0210", None), ("C0200", None), ("Net", None)):
+        verifier(f"lire_montant({case!r})", vk.lire_montant(case) == attendu, f"{vk.lire_montant(case)} au lieu de {attendu}")
+    sections = vk.montants_par_section(EXTRAIT_MAIF)
+    verifier("sections primes / sinistres", [x for x, _ in sections["primes"]] == [69964, 275152, 4247, 3918623]
+             and (2108044.0, 0) in sections["sinistres"] and (68094.0, 0) not in sections["sinistres"])
+    verifier("identité MAIF avec la ligne en base (+2 097) : refusée",
+             vk.identite_s0501(sections["sinistres"], [2367845, 23697, 2097]) is None)
+    verifier("identité MAIF avec la ligne imprimée (−2 097) : brut − 281 401 = 2 108 044",
+             vk.identite_s0501(sections["sinistres"], [2367845, 23697, -2097]) == (281401.0, 2108044.0, 1))
+
+    conn = sqlite3.connect(RACINE / "kpis.db")
+    ids = {n: i for i, n in conn.execute("SELECT id, name FROM companies")}
+    sp_verifies = set()
+    for nom, kp in kps.items():
+        sp = kp.get("sp_nonvie")
+        checks = {c: (p, d) for c, p, d in conn.execute(
+            "SELECT check_name, passed, details FROM validation_checks WHERE company_id=? AND year=2025 "
+            "AND check_name LIKE 'sp_nonvie_%'", (ids[nom],))}
+        lignes = {c: v for c, v in checks.items() if c.startswith("sp_nonvie_ligne_")}
+        if sp is None:
+            verifier(f"{nom} sans sp_nonvie : pas de contrôle 12", not checks)
+            continue
+        verifier(f"{nom}/sp_nonvie : une ligne contrôlée par composant", len(lignes) == len(sp["composants"]),
+                 f"({len(lignes)} contrôles, {len(sp['composants'])} composants)")
+        verifier(f"{nom}/sp_nonvie : composants valides = lignes relues",
+                 sum(c["valide"] for c in sp["composants"]) == sum(p for p, _ in lignes.values()))
+        verifier(f"{nom}/sp_nonvie : recalcul contrôlé", checks.get("sp_nonvie_recalcul", (0,))[0] == 1)
+        for groupe, kpi in (("primes", "primes_acquises_brutes"), ("sinistres", "charge_sinistres")):
+            identite = checks.get(f"sp_nonvie_identite_{groupe}")
+            for c, (p, d) in lignes.items():
+                if kpi in c and p:
+                    verifier(f"{nom}/{c} vérifiée sans identité", identite is not None and identite[0] == 1)
+                if kpi in c and identite is None:
+                    verifier(f"{nom}/{c} : raison écrite si non contrôlable", not p and d.startswith("NON CONTRÔLABLE"))
+        verifier(f"{nom}/sp_nonvie : valide ⇔ toutes les lignes relues",
+                 sp["valide"] == all(p for p, _ in lignes.values()))
+        if sp["valide"]:
+            sp_verifies.add(nom)
+    print(f"  sp_nonvie vérifiés : {len(sp_verifies)} / {sum(1 for kp in kps.values() if 'sp_nonvie' in kp)}")
+    verifier("sp_nonvie vérifiés = liste attendue", sp_verifies == SP_VERIFIES,
+             f"(en trop {sorted(sp_verifies - SP_VERIFIES)}, manquants {sorted(SP_VERIFIES - sp_verifies)})")
+
+    if DB_AVANT_159.exists():
+        avant = sqlite3.connect(DB_AVANT_159)
+        q = ("SELECT company_id, year, kpi_name, value, unit, source_page, source_chapter, validated, raw_value, "
+             "raw_unit, source_pdf, avertissement, note_avertissement FROM kpis ORDER BY company_id, kpi_name")
+        a, b = avant.execute(q).fetchall(), conn.execute(q).fetchall()
+        changes = [(x, y) for x, y in zip(a, b) if x != y]
+        verifier("kpis : mêmes lignes qu'avant", len(a) == len(b))
+        verifier("kpis : seul `validated` de sp_nonvie a changé",
+                 all(x[2] == "sp_nonvie" and x[:7] + x[8:] == y[:7] + y[8:] for x, y in changes), f"({len(changes)})")
+        # Sans `id` : peupler_kpis_officiels_indicateurs.py réinsère ses lignes.
+        q = ("SELECT company_id, year, kpi_name, composant_index, composant_label, composant_code_qrt, "
+             "composant_valeur, composant_unite, composant_page, operation, kpi_code, composant_detail, "
+             "composant_source_pdf, composant_valide FROM kpi_composants ORDER BY company_id, kpi_name, composant_index")
+        a, b = avant.execute(q).fetchall(), conn.execute(q).fetchall()
+        verifier("kpi_composants : seul composant_valide de sp_nonvie a changé", len(a) == len(b) and all(
+            x[2] == "sp_nonvie" and x[:-1] == y[:-1] for x, y in zip(a, b) if x != y))
+        q = ("SELECT company_id, check_name, expected_value, computed_value, passed, details FROM validation_checks "
+             "WHERE check_name NOT LIKE 'sp_nonvie_%' ORDER BY company_id, check_name")
+        verifier("validation_checks : contrôles 1-11 inchangés", avant.execute(q).fetchall() == conn.execute(q).fetchall())
+        avant.close()
+    else:
+        print(f"  (comparaison sautée : {DB_AVANT_159} introuvable)")
+    conn.close()
 
     print("=" * 90)
     print("Décompte par KPI")
