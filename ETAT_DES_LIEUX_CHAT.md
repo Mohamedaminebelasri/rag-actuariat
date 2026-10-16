@@ -391,3 +391,81 @@ Limites :
    - connexion SQLite en lecture seule (`mode=ro`) ;
    - un seul millésime (2025) en base : toute question sur l'évolution d'une
      année à l'autre est hors de portée de `kpis.db`.
+
+### Mise à jour après Décision 161 (16/10)
+
+Rédigé le 2026-10-16, en lecture seule, sur le poste local (master à
+`e9147a0`). Ce qui précède décrit la base **d'avant** la Décision 161
+(empreinte `438e0475…`, récupérée par `git show 4d341d4:kpis.db`). La base
+actuelle a l'empreinte `bb416d3b…` (commit `732193b`). Les deux ont été
+comparées sur des **copies** de scratchpad ouvertes en `mode=ro`. Les appels
+à `kpi_service.py` ont été faits sur deux autres copies, et l'original est
+resté intact (empreinte inchangée). Scripts (scratchpad, hors dépôt) :
+`comparer_db.py`, `appels_kpi_service_161.py`.
+
+**Schéma.** Aucune table ajoutée ni supprimée. Une seule colonne ajoutée :
+`kpis.source_chapter_technique` (TEXT), d'où **16 colonnes** dans `kpis` au
+lieu de 15. Aucune colonne supprimée ni renommée, ordre conservé. Même
+nombre de lignes dans toutes les tables (`kpis` 1 049, `kpi_composants`
+1 169, `validation_checks` 2 171, etc.).
+
+**Comparaison des lignes**, faite sur une clé métier et non sur `id` :
+188 lignes de `kpis` (les 6 KPIs officiels), 508 de `kpi_composants` et les
+2 171 de `validation_checks` ont été réinsérées avec un **nouvel `id`**
+(les rejeux font avancer `sqlite_sequence`). Un agent ne doit donc pas
+garder un `id` d'une extraction à l'autre.
+
+| Table | Clé de comparaison | Identiques | Différentes | Colonne modifiée |
+|---|---|---:|---:|---|
+| `kpis` | société, année, `kpi_name` | 188 | 861 | `source_chapter` seulement |
+| `kpi_composants` | société, année, `kpi_name`, `composant_index` | 956 | 213 | `composant_label` seulement |
+| `validation_checks` | société, année, `check_name` | 2 134 | 37 | `details` seulement (contrôles `sp_nonvie_ligne_*`) |
+| `companies`, `kpi_formules`, `impact_mesures_lt`, `corrections` | — | toutes | 0 | — |
+
+- **Valeurs, unités et pages de `kpis` : identiques sur les 1 049 lignes**
+  (`value`, `unit`, `source_page`), ainsi que `raw_value`, `raw_unit`,
+  `validated`, `avertissement`, `note_avertissement`, `source_pdf` et
+  `category`. Il n'y a donc pas d'exemple de différence à donner.
+- Les 188 lignes non modifiées sont exactement les 6 KPIs officiels
+  (catégorie `indicateurs_comparables`). Leur `source_chapter` était déjà
+  en français (par exemple « Impact des mesures de long terme (état
+  S.22.01) ») et leur `source_chapter_technique` est NULL.
+- Exemples hors `kpis` : libellé de composant « Meilleure estimation
+  (best_estimate) » → « Meilleure estimation (best estimate) » ; détail
+  de contrôle « primes acquises brutes – assurance directe r0210 = … » →
+  même texte sans le code de ligne `r0210`. Les 36 contrôles
+  « NON CONTRÔLABLE » sont toujours là (P10 inchangé).
+
+**`source_chapter` et `source_chapter_technique`.**
+- `source_chapter` contient maintenant le texte en français simple qu'affiche
+  le front. Il a été réécrit sur 861 lignes, dont 5 KPIs à valeur NULL.
+- `source_chapter_technique` contient l'**ancien `source_chapter`, à
+  l'identique**, sur ces 861 lignes : il est égal à l'ancienne valeur dans
+  861 cas sur 861. Il vaut NULL sur les 188 lignes des KPIs officiels.
+
+| Société · KPI | `source_chapter` (actuel) | `source_chapter_technique` |
+|---|---|---|
+| Groupama · `ratio_scr` | « Rapport, chapitre E.1 (fonds propres) » | « E.1 » |
+| MACIF SAM · `ratio_scr` | « Tableau officiel S.23.01 (fonds propres) — rapport unique du groupe Aéma, partie consacrée à la société ; lu sur une page image » | « Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (extraction manuelle sur rendu image, cf. Décision 083) — S.23.01.01.01/R0620 » |
+| AXA France IARD · `scr_souscription_sante` (valeur NULL) | « Pas de montant séparé : inclus dans un autre risque (modèle interne). » | « NULL : inclus dans un autre poste — S.25.05.21 (annexe QRT p.9), lignes « - diversified » ; … » (texte complet plus long) |
+
+Les extraits du point 2 (MACIF SAM) et du point 3 (« NULL : inclus dans un
+autre poste… ») montrent donc l'ancien texte. Ce texte se lit désormais dans
+`source_chapter_technique`.
+
+**`kpi_service.py` (Groupama, 2025) : format inchangé, sauf une clé ajoutée.**
+
+| Fonction | Résultat actuel | Changement |
+|---|---|---|
+| `get_kpis` | 26 KPIs | clé `source_chapter_technique` ajoutée à chaque ligne |
+| `get_kpi(…, "ratio_scr")` | `value` 274.0, `unit` pct, `source_page` 85, `validated` 1, `avertissement` 0 | même clé ajoutée ; `source_chapter` = « Rapport, chapitre E.1 (fonds propres) » |
+| `compare_kpis("ratio_scr")` | 41 sociétés, 0 `None` | même clé ajoutée à chaque ligne |
+| `get_corpus_stats("ratio_scr")` | `n=41`, moyenne 276,94, médiane 227,0, min 128,0, max 953,0 | aucun (identique au chiffre près) |
+| `get_validation_report` | 59 contrôles, 53 réussis, 6 échoués | aucun : mêmes clés, mêmes 6 contrôles échoués |
+
+En dehors de `source_chapter_technique`, la structure renvoyée (clés et
+types) est identique pour les 5 fonctions. Les constats des points 2 à 5
+restent valables. Une conséquence pour l'agent : il a maintenant deux textes
+de source par KPI, un lisible (`source_chapter`) et un technique
+(`source_chapter_technique`, NULL pour les 6 KPIs officiels). Le choix de
+celui à citer reste à décider.
