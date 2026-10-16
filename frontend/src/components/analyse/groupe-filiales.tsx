@@ -89,11 +89,13 @@ function LigneArbre({
       // Société sélectionnée dans le comparatif : contour --text-primary.
       style={selectionnee ? { boxShadow: "0 0 0 2px var(--text-primary)" } : undefined}
     >
-      <span className={cn("min-w-0 flex-1 text-sm text-text-primary", groupe && "font-semibold")}>{donnees.nom}</span>
+      <span className={cn("min-w-0 basis-full sm:basis-0 sm:flex-1 text-sm text-text-primary", groupe && "font-semibold")}>
+        {donnees.nom}
+      </span>
       {donnees.primes !== null && (
         <span className="text-xs text-text-secondary whitespace-nowrap">primes {fmt(donnees.primes, 1)} M€</span>
       )}
-      <span className="inline-flex items-center gap-1">
+      <span className="inline-flex items-center gap-1 ml-auto">
         <RatioSCR ratio={donnees.ratio} seuilVertScr={seuilVertScr} />
         {donnees.avert !== undefined && (
           <AvertissementKpi note={donnees.avert} titre={`Ratio SCR — ${donnees.nom}`} />
