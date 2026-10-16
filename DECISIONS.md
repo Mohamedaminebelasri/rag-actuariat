@@ -10351,3 +10351,11 @@ qui garde la base technique ») n'est plus exact.
 - Les rapports 2024 sont conservés dans `data/` pour de futures questions d'évolution N-1.
 - L'ajout de Pacifica, Allianz IARD et AXA Retraite Entreprise à `kpis.db` est reporté (à discuter avec le fondateur).
 - À traiter au titre 0.2 : les collections Qdrant actuelles contiennent déjà Groupama 2024 (`ingest_qdrant_2024.py`, Décision 031), ce qui n'est pas conforme à cette règle (non vérifié sur le serveur).
+
+## Décision 163 — Numéro de page cité par le Chat AI
+
+- Le Chat AI cite toujours la page **physique** du PDF, celle de `kpis.source_page` (et le fichier de `documents_sfcr`), formulée « page N du PDF ».
+- Il ne cite jamais le numéro imprimé sur la page, et n'applique jamais de correction fixe (+1, −1…).
+- Raison : l'écart entre numéro imprimé et page physique varie selon le document. Mesures du 0.4 de `ETAT_DES_LIEUX_CHAT.md` : 0 pour CNP, MACSF et SwissLife ; −1 pour l'annexe QRT d'AXA France IARD ; −2 pour MGEN (4 pages sur 5).
+- Rappel : la correction −1 ajoutée au front le 28/09 (`ef51401`) a été retirée le jour même (`f5d0c6e`) ; le lecteur PDF ouvre la page de `kpis.db` (P5).
+- Le format exact de la citation sera fixé au titre 5 (format des réponses) du plan Chat AI.

@@ -793,3 +793,14 @@ page physique (PyMuPDF).
 L'écart entre numéro imprimé et page physique (0, −1 ou −2 selon le PDF,
 voir le point 4) reste vrai. L'agent doit donc citer la page physique (P6),
 mais le front ne corrige plus rien.
+
+### P6 — résolu (16/10)
+
+La règle de citation est fixée par écrit dans la **Décision 163**
+(« Numéro de page cité par le Chat AI »). Le Chat AI cite toujours la page
+**physique** du PDF, celle de `kpis.source_page`, sous la forme « page N du
+PDF ». Il ne cite jamais le numéro imprimé et n'applique aucune correction
+fixe, car l'écart varie selon le document (point 4 : 0 pour CNP, MACSF et
+SwissLife ; −1 pour l'annexe QRT d'AXA France IARD ; −2 pour MGEN). Le
+format exact de la citation sera fixé au titre 5 du plan. Rien d'autre n'a
+été modifié : ni `kpis.db`, ni le code, ni CLAUDE.md.
