@@ -39,9 +39,35 @@ devant. En dehors de MAIF, il n'y a que 2 fausses alertes :
 | MAIF | fonds propres niveau 2 (9 725 K€) | le tiret est la case vide d'à côté ; 5 319 982 + 9 725 = 5 329 707 |
 | AG.Mut | marge de risque (117 K€) | le « -117 » de la p.207 est une case du triangle des sinistres, sans rapport |
 
-**Autre problème trouvé, non corrigé :** la page source de `marge_risque`
-d'AG.Mut est la page 207 (le triangle des sinistres). Ses lignes sont
-pourtant page 199. Dis-moi si je dois la corriger.
+**Autre problème trouvé :** la page source de `marge_risque` d'AG.Mut
+était la page 207 (le triangle des sinistres), alors que ses lignes sont
+page 199. → **Corrigé depuis, à ta demande (voir ci-dessous).**
+
+### AG.Mut : page source de la marge de risque 207 → 199
+
+Tag `avant-agmut-page`, sauvegardes `archive/*_avant_agmut_page*`.
+
+- **Vérifié avant de corriger.** La page 199 est le passif du bilan
+  d'AG.Mut, dans la section AG.Mut du rapport du groupe AG2R (pages 198 à
+  215). On y lit :
+  - le best estimate (22 885) ;
+  - la marge de risque : 116 + 1 = 117 K€, c'est-à-dire la valeur du KPI.
+
+  Les 5 lignes de détail étaient déjà page 199. La page 207 est le
+  triangle des sinistres.
+- **Seule cette page a changé.** Elle change aux trois endroits où elle
+  figure : le KPI `marge_risque`, et ses deux copies faites
+  automatiquement par le calcul de `marge_risque_sur_be`. Aucune valeur,
+  aucun contrôle et aucun statut « Vérifié » n'ont bougé.
+- **Fichiers de données :** dans `donnees-extraites.json`, 3 pages et
+  `genereLe` changent. Dans `kpi-sources.json`, 2 pages changent.
+- **Laissé tel quel, comme demandé :** la ligne « Marge de risque » du
+  détail de `provisions_techniques` d'AG.Mut indique encore la page 207.
+  Elle est recopiée une seule fois, au moment de l'extraction. Je peux la
+  corriger aussi si tu veux.
+- **Tests :** `validate_kpis.py --all` (0 échec réel),
+  `test_kpis_officiels.py` (OK avec les 3 sauvegardes) et
+  `test_normalisation_signe.py` (OK).
 
 Limite : 59 pages sont des images (annexes du rapport Aéma, Generali IARD,
 Groupama…) et ne peuvent pas être relues de cette façon.
@@ -152,4 +178,5 @@ valeurs, même statut « Vérifié », mêmes contrôles 1 à 11.
 ## Commits
 
 Voir `git log avant-sp-covea..HEAD` (Décision 159) et
-`git log avant-maif-signe..HEAD` (Décision 160).
+`git log avant-maif-signe..HEAD` (Décision 160) ; page AG.Mut :
+`git log avant-agmut-page..HEAD`.

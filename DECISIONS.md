@@ -10207,7 +10207,8 @@ n'est un signe perdu :
   une case du triangle des sinistres (S.19.01), sans rapport. Mais cela
   montre un **autre défaut, non corrigé** : la page source de
   `marge_risque` d'AG.Mut est 207 (triangle), alors que ses lignes sont
-  p.199 (R0590 = 116, R0680 = 1).
+  p.199 (R0590 = 116, R0680 = 1). *(Corrigé à la demande de
+  l'utilisateur, voir « 3. » ci-dessous.)*
 Limite : 59 pages image (annexes QRT Aéma, Generali IARD, Groupama…) ne
 peuvent pas être examinées ainsi.
 
@@ -10228,3 +10229,25 @@ MAIF, `value` du S/P MAIF, `source_page` des 2 KPIs Covéa).
 la ligne MAIF, du total, du S/P à 60,3 % et des pages 85 ; comparaisons
 avec les sauvegardes limitées aux corrections voulues (`CORRECTIONS_160`).
 `corrections_comparabilite.py` rejoué deux fois : résultat identique.
+
+**3. AG.Mut, `marge_risque` : `source_page` 207 → 199** (à la demande de
+l'utilisateur, tag `avant-agmut-page`, sauvegardes
+`archive/*_avant_agmut_page*`). Vérifié dans
+`AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf` : la p.207 est le triangle des
+sinistres (S.19.01) ; la p.199 est le passif du bilan S.02.01.02 de la
+section AG.Mut (p.198-215, `ag2r_entites.py`), avec R0580 = 22 885 (son
+best estimate), R0590 = 116, R0680 = 1 K€, R0550 / R0640 / R0720 vides :
+somme 117 K€ = le KPI, et ses 5 lignes étaient déjà p.199. (La p.79, page
+du `best_estimate`, imprime le total 22 926 K€ : correcte ; elle imprime
+la marge de risque arrondie à 116, d'où le choix de 199 pour
+`marge_risque`.) Ajout à `PAGES_VERIFIEES`. Avant / après : seule cette
+page change — `marge_risque` (KPI) et ses deux copies faites par
+`peupler_kpis_officiels_indicateurs.py` (page du KPI `marge_risque_sur_be`
+et de sa ligne « Marge de risque ») ; aucune valeur, aucun contrôle,
+aucun statut modifiés (`validation_checks` identique) ;
+`donnees-extraites.json` : ces 3 pages et `genereLe` ; `kpi-sources.json` :
+2 pages. **Laissée telle quelle** (hors périmètre demandé) : la ligne
+« Marge de risque (marge_risque) » de `provisions_techniques` d'AG.Mut
+garde la p.207 (copiée une seule fois par
+`peupler_composants_provisions.py`, à l'extraction) ; de même, chez Covéa,
+les 2 lignes de `provisions_techniques` restent sans page.
