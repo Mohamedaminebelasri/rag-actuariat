@@ -10073,3 +10073,92 @@ Ordre de rejeu complet : extractions → `populate_company_metadata.py` →
 `corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
 `validate_kpis.py --all` → `peupler_kpis_officiels_indicateurs.py` →
 `export_kpis_for_frontend.py` → `test_kpis_officiels.py`.
+
+## Décision 159 — S/P non-vie relu dans le PDF ; page source des provisions de Covéa
+
+Suite de `RAPPORT_nuit_kpis_officiels.md` (« Pas fait / à suivre »).
+Tag de départ `avant-sp-covea` ; sauvegardes locales non commitées :
+`archive/kpis_avant_sp_covea_20261016.db`,
+`archive/donnees-extraites_avant_sp_covea.json`,
+`archive/kpi-sources_avant_sp_covea.json`.
+
+**A. `sp_nonvie` : 0 → 14 « Vérifié » sur 25.** Avant, ses lignes de
+primes et de sinistres héritaient du `validated` de `primes_acquises_brutes`
+/ `charge_sinistres`, toujours 0 (`validate_kpis.py` ne contrôle pas ces
+deux KPIs). Nouveau contrôle 12 de `validate_kpis.py`
+(`controler_sp_nonvie`), seulement pour les sociétés où `sp_nonvie` existe
+(mêmes règles que `comparabilite.py`). Pour chaque groupe (primes acquises,
+charge des sinistres) de la page S.05.01 source :
+- a) chaque montant non nul est imprimé dans la bonne section de la page
+  (« Primes acquises » / « Charge des sinistres », français ou anglais),
+  en milliers d'euros ou en euros, au signe près ;
+- b) identité du tableau : Σ lignes brutes − part des réassureurs = net,
+  avec deux montants imprimés de la même section (autres que les lignes
+  brutes et que zéro, tolérance d'arrondi 0,5 par montant). C'est elle qui
+  contrôle les **signes** — en format comptable, le tiret d'un négatif ne
+  se distingue pas d'une case vide dans le texte — et qu'aucune ligne ne
+  manque, y compris les lignes à zéro.
+- Recalcul sinistres ÷ primes × 100 = valeur du KPI (tolérance 0,05).
+
+Une ligne n'est vérifiée que si a) et b) passent ; `sp_nonvie` est
+« Vérifié » si toutes ses lignes le sont et si le recalcul passe (règle de
+la Décision 158, inchangée). Résultats écrits dans `validation_checks`
+(`sp_nonvie_ligne_<kpi>_<index>`, `sp_nonvie_identite_<primes|sinistres>`,
+`sp_nonvie_recalcul`) ; `peupler_kpis_officiels_indicateurs.py` les lit
+pour la validité des composants. Aucun des 21 KPIs extraits n'est touché
+(`marquer_valides` ne lit pas ces contrôles). Contrôle impossible : ligne
+« NON CONTRÔLABLE » avec la raison, comptée à part dans le récapitulatif
+`--all` (ce n'est pas une erreur de donnée). PyMuPDF n'existe que dans le
+`.venv` : lancer `.venv/Scripts/python.exe -I validate_kpis.py --all`
+(sinon tout est « non contrôlable » et un avertissement s'affiche). PDF
+par défaut d'une société : lu dans `frontend/src/lib/pdf-par-societe.ts`
+(lecture seule).
+
+| Résultat | Sociétés |
+|---|---|
+| Vérifié (14) | AG.Mut, AG2R Prévoyance, AXA France IARD, AXA France Vie, Arpège Prévoyance, BPCE Assurances IARD, Cardif Assurances Risques Divers, Covéa, Crédit Agricole Assurances, La Mondiale, MGEN, Prima, SGAM AG2R LA MONDIALE, VIASANTE Mutuelle |
+| Page image sans texte (10) | Aéma Groupe, MACIF SAM, Macif Santé Prévoyance, Aésio Mutuelle, MNPAF, MMJ, Nuoma, Abeille IARD Santé (annexe QRT du rapport Aéma, p.439-621), Generali IARD (p.4 de l'annexe QRT), Groupama (p.80) |
+| Écart réel (1) | MAIF : sinistres non vérifiés, primes vérifiées |
+
+**MAIF, écart trouvé (non corrigé)** : `rapport-solvabilite-maif-2025.pdf`
+p.113, ligne « Brut – Réassurance non proportionnelle acceptée » de la
+charge des sinistres imprimée **−2 097 K€** (Santé −26, Accidents −150,
+Biens −1 920) ; en base +2,097 M€. Preuve par le tableau : 2 367 845 +
+23 697 − 2 097 − 281 401 (part des réassureurs) = 2 108 044 (net
+imprimé) ; avec +2 097, l'identité ne tombe pas juste. Effet : S/P non-vie
+60,3 % au lieu de 60,4 %, et `charge_sinistres` de MAIF surévaluée de
+4,194 M€. Rien n'est corrigé sans accord de l'utilisateur.
+
+Cas AXA France IARD : la ligne « réassurance non proportionnelle acceptée »
+des sinistres (−12 038,51 K€) est négative en base comme dans le PDF ;
+l'identité le confirme (5 912 436 − 2 386 231 = 3 526 205).
+
+**B. Covéa, `best_estimate` / `marge_risque` : la page 85 est la bonne,
+rien n'est changé.** Recherche des montants sur les 99 pages de
+`sfcr_covea_2025.pdf` : les totaux (84 032 648 K€ et 5 263 956 K€) ne
+sont imprimés nulle part ; les 10 lignes dont ils sont la somme (5
+« Meilleure estimation », 5 « Marge de risque ») sont toutes p.85
+(S.02.01.02, bilan, passif). Le chapitre D2.1 (p.65) donne des montants
+en M€ **nets de réassurance** (BE non-vie 24 416, vie 47 991, UC 8 179) :
+ce ne sont pas les KPIs, qui sont bruts. Le contrôle
+`marge_risque_sur_be` de Covéa (6,26 %) reste « Vérifié ». Le repli
+`PAGE_VERIFIEE` de `peupler_kpis_officiels_indicateurs.py` ne sert qu'à
+Covéa ; les deux KPIs gardent `source_page` NULL en base (possible de
+l'écrire à 85 sur demande).
+
+**Avant / après** (base et JSON comparés à la sauvegarde) : dans `kpis`,
+seul `validated` de 14 `sp_nonvie` change (0 → 1) ; dans
+`kpi_composants`, seul `composant_valide` de 75 lignes de `sp_nonvie` ;
+`kpi_formules`, `impact_mesures_lt`, `companies` et les contrôles 1-11 de
+`validation_checks` sont identiques ; 169 contrôles ajoutés (129 passés).
+`donnees-extraites.json` : 14 `kpisParSociete[…].sp_nonvie.valide`, 75
+`composants[…].valide` et `genereLe` ; `kpi-sources.json` inchangé.
+`test_kpis_officiels.py` : nouvelle section 6 (lecture des montants,
+identité sur l'extrait réel de MAIF, cohérence `validation_checks` / base
+/ JSON, liste des 14, comparaison avec la sauvegarde).
+
+Ordre de rejeu complet : extractions → `populate_company_metadata.py` →
+`corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
+`.venv/Scripts/python.exe -I validate_kpis.py --all` →
+`peupler_kpis_officiels_indicateurs.py` → `export_kpis_for_frontend.py` →
+`test_kpis_officiels.py`.

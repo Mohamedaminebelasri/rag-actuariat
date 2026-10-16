@@ -183,12 +183,18 @@ partir des KPIs ci-dessus, de leurs composants et de la table
 `impact_transitoires` (pts), `marge_risque_sur_be` (%), `sp_nonvie` (%),
 `mcr_en_pct_scr` (%). `validate_kpis.py` ne contrôle que les 21 KPIs
 extraits ; les 6 KPIs calculés ont leur propre contrôle (recalcul depuis
-les composants, `test_kpis_officiels.py`).
+les composants, `test_kpis_officiels.py`). Exception (Décision 159) : son
+contrôle 12 relit dans le PDF les lignes de primes et de sinistres de
+`sp_nonvie` ; `peupler_kpis_officiels_indicateurs.py` s'en sert pour la
+validité de ces composants. Il lit les PDF avec PyMuPDF : lancer
+`validate_kpis.py` avec le Python du `.venv`, sinon aucun `sp_nonvie`
+n'est « Vérifié ».
 
 Ordre de rejeu complet après une ré-extraction :
 `extract_kpis_*.py` → `populate_company_metadata.py` →
 `corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →
-`validate_kpis.py --all` → `peupler_kpis_officiels_indicateurs.py` →
+`.venv/Scripts/python.exe -I validate_kpis.py --all` →
+`peupler_kpis_officiels_indicateurs.py` →
 `export_kpis_for_frontend.py` → `test_kpis_officiels.py`.
 
 ---
