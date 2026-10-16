@@ -18,7 +18,7 @@ import { GroupeFiliales } from "./groupe-filiales";
 import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
 import { FiltresSocietesBar } from "./filtres-societes";
-import { groupePairsCommun, groupePairsDe } from "@/lib/comparabilite";
+import { groupePairsCommun, groupePairsDe, pairsLesPlusProches } from "@/lib/comparabilite";
 // import { exporterCsvComparatif } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
@@ -45,9 +45,17 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
   const pairsSelection = groupePairsCommun(societes);
   const comparerAuxPairs = () => {
     if (!reference || !pairsReference) return;
-    const membres = [reference, ...pairsReference.societes.filter((s) => s !== reference)];
-    setSocietes(membres.slice(0, MAX_SOCIETES));
+    // La société choisie + ses pairs les plus proches en taille (SCR), 8 au plus.
+    setSocietes(pairsLesPlusProches(reference, MAX_SOCIETES));
   };
+  // Phrase « n sociétés sur N affichées » : seulement si le groupe de pairs dépasse
+  // la limite ET que la sélection est bien celle des pairs les plus proches.
+  const plusProches = reference && pairsReference ? pairsLesPlusProches(reference, MAX_SOCIETES) : [];
+  const selectionPairsLimitee =
+    !!pairsReference &&
+    pairsReference.n > MAX_SOCIETES &&
+    societes.length === plusProches.length &&
+    plusProches.every((s) => societes.includes(s));
 
   const ajouter = (id: string) => {
     if (!id || societes.includes(id) || auMaximum) return;
@@ -133,8 +141,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
             <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-text-tertiary" aria-hidden="true" />
             <span>
               Groupe de pairs : <span className="font-medium text-text-primary">{pairsSelection.id}</span> —{" "}
-              {societes.length} sur {pairsSelection.n} société{pairsSelection.n > 1 ? "s" : ""} du groupe
-              {pairsSelection.n > MAX_SOCIETES && ` (comparatif limité à ${MAX_SOCIETES} colonnes)`}.
+              {societes.length} sur {pairsSelection.n} société{pairsSelection.n > 1 ? "s" : ""} du groupe.
               {pairsSelection.petitEchantillon &&
                 ` Échantillon de ${pairsSelection.n} société${pairsSelection.n > 1 ? "s" : ""} : moyenne peu fiable.`}
             </span>
@@ -161,6 +168,12 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
         </div>
       ) : (
         <div className="flex flex-col gap-4 w-full items-start">
+          {selectionPairsLimitee && pairsReference && (
+            <p role="note" className="text-xs leading-relaxed text-text-tertiary">
+              {societes.length} sociétés sur {pairsReference.n} affichées (les pairs les plus proches en taille). Le
+              classement « Position parmi les pairs » utilise les {pairsReference.n}.
+            </p>
+          )}
           {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
           <button
             onClick={() => exporterCsvComparatif(societes)}

@@ -7,7 +7,7 @@
  * réserve), N (non comparable), NA (sans objet pour certaines sociétés).
  */
 
-import { DEMO_SFCR } from "@/data/analyse-demo";
+import { DEMO_SFCR, kpisSociete } from "@/data/analyse-demo";
 import {
   DONNEES_EXTRAITES,
   type AxeCompat,
@@ -107,6 +107,36 @@ export function groupePairsDe(societe: string): GroupePairs | null {
   const id = DEMO_SFCR[societe]?.groupePairs;
   if (!id) return null;
   return DONNEES_EXTRAITES.groupesPairs.find((g) => g.id === id) ?? null;
+}
+
+/** La société de référence + ses pairs les plus proches en TAILLE, `max` sociétés
+ * au total : écart de SCR total (M€) le plus faible par rapport à la référence ;
+ * pairs sans SCR en dernier ; égalité (ou SCR de la référence absent) : ordre
+ * alphabétique. Ne sert qu'à choisir quelles sociétés afficher : le calcul de
+ * « Position parmi les pairs » utilise, lui, tout le groupe de pairs. */
+export function pairsLesPlusProches(reference: string, max: number): string[] {
+  const groupe = groupePairsDe(reference);
+  if (!groupe) return [reference];
+  const scr = (s: string): number | null => {
+    const v = kpisSociete(s)["scr_total"]?.valeur;
+    return typeof v === "number" && Number.isFinite(v) ? v : null;
+  };
+  const ref = scr(reference);
+  const ecart = (s: string): number | null => {
+    const v = scr(s);
+    return ref === null || v === null ? null : Math.abs(v - ref);
+  };
+  const autres = groupe.societes
+    .filter((s) => s !== reference)
+    .sort((a, b) => {
+      const ea = ecart(a);
+      const eb = ecart(b);
+      if (ea === null && eb === null) return a.localeCompare(b, "fr");
+      if (ea === null) return 1;
+      if (eb === null) return -1;
+      return ea - eb || a.localeCompare(b, "fr");
+    });
+  return [reference, ...autres.slice(0, Math.max(0, max - 1))];
 }
 
 /** Groupe de pairs partagé par TOUTES les sociétés données (null sinon). */
