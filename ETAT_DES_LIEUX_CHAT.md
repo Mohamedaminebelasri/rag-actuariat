@@ -889,3 +889,75 @@ noms proches), `kpi_inconnu` (avec les KPI disponibles), `valeur_absente`
 réponse contient au minimum la valeur, l'unité, la page physique, le
 fichier PDF et le statut de fiabilité. Le code sera écrit au titre 3, dans
 les outils de l'agent, sans modifier `kpi_service.py`.
+
+### P9 — résolu (16/10)
+
+**Inventaire** (lecture seule ; il y a **21** KPI extraits et non 22 depuis
+la Décision 144, plus 6 KPI calculés, soit 27 `kpi_name` dans `kpis`) :
+
+| Information | Où elle existe avant P9 | Couverture | Côté Python ? |
+|---|---|---|---|
+| Nom de la société | `kpis.db`, `companies.name` | 41/41 | ✅ |
+| Fichier PDF | `kpis.db`, `documents_sfcr` (P1, P3) ; `kpis.source_pdf` pour 17 lignes | 41/41 | ✅ |
+| Libellé lisible | `kpi_definitions.py` : `KPI_DEFINITIONS[].label` (21) et `KPI_INDICATEURS_OFFICIELS[].label` (6). Front : `KPI_LABELS_REELS` (`lib/donnees-extraites-utils.ts:180`, 21), `definitionsKpis` du JSON (6, recopié de Python), `KPI_LABELS` (`app/documents/page.tsx:34`, 6) | 27/27 | ✅, mais avec des **différences** (voir plus bas) |
+| Définition courte | 6 calculés : `KPI_INDICATEURS_OFFICIELS[].description` (Python, exporté à l'identique). 21 extraits : **seulement** `DESCRIPTIONS` (`data/analyse-demo.ts:88`) | 27/27, dont 21 **dans le front seulement** | ❌ pour les 21 |
+| Unité | `kpis.unit` (une seule par KPI), `KPI_DEFINITIONS[].unit`, `KPI_INDICATEURS_OFFICIELS[].unit` : identiques. Le front affiche `pct` comme `%` | 27/27 | ✅ |
+| Formule | `kpis.db`, `kpi_formules` (188 lignes, par société) : les 6 calculés seulement. La fenêtre de formule du front (`kpi-pdf-modal.tsx:470-570`) lit `formule` du JSON, c'est-à-dire cette table. **`ratio_scr` n'a pas de formule stockée** : il est lu directement (S.23.01, R0620) ; seule la définition du front dit « Fonds propres éligibles / SCR » | 6/27 | ✅ |
+| Composants | `kpis.db`, `kpi_composants` (1 169 lignes) : 6 calculés + 5 sommes (`best_estimate`, `marge_risque`, `provisions_techniques`, `primes_acquises_brutes`, `charge_sinistres`) | 11/27 | ✅ |
+| Sens (plus haut = mieux) | 6 calculés : `KPI_INDICATEURS_OFFICIELS[].classement` (Python). Extraits : **seulement** `SENS_KPI` (`lib/analyse-utils.ts`), pour 3 KPI (`ratio_scr`, `ratio_mcr` = higher ; `scr_diversification` = lower). Le champ Python `sign` (signe attendu) n'est pas un sens | 9/27, dont 3 **dans le front seulement** | ❌ pour les 3 |
+
+**Différences entre deux sources** (signalées, rien n'a été corrigé) :
+- **Libellés des 21 extraits : 17 diffèrent** entre `KPI_DEFINITIONS.label`
+  et le libellé affiché (`KPI_LABELS_REELS`). Exemples : « Ratio de
+  couverture du SCR » / « Ratio SCR » ; « Capital minimum requis (MCR) » /
+  « MCR ». **`kpi_definitions.py` écrit « Tier 1 non repris / repris »**
+  alors que le front écrit « Tier 1 non restreint / restreint », qui est le
+  terme réglementaire : le libellé Python est probablement faux.
+- `app/documents/page.tsx` écrit « Best Estimate » ; `KPI_LABELS_REELS`
+  écrit « Best estimate ».
+- `DESCRIPTIONS` (front) :
+  - pour les 4 KPI Tier, la définition est identique au libellé : il n'y a
+    pas de vraie définition ;
+  - `primes_acquises_brutes` est décrit comme « Primes brutes **émises** sur
+    l'exercice », alors que le KPI porte sur les primes **acquises**.
+
+  Les deux textes sont recopiés tels quels.
+
+**Créé.** Comme deux informations n'existaient que dans le front, la table
+**`catalogue_kpis`** a été ajoutée à `kpis.db`. Elle est remplie par
+`creer_table_catalogue_kpis.py`, qui lit les fichiers du front sans les
+modifier, sur le modèle de `creer_table_documents_sfcr.py`. Colonnes :
+- `kpi_id` (clé) ;
+- `libelle` (libellé affiché par le front) ;
+- `definition` ;
+- `unite` (`kpis.unit`) ;
+- `formule` (textes distincts de `kpi_formules`, séparés par « | ») ;
+- `composants` (« par société dans kpi_composants (N sociétés, M lignes) ») ;
+- `sens`.
+
+Aucune valeur n'est inventée : 21 formules, 16 composants et 18 sens sont
+vides (NULL), faute de source.
+- **Sauvegarde :** `archive/kpis_avant_catalogue_kpis_20261016_230134.db`
+  (SHA-256 `08b6fa17846d7adbdca3f9cc97f484761999e92c408a74311c21b835c6577228`).
+- **Relance :** le script, relancé une seconde fois, donne un contenu
+  identique.
+
+**Contrôles.**
+- **Correspondance :** les 27 `kpi_name` de `kpis` ont une ligne au
+  catalogue, et le catalogue n'a aucune ligne en trop.
+- **Front :** 0 différence avec le front (libellé affiché, définition, sens,
+  unité des KPI calculés).
+- **Unités :** elles concordent avec les 1 049 lignes de `kpis`.
+- **Autres tables :** les 9 autres tables sont identiques à la sauvegarde
+  (nombre de lignes, contenu et schéma), et le front n'est pas modifié.
+
+**Où l'agent lira chaque information (titre 3) :**
+- nom : `companies.name` ;
+- PDF : `documents_sfcr` (ou `kpis.source_pdf` s'il est renseigné) ;
+- libellé, définition, unité, sens et formule générique : `catalogue_kpis` ;
+- formule et composants exacts d'une société : `kpi_formules` et
+  `kpi_composants` ;
+- page : `kpis.source_page` (Décision 163).
+
+Limite : le catalogue recopie le front. Si le front change un libellé ou
+une définition, il faut relancer le script.
