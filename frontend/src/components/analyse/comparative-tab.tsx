@@ -13,6 +13,7 @@ import { ComparativeTable } from "./comparative-table";
 import { RadarComparatif } from "./radar-chart";
 import { TiersComparatif } from "./tiers-comparatif";
 import { TreemapPanel } from "./treemap-panel";
+import { GroupeFiliales } from "./groupe-filiales";
 import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
 import { FiltresSocietesBar } from "./filtres-societes";
@@ -171,6 +172,7 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
           <RadarComparatif societesComparees={societes} />
           <TiersComparatif societesComparees={societes} />
           <TreemapPanel societesFiltrees={idsFiltres} societesSelectionnees={societes} seuilVertScr={seuilVertScr} />
+          <GroupeFiliales societesSelectionnees={societes} seuilVertScr={seuilVertScr} />
           <ComparisonBarChart societesComparees={societes} kpiId={kpiGraphique} onChangeKpi={setKpiGraphique} />
 
           <ComparativeTable
