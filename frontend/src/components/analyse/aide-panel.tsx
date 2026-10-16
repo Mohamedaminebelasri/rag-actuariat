@@ -137,6 +137,12 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         Solvabilité II. Les parts sont calculées sur la somme des 4 Tiers ; aucun classement n&apos;est établi.
       </p>
       <p>
+        <span className="font-medium text-text-primary">Dépendance aux mesures de long terme :</span> écart entre le
+        ratio publié (point plein) et le ratio sans correction pour volatilité ni mesures transitoires (point creux) :
+        plus il est grand, plus le ratio dépend de ces mesures réglementaires. La couleur des points est la zone du
+        ratio SCR ; une société sans aucune mesure n&apos;a qu&apos;un point.
+      </p>
+      <p>
         <span className="font-medium text-text-primary">Taille et solidité du panel :</span> la surface d&apos;un
         rectangle est proportionnelle aux primes acquises brutes du panel (41 SFCR, ce n&apos;est pas une part de
         marché) ; la couleur est le feu du ratio SCR. La vue Groupes regroupe les groupes et les sociétés
