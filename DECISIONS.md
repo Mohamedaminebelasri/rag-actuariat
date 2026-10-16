@@ -10250,4 +10250,20 @@ aucun statut modifiés (`validation_checks` identique) ;
 « Marge de risque (marge_risque) » de `provisions_techniques` d'AG.Mut
 garde la p.207 (copiée une seule fois par
 `peupler_composants_provisions.py`, à l'extraction) ; de même, chez Covéa,
-les 2 lignes de `provisions_techniques` restent sans page.
+les 2 lignes de `provisions_techniques` restent sans page. *(Ligne AG.Mut
+corrigée ensuite, voir « 4. ».)*
+
+**4. AG.Mut, ligne « Marge de risque (marge_risque) » de
+`provisions_techniques` : page 207 → 199** (à la demande de l'utilisateur,
+tag `avant-agmut-ligne-pt`, sauvegardes `archive/*_avant_agmut_ligne_pt*`).
+Nouveau `PAGES_LIGNES_VERIFIEES` dans `corrections_comparabilite.py`
+(société, kpi, index → libellé attendu, page ; s'arrête si le libellé ne
+correspond plus) : ces lignes sont recopiées une seule fois à l'extraction,
+la correction est rejouée après. Avant / après : un seul champ change en
+base (`composant_page` de cette ligne) ; `donnees-extraites.json` : cette
+page et `genereLe` ; `kpi-sources.json` inchangé. La ligne « Meilleure
+estimation » garde la p.79 (total 22 926 K€ imprimé). Écart 22 885 / 22 926
+K€ : 22 885 = best estimate santé non-vie seul (R0580, p.199) ; + 41 K€ de
+best estimate vie (R0670, même page) = 22 926 K€, le total de la p.79.
+Covéa : ses 2 lignes de `provisions_techniques` restent sans page (non
+demandé).

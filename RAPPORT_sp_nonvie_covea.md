@@ -63,8 +63,29 @@ Tag `avant-agmut-page`, sauvegardes `archive/*_avant_agmut_page*`.
   `genereLe` changent. Dans `kpi-sources.json`, 2 pages changent.
 - **Laissé tel quel, comme demandé :** la ligne « Marge de risque » du
   détail de `provisions_techniques` d'AG.Mut indique encore la page 207.
-  Elle est recopiée une seule fois, au moment de l'extraction. Je peux la
-  corriger aussi si tu veux.
+  Elle est recopiée une seule fois, au moment de l'extraction. → **Corrigé
+  depuis, à ta demande (voir ci-dessous).**
+
+### AG.Mut : ligne « Marge de risque » du détail de provisions_techniques 207 → 199
+
+Tag `avant-agmut-ligne-pt`, sauvegardes `archive/*_avant_agmut_ligne_pt*`.
+
+- **Seule cette page a changé.** Dans la base, un seul champ bouge : la
+  page de cette ligne. Aucun KPI, aucune valeur, aucun contrôle et aucun
+  statut « Vérifié » ne change.
+- **Fichiers de données :** dans `donnees-extraites.json`, cette page et
+  `genereLe`. `kpi-sources.json` ne change pas.
+- La ligne « Meilleure estimation » garde la page 79, qui est correcte.
+- **Écart entre 22 885 K€ (p.199) et 22 926 K€ (p.79) :** 22 885 K€ n'est
+  que le best estimate santé non-vie (R0580). En y ajoutant les 41 K€ de
+  best estimate vie (R0670, même page 199), on obtient le total de
+  22 926 K€ imprimé page 79.
+- La correction est écrite dans `corrections_comparabilite.py`
+  (`PAGES_LIGNES_VERIFIEES`). Si la ligne n'a plus le libellé attendu, le
+  script s'arrête au lieu de corriger.
+- **Tests :** `validate_kpis.py --all` (0 échec réel),
+  `test_kpis_officiels.py` (OK avec les 3 sauvegardes) et
+  `test_normalisation_signe.py` (OK).
 - **Tests :** `validate_kpis.py --all` (0 échec réel),
   `test_kpis_officiels.py` (OK avec les 3 sauvegardes) et
   `test_normalisation_signe.py` (OK).
@@ -179,4 +200,5 @@ valeurs, même statut « Vérifié », mêmes contrôles 1 à 11.
 
 Voir `git log avant-sp-covea..HEAD` (Décision 159) et
 `git log avant-maif-signe..HEAD` (Décision 160) ; page AG.Mut :
-`git log avant-agmut-page..HEAD`.
+`git log avant-agmut-page..HEAD` ; ligne de `provisions_techniques` :
+`git log avant-agmut-ligne-pt..HEAD`.
