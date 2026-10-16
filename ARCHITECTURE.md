@@ -1,5 +1,20 @@
 # ARCHITECTURE — RAG Solvabilité II (Iconcilio)
 
+> **État actuel (16/10/2026)**
+>
+> - **Données** : PDF SFCR 2025 dans `data/` → scripts d'extraction (`extract_kpis_*.py`,
+>   `aema_entites.py`, `ag2r_entites.py`) → corrections et contrôles
+>   (`corrections_comparabilite.py`, `validate_kpis.py`) → `kpis.db` (SQLite, 41 sociétés, 2025).
+> - **Interface** : `kpis.db` → `export_kpis_for_frontend.py` → 2 JSON statiques
+>   (`frontend/src/data/kpi-sources.json`, `donnees-extraites.json`) → interface Next.js (`frontend/`).
+> - **RAG** : Qdrant local (`localhost:6333`, 4 collections texte / tableaux / images / qrt),
+>   pipeline dans `test_markdrop/` ; seul le SFCR Groupama est indexé.
+> - **Chat AI** : agent IA avec outils (dont `kpi_service.py` et la recherche dans les PDF), en
+>   conception ; état des lieux dans `ETAT_DES_LIEUX_CHAT.md`.
+>
+> La suite de ce fichier décrit l'**ancien projet** (RAG sur la directive 2009/138/CE, FAISS,
+> Streamlit). Elle sera réécrite au titre 9 du plan Chat AI.
+
 Document régénéré le 2026-07-29 à partir du code réel (`src/*.py`, `app.py`,
 `requirements.txt`), pas de l'ancienne version (25/07, projet planifié PDF +
 e5-large, jamais celui effectivement construit) ni de suppositions.
