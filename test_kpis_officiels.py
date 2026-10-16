@@ -64,9 +64,12 @@ CORRECTIONS_160 = {("MAIF", "charge_sinistres"): {"value", "raw_value", "source_
                    ("MAIF", "sp_nonvie"): {"value", "validated"},
                    ("Covéa", "best_estimate"): {"source_page"}, ("Covéa", "marge_risque"): {"source_page"},
                    # AG.Mut : page de marge_risque 207 -> 199, recopiée dans marge_risque_sur_be.
-                   ("AG.Mut", "marge_risque"): {"source_page"}, ("AG.Mut", "marge_risque_sur_be"): {"source_page"}}
+                   ("AG.Mut", "marge_risque"): {"source_page"}, ("AG.Mut", "marge_risque_sur_be"): {"source_page"},
+                   # Ligne « Marge de risque » du détail de provisions_techniques : page 207 -> 199 seulement.
+                   ("AG.Mut", "provisions_techniques"): set()}
 IGNORES_160 = [r"/kpisParSociete/MAIF/charge_sinistres/.*", r"/kpisParSociete/Covéa/(best_estimate|marge_risque)/.*",
-               r"/indicateursParSociete/MAIF/sp_nonvie_pct", r"/kpisParSociete/AG\.Mut/marge_risque/pageSource"]
+               r"/indicateursParSociete/MAIF/sp_nonvie_pct", r"/kpisParSociete/AG\.Mut/marge_risque/pageSource",
+               r"/kpisParSociete/AG\.Mut/provisions_techniques/composants\[1\]/pageSource"]
 IGNORES_160_SOURCES = [r"/MAIF/charge_sinistres/(value|raw_value|source_chapter)", r"/MAIF/sp_nonvie/value",
                        r"/Covéa/(best_estimate|marge_risque)/source_page",
                        r"/AG\.Mut/(marge_risque|marge_risque_sur_be)/source_page"]
@@ -328,6 +331,9 @@ def main():
              rm["pageSource"] == 199 and all(c["pageSource"] == 199 for c in rm["composants"]))
     verifier("AG.Mut/marge_risque_sur_be : page 199 recopiée", kps["AG.Mut"]["marge_risque_sur_be"]["pageSource"] == 199
              and kps["AG.Mut"]["marge_risque_sur_be"]["composants"][0]["pageSource"] == 199)
+    pt = [(c["label"], c["pageSource"]) for c in kps["AG.Mut"]["provisions_techniques"]["composants"]]
+    verifier("AG.Mut/provisions_techniques : ligne « Marge de risque » p.199, best estimate inchangé p.79",
+             pt == [("Meilleure estimation (best_estimate)", 79), ("Marge de risque (marge_risque)", 199)], f"{pt}")
 
     if DB_AVANT_159.exists():
         avant = sqlite3.connect(DB_AVANT_159)

@@ -413,6 +413,14 @@ def appliquer_signes(conn):
 PAGES_VERIFIEES = {("Covéa", "best_estimate"): 85, ("Covéa", "marge_risque"): 85, ("AG.Mut", "marge_risque"): 199}
 
 
+# Lignes de détail recopiées une seule fois à l'extraction
+# (peupler_composants_provisions.py) avec l'ancienne page fausse : corrigées
+# une par une. (société, kpi, index) -> (libellé attendu, page).
+PAGES_LIGNES_VERIFIEES = {
+    ("AG.Mut", "provisions_techniques", 2): ("Marge de risque (marge_risque)", 199),
+}
+
+
 def appliquer_pages(conn):
     for (societe, kpi), page in PAGES_VERIFIEES.items():
         cid = _cid(conn, societe)
@@ -422,7 +430,13 @@ def appliquer_pages(conn):
             raise SystemExit(f"Ligne KPI introuvable : {societe}/{kpi}")
         conn.execute("UPDATE kpi_composants SET composant_page=? WHERE company_id=? AND year=? AND kpi_name=?",
                      (page, cid, YEAR, kpi))
-    print(f"  {len(PAGES_VERIFIEES)} pages source écrites")
+    for (societe, kpi, index), (label, page) in PAGES_LIGNES_VERIFIEES.items():
+        n = conn.execute("""UPDATE kpi_composants SET composant_page=? WHERE company_id=? AND year=? AND kpi_name=?
+                            AND composant_index=? AND composant_label=?""",
+                         (page, _cid(conn, societe), YEAR, kpi, index, label)).rowcount
+        if n != 1:
+            raise SystemExit(f"Ligne introuvable : {societe}/{kpi} #{index} {label!r} — à revoir")
+    print(f"  {len(PAGES_VERIFIEES)} pages source et {len(PAGES_LIGNES_VERIFIEES)} page(s) de ligne écrites")
 
 
 def main():
