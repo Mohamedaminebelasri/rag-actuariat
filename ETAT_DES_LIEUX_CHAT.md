@@ -747,3 +747,49 @@ restent valables. Une conséquence pour l'agent : il a maintenant deux textes
 de source par KPI, un lisible (`source_chapter`) et un technique
 (`source_chapter_technique`, NULL pour les 6 KPIs officiels). Le choix de
 celui à citer reste à décider.
+
+### P5 — résolu (16/10)
+
+Revérifié **en local**, en lecture seule. **Aucun fichier n'a été modifié**,
+car aucune correction de page n'existe encore.
+
+**Recherche dans `frontend/src`** (`- 1`, `-1`, `initialPage`,
+`pageSource`, `source_page`) :
+- `kpi-pdf-modal.tsx:60` : `useState(kpi.pageSource ?? 1)`, puis
+  `initialPage={viewingPage}` (l. 430) ; `naviguerVersPage(page)` (l. 65-69)
+  passe aussi la page sans changement.
+- `pdf-page-viewer.tsx:88, 117` : `doc.getPage(currentPage)` (pdf.js, pages
+  numérotées à partir de 1), sans décalage. Les `cible - 1` (l. 392, 522)
+  convertissent la page en indice de tableau (base 0) : ce n'est pas un
+  décalage.
+- `app/documents/page.tsx:45-48, 209` : `initialPage={pageCible ?? 1}`, avec
+  la page lue telle quelle dans `kpi-sources.json` ou
+  `donnees-extraites.json`.
+- `kpi-ligne.tsx:45-47`, `csv-export.ts:99` : la page est affichée ou
+  exportée telle quelle.
+- `KpiPdfModal` est ouvert par `base-donnees/page.tsx` et
+  `analyse/individual-tab.tsx`, qui ne transforment pas la page.
+
+**Chronologie Git** (`git log -G` sur `frontend/src`) :
+- 28/09 à 03:09 (`ef51401`, « fix: adjust PDF page offset (-1) for printed
+  vs physical page numbers ») : `initialPage={Math.max(1, (kpi.pageSource ?? 1) - 1)}`.
+- 28/09 à 15:38 (`f5d0c6e`, « fix(kpi-modal): remove off-by-one page number
+  in PdfPageViewer ») : retour à `initialPage={kpi.pageSource ?? 1}`.
+- Depuis, aucun commit ne réintroduit de décalage. L'erreur du 0.4
+  (« non trouvé ») venait de la recherche dans le seul état actuel du code,
+  sans l'historique.
+
+**Conclusion.** Au clic sur un KPI, le lecteur ouvre **exactement la page
+stockée dans `kpis.db`** (page physique). Contrôle sur 3 KPI : page en base,
+page des deux JSON exportés, puis présence de la valeur dans le texte de la
+page physique (PyMuPDF).
+
+| KPI | `kpis.db` | `donnees-extraites.json` | `kpi-sources.json` | Valeur sur la page physique |
+|---|---:|---:|---:|---|
+| Groupama · `ratio_scr` (274 %) | 85 | 85 | 85 | ✅ « 2,74 », ligne R0690 (S.23.01) ; numéro imprimé « 85 » |
+| La Mondiale · `scr_total` (rapport de groupe AG2R) | 251 | 251 | 251 | ✅ « 2 441 979 » (K€), absent des pages 250 et 252 |
+| MGEN · `fonds_propres_eligibles` | 53 | 53 | 53 | ✅ « 3 441 361 » (K€), absent des pages 52 et 54 |
+
+L'écart entre numéro imprimé et page physique (0, −1 ou −2 selon le PDF,
+voir le point 4) reste vrai. L'agent doit donc citer la page physique (P6),
+mais le front ne corrige plus rien.
