@@ -10359,3 +10359,16 @@ qui garde la base technique ») n'est plus exact.
 - Raison : l'écart entre numéro imprimé et page physique varie selon le document. Mesures du 0.4 de `ETAT_DES_LIEUX_CHAT.md` : 0 pour CNP, MACSF et SwissLife ; −1 pour l'annexe QRT d'AXA France IARD ; −2 pour MGEN (4 pages sur 5).
 - Rappel : la correction −1 ajoutée au front le 28/09 (`ef51401`) a été retirée le jour même (`f5d0c6e`) ; le lecteur PDF ouvre la page de `kpis.db` (P5).
 - Le format exact de la citation sera fixé au titre 5 (format des réponses) du plan Chat AI.
+
+## Décision 164 — Format des réponses et des erreurs des outils de l'agent
+
+- Les outils de l'agent (titre 3) ne lèvent **jamais** d'exception vers l'agent : ils renvoient toujours un objet avec un champ `statut`.
+- Valeurs de `statut` :
+  - `ok` ;
+  - `societe_inconnue`, avec une liste de noms proches suggérés (ex. « groupamma » → « Groupama », « Macif » → « MACIF SAM ») ;
+  - `kpi_inconnu`, avec la liste des KPI disponibles ;
+  - `valeur_absente` : le KPI existe mais vaut NULL (non publié ou non extrait). Ce n'est pas une erreur, l'agent le dit tel quel et n'invente aucune valeur ;
+  - `erreur_technique` (base introuvable, erreur SQLite…).
+- Si `statut = ok`, la réponse contient au minimum : la valeur, l'unité, la page physique (Décision 163), le fichier PDF (`documents_sfcr`, ou `kpis.source_pdf` s'il est renseigné) et le statut de fiabilité.
+- `kpi_service.py` reste inchangé : ce format est appliqué par les outils de l'agent, au titre 3.
+- Comportement actuel, cas par cas (exception, `None`, `{}`, résumé vide) : voir `ETAT_DES_LIEUX_CHAT.md`, section 0.4, « P8 ».

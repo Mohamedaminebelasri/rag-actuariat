@@ -849,3 +849,43 @@ Remarque, sans correction (hors périmètre) : les méthodes utilisent
 **ferme** pas la connexion : elle reste ouverte jusqu'au ramasse-miettes.
 C'est sans risque en lecture seule, mais à reprendre au titre 3 si l'agent
 appelle le service très souvent.
+
+### P8 — résolu (format fixé, code au titre 3) (16/10)
+
+Comportement **actuel** de `kpi_service.py`, mesuré en exécutant chaque cas
+sur une **copie** de `kpis.db` (année 2025, sauf mention). L'original est
+inchangé (`08b6fa17846d7adb…`). `kpi_service.py` n'est pas modifié.
+
+| Cas | `get_kpis` | `get_kpi` | `compare_kpis` | `get_corpus_stats` | `get_validation_report` |
+|---|---|---|---|---|---|
+| Société inexistante (« Société Inexistante ») | `{}` | exception `KpiIntrouvable` : « Entreprise 'Société Inexistante' absente de companies » | sans objet (pas de paramètre société) | sans objet | résumé vide : `n_checks=0, n_passed=0, n_failed=0`, `checks=[]` |
+| Mal orthographiée (« groupamma ») | `{}` | exception `KpiIntrouvable` : « Entreprise 'groupamma' absente de companies » | sans objet | sans objet | résumé vide |
+| Nom partiel (« Macif » au lieu de « MACIF SAM ») | `{}` | exception `KpiIntrouvable` : « Entreprise 'Macif' absente de companies » | sans objet | sans objet | résumé vide |
+| Casse différente (« groupama ») | `{}` | exception `KpiIntrouvable` | sans objet | sans objet | (non testé ; même requête exacte) |
+| KPI inexistant (« kpi_bidon ») | sans objet (renvoie tous les KPI) | `None` | dict de 41 sociétés, toutes `None` | `{n: 0, moyenne: None, mediane: None, min: None, max: None}` | sans objet |
+| KPI existant à valeur NULL (AXA France IARD · `scr_souscription_sante`) | ligne présente, `value: None` | ligne complète, `value: None`, `source_page: None` | 41 lignes, dont 5 à `value: None` | NULL ignorés : `n=36`, mais `min=0.0` (zéros comptés) | sans objet |
+| KPI absent pour la société (Groupama · `mcr_en_pct_scr`, aucune ligne) | clé absente (26 KPI) | `None`, comme un KPI inexistant | — | — | sans objet |
+| Année absente (2024) | `{}`, comme une société inexistante | `None` | 41 `None` | `n: 0`, le reste `None` | résumé vide |
+| Base introuvable | exception `FileNotFoundError` : « Base KPI introuvable : … » (depuis P7, aucun fichier créé) | idem | idem | idem | idem |
+
+Ce qui rend ces réponses inutilisables telles quelles par un agent :
+- **Société inconnue :** elle donne trois réponses différentes selon la
+  fonction (`{}`, une exception ou un résumé vide), sans aucune suggestion
+  de nom proche.
+- **Réponses identiques pour des cas différents :**
+  - `{}` veut dire « société inconnue » ou « année absente » ;
+  - `None` veut dire « KPI inexistant » ou « KPI absent pour cette
+    société » ;
+  - un résumé de validation vide veut dire « société inconnue » ou
+    « aucun contrôle ».
+- **Valeur NULL :** elle n'est pas distinguée d'un échec, et son
+  explication est seulement dans `source_chapter`.
+
+**Format cible : Décision 164** (« Format des réponses et des erreurs des
+outils de l'agent »). Aucune exception n'est remontée à l'agent ; chaque
+réponse porte un champ `statut` parmi `ok`, `societe_inconnue` (avec des
+noms proches), `kpi_inconnu` (avec les KPI disponibles), `valeur_absente`
+(KPI NULL, qui n'est pas une erreur) et `erreur_technique`. Avec `ok`, la
+réponse contient au minimum la valeur, l'unité, la page physique, le
+fichier PDF et le statut de fiabilité. Le code sera écrit au titre 3, dans
+les outils de l'agent, sans modifier `kpi_service.py`.
