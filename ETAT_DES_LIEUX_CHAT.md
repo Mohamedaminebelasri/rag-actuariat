@@ -961,3 +961,83 @@ vides (NULL), faute de source.
 
 Limite : le catalogue recopie le front. Si le front change un libellé ou
 une définition, il faut relancer le script.
+
+### P10 — résolu (16/10)
+
+**Stockage** (copie de `kpis.db`, lecture seule) : il n'y a **pas de
+colonne de statut**. `validation_checks` porte `passed` (0/1) et `legitime`
+(0/1) :
+
+| `passed` | `legitime` | Lignes | Sens |
+|---:|---:|---:|---|
+| 1 | 0 | 2 127 | réussi |
+| 0 | 0 | 36 | tous « NON CONTRÔLABLE » (texte `details` commençant par « NON CONTRÔLABLE — ») |
+| 0 | 1 | 8 | échec connu et jugé légitime (Décision 136) |
+
+Le seul marqueur d'un contrôle non contrôlable est ce préfixe de texte. Il
+est écrit par `validate_kpis.py:569` et testé de la même façon par
+`test_kpis_officiels.py:311`. Les 36 lignes sont toutes des contrôles
+`sp_nonvie_ligne_*` (18 sur les primes, 18 sur les sinistres), répartis sur
+10 sociétés.
+
+**Où le nombre d'échecs est calculé.**
+- **Python :** seulement dans `KpiService.validation_summary()`, qui
+  alimente `get_validation_report()`.
+- **Exports :** `export_kpis_for_frontend.py` n'exporte pas
+  `validation_checks`. `donnees-extraites.json` et `kpi-sources.json` ne
+  contiennent aucun « NON CONTRÔLABLE » ni aucun compte d'échecs.
+- **Front :** il n'affiche **aucun compte d'échecs ni score de contrôle**.
+  Il affiche seulement, par KPI, « Vérifié » ou « À vérifier / Non vérifié »
+  (`kpi-ligne.tsx:86-99`, `kpi-pdf-modal.tsx:171-181`), et pour chaque
+  composant « vérifié » ou « non vérifié » (`kpi-pdf-modal.tsx:635-638`),
+  d'après `kpis.validated` et `composant_valide`. Pour les 10 sociétés
+  concernées, `sp_nonvie` est à `validated=0` et ses 36 composants à
+  `composant_valide=0`. Le front les montre donc « non vérifiés », ce qui
+  est **exact**, et non comme des échecs.
+- **Conclusion :** le front n'a pas le même mauvais compte. Rien n'est à
+  corriger côté front ni côté exports.
+
+**Correction** (`kpi_service.py`, calcul seulement, +12 lignes, −3).
+`validation_summary()` sépare désormais les contrôles non réussis selon le
+préfixe « NON CONTRÔLABLE ». Les clés existantes sont gardées : `n_checks`,
+`n_passed`, `n_failed` (sans les non contrôlables) et `checks_echoues`.
+Deux clés sont ajoutées : `n_non_controlables` et `checks_non_controlables`.
+On a toujours `n_passed + n_failed + n_non_controlables = n_checks`. Le
+résumé vide renvoyé pour une société inconnue porte les mêmes clés. Le
+format des erreurs (Décision 164) n'est pas touché.
+
+**Contrôles** (avant : ancien code ; après : nouveau code ; même copie de
+la base) :
+- **Sociétés modifiées :** seules les **10 sociétés** qui ont des « NON
+  CONTRÔLABLE » changent. Pour chacune, l'écart de `n_failed` est
+  exactement leur nombre en base (36 au total). `n_passed`, `n_checks` et la
+  liste `checks` sont inchangés pour les 41 sociétés.
+
+| Société | Échoués avant | Échoués après | Non contrôlables |
+|---|---:|---:|---:|
+| Aema Groupe | 6 | 0 | 6 |
+| Groupama | 6 | 0 | 6 |
+| MACIF SAM | 6 | 0 | 6 |
+| Generali IARD | 7 | 1 | 6 |
+| Abeille IARD Sante | 2 | 0 | 2 |
+| Aesio Mutuelle | 2 | 0 | 2 |
+| MMJ | 2 | 0 | 2 |
+| MNPAF | 2 | 0 | 2 |
+| Macif Sante Prevoyance | 2 | 0 | 2 |
+| Nuoma | 2 | 0 | 2 |
+| AXA France IARD, AXA France Vie, Allianz Vie, Generali Vie, Themis | 1 chacune | 1 chacune | 0 |
+| Macifilia | 2 | 2 | 0 |
+| Les 24 autres sociétés | 0 | 0 | 0 |
+
+- **Échecs restants :** il en reste 8, et ce sont exactement les 8 échecs
+  `legitime=1` (par exemple `completude_aucun_null` : seul NULL,
+  `scr_souscription_sante` inclus dans un autre poste). Le résumé ne tient
+  toujours pas compte de `legitime` : ce point n'était pas demandé et n'a
+  pas été traité.
+- **4 autres fonctions :** les 218 appels (`get_kpis`, `get_kpi`,
+  `compare_kpis`, `get_corpus_stats`, sur les 41 sociétés et les 27 KPI) sont
+  **identiques** avant et après.
+- **Empreinte de `kpis.db` :** identique (`02ef32a38a4e6a84…`). La
+  démonstration intégrée à `kpi_service.py` (`python kpi_service.py`)
+  tourne sur l'original en lecture seule : « Contrôles Groupama 2025 :
+  53/59 passés », sans liste d'échecs.
