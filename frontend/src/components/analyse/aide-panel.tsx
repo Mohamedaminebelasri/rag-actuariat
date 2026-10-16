@@ -132,6 +132,22 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         clic sur le graphique. Rien n&apos;est réinitialisé (KPI choisi, catégories ouvertes, filtre).
       </p>
       <p>
+        <span className="font-medium text-text-primary">Qualité des fonds propres par Tier :</span> le T1 non restreint
+        est le capital de meilleure qualité ; le T1 restreint, le T2 et le T3 sont plus fragiles et plafonnés par
+        Solvabilité II. Les parts sont calculées sur la somme des 4 Tiers ; aucun classement n&apos;est établi.
+      </p>
+      <p>
+        <span className="font-medium text-text-primary">Taille et solidité du panel :</span> la surface d&apos;un
+        rectangle est proportionnelle aux primes acquises brutes du panel (41 SFCR, ce n&apos;est pas une part de
+        marché) ; la couleur est le feu du ratio SCR. La vue Groupes regroupe les groupes et les sociétés
+        indépendantes, la vue Entités les sociétés solo : une société n&apos;apparaît jamais deux fois.
+      </p>
+      <p>
+        <span className="font-medium text-text-primary">Groupe et filiales :</span> le groupe et ses filiales présentes
+        dans le panel, avec leur ratio SCR. Le ratio du groupe n&apos;est pas la moyenne de ses filiales. Seuls Aéma,
+        AG2R La Mondiale et Crédit Agricole ont des filiales dans le panel.
+      </p>
+      <p>
         <span className="font-medium text-text-primary">Alertes</span> (regroupées par société : l&apos;alerte la plus
         grave est affichée, les autres se déplient avec « Voir les autres alertes » ; par ordre de gravité : critique,
         attention, information) : ratio SCR sous {SEUIL_LEGAL} %, y compris sans correction pour volatilité ni mesure
