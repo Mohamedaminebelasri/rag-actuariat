@@ -179,6 +179,47 @@ fortement, et il surestime les petites annexes de 4 à 15 pages.
 10. **`en-Allianz-Group-SFCR-2024.pdf`** : langue et couverture par entité non
     vérifiées. Le préfixe « en- » et l'année 2024 viennent seulement du nom du fichier.
 
+### P1 — résolu (16/10)
+
+La correspondance société → PDF est maintenant dans `kpis.db`, table
+**`documents_sfcr`**. Elle est créée et remplie par
+`creer_table_documents_sfcr.py`, à partir de `pdf-par-societe.ts` lu tel
+quel (le front n'est pas modifié). Le script est idempotent : il réécrit les
+lignes de l'année à chaque exécution. Avant l'écriture, `kpis.db` a été
+sauvegardée dans `archive/kpis_avant_documents_sfcr_20261016_212635.db`
+(SHA-256 `bb416d3badcb1f766c3a966e34a72760903603f60cca91e9484d5e27cda8472e`).
+
+| Colonne | Contenu |
+|---|---|
+| `societe_id` | `companies.id` (clé étrangère) |
+| `pdf_path` | chemin relatif depuis la racine, par exemple `data/SFCR_2025_Groupe-Groupama.pdf` |
+| `type_document` | `annexe_qrt` (6 sociétés) ou `rapport_complet` (35) ; contrainte `CHECK` |
+| `nb_pages` | nombre de pages lu dans le fichier (PyMuPDF : un PDF chiffré en AES n'est pas lisible par pypdf sans `cryptography`) |
+| `rapport_groupe` | 1 pour les rapports communs Aéma et AG2R (22 sociétés), sinon 0 |
+| `annee` | 2025 |
+
+La clé primaire est (`societe_id`, `annee`) : une société a un seul PDF par
+défaut par année. Les PDF secondaires utilisés pour un KPI précis (AXA,
+Generali) restent dans `kpis.source_pdf` (Décision 145) et ne sont pas dans
+cette table. Les extraits `_entite_*.pdf` sont refusés par le script.
+
+**Contrôles** (base ouverte en `mode=ro`) :
+
+| Contrôle | Résultat |
+|---|---|
+| 41 sociétés, aucune en double | ✅ 41 lignes, 41 sociétés distinctes, 0 doublon, 0 société de `companies` absente, 0 `_entite_` |
+| Chaque `pdf_path` existe sur le disque | ✅ 41/41 (21 PDF distincts) |
+| Même correspondance que `pdf-par-societe.ts` | ✅ 41 entrées de chaque côté, 0 différence |
+| `type_document` = inventaire 0.3 | ✅ les 6 `annexe_qrt` sont exactement AXA France Vie, AXA France IARD, Generali Vie, Generali IARD, Cardif Assurance Vie, Cardif Assurances Risques Divers |
+| `rapport_groupe` = inventaire 0.3 | ✅ 22 lignes à 1 = les 13 entités Aéma + les 9 AG2R, chacune sur le PDF de son groupe |
+| `nb_pages` = inventaire 0.3 | ✅ échantillon identique (Aéma 621, AG2R 288, Groupama 89, AFV 11, Cardif Vie 14), total des 21 PDF 2 133 pages comme au 0.3 |
+| Autres tables inchangées | ✅ seule `documents_sfcr` est ajoutée ; pour les 8 autres tables, nombre de lignes, contenu et schéma identiques à la sauvegarde (`companies` 41, `kpis` 1 049, `kpi_composants` 1 169, `kpi_formules` 188, `validation_checks` 2 171, `impact_mesures_lt` 41, `corrections` 0, `sqlite_sequence` 5) |
+
+Limite : `pdf-par-societe.ts` reste la source de cette table. Si le front
+change de PDF pour une société, il faut relancer
+`creer_table_documents_sfcr.py`. `kpi_service.py` ne lit pas encore la
+table (cela relève du titre 3, outils de l'agent).
+
 ---
 
 ## 0.4 kpis.db et kpi_service.py
