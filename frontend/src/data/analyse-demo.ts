@@ -89,10 +89,10 @@ const DESCRIPTIONS: Record<string, string> = {
   ratio_scr: "Fonds propres éligibles / SCR",
   ratio_mcr: "Fonds propres éligibles / MCR",
   fonds_propres_eligibles: "Total des fonds propres éligibles",
-  fonds_propres_t1_nr: "Fonds propres Tier 1 non restreint",
-  fonds_propres_t1_r: "Fonds propres Tier 1 restreint",
-  fonds_propres_t2: "Fonds propres Tier 2",
-  fonds_propres_t3: "Fonds propres Tier 3",
+  fonds_propres_t1_nr: "Fonds propres de la meilleure qualité (capital, réserve de réconciliation…), éligibles sans limite.",
+  fonds_propres_t1_r: "Fonds propres de Tier 1 dont l'éligibilité est limitée à 20 % du Tier 1 total.",
+  fonds_propres_t2: "Fonds propres de qualité intermédiaire (par exemple des dettes subordonnées), éligibles dans certaines limites.",
+  fonds_propres_t3: "Fonds propres de qualité la plus faible (par exemple des impôts différés actifs nets), éligibles au plus à 15 % du SCR.",
   scr_total: "Capital de solvabilité requis",
   mcr: "Minimum de capital requis",
   scr_marche: "Risque de marché",
@@ -105,7 +105,7 @@ const DESCRIPTIONS: Record<string, string> = {
   best_estimate: "Provisions techniques — meilleure estimation",
   marge_risque: "Marge de risque réglementaire",
   provisions_techniques: "Best Estimate + marge de risque",
-  primes_acquises_brutes: "Primes brutes émises sur l'exercice",
+  primes_acquises_brutes: "Primes correspondant à la couverture de l'exercice (primes émises corrigées de la variation des primes non acquises), avant réassurance.",
   charge_sinistres: "Charge de sinistres sur l'exercice",
 };
 

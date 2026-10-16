@@ -1134,3 +1134,48 @@ front :
   (`kpi_labels_fr.py` etc.) sont un sujet distinct. Elles reproduisent le
   texte imprimé dans les rapports, et ne doivent **pas** être alignées sur
   les libellés d'affichage.
+
+### P15 — résolu (16/10)
+
+**Source et affichage.** Les 5 définitions sont dans `DESCRIPTIONS`
+(`frontend/src/data/analyse-demo.ts:88-110`) :
+- l. 92-95 : `fonds_propres_t1_nr`, `t1_r`, `t2`, `t3`. La définition était
+  identique au libellé (par exemple « Fonds propres Tier 1 non restreint ») ;
+- l. 108 : `primes_acquises_brutes`, « Primes brutes émises sur l'exercice ».
+
+Elles ne sont lues qu'à un seul endroit, `def.description` dans
+`components/analyse/kpi-card.tsx:163`. `KpiCard` n'est affiché que par
+`individual-tab.tsx`, donc dans l'**onglet Analyse** seulement
+(`app/analyse/page.tsx`). Aucun autre onglet ni l'export CSV ne lit ce
+champ. Le même texte « Fonds propres Tier 1 non restreint » figure aussi à
+`lib/donnees-extraites-utils.ts:184`, mais c'est le **libellé**
+(`KPI_LABELS_REELS`) : il n'a pas été touché.
+
+**Changement.** Les 5 textes validés remplacent les anciens, dans
+`analyse-demo.ts` uniquement (5 lignes ; aucun identifiant, libellé ou
+autre texte changé) :
+- `primes_acquises_brutes` : « Primes correspondant à la couverture de
+  l'exercice (primes émises corrigées de la variation des primes non
+  acquises), avant réassurance. »
+- `fonds_propres_t1_nr` : « Fonds propres de la meilleure qualité
+  (capital, réserve de réconciliation…), éligibles sans limite. »
+- `fonds_propres_t1_r` : « Fonds propres de Tier 1 dont l'éligibilité est
+  limitée à 20 % du Tier 1 total. »
+- `fonds_propres_t2` : « Fonds propres de qualité intermédiaire (par
+  exemple des dettes subordonnées), éligibles dans certaines limites. »
+- `fonds_propres_t3` : « Fonds propres de qualité la plus faible (par
+  exemple des impôts différés actifs nets), éligibles au plus à 15 % du
+  SCR. »
+
+Ensuite, `kpis.db` a été sauvegardée
+(`archive/kpis_avant_p15_definitions_20261016_231100.db`, SHA-256
+`02ef32a38a4e6a8406cdadeb4b05ae83d2a1a8246cec0d402c2d0663975e8084`), puis
+`creer_table_catalogue_kpis.py` a été relancé.
+
+**Contrôles.**
+- **`catalogue_kpis` :** 27 lignes avant et après, et **exactement 5 cases
+  modifiées**, toutes dans la colonne `definition` de ces 5 KPI.
+- **Autres tables :** les 9 autres tables sont identiques à la sauvegarde.
+- **Compilation :** `npm run build` réussit (code 0, 93 s : compilation,
+  lint, types, 10 pages). Le seul avertissement (polices, dans
+  `src/app/layout.tsx`, fichier inchangé depuis le 26/09) existait déjà.
