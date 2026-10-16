@@ -234,7 +234,8 @@ def export_donnees_extraites():
         })
         if row["avertissement"]:
             # Décision 158 (bonus) — « Source : » en français simple ;
-            # chapitreSource garde la base technique (Décision 157).
+            # chapitreSource est lui aussi en français simple (Décision 161) ;
+            # la trace technique reste en base (source_chapter_technique).
             lisible = corrections_comparabilite.source_lisible(nom, row["kpi_name"])
             if lisible and kpis_par_societe[nom][row["kpi_name"]]["annee"] == row["year"]:
                 kpis_par_societe[nom][row["kpi_name"]]["sourceLisible"] = lisible
@@ -287,8 +288,10 @@ def export_donnees_extraites():
             "axes": list(comparabilite.AXES),
             "ordreVerdicts": comparabilite.ORDRE_VERDICTS,
             "classeSinistres": comparabilite.CLASSE_SINISTRES,
-            "regle": "Pour un KPI et deux sociétés : pire verdict parmi les axes où elles diffèrent "
-                     "(axe activité de charge_sinistres : comparer classeSinistres, pas l'activité brute).",
+            # Décision 161 : texte affiché, en français simple.
+            "regle": "Pour un indicateur et deux sociétés, on retient le verdict le plus prudent parmi les critères "
+                     "où elles diffèrent. Pour la charge de sinistres, on compare la nature des sinistres (vie ou "
+                     "non-vie), pas l'activité déclarée.",
             "matrice": comparabilite.MATRICE,
             # Décision 158 — hors de ces activités, le KPI n'entre dans aucune comparaison.
             "activitesApplicables": comparabilite.ACTIVITES_APPLICABLES,

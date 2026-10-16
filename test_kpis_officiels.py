@@ -73,6 +73,13 @@ IGNORES_160 = [r"/kpisParSociete/MAIF/charge_sinistres/.*", r"/kpisParSociete/Co
 IGNORES_160_SOURCES = [r"/MAIF/charge_sinistres/(value|raw_value|source_chapter)", r"/MAIF/sp_nonvie/value",
                        r"/Covéa/(best_estimate|marge_risque)/source_page",
                        r"/AG\.Mut/(marge_risque|marge_risque_sur_be)/source_page"]
+# Décision 161 — textes affichés réécrits en français simple : seuls ces
+# champs de texte peuvent différer des sauvegardes (jamais une valeur, un
+# statut ou une page).
+IGNORES_161 = [r"/kpisParSociete/[^/]+/[^/]+/chapitreSource", r"/kpisParSociete/[^/]+/[^/]+/composants\[\d+\]/label",
+               r"/compatibilite/matrice/[^/]+/[^/]+/note", r"/compatibilite/regle"]
+IGNORES_161_SOURCES = [r"/[^/]+/[^/]+/source_chapter"]
+TEXTES_161 = {"source_chapter", "composant_label"}
 # Extrait réel, rapport-solvabilite-maif-2025.pdf p.113 (texte PyMuPDF).
 EXTRAIT_MAIF = """Primes acquises
  Brut – assurance directe
@@ -208,7 +215,7 @@ def main():
     if JSON_ANCIEN.exists():
         ancien = json.loads(JSON_ANCIEN.read_text(encoding="utf-8"))
         ecarts = []
-        diff_ajouts(ancien, d, "", [r"/genereLe", r"/definitionsIndicateurs/[^/]+", *IGNORES_160], ecarts)
+        diff_ajouts(ancien, d, "", [r"/genereLe", r"/definitionsIndicateurs/[^/]+", *IGNORES_160, *IGNORES_161], ecarts)
         for e in ecarts:
             print(f"    {e}")
         verifier("donnees-extraites.json : aucun retrait ni modification", not ecarts, f"({len(ecarts)} écarts)")
@@ -231,7 +238,8 @@ def main():
     if SOURCES_ANCIEN and SOURCES_ANCIEN.exists():
         ecarts = []
         diff_ajouts(json.loads(SOURCES_ANCIEN.read_text(encoding="utf-8")),
-                    json.loads(SOURCES_NOUVEAU.read_text(encoding="utf-8")), "", IGNORES_160_SOURCES, ecarts)
+                    json.loads(SOURCES_NOUVEAU.read_text(encoding="utf-8")), "",
+                    IGNORES_160_SOURCES + IGNORES_161_SOURCES, ecarts)
         for e in ecarts:
             print(f"    {e}")
         verifier("kpi-sources.json : aucun retrait ni modification", not ecarts, f"({len(ecarts)} écarts)")
@@ -333,7 +341,7 @@ def main():
              and kps["AG.Mut"]["marge_risque_sur_be"]["composants"][0]["pageSource"] == 199)
     pt = [(c["label"], c["pageSource"]) for c in kps["AG.Mut"]["provisions_techniques"]["composants"]]
     verifier("AG.Mut/provisions_techniques : ligne « Marge de risque » p.199, best estimate inchangé p.79",
-             pt == [("Meilleure estimation (best_estimate)", 79), ("Marge de risque (marge_risque)", 199)], f"{pt}")
+             pt == [("Meilleure estimation (best estimate)", 79), ("Marge de risque", 199)], f"{pt}")
 
     if DB_AVANT_159.exists():
         avant = sqlite3.connect(DB_AVANT_159)
@@ -346,7 +354,7 @@ def main():
         for x, y in zip(a, b):
             changees = {c for c, u, v in zip(cols, x, y) if u != v}
             permises = CORRECTIONS_160.get((noms_par_id[x[0]], x[2]), set()) | (
-                {"validated"} if x[2] == "sp_nonvie" else set())
+                {"validated"} if x[2] == "sp_nonvie" else set()) | TEXTES_161
             verifier(f"kpis {noms_par_id[x[0]]}/{x[2]} : seules les corrections voulues", changees <= permises,
                      f"{sorted(changees - permises)}")
         # Sans `id` : peupler_kpis_officiels_indicateurs.py réinsère ses lignes.
@@ -361,18 +369,52 @@ def main():
             societe, kpi = noms_par_id[x[0]], x[2]
             permises = ({"composant_valide"} if kpi == "sp_nonvie" else set()) | (
                 {"composant_valeur"} if (societe, kpi, x[3]) in (("MAIF", "charge_sinistres", 3), ("MAIF", "sp_nonvie", 3))
-                else set()) | ({"composant_page"} if (societe, kpi) in CORRECTIONS_160 and kpi != "sp_nonvie" else set())
+                else set()) | ({"composant_page"} if (societe, kpi) in CORRECTIONS_160 and kpi != "sp_nonvie" else set()) \
+                | TEXTES_161
             verifier(f"kpi_composants {societe}/{kpi}#{x[3]} : seules les corrections voulues", changees <= permises,
                      f"{sorted(changees - permises)}")
         q = ("SELECT company_id, check_name, expected_value, computed_value, passed, details FROM validation_checks "
              "WHERE check_name NOT LIKE 'sp_nonvie_%' ORDER BY company_id, check_name")
         a, b = avant.execute(q).fetchall(), conn.execute(q).fetchall()
+        # (les détails des contrôles 1-11 ne citent aucun libellé : inchangés malgré la Décision 161)
         verifier("validation_checks : contrôles 1-11 inchangés (hors charge de sinistres MAIF)", len(a) == len(b) and all(
             x == y or (noms_par_id[x[0]] == "MAIF" and x[1] in ("signe_charge_sinistres", "magnitude_charge_sinistres")
                        and x[4] == y[4] == 1) for x, y in zip(a, b)))
         avant.close()
     else:
         print(f"  (comparaison sautée : {DB_AVANT_159} introuvable)")
+
+    print("=" * 90)
+    print("7. Textes affichés en français simple (Décision 161)")
+    print("=" * 90)
+    from textes_simples import contient_jargon, nettoyer_libelle, source_simple
+    for t, attendu in (("scr_marche", True), ("NULL", True), ("Décision 150", True), ("R0540/C0010", True),
+                       ("sfcr_covea_2025.pdf", True), ("D.2", True), ("S.23.01.01.01/R0540/Total", True),
+                       ("Tableau officiel S.23.01 (fonds propres)", False), ("Rapport, chapitre D.2 (provisions techniques)",
+                                                                           False), ("Primes : brut – non-vie", False)):
+        verifier(f"contient_jargon({t!r})", contient_jargon(t) == attendu)
+    verifier("source_simple : ligne du tableau des fonds propres",
+             source_simple("X", "fonds_propres_t2", "S.23.01.01/R0540/C0040 imprimé « - » (p.61)")
+             == "Tableau officiel S.23.01 (fonds propres) — case vide ou « - » dans le tableau (zéro)")
+    verifier("nettoyer_libelle : code et césures retirés",
+             nettoyer_libelle("Primes : brutes – reassu- rance proportion- nelle acceptee r0220")
+             == "Primes : brutes – réassurance proportionnelle acceptée")
+    textes = []
+    for nom, kp in kps.items():
+        for k, v in kp.items():
+            textes += [v.get(c) for c in ("chapitreSource", "noteAvertissement", "sourceLisible", "libelle")]
+            textes += [(v.get("formule") or {}).get(c) for c in ("texte", "note")]
+            textes += [c.get(x) for c in (v.get("composants") or []) for x in ("label", "detail")]
+    dj = json.loads(JSON_NOUVEAU.read_text(encoding="utf-8"))  # `d` est réutilisé plus haut
+    textes += [v.get("note") for axes in dj["compatibilite"]["matrice"].values() for v in axes.values()]
+    textes += [dj["compatibilite"]["regle"], *dj["definitionsIndicateurs"].values()]
+    textes += [v["description"] for v in dj["definitionsKpis"].values()]
+    restes = [t for t in textes if t and contient_jargon(t)]
+    print(f"  {sum(1 for t in textes if t)} textes affichés, avec jargon : {len(restes)}")
+    verifier("aucun jargon dans les textes affichés", not restes, f"{restes[:3]}")
+    n_sans_trace = conn.execute("SELECT COUNT(*) FROM kpis WHERE source_chapter_technique IS NULL AND source_chapter "
+                                "LIKE 'Tableau officiel%'").fetchone()[0]
+    verifier("trace technique gardée pour chaque source réécrite", n_sans_trace == 0, f"({n_sans_trace})")
     conn.close()
 
     print("=" * 90)

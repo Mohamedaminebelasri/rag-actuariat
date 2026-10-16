@@ -33,20 +33,22 @@ MATRICE = {
         "activite": _v("R", "Niveau habituel propre à chaque métier (médianes 2025 : santé 270 %, vie 202 %, non-vie 167 %)."),
         "forme": _v("R", "Mutuelles et SAM sans accès au marché des actions : structurellement plus capitalisées."),
         "modele": _v("R", "Calibrage propre au modèle interne ; correction pour volatilité parfois dynamique (jusqu'à +46 pts). "
-                          "Comparer aussi ratio_scr_sans_mesures_lt_pct."),
+                          "Comparer aussi le ratio SCR sans mesures de long terme."),
         "perimetre": _R_PERIM,
     },
     "ratio_mcr": {
         "activite": _v("R", "Formule MCR différente vie / non-vie ; ratio surtout dicté par le corridor 25-45 % du SCR."),
         "forme": _v("R", "Plancher absolu du MCR pour les petites structures."),
         "modele": _v("R", "MCR en formule linéaire pour tous, mais corridor appliqué au SCR du modèle interne."),
-        "perimetre": _v("N", "Groupe : ratio au « SCR minimal consolidé » (S.23.01.22 R0650), pas un ratio MCR."),
+        "perimetre": _v("N", "Groupe : ratio de couverture du « SCR minimal consolidé » (tableau des fonds propres du "
+                             "groupe), pas un ratio MCR."),
     },
     "mcr": {
         "activite": _v("R", "Formule linéaire différente vie / non-vie."),
         "forme": _v("R", "Plancher absolu pour les petites structures."),
         "modele": _v("R", "Corridor appliqué au SCR du modèle interne."),
-        "perimetre": _v("N", "Groupe : « SCR minimal consolidé » (S.23.01.22 R0610 = somme des MCR solo), pas un MCR."),
+        "perimetre": _v("N", "Groupe : « SCR minimal consolidé » (somme des MCR des sociétés du groupe, tableau des "
+                             "fonds propres du groupe), pas un MCR."),
     },
     "scr_total": {
         "activite": _v("R", "Taille et profil de risque."), "forme": _v("C"),
@@ -65,13 +67,15 @@ MATRICE = {
     "scr_marche": {"activite": _R_BRUT, "forme": _v("C"), "modele": _N_MODELE, "perimetre": _R_PERIM},
     "scr_contrepartie": {"activite": _R_BRUT, "forme": _v("C"), "modele": _N_MODELE, "perimetre": _R_PERIM},
     "scr_souscription_vie": {
-        "activite": _v("R", "Nul par construction pour un non-vie pur ; montant brut (cf. scr_marche)."),
+        "activite": _v("R", "Nul par construction pour un assureur non-vie pur ; montant brut (comme pour le risque "
+                            "de marché)."),
         "forme": _v("C"), "modele": _v("N", "Modèle interne : vie ET santé confondus, catégories propres."),
         "perimetre": _R_PERIM,
     },
     "scr_souscription_sante": {
         "activite": _v("R", "Montant brut ; nul pour un assureur sans santé."),
-        "forme": _v("C"), "modele": _v("N", "Modèle interne : inclus dans scr_souscription_vie (NULL)."),
+        "forme": _v("C"), "modele": _v("N", "Modèle interne : inclus dans le risque de souscription vie (pas de "
+                                           "montant séparé)."),
         "perimetre": _R_PERIM,
     },
     "scr_souscription_nonvie": {
@@ -96,7 +100,8 @@ MATRICE = {
         "forme": _v("C"), "modele": _v("R", "Calculée avec le SCR du modèle."), "perimetre": _v("R", "Éliminations intra-groupe."),
     },
     "provisions_techniques": {
-        "activite": _v("R", "Cf. best_estimate ; mesure transitoire sur provisions chez La Mondiale / SGAM AG2R."),
+        "activite": _v("R", "Mêmes réserves que pour le best estimate ; mesure transitoire sur les provisions chez "
+                            "La Mondiale et SGAM AG2R."),
         "forme": _v("C"), "modele": _v("C"), "perimetre": _v("R", "Éliminations intra-groupe."),
     },
     "primes_acquises_brutes": {
@@ -104,7 +109,8 @@ MATRICE = {
         "forme": _v("C"), "modele": _v("C"), "perimetre": _v("R", "Montants consolidés."),
     },
     "charge_sinistres": {
-        "activite": _v("N", "Vie (S.05.01 R1610) = prestations (rachats, échéances, rentes) ; non-vie = sinistres survenus."),
+        "activite": _v("N", "En vie (partie vie du tableau des primes et sinistres), ce sont des prestations "
+                            "(rachats, échéances, rentes) ; en non-vie, des sinistres survenus."),
         "forme": _v("C"), "modele": _v("C"), "perimetre": _v("R", "Montants consolidés."),
     },
 }

@@ -26,6 +26,8 @@ Ordre de rejeu après toute ré-extraction :
 7. Signe perdu à l'extraction (MAIF, une ligne de sinistres), Décision 160.
 8. Page source vérifiée mais absente (Covéa, best_estimate / marge_risque),
    Décision 160.
+9. Textes de source et libellés de lignes en français simple
+   (textes_simples.py, Décision 161), toujours en dernier.
 
     python corrections_comparabilite.py
 """
@@ -33,7 +35,12 @@ import sqlite3
 import sys
 from pathlib import Path
 
+import comparabilite
+import textes_simples
+from kpi_definitions import KPI_DEFINITIONS
+
 DB_PATH = Path(__file__).parent / "kpis.db"
+NOMS_KPIS_EXTRAITS = {d["kpi_name"] for d in KPI_DEFINITIONS}
 YEAR = 2025
 MODULES = ("scr_marche", "scr_contrepartie", "scr_souscription_vie", "scr_souscription_sante",
            "scr_souscription_nonvie", "scr_diversification", "scr_operationnel")
@@ -122,7 +129,9 @@ MODELES_INTERNES = {
 }
 
 # Notes affichées à l'utilisateur, en français simple (Décision 157) ; la
-# base technique de chaque valeur reste dans source_chapter (spec["base"]).
+# base technique de chaque valeur (spec["base"]) est écrite dans
+# source_chapter puis, en section 9, gardée dans source_chapter_technique
+# (source_chapter reçoit sa version simple, Décision 161).
 _NOTE_AXA = ("{s} calcule son SCR avec son propre modèle interne, pas avec la formule standard : les risques "
              "y sont découpés et calibrés autrement. Ne pas comparer ces montants à ceux des sociétés en "
              "formule standard. Le risque santé est inclus dans le risque vie.")
@@ -330,8 +339,8 @@ ATYPIQUES = {
 
 
 # Décision 158 (bonus) — texte « Source : » en français simple pour les KPIs
-# à avertissement ci-dessus, exporté à côté de source_chapter (qui garde la
-# base technique, Décision 157) ; la page est ajoutée par le front-end.
+# à avertissement ci-dessus, exporté à côté de source_chapter (lui aussi en
+# français simple depuis la Décision 161) ; la page est ajoutée par le front-end.
 _SOURCE_MI = {
     "AXA France Vie": "Annexe des états quantitatifs : SCR du modèle interne par risque, après diversification "
                       "au sein de chaque risque",
@@ -393,8 +402,12 @@ def appliquer_signes(conn):
                      (valeur_k / 1000, page, cid, YEAR, kpi, index))
         total = conn.execute("SELECT SUM(composant_valeur) FROM kpi_composants WHERE company_id=? AND year=? "
                              "AND kpi_name=?", (cid, YEAR, kpi)).fetchone()[0]
-        chapitre = conn.execute("SELECT source_chapter FROM kpis WHERE company_id=? AND year=? AND kpi_name=?",
-                                (cid, YEAR, kpi)).fetchone()[0]
+        # Trace technique (Décision 161 : source_chapter est réécrit en
+        # français simple à la fin, la trace reste dans source_chapter_technique).
+        technique = "source_chapter_technique" in {r[1] for r in conn.execute("PRAGMA table_info(kpis)")}
+        chapitre = conn.execute(
+            f"SELECT {'COALESCE(source_chapter_technique, source_chapter)' if technique else 'source_chapter'} "
+            "FROM kpis WHERE company_id=? AND year=? AND kpi_name=?", (cid, YEAR, kpi)).fetchone()[0]
         chapitre = chapitre.split(" — signe d'une ligne corrigé")[0] + \
             f" — signe d'une ligne corrigé p.{page} (Décision 160)"
         conn.execute("""UPDATE kpis SET value=?, raw_value=?, raw_unit='K€', source_chapter=?
@@ -431,11 +444,14 @@ def appliquer_pages(conn):
         conn.execute("UPDATE kpi_composants SET composant_page=? WHERE company_id=? AND year=? AND kpi_name=?",
                      (page, cid, YEAR, kpi))
     for (societe, kpi, index), (label, page) in PAGES_LIGNES_VERIFIEES.items():
-        n = conn.execute("""UPDATE kpi_composants SET composant_page=? WHERE company_id=? AND year=? AND kpi_name=?
-                            AND composant_index=? AND composant_label=?""",
-                         (page, _cid(conn, societe), YEAR, kpi, index, label)).rowcount
-        if n != 1:
-            raise SystemExit(f"Ligne introuvable : {societe}/{kpi} #{index} {label!r} — à revoir")
+        cid = _cid(conn, societe)
+        row = conn.execute("""SELECT composant_label FROM kpi_composants WHERE company_id=? AND year=? AND kpi_name=?
+                              AND composant_index=?""", (cid, YEAR, kpi, index)).fetchone()
+        # Libellé comparé une fois nettoyé (Décision 161 : libellés réécrits en français simple).
+        if row is None or textes_simples.nettoyer_libelle(row[0]) != textes_simples.nettoyer_libelle(label):
+            raise SystemExit(f"Ligne introuvable : {societe}/{kpi} #{index} {label!r} ({row}) — à revoir")
+        conn.execute("""UPDATE kpi_composants SET composant_page=? WHERE company_id=? AND year=? AND kpi_name=?
+                        AND composant_index=?""", (page, cid, YEAR, kpi, index))
     print(f"  {len(PAGES_VERIFIEES)} pages source et {len(PAGES_LIGNES_VERIFIEES)} page(s) de ligne écrites")
 
 
@@ -457,6 +473,9 @@ def main():
     appliquer_signes(conn)
     print("=== 8. Pages source vérifiées ===")
     appliquer_pages(conn)
+    # Toujours en dernier : réécrit aussi les sources écrites ci-dessus.
+    print("=== 9. Textes de source en français simple ===")
+    textes_simples.appliquer(conn, sorted(NOMS_KPIS_EXTRAITS), comparabilite._classe_composant, YEAR)
     conn.commit()
     conn.close()
 
