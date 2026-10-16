@@ -190,6 +190,14 @@ validité de ces composants. Il lit les PDF avec PyMuPDF : lancer
 `validate_kpis.py` avec le Python du `.venv`, sinon aucun `sp_nonvie`
 n'est « Vérifié ».
 
+Textes affichés (Décision 161) : les extractions écrivent dans
+`source_chapter` une trace technique (fichier, codes de lignes, numéros de
+décision) et des libellés de lignes avec codes et césures du PDF.
+`corrections_comparabilite.py` les réécrit en français simple en dernière
+étape (`textes_simples.py`) ; la trace d'origine reste dans
+`kpis.source_chapter_technique` (non exportée). Un texte de source d'un
+modèle inconnu arrête le script : ajouter sa règle dans `textes_simples.py`.
+
 Ordre de rejeu complet après une ré-extraction :
 `extract_kpis_*.py` → `populate_company_metadata.py` →
 `corrections_comparabilite.py` → `peupler_impact_mesures_lt.py` →

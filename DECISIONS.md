@@ -10267,3 +10267,73 @@ K€ : 22 885 = best estimate santé non-vie seul (R0580, p.199) ; + 41 K€ de
 best estimate vie (R0670, même page) = 22 926 K€, le total de la p.79.
 Covéa : ses 2 lignes de `provisions_techniques` restent sans page (non
 demandé).
+
+## Décision 161 — Textes de source et de comparabilité en français simple
+
+Signalé par la fenêtre front : des textes affichés (Analyse, export CSV,
+Base de données) contenaient encore des identifiants internes
+(`scr_marche`, NULL), des codes de lignes / colonnes des tableaux
+officiels (R0540, C0010), des numéros de décision et des noms de fichiers.
+Tag de départ `avant-notes-simples` ; sauvegardes locales
+`archive/*_avant_notes_simples*`.
+
+**Inventaire** (recherche automatique sur tous les textes exportés) : 381
+textes distincts concernés — `chapitreSource` 338 (856 KPIs exportés),
+libellés des lignes de détail 35 (213 lignes), notes de la matrice de
+compatibilité 7, règle de compatibilité 1. Déjà propres : notes
+d'avertissement, `sourceLisible`, `definitionsIndicateurs`,
+`definitionsKpis`, règles et notes de calcul des KPIs calculés.
+
+**Choix** :
+- `chapitreSource` est réécrit lui-même (et non doublé par un nouveau
+  champ) : le front lit `sourceLisible ?? chapitreSource`, mais l'export
+  CSV lit `chapitreSource` directement, et `sourceLisible` n'existe que pour
+  les 40 KPIs à avertissement. Ce choix revient sur la Décision 157 (qui
+  gardait la base technique dans `source_chapter`) : la trace d'origine est
+  conservée, à l'identique, dans la nouvelle colonne
+  `kpis.source_chapter_technique` (non exportée).
+- Réécriture **par règles** (`textes_simples.py`), pas texte par texte : le
+  tableau officiel est nommé et expliqué (« Tableau officiel S.23.01 (fonds
+  propres du groupe) »), le chapitre du rapport aussi (« Rapport, chapitre
+  D.2 (provisions techniques) »), puis les précisions utiles de la trace :
+  rapport commun du groupe, lu sur une page image, lignes additionnées
+  (nommées en clair pour le bilan), activité seule, case vide (zéro),
+  recoupé avec la page N, plancher absolu du MCR, somme des niveaux = total,
+  signe corrigé. Les 5 traces des modèles internes et celle de Groupama
+  sont réécrites une par une (mêmes réserves : avant diversification entre
+  risques, avant impôt, ajustements qui expliquent l'écart avec le SCR).
+  Un texte d'un modèle inconnu, ou une réécriture encore technique, arrête
+  le script (rien n'est réécrit au hasard).
+- Libellés de lignes : codes de ligne retirés (ils restent dans `codeQrt`),
+  césures du PDF recollées (« reassu- rance » → « réassurance »), accents,
+  « BE » / « RM » / « UC » écrits en toutes lettres, identifiants retirés,
+  note MAIF reformulée. Garde-fou : le classement vie / non-vie de chaque
+  ligne (`comparabilite._classe_composant`) doit être le même avant et
+  après, sinon arrêt (le S/P non-vie en dépend).
+- Matrice et règle : textes réécrits dans `comparabilite.py` et
+  `export_kpis_for_frontend.py`.
+- Où : `corrections_comparabilite.py`, section 9, toujours en dernier,
+  donc rejouée après chaque ré-extraction. Idempotent (rejoué deux fois sur
+  copie : identique). `appliquer_signes` (Décision 160) part de la trace
+  technique ; le garde-fou de `PAGES_LIGNES_VERIFIEES` compare des
+  libellés nettoyés.
+- Référence à un tableau officiel admise seulement expliquée en mots
+  (`textes_simples.contient_jargon`, utilisée pour la détection, le
+  contrôle final et les tests).
+
+**Avant / après** (toute la base et les deux JSON comparés à la
+sauvegarde) : `kpis.source_chapter` 861 lignes (dont 5 KPIs sans valeur,
+non exportés), ancien texte gardé à l'identique dans
+`source_chapter_technique` pour les 861 ; `kpi_composants.composant_label`
+213 lignes ; `validation_checks.details` 37 lignes (contrôle 12, qui cite
+les libellés) ; tout le reste identique (valeurs, statuts « Vérifié »,
+pages, formules, sociétés, impacts des mesures de long terme ;
+`sqlite_sequence` avance comme à chaque rejeu). `donnees-extraites.json` :
+856 `chapitreSource`, 213 `label`, 7 notes de matrice, la règle et
+`genereLe` ; `kpi-sources.json` : 856 `source_chapter`. Recherche finale :
+0 jargon sur 3 894 textes affichés des deux JSON (restent 61 sources qui
+citent un tableau officiel, toujours expliqué).
+
+À signaler à la fenêtre front (non modifié) : le commentaire de
+`frontend/src/lib/donnees-extraites-utils.ts` (l.151, « chapitreSource,
+qui garde la base technique ») n'est plus exact.
