@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-15T23:17:24",
+  "genereLe": "2026-10-16T12:53:58",
   "societes": [
     {
       "id": 67,
@@ -1323,7 +1323,7 @@
         "annee": 2025,
         "pageSource": 200,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -1336,7 +1336,7 @@
             "pageSource": 200,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance proportion- nelle acceptee r0320",
@@ -1346,7 +1346,7 @@
             "pageSource": 200,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance non propor- tionnelle acceptee r0330",
@@ -1356,7 +1356,7 @@
             "pageSource": 200,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes – assurance directe r0210",
@@ -1366,7 +1366,7 @@
             "pageSource": 200,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance proportion- nelle acceptee r0220",
@@ -1376,7 +1376,7 @@
             "pageSource": 200,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance non propor- tionnelle acceptee r0230",
@@ -1386,7 +1386,7 @@
             "pageSource": 200,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -2109,7 +2109,7 @@
         "annee": 2025,
         "pageSource": 141,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -2122,7 +2122,7 @@
             "pageSource": 141,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance proportion- nelle acceptee r0320",
@@ -2132,7 +2132,7 @@
             "pageSource": 141,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance non propor- tionnelle acceptee r0330",
@@ -2142,7 +2142,7 @@
             "pageSource": 141,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes – assurance directe r0210",
@@ -2152,7 +2152,7 @@
             "pageSource": 141,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance proportion- nelle acceptee r0220",
@@ -2162,7 +2162,7 @@
             "pageSource": 141,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance non propor- tionnelle acceptee r0230",
@@ -2172,7 +2172,7 @@
             "pageSource": 141,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -2868,7 +2868,7 @@
         "annee": 2025,
         "pageSource": 3,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -2881,7 +2881,7 @@
             "pageSource": 3,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge de sinistres — réassurance proportionnelle acceptée (non-vie, Total)",
@@ -2891,7 +2891,7 @@
             "pageSource": 3,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge de sinistres — réassurance non proportionnelle acceptée (non-vie, Total)",
@@ -2901,7 +2901,7 @@
             "pageSource": 3,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — directe (non-vie, Total)",
@@ -2911,7 +2911,7 @@
             "pageSource": 3,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — réassurance proportionnelle acceptée (non-vie, Total)",
@@ -2921,7 +2921,7 @@
             "pageSource": 3,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — réassurance non proportionnelle acceptée (non-vie, Total)",
@@ -2931,7 +2931,7 @@
             "pageSource": 3,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -3626,7 +3626,7 @@
         "annee": 2025,
         "pageSource": 4,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -3639,7 +3639,7 @@
             "pageSource": 4,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge de sinistres — réassurance proportionnelle acceptée (non-vie, Total)",
@@ -3649,7 +3649,7 @@
             "pageSource": 4,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge de sinistres — réassurance non-proportionnelle acceptée (non-vie, Total)",
@@ -3659,7 +3659,7 @@
             "pageSource": 4,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — directe (non-vie, Total)",
@@ -3669,7 +3669,7 @@
             "pageSource": 4,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — réassurance proportionnelle acceptée (non-vie, Total)",
@@ -3679,7 +3679,7 @@
             "pageSource": 4,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — réassurance non-proportionnelle acceptée (non-vie, Total)",
@@ -3689,7 +3689,7 @@
             "pageSource": 4,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -8459,7 +8459,7 @@
         "annee": 2025,
         "pageSource": 161,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -8472,7 +8472,7 @@
             "pageSource": 161,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance proportion- nelle acceptee r0320",
@@ -8482,7 +8482,7 @@
             "pageSource": 161,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes – assurance directe r0210",
@@ -8492,7 +8492,7 @@
             "pageSource": 161,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance proportion- nelle acceptee r0220",
@@ -8502,7 +8502,7 @@
             "pageSource": 161,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -9208,7 +9208,7 @@
         "annee": 2025,
         "pageSource": 69,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -9221,7 +9221,7 @@
             "pageSource": 69,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge de sinistres — réass. proportionnelle acceptée (non-vie, Total)",
@@ -9231,7 +9231,7 @@
             "pageSource": 69,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge de sinistres — réass. non-proportionnelle acceptée (non-vie)",
@@ -9241,7 +9241,7 @@
             "pageSource": 69,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — directe (non-vie, Total)",
@@ -9251,7 +9251,7 @@
             "pageSource": 69,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — réass. proportionnelle acceptée (non-vie, Total)",
@@ -9261,7 +9261,7 @@
             "pageSource": 69,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises brutes — réass. non-proportionnelle acceptée (non-vie)",
@@ -9271,7 +9271,7 @@
             "pageSource": 69,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -12151,7 +12151,7 @@
         "annee": 2025,
         "pageSource": 5,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -12164,7 +12164,7 @@
             "pageSource": 5,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Claims incurred | Charge des sinistres",
@@ -12174,7 +12174,7 @@
             "pageSource": 5,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Claims incurred | Charge des sinistres",
@@ -12184,7 +12184,7 @@
             "pageSource": 5,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Premiums earned | Primes acquises",
@@ -12194,7 +12194,7 @@
             "pageSource": 5,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Premiums earned | Primes acquises",
@@ -12204,7 +12204,7 @@
             "pageSource": 5,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Premiums earned | Primes acquises",
@@ -12214,7 +12214,7 @@
             "pageSource": 5,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -12941,7 +12941,7 @@
         "annee": 2025,
         "pageSource": 87,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -12954,7 +12954,7 @@
             "pageSource": 87,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : Brut – Réassurance proportionnelle acceptée",
@@ -12964,7 +12964,7 @@
             "pageSource": 87,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : Brut – Réassurance non proportionnelle acceptée",
@@ -12974,7 +12974,7 @@
             "pageSource": 87,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : Brut – Assurance directe",
@@ -12984,7 +12984,7 @@
             "pageSource": 87,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : Brut – Réassurance proportionnelle acceptée",
@@ -12994,7 +12994,7 @@
             "pageSource": 87,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : Brut – Réassurance non proportionnelle acceptée",
@@ -13004,7 +13004,7 @@
             "pageSource": 87,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -13686,7 +13686,7 @@
         "annee": 2025,
         "pageSource": 69,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -13699,7 +13699,7 @@
             "pageSource": 69,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge des sinistres Brut — Non-vie, réassurance proportionnelle acceptée (Total)",
@@ -13709,7 +13709,7 @@
             "pageSource": 69,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Charge des sinistres Brut — Non-vie, réassurance non proportionnelle acceptée (Total)",
@@ -13719,7 +13719,7 @@
             "pageSource": 69,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises Brut — Non-vie, assurance directe (Total)",
@@ -13729,7 +13729,7 @@
             "pageSource": 69,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises Brut — Non-vie, réassurance proportionnelle acceptée (Total)",
@@ -13739,7 +13739,7 @@
             "pageSource": 69,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes acquises Brut — Non-vie, réassurance non proportionnelle acceptée (Total)",
@@ -13749,7 +13749,7 @@
             "pageSource": 69,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -16626,7 +16626,7 @@
         "annee": 2025,
         "pageSource": 239,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -16639,7 +16639,7 @@
             "pageSource": 239,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance proportion- nelle acceptee r0320",
@@ -16649,7 +16649,7 @@
             "pageSource": 239,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes – assurance directe r0210",
@@ -16659,7 +16659,7 @@
             "pageSource": 239,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance proportion- nelle acceptee r0220",
@@ -16669,7 +16669,7 @@
             "pageSource": 239,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -20194,7 +20194,7 @@
             "pageSource": 113,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : Brut – Réassurance proportionnelle acceptée",
@@ -20204,7 +20204,7 @@
             "pageSource": 113,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : Brut – Réassurance non proportionnelle acceptée",
@@ -20214,7 +20214,7 @@
             "pageSource": 113,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -20905,7 +20905,7 @@
         "annee": 2025,
         "pageSource": 48,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -20918,7 +20918,7 @@
             "pageSource": 48,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Claims incurred | Charge des sinistres",
@@ -20928,7 +20928,7 @@
             "pageSource": 48,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Claims incurred | Charge des sinistres",
@@ -20938,7 +20938,7 @@
             "pageSource": 48,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Premiums earned | Primes acquises",
@@ -20948,7 +20948,7 @@
             "pageSource": 48,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Premiums earned | Primes acquises",
@@ -20958,7 +20958,7 @@
             "pageSource": 48,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Premiums earned | Primes acquises",
@@ -20968,7 +20968,7 @@
             "pageSource": 48,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -26161,7 +26161,7 @@
         "annee": 2025,
         "pageSource": 181,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -26174,7 +26174,7 @@
             "pageSource": 181,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes - assurance directe r0210",
@@ -26184,7 +26184,7 @@
             "pageSource": 181,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -26960,7 +26960,7 @@
         "annee": 2025,
         "pageSource": 124,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -26973,7 +26973,7 @@
             "pageSource": 124,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance proportion- nelle acceptee r0320",
@@ -26983,7 +26983,7 @@
             "pageSource": 124,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes – assurance directe r0210",
@@ -26993,7 +26993,7 @@
             "pageSource": 124,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance proportion- nelle acceptee r0220",
@@ -27003,7 +27003,7 @@
             "pageSource": 124,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
@@ -29565,7 +29565,7 @@
         "annee": 2025,
         "pageSource": 219,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -29578,7 +29578,7 @@
             "pageSource": 219,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : brutes – reassu- rance proportion- nelle acceptee r0320",
@@ -29588,7 +29588,7 @@
             "pageSource": 219,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "primes acquises brutes – assurance directe r0210",
@@ -29598,7 +29598,7 @@
             "pageSource": 219,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : brutes – reassu- rance proportion- nelle acceptee r0220",
@@ -29608,7 +29608,7 @@
             "pageSource": 219,
             "operation": "den",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           }
         ],
         "sourcePdf": null,
