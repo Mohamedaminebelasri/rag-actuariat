@@ -9771,12 +9771,12 @@
       "note_avertissement": null
     },
     "charge_sinistres": {
-      "value": 2393.639,
+      "value": 2389.445,
       "unit": "M€",
       "year": 2025,
       "source_page": 113,
-      "source_chapter": "A.2",
-      "raw_value": 2393639.0,
+      "source_chapter": "A.2 — signe d'une ligne corrigé p.113 (Décision 160)",
+      "raw_value": 2389445.0,
       "raw_unit": "K€",
       "source_pdf": null,
       "avertissement": false,
@@ -9867,7 +9867,7 @@
       "note_avertissement": null
     },
     "sp_nonvie": {
-      "value": 60.4,
+      "value": 60.3,
       "unit": "pct",
       "year": 2025,
       "source_page": 113,
@@ -10100,7 +10100,7 @@
       "value": 84032.648,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 85,
       "source_chapter": "D.2",
       "raw_value": 84032648.0,
       "raw_unit": "K€",
@@ -10112,7 +10112,7 @@
       "value": 5263.956,
       "unit": "M€",
       "year": 2025,
-      "source_page": null,
+      "source_page": 85,
       "source_chapter": "D.2",
       "raw_value": 5263956.0,
       "raw_unit": "K€",

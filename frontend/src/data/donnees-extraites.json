@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-16T12:53:58",
+  "genereLe": "2026-10-16T13:14:54",
   "societes": [
     {
       "id": 67,
@@ -12619,7 +12619,7 @@
         "unite": "M€",
         "categorie": "provisions",
         "annee": 2025,
-        "pageSource": null,
+        "pageSource": 85,
         "chapitreSource": "D.2",
         "valide": true,
         "valeurBrute": 84032648.0,
@@ -12631,7 +12631,7 @@
             "codeQrt": "Meilleure estimation (occurrence 1/5)",
             "valeur": 25717.336,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12639,7 +12639,7 @@
             "codeQrt": "Meilleure estimation (occurrence 2/5)",
             "valeur": 1682.931,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12647,7 +12647,7 @@
             "codeQrt": "Meilleure estimation (occurrence 3/5)",
             "valeur": 707.335,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12655,7 +12655,7 @@
             "codeQrt": "Meilleure estimation (occurrence 4/5)",
             "valeur": 47745.595,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12663,7 +12663,7 @@
             "codeQrt": "Meilleure estimation (occurrence 5/5)",
             "valeur": 8179.451,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           }
         ],
@@ -12676,7 +12676,7 @@
         "unite": "M€",
         "categorie": "provisions",
         "annee": 2025,
-        "pageSource": null,
+        "pageSource": 85,
         "chapitreSource": "D.2",
         "valide": true,
         "valeurBrute": 5263956.0,
@@ -12688,7 +12688,7 @@
             "codeQrt": "Marge de risque (occurrence 1/5)",
             "valeur": 2007.159,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12696,7 +12696,7 @@
             "codeQrt": "Marge de risque (occurrence 2/5)",
             "valeur": 113.027,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12704,7 +12704,7 @@
             "codeQrt": "Marge de risque (occurrence 3/5)",
             "valeur": 112.74,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12712,7 +12712,7 @@
             "codeQrt": "Marge de risque (occurrence 4/5)",
             "valeur": 2674.79,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           },
           {
@@ -12720,7 +12720,7 @@
             "codeQrt": "Marge de risque (occurrence 5/5)",
             "valeur": 356.24,
             "unite": "M€",
-            "pageSource": null,
+            "pageSource": 85,
             "operation": "+"
           }
         ],
@@ -19868,14 +19868,14 @@
         "noteAvertissement": null
       },
       "charge_sinistres": {
-        "valeur": 2393.639,
+        "valeur": 2389.445,
         "unite": "M€",
         "categorie": "activité",
         "annee": 2025,
         "pageSource": 113,
-        "chapitreSource": "A.2",
+        "chapitreSource": "A.2 — signe d'une ligne corrigé p.113 (Décision 160)",
         "valide": false,
-        "valeurBrute": 2393639.0,
+        "valeurBrute": 2389445.0,
         "uniteBrute": "K€",
         "estCompose": true,
         "composants": [
@@ -19898,7 +19898,7 @@
           {
             "label": "Brut – Réassurance non proportionnelle acceptée",
             "codeQrt": "Brut – Réassurance non proportionnelle acceptée",
-            "valeur": 2.097,
+            "valeur": -2.097,
             "unite": "M€",
             "pageSource": 113,
             "operation": "+"
@@ -20145,13 +20145,13 @@
         }
       },
       "sp_nonvie": {
-        "valeur": 60.4,
+        "valeur": 60.3,
         "unite": "pct",
         "categorie": "indicateurs_comparables",
         "annee": 2025,
         "pageSource": 113,
         "chapitreSource": "Calculé à partir des primes et des sinistres par ligne d'activité",
-        "valide": false,
+        "valide": true,
         "valeurBrute": null,
         "uniteBrute": null,
         "estCompose": true,
@@ -20164,7 +20164,7 @@
             "pageSource": 113,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : Brut – Réassurance proportionnelle acceptée",
@@ -20174,17 +20174,17 @@
             "pageSource": 113,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Sinistres : Brut – Réassurance non proportionnelle acceptée",
             "codeQrt": null,
-            "valeur": 2.097,
+            "valeur": -2.097,
             "unite": "M€",
             "pageSource": 113,
             "operation": "num",
             "sourcePdf": null,
-            "valide": false
+            "valide": true
           },
           {
             "label": "Primes : Brut – assurance directe",
@@ -30207,7 +30207,7 @@
       "diversification_sur_modules_pct": 26.1,
       "ajustements_sur_scr_pct": -12.7,
       "scr_sur_primes_plus_be_pct": 28.01,
-      "sp_nonvie_pct": 60.4,
+      "sp_nonvie_pct": 60.3,
       "position_mcr": "entre_25_45",
       "base_scr": "formule_standard",
       "utilise_va": true,
