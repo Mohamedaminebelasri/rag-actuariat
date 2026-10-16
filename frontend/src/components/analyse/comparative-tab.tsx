@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info, RotateCcw, TriangleAlert, Users, X } from "lucide-react";
+import { Download, Info, RotateCcw, TriangleAlert, Users, X } from "lucide-react";
 import {
   FILTRES_VIDES,
   avertissementComparabilite,
@@ -19,7 +19,7 @@ import { ComparisonBarChart } from "./comparison-bar-chart";
 import { AlertsPanel } from "./alerts-panel";
 import { FiltresSocietesBar } from "./filtres-societes";
 import { groupePairsCommun, groupePairsDe, pairsLesPlusProches } from "@/lib/comparabilite";
-// import { exporterCsvComparatif } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
+import { exporterCsvComparatif } from "@/lib/csv-export";
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 const MAX_SOCIETES = 8;
@@ -174,14 +174,16 @@ export function ComparativeTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuil
               classement « Position parmi les pairs » utilise les {pairsReference.n}.
             </p>
           )}
-          {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
-          <button
-            onClick={() => exporterCsvComparatif(societes)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] border border-border text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors"
-          >
-            <Download className="w-[15px] h-[15px]" />
-            Exporter (CSV)
-          </button> */}
+          <div className="flex w-full justify-end">
+            <button
+              onClick={() => exporterCsvComparatif(societes, filtreCategorie)}
+              title="Télécharger un fichier CSV (Excel en français) : les sociétés sélectionnées et les indicateurs du tableau"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] border border-border text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors"
+            >
+              <Download className="w-[15px] h-[15px]" />
+              Exporter (CSV)
+            </button>
+          </div>
 
           <RadarComparatif societesComparees={societes} />
           <TiersComparatif societesComparees={societes} />

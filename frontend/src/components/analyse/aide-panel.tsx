@@ -126,6 +126,13 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
         pour la diversification, le meilleur et le pire sont en gras.
       </p>
       <p>
+        <span className="font-medium text-text-primary">Exporter (CSV) :</span> fichier prévu pour Excel en français
+        (séparateur « ; », virgule décimale, accents). Il contient les sociétés sélectionnées, dans l&apos;ordre
+        affiché, et les indicateurs du tableau (catégorie filtrée comprise) ; une valeur absente est une cellule vide, un
+        zéro réel reste 0, et les valeurs non comparables sont identifiées dans des colonnes dédiées, avec leur note. Le
+        même bouton existe dans l&apos;Analyse individuelle, pour une société.
+      </p>
+      <p>
         <span className="font-medium text-text-primary">Agrandir :</span> le radar (avec son tableau de parts), la
         comparaison par KPI et le tableau comparatif ont une flèche en haut à droite de leur carte pour les agrandir ;
         la flèche de réduction (ou Échap, ou un clic sur le fond) ramène à la page. Le radar s&apos;agrandit aussi d&apos;un

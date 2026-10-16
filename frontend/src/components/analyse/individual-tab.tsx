@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CircleCheck, FileSearch, FileText } from "lucide-react";
+import { CircleCheck, Download, FileSearch, FileText } from "lucide-react";
 import { CATEGORIES, KPI_DEFINITIONS, kpisSociete, listeSfcrDisponibles } from "@/data/analyse-demo";
 import { KpiCard } from "./kpi-card";
 import { ScrBreakdownChart } from "./scr-breakdown-chart";
@@ -12,7 +12,7 @@ import { kpisDe, labelKpi } from "@/lib/donnees-extraites-utils";
 // import { IndicateursComparables } from "./indicateurs-comparables";
 // Réactivé (Phase 3, nuit du 15/10/2026) : réécrit sur les groupes de pairs.
 import { PositionMarche } from "./position-marche";
-// import { exporterCsvIndividuel } from "@/lib/csv-export"; // masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
+import { exporterCsvIndividuel } from "@/lib/csv-export";
 import { SEUIL_VERT_SCR_DEFAUT } from "@/lib/seuils-config";
 
 /** Port de analyse_individuelle() (individuelle.py, Reflex). */
@@ -66,15 +66,15 @@ export function IndividualTab({ seuilVertScr = SEUIL_VERT_SCR_DEFAUT }: { seuilV
         <div className="w-full flex flex-col items-start">
           <div className="flex items-center w-full mt-6 mb-2">
             <h2 className="font-heading italic text-2xl text-text-primary">{label}</h2>
-            {/* masqué : export CSV à refaire plus tard (marqueur valeur non comparable, séparateur ; + BOM UTF-8, colonnes confiance/variation)
             <span className="flex-1" />
             <button
               onClick={() => exporterCsvIndividuel(societe)}
+              title="Télécharger un fichier CSV (Excel en français) : tous les indicateurs de cette société"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] border border-border text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors"
             >
               <Download className="w-[15px] h-[15px]" />
               Exporter (CSV)
-            </button> */}
+            </button>
           </div>
 
           <PositionMarche key={societe} societe={societe} />
