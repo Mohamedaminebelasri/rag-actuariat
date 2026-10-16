@@ -1,5 +1,5 @@
 {
-  "genereLe": "2026-10-16T13:14:54",
+  "genereLe": "2026-10-16T13:49:54",
   "societes": [
     {
       "id": 67,
@@ -866,7 +866,7 @@
         "unite": "M€",
         "categorie": "provisions",
         "annee": 2025,
-        "pageSource": 207,
+        "pageSource": 199,
         "chapitreSource": "Document combiné 'AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf' (288p), entité isolée — S.02.01.02, somme (mapping)",
         "valide": true,
         "valeurBrute": 117.0,
@@ -1277,7 +1277,7 @@
         "unite": "pct",
         "categorie": "indicateurs_comparables",
         "annee": 2025,
-        "pageSource": 207,
+        "pageSource": 199,
         "chapitreSource": "Calculé à partir des provisions techniques du bilan prudentiel",
         "valide": true,
         "valeurBrute": null,
@@ -1289,7 +1289,7 @@
             "codeQrt": null,
             "valeur": 0.117,
             "unite": "M€",
-            "pageSource": 207,
+            "pageSource": 199,
             "operation": "num",
             "kpiCode": "marge_risque",
             "sourcePdf": null,
