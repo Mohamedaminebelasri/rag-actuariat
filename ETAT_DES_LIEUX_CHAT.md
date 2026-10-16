@@ -332,6 +332,75 @@ documents à part entière. »
   - `documents_sfcr` est intacte (41 lignes, 0 `_entite_`, 41 chemins
     existants), et `kpis.db` n'a pas changé.
 
+### P3 — en cours (16/10)
+
+**Sociétés concernées** (`type_document = annexe_qrt`) :
+
+| `societe_id` | Société | Annexe actuelle |
+|---:|---|---|
+| 116 | AXA France Vie | `data/afv-annexes-2025-etats-quantitatifs.pdf` (11 p.) |
+| 117 | AXA France IARD | `data/Annexe-QRT-Publics-AFI-2025-ok.pdf` (10 p.) |
+| 103 | Cardif Assurance Vie | `data/Cardif-Assurance-Vie-–-Annexes-2025.pdf` (14 p.) |
+| 104 | Cardif Assurances Risques Divers | `data/cardif-assurances-risques-divers-–-annexes-2025.pdf` (14 p.) |
+| 121 | Generali IARD | `data/Annexe_RSSF_QRT_GIARD_2025.pdf` (15 p.) |
+| 122 | Generali Vie | `data/Annexe_RSSF_QRT_GVIE_2025.pdf` (11 p.) |
+
+**Recherche par le contenu** (PyMuPDF, texte natif) dans les 9 PDF de
+`data/` absents de `documents_sfcr`. Trois critères : nom de l'entité,
+exercice 2025, chapitres A à E.
+
+| Société | Rapport complet | Vérification |
+|---|---|---|
+| AXA France Vie | ✅ `data/AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf` (107 p.) | « AXA France Vie » 145 fois ; « pour l'exercice 2025 », « 31 décembre 2025 » 20 fois ; chapitres A à E |
+| AXA France IARD | ✅ `data/AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf` (96 p.) | « AXA France IARD » 110 fois ; « 31 décembre 2025 » 24 fois ; chapitres A (« Activité et résultat », p. 12) à E |
+| Generali Vie | ✅ `data/RSSF_Generali_Vie_2025.pdf` (91 p.) | « Generali Vie » 119 fois ; « Exercice 2025 » ; chapitres A à E |
+| Generali IARD | ✅ `data/RSSF_Generali_Iard_2025.pdf` (83 p.) | « Generali Iard » 103 fois ; « Exercice 2025 » ; chapitres A à E |
+| Cardif Assurance Vie | ❌ absent | Aucun PDF de `data/` ne cite « Cardif » sur ses 5 premières pages, hors les deux annexes |
+| Cardif Assurances Risques Divers | ❌ absent | Idem |
+
+Les 4 rapports trouvés sont ceux déjà utilisés comme documents secondaires
+(Décisions 145 et 146).
+
+**Structure.** La clé primaire est passée de (`societe_id`, `annee`) à
+(`societe_id`, `annee`, `type_document`), à la demande de l'utilisateur.
+SQLite ne sait pas modifier une clé en place : la table est recopiée, puis
+remplacée, dans une même transaction. Les 41 lignes d'origine sont
+conservées à l'identique. Sauvegarde préalable :
+`archive/kpis_avant_p3_rapports_complets_20261016_214030.db` (SHA-256
+`983e9119c564634b9279607794eacec6c8a3ea1948b25e859a65993f525406cf`).
+
+**Lignes ajoutées.** Une ligne `rapport_complet` (`rapport_groupe = 0`) est
+ajoutée pour les 4 sociétés, et leur ligne `annexe_qrt` est gardée.
+`creer_table_documents_sfcr.py` les recrée grâce au dictionnaire
+`RAPPORTS_COMPLETS_SUPPLEMENTAIRES`, et fait la migration de clé si
+nécessaire. Le script a été relancé une seconde fois : le contenu est
+identique (même empreinte, 45 lignes, aucune nouvelle migration).
+
+**Contrôles.**
+- `documents_sfcr` : 41 → **45 lignes**, 41 sociétés distinctes, dont 4 avec
+  2 lignes. Les 41 lignes d'origine sont identiques, 4 sont ajoutées et
+  aucune n'est supprimée.
+- Les 45 `pdf_path` existent, et aucun n'est un `_entite_`.
+- Les 8 autres tables sont identiques à la sauvegarde (nombre de lignes,
+  contenu et schéma).
+
+**Reste à faire : rapports complets absents (à télécharger)**, avec le nom
+exact de l'entité tel qu'il figure sur l'annexe :
+- **Cardif Assurance Vie** : annexe « RAPPORT SUR LA SOLVABILITE ET LA
+  SITUATION FINANCIERE — Cardif Assurance Vie — Annexes Quantitative
+  Reporting Templates - QRT — 31 décembre 2025 ».
+- **Cardif Assurances Risques Divers** : même intitulé, entité « Cardif
+  Assurances Risques Divers », 31 décembre 2025.
+
+Une fois ces deux rapports déposés dans `data/`, il suffira de les ajouter à
+`RAPPORTS_COMPLETS_SUPPLEMENTAIRES` et de relancer le script.
+
+**Découverte au passage (anomalie 9).** `are-annexes-2025-etats-quantitatifs.pdf`
+est l'annexe QRT 2025 d'**AXA Retraite Entreprise** (première page :
+« AXA Retraite Entreprise — Rapport sur la Solvabilité et la Situation
+Financière 2025 — Annexe 2 : États annuels quantitatifs (QRT) »). Cette
+société n'est pas dans `kpis.db`.
+
 ---
 
 ## 0.4 kpis.db et kpi_service.py
