@@ -220,6 +220,90 @@ change de PDF pour une société, il faut relancer
 `creer_table_documents_sfcr.py`. `kpi_service.py` ne lit pas encore la
 table (cela relève du titre 3, outils de l'agent).
 
+### P2 — vérification (16/10)
+
+Vérification en lecture seule sur le poste local : rien n'a été supprimé ni
+modifié. **L'anomalie 4 ci-dessus est inexacte sur un point** : le commit
+`07c85c9` n'a pas ajouté les extraits.
+
+**1. Commit `07c85c9`.** Auteur Mohamed Amine Belasri, 2026-10-15 23:17
+(UTC). Message : « feat(export): champ sourceLisible pour les cartes à
+avertissement (Décision 158, bonus) », avec la mention Claude Opus 5.5
+comme co-auteur. Il ne modifie qu'**un seul fichier**,
+`export_kpis_for_frontend.py` (+7 lignes), et **aucun PDF**. Cause probable
+de l'erreur du 0.3 (à vérifier) : un clone cloud superficiel, où le
+premier commit visible semble ajouter tous les fichiers.
+
+**2. Chronologie** (`git log --all -- 'data/_entite_*'`) :
+- 25/09 (`a2c3a42`, Décision 089) : 20 extraits temporaires (Aéma et AG2R)
+  sont supprimés **du disque** (`data/`). Ils n'avaient jamais été dans Git :
+  aucun commit antérieur ne les contient.
+- Entre le 25/09 et le 27/09 : les 9 extraits AG2R sont recréés dans `data/`.
+  En effet, `ag2r_entites.py` (l. 269) et `peupler_composants_ag2r.py`
+  (l. 51) appellent `extraire_entite()` (`test_markdrop/ingest.py`, l. 132-162),
+  qui écrit `_entite_<nom>.pdf` à côté du PDF source. Aucun de ces scripts ne
+  les supprime ensuite.
+- 27/09 (`049c80c`, « Ajoute les PDF source SFCR/RSSF des 34 sociétés… ») :
+  les 9 extraits entrent dans Git **pour la seule et unique fois**, avec 28
+  autres PDF de `data/` (37 fichiers dans ce commit).
+- Depuis : aucun commit ne les supprime ni ne les modifie. Le contenu sur le
+  disque est identique à celui de Git (`git status` propre). La date des
+  fichiers (05/10) n'est pas concluante, car Git la réécrit à chaque checkout.
+
+**3. Références** (fichiers suivis par Git, aucun fichier Python non suivi
+concerné) :
+
+| Où | Référence | Rôle |
+|---|---|---|
+| `test_markdrop/ingest.py:142, 159` | `_entite_{slug}.pdf` | **Crée** les extraits (`extraire_entite()`) |
+| `ag2r_entites.py:269` | `extraire_entite(SOURCE_PDF, …)` | Recrée l'extrait, puis le lit pour extraire les KPIs de l'entité |
+| `peupler_composants_ag2r.py:51` | `extraire_entite(ag.SOURCE_PDF, …)` | Idem pour les composants ; pages relatives converties en pages absolues (Décision 133) |
+| `creer_table_documents_sfcr.py:17, 86-87` | `_entite_` | **Refuse** les extraits (P1) |
+| `batch_diagnostic.py:456` | `DATA_DIR.glob("*.pdf")` | Pas de référence explicite, mais parcourt **tous** les PDF de `data/` : `EXCLUSIONS` ne contient que `ifrs17.pdf` et `solva2.pdf`, donc les 9 extraits y sont comptés comme 9 documents à part entière (la « pollution » décrite par la Décision 089) |
+| Front (`frontend/`, hors `node_modules` et `.next`), y compris `pdf-par-societe.ts` et `frontend/src/data/*.json` | aucune | — |
+| Ingestion Qdrant (`test_markdrop/ingest_qdrant*.py`, `run_pipeline.py`) | aucune | — |
+| `kpis.db` : `kpis.source_pdf`, `source_chapter`, `source_chapter_technique`, `kpi_composants.composant_source_pdf`, `composant_detail`, `validation_checks.details`, `documents_sfcr.pdf_path` | aucune (0 ligne) | `kpis.source_pdf` ne contient que `RSSF_Generali_Iard_2025.pdf` (9) et `RSSF_Generali_Vie_2025.pdf` (8) |
+
+Les mentions dans les fichiers `.md` (DECISIONS.md, ce rapport) sont de la
+documentation et n'ont pas été comptées.
+
+**4. Contenu.** Comparaison du texte page par page (PyMuPDF, espaces
+normalisés, empreinte SHA-256 par page). Les **9 extraits sont des copies
+exactes** des pages du rapport complet `AG2R-LA-MONDIALE-RSSF-Groupe-2025.pdf`
+données par `ag2r_entites.py::ENTITES_BORNES` : 154 pages sur 154 sont
+identiques, et aucune page n'est sans texte. Deux exemples :
+- `_entite_AG2R_Prevoyance.pdf` (19 p.) = **pages 139 à 157** du rapport. Il
+  commence par « S.02.01.02 - Bilan » et finit par « Calcul du montant
+  notionnel du MCR en non-vie et en vie ».
+- `_entite_La_Mondiale_Partenaire.pdf` (14 p.) = **pages 273 à 286**. Il
+  commence par « S.02.01.02 - Bilan » et finit sur le tableau des
+  « Meilleure estimation et PT calculées comme un tout ».
+
+Ce sont uniquement les blocs QRT de chaque entité, sans texte narratif.
+
+**5. Décision 089** (DECISIONS.md, l. 5740-5743) :
+« Nettoyage : les 20 fichiers `_entite_*.pdf` temporaires (isolation
+Aéma/AG2R, régénérables via `extraire_entite()`) supprimés de `data/` après
+usage — ils polluaient le diagnostic générique en étant scannés comme des
+documents à part entière. »
+
+**6. Conclusion.**
+- **Utilisés ? Non**, en tant que fichiers suivis par Git. Aucun lecteur ne
+  dépend de leur présence. Les deux scripts qui les lisent
+  (`ag2r_entites.py`, `peupler_composants_ag2r.py`) les **recréent juste
+  avant** de les lire. Le front, l'export, Qdrant et `kpis.db` ne les
+  citent pas.
+- **Qu'est-ce qui casserait si on les retirait de Git ? Rien.**
+  Conséquences à prévoir :
+  - toute nouvelle exécution des deux scripts AG2R les recrée dans `data/`.
+    Sans règle `.gitignore` (aucune ne couvre `data/_entite_*.pdf`
+    aujourd'hui), ils réapparaîtraient comme fichiers non suivis et
+    pourraient être recommités par un `git add data/` ;
+  - tant qu'ils sont dans `data/`, `batch_diagnostic.py` les compte comme
+    des documents.
+- Pour le Chat AI : ne jamais les indexer (rappel du 0.3). `documents_sfcr`
+  les exclut déjà.
+
 ---
 
 ## 0.4 kpis.db et kpi_service.py
