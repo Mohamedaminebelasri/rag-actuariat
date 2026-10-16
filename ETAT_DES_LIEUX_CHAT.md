@@ -1041,3 +1041,96 @@ la base) :
   démonstration intégrée à `kpi_service.py` (`python kpi_service.py`)
   tourne sur l'original en lecture seule : « Contrôles Groupama 2025 :
   53/59 passés », sans liste d'échecs.
+
+### P14 — vérification (16/10)
+
+Lecture seule ; aucun fichier n'a été modifié en dehors de ce rapport.
+
+**1. Libellés des 27 KPI** : `label` de `kpi_definitions.py` comparé à
+`catalogue_kpis.libelle`, qui est le libellé affiché par le front. Il y a
+**10 libellés identiques sur 27** : les 4 identiques parmi les 21 extraits,
+et les 6 KPI officiels, que le front reçoit justement de Python.
+
+| kpi_id | Libellé Python (`kpi_definitions.py`) | Libellé front (`catalogue_kpis`) | Identiques |
+|---|---|---|---|
+| `ratio_scr` | Ratio de couverture du SCR | Ratio SCR | non |
+| `ratio_mcr` | Ratio de couverture du MCR | Ratio MCR | non |
+| `fonds_propres_eligibles` | Total des fonds propres éligibles | Fonds propres éligibles | non |
+| `fonds_propres_t1_nr` | Fonds propres de base Tier 1 non repris | Fonds propres Tier 1 non restreint | non |
+| `fonds_propres_t1_r` | Fonds propres de base Tier 1 repris | Fonds propres Tier 1 restreint | non |
+| `fonds_propres_t2` | Fonds propres de base Tier 2 | Fonds propres Tier 2 | non |
+| `fonds_propres_t3` | Fonds propres de base Tier 3 | Fonds propres Tier 3 | non |
+| `scr_total` | Capital de solvabilité requis (SCR total) | SCR total | non |
+| `scr_marche` | SCR — Risque de marché | SCR — Risque de marché | oui |
+| `scr_souscription_vie` | SCR — Risque de souscription vie | SCR — Souscription vie | non |
+| `scr_souscription_nonvie` | SCR — Risque de souscription non-vie | SCR — Souscription non-vie | non |
+| `scr_souscription_sante` | SCR — Risque de souscription santé | SCR — Souscription santé | non |
+| `scr_contrepartie` | SCR — Risque de contrepartie (défaut) | SCR — Risque de contrepartie | non |
+| `scr_operationnel` | SCR — Risque opérationnel | SCR — Risque opérationnel | oui |
+| `scr_diversification` | SCR — Effet de diversification | Effet de diversification | non |
+| `best_estimate` | Best estimate (provisions techniques) | Best estimate | non |
+| `marge_risque` | Marge de risque | Marge de risque | oui |
+| `provisions_techniques` | Provisions techniques totales | Provisions techniques | non |
+| `mcr` | Capital minimum requis (MCR) | MCR | non |
+| `primes_acquises_brutes` | Primes acquises brutes | Primes acquises brutes | oui |
+| `charge_sinistres` | Charge des sinistres | Charge de sinistres | non |
+| `ratio_scr_sans_mesures_lt` | Ratio SCR sans mesures de long terme | Ratio SCR sans mesures de long terme | oui |
+| `impact_va` | Impact de la correction pour volatilité | Impact de la correction pour volatilité | oui |
+| `impact_transitoires` | Impact des mesures transitoires | Impact des mesures transitoires | oui |
+| `marge_risque_sur_be` | Marge de risque / best estimate | Marge de risque / best estimate | oui |
+| `sp_nonvie` | Ratio sinistres / primes non-vie | Ratio sinistres / primes non-vie | oui |
+| `mcr_en_pct_scr` | MCR en % du SCR | MCR en % du SCR | oui |
+
+**2. Qui lit les libellés Python.** Méthode :
+- recherche de tous les fichiers `.py` qui importent `kpi_definitions` :
+  29 fichiers, tous suivis par Git, aucun non suivi ;
+- recherche de chaque accès au champ `label` ;
+- recherche des champs lus via les définitions : `unit` 52 fois,
+  `category` 41, `kpi_name` 35, `sfcr_chapter` 19, `sign` 1, et `label`
+  **1 seule fois**.
+
+| Endroit | Ce qui est lu | Rôle |
+|---|---|---|
+| `export_kpis_for_frontend.py:280` | `KPI_INDICATEURS_OFFICIELS[].label` (les **6 officiels**) | écrit dans `definitionsKpis` de `donnees-extraites.json`, affiché par le front (`labelKpi()`) |
+| `creer_table_catalogue_kpis.py:92` | `KPI_INDICATEURS_OFFICIELS[].label` (les **6 officiels**) | écrit dans `catalogue_kpis.libelle` |
+| Les 27 autres importeurs (`extract_kpis*.py`, `aema_entites.py`, `ag2r_entites.py`, `validate_kpis.py`, `corrections_comparabilite.py`, `batch_diagnostic.py`, `export_kpis_json.py`, `peupler_kpis_officiels_indicateurs.py`, `test_kpis_officiels.py`) | `kpi_name`, `unit`, `category`, `sfcr_chapter`, `sign`, `indicateur` ; **jamais `label`** | extraction, conversion d'unité, contrôles, export |
+
+**Les libellés `KPI_DEFINITIONS[].label` des 21 KPI extraits ne sont lus
+par aucun code.** Ce sont eux qui diffèrent du front, dont « Tier 1 non
+repris / repris ». En particulier :
+- **Prompt LLM d'extraction : non.** Le seul appel à un LLM qui touche
+  `kpi_definitions` (`extract_kpis.py:615` et `:654`, Gemini ou Claude sur
+  `picture_75.png`) a un prompt écrit en dur : libellés « SCR Marché »,
+  « SCR Vie »… et clés `kpi_name`. Le pipeline RAG (`test_markdrop/`)
+  n'importe pas `kpi_definitions`.
+- **Écrits dans `kpis.db` ou les JSON : non.** Recherche des 17 libellés
+  différents dans `kpis.db`, `donnees-extraites.json` et `kpi-sources.json` :
+  les seules occurrences sont des textes identiques d'une autre origine,
+  pas une copie de `kpi_definitions.py`. Il s'agit des libellés de lignes
+  des PDF (« Charge des sinistres Brut — Vie », dans `kpi_composants` et
+  `validation_checks`), de la définition du front recopiée dans
+  `catalogue_kpis`, et de « Ratio de couverture du SCR minimal consolidé »
+  (écrit en dur dans `export_kpis_for_frontend.py:255`).
+- **Clé de correspondance : non.** Toutes les recherches passent par
+  `kpi_name`. Les chaînes recherchées dans les PDF sont d'autres constantes,
+  indépendantes de `kpi_definitions.py`. Il s'agit de `kpi_labels_fr.py`
+  (« Ratio de couverture du SCR »…), de `corriger_source_page.py:75`
+  (« Charge des sinistres », « Charge de sinistres ») et de
+  `batch_diagnostic.py:174-219`.
+
+**3. Ce qui changerait** si l'on remplaçait les libellés Python par ceux du
+front :
+- **Les 21 libellés extraits :** rien dans le comportement. Aucun script ne
+  les lit : ni extraction, ni base, ni export, ni front, ni LLM. Seuls la
+  documentation et le texte de `kpi_definitions.py` changent. Le risque est
+  nul pour les recherches, qui n'en dépendent pas.
+- **Les 6 libellés officiels :** ils sont déjà identiques ; rien ne
+  changerait. Pour information, les modifier changerait le libellé affiché
+  par le front après `export_kpis_for_frontend.py`, et `catalogue_kpis`
+  après `creer_table_catalogue_kpis.py`.
+- **`catalogue_kpis` :** inchangé, car il prend déjà le libellé du front
+  pour les 21.
+- **Point d'attention :** les constantes de recherche dans les PDF
+  (`kpi_labels_fr.py` etc.) sont un sujet distinct. Elles reproduisent le
+  texte imprimé dans les rapports, et ne doivent **pas** être alignées sur
+  les libellés d'affichage.
