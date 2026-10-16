@@ -145,22 +145,28 @@ class KpiService:
             return [dict(r) for r in rows]
 
     def validation_summary(self, company_name, year):
-        """Résumé agrégé : {n_checks, n_passed, n_failed, n_non_controlables,
-        checks_echoues, checks_non_controlables}. Un contrôle « NON
-        CONTRÔLABLE » (page image illisible, écrit ainsi par validate_kpis.py)
-        n'est pas un échec : il est compté à part."""
+        """Résumé agrégé : {n_checks, n_passed, n_failed, n_ecarts_expliques,
+        n_non_controlables, checks_echoues, checks_ecarts_expliques,
+        checks_non_controlables}. Ni un contrôle « NON CONTRÔLABLE » (page
+        image illisible, écrit ainsi par validate_kpis.py), ni un écart
+        légitime (legitime=1, raison dans note_legitimite) ne sont des échecs :
+        ils sont comptés à part."""
         checks = self.get_validation_checks(company_name, year)
         non_passes = [c for c in checks if not c["passed"]]
         non_controlables = [c["check_name"] for c in non_passes
                             if (c["details"] or "").startswith("NON CONTRÔLABLE")]
-        echoues = [c["check_name"] for c in non_passes
-                   if not (c["details"] or "").startswith("NON CONTRÔLABLE")]
+        restants = [c for c in non_passes if not (c["details"] or "").startswith("NON CONTRÔLABLE")]
+        ecarts_expliques = [{"check_name": c["check_name"], "raison": c["note_legitimite"]}
+                            for c in restants if c["legitime"]]
+        echoues = [c["check_name"] for c in restants if not c["legitime"]]
         return {
             "n_checks": len(checks),
-            "n_passed": len(checks) - len(echoues) - len(non_controlables),
+            "n_passed": len(checks) - len(non_passes),
             "n_failed": len(echoues),
+            "n_ecarts_expliques": len(ecarts_expliques),
             "n_non_controlables": len(non_controlables),
             "checks_echoues": echoues,
+            "checks_ecarts_expliques": ecarts_expliques,
             "checks_non_controlables": non_controlables,
         }
 
@@ -240,8 +246,9 @@ class KpiService:
                 "checks": self.get_validation_checks(company_name, year),
             }
         except KpiIntrouvable:
-            return {"summary": {"n_checks": 0, "n_passed": 0, "n_failed": 0, "n_non_controlables": 0,
-                                "checks_echoues": [], "checks_non_controlables": []}, "checks": []}
+            return {"summary": {"n_checks": 0, "n_passed": 0, "n_failed": 0, "n_ecarts_expliques": 0,
+                                "n_non_controlables": 0, "checks_echoues": [], "checks_ecarts_expliques": [],
+                                "checks_non_controlables": []}, "checks": []}
 
 
 if __name__ == "__main__":

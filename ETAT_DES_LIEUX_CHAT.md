@@ -1208,3 +1208,62 @@ Ensuite, `kpis.db` a été sauvegardée
 - **Compilation :** `npm run build` réussit (code 0, 93 s : compilation,
   lint, types, 10 pages). Le seul avertissement (polices, dans
   `src/app/layout.tsx`, fichier inchangé depuis le 26/09) existait déjà.
+
+### P16 — résolu (16/10)
+
+**Les 8 écarts légitimes** (`validation_checks`, `legitime=1`, tous
+`passed=0`). Aucun n'est aussi « NON CONTRÔLABLE ». La raison est
+enregistrée pour **les 8**, dans la colonne `note_legitimite` : aucune
+raison ne manque.
+
+| Société | Contrôle | Valeurs comparées | Écart | Raison enregistrée (`note_legitimite`) |
+|---|---|---|---|---|
+| AXA France IARD | `completude_aucun_null` | attendu 0 NULL, trouvé 1 (`scr_souscription_sante`) | 1 NULL | « Seul NULL : scr_souscription_sante, inclus dans scr_souscription_vie (modèle interne complet sans catégorie santé séparée, Décision 150). » |
+| AXA France Vie | `completude_aucun_null` | idem | 1 NULL | idem |
+| Allianz Vie | `completude_aucun_null` | idem | 1 NULL | idem |
+| Generali IARD | `completude_aucun_null` | idem | 1 NULL | idem |
+| Generali Vie | `completude_aucun_null` | idem | 1 NULL | idem |
+| Macifilia | `mcr_inferieur_scr_total` | MCR 4,00 M€ doit être < SCR 1,93 M€ (rapport calculé 2,068) | MCR supérieur au SCR | « Plancher MCR absolu sur petite structure, déjà documenté (Décision 085). » |
+| Themis | `mcr_inferieur_scr_total` | MCR 2,70 M€ doit être < SCR 1,05 M€ (rapport calculé 1,645) | MCR supérieur au SCR | idem |
+| Macifilia | `signe_charge_sinistres` | signe attendu positif, valeur −939,55 M€ | signe négatif | « Reprise de provision vérifiée pixel par pixel (Décision 094, addendum 2026-09-26) : page 511, R0310=-939 552 confirmé exact… Signe négatif économiquement cohérent, pas une erreur d'extraction. » |
+
+**Correction** (`kpi_service.py`, `validation_summary()` seulement, calcul
+du résumé). Les contrôles non réussis sont répartis dans l'ordre suivant :
+- d'abord les « NON CONTRÔLABLE » (P10) ;
+- puis les écarts légitimes (`legitime=1`) ;
+- le reste est compté comme échec.
+
+Toutes les clés existantes sont gardées, y compris celles du P10. Deux
+clés sont ajoutées : `n_ecarts_expliques`, et `checks_ecarts_expliques`
+(liste de `{check_name, raison}`, où `raison` vaut `note_legitimite`). On a
+toujours `n_passed + n_failed + n_ecarts_expliques + n_non_controlables =
+n_checks`. Le résumé vide (société inconnue) porte les mêmes clés.
+
+**Contrôles** (copie de `kpis.db`, ancien code contre nouveau code) :
+- **Sociétés modifiées :** seules les **7 sociétés** qui ont des écarts
+  légitimes changent, chacune d'exactement son nombre (8 au total). Les
+  non contrôlables (36) et leur liste sont **identiques** au P10.
+  `n_passed`, `n_checks` et `checks` sont inchangés pour les 41 sociétés.
+
+| Société | Échoués avant | Échoués après | Écarts expliqués | Non contrôlables |
+|---|---:|---:|---:|---:|
+| AXA France IARD | 1 | 0 | 1 | 0 |
+| AXA France Vie | 1 | 0 | 1 | 0 |
+| Allianz Vie | 1 | 0 | 1 | 0 |
+| Generali IARD | 1 | 0 | 1 | 6 |
+| Generali Vie | 1 | 0 | 1 | 0 |
+| Macifilia | 2 | 0 | 2 | 0 |
+| Themis | 1 | 0 | 1 | 0 |
+| Aema Groupe, Groupama, MACIF SAM | 0 | 0 | 0 | 6 chacune |
+| Abeille IARD Sante, Aesio Mutuelle, MMJ, MNPAF, Macif Sante Prevoyance, Nuoma | 0 | 0 | 0 | 2 chacune |
+| Les 25 autres sociétés | 0 | 0 | 0 | 0 |
+
+- **Total :** 8 échecs avant, **0 échec après**. En l'état de la base,
+  tout contrôle non réussi est soit expliqué, soit non contrôlable.
+- **4 autres fonctions :** les 218 appels (`get_kpis`, `get_kpi`,
+  `compare_kpis`, `get_corpus_stats`) sont **identiques**.
+- **Empreinte de `kpis.db` :** inchangée (`5647a3df62f7e09e…`).
+  `python kpi_service.py` fonctionne (« Contrôles Groupama 2025 : 53/59
+  passés »).
+- Le front et les exports ne sont pas touchés : comme vu au P10, ils
+  n'affichent aucun compte d'échecs.
