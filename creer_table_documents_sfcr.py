@@ -45,12 +45,15 @@ ANNEXES_QRT = {
 }
 # P3 : rapport SFCR complet 2025 des sociétés dont le PDF par défaut est une
 # annexe QRT (entité, exercice 2025 et chapitres A à E vérifiés dans le texte).
-# Absents de data/ : Cardif Assurance Vie, Cardif Assurances Risques Divers.
+# Cardif : téléchargés le 16/10/2026 depuis bnpparibascardif.com
+# (/investisseurs/informations-financieres-2/, rubrique « Rapports de solvabilité »).
 RAPPORTS_COMPLETS_SUPPLEMENTAIRES = {
     "AXA France Vie": "AXA_France_Vie-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
     "AXA France IARD": "AXA_France_IARD-Rapport_2025_sur_la_solvabilite_et_la_situation_financiere.pdf",
     "Generali Vie": "RSSF_Generali_Vie_2025.pdf",
     "Generali IARD": "RSSF_Generali_Iard_2025.pdf",
+    "Cardif Assurance Vie": "Cardif_Assurance_Vie_SFCR_2025.pdf",
+    "Cardif Assurances Risques Divers": "Cardif_Assurances_Risques_Divers_SFCR_2025.pdf",
 }
 RAPPORTS_GROUPE = {
     "Aema-Groupe_RAPPORT-UNIQUE-SUR-LA-SOLVABILITE-ET-LA-SITUATION-FINANCIERE_2025.pdf",

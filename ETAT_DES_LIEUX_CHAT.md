@@ -332,7 +332,7 @@ documents à part entière. »
   - `documents_sfcr` est intacte (41 lignes, 0 `_entite_`, 41 chemins
     existants), et `kpis.db` n'a pas changé.
 
-### P3 — en cours (16/10)
+### P3 — résolu (16/10)
 
 **Sociétés concernées** (`type_document = annexe_qrt`) :
 
@@ -384,16 +384,43 @@ identique (même empreinte, 45 lignes, aucune nouvelle migration).
 - Les 8 autres tables sont identiques à la sauvegarde (nombre de lignes,
   contenu et schéma).
 
-**Reste à faire : rapports complets absents (à télécharger)**, avec le nom
-exact de l'entité tel qu'il figure sur l'annexe :
-- **Cardif Assurance Vie** : annexe « RAPPORT SUR LA SOLVABILITE ET LA
-  SITUATION FINANCIERE — Cardif Assurance Vie — Annexes Quantitative
-  Reporting Templates - QRT — 31 décembre 2025 ».
-- **Cardif Assurances Risques Divers** : même intitulé, entité « Cardif
-  Assurances Risques Divers », 31 décembre 2025.
+**Cardif : rapports complets téléchargés (suite du 16/10).** Les deux
+rapports manquants (« ❌ absent » dans le tableau ci-dessus) ont été trouvés
+sur le site officiel de BNP Paribas Cardif. Page source :
+`https://www.bnpparibascardif.com/investisseurs/informations-financieres-2/`,
+rubrique « Rapports de solvabilité ». Les annexes listées sur cette même
+page portent les noms des fichiers déjà présents dans `data/`. Les deux
+fichiers ont été téléchargés avec l'accord de l'utilisateur, vérifiés, puis
+copiés dans `data/` :
 
-Une fois ces deux rapports déposés dans `data/`, il suffira de les ajouter à
-`RAPPORTS_COMPLETS_SUPPLEMENTAIRES` et de relancer le script.
+| Fichier (`data/`) | Adresse d'origine | Taille | Pages |
+|---|---|---:|---:|
+| `Cardif_Assurance_Vie_SFCR_2025.pdf` | `…/wp-content/uploads/sites/28/2026/04/Cardif-Assurance-Vie-–-SFCR-2025.pdf` | 3 165 177 octets | 57 |
+| `Cardif_Assurances_Risques_Divers_SFCR_2025.pdf` | `…/wp-content/uploads/sites/28/2026/04/Cardif-Assurances-Risques-Divers-–-SFCR-2025.pdf` | 2 356 681 octets | 54 |
+
+Vérifications sur le texte (PyMuPDF), pour les deux fichiers :
+- **Entité** : la page de titre porte « RAPPORT SUR LA SOLVABILITE ET LA
+  SITUATION FINANCIERE SFCR Cardif Assurance Vie » (ou « Cardif Assurances
+  Risques Divers »). Le nom de l'entité revient 170 et 141 fois, et l'autre
+  entité seulement 2 fois. Ce n'est pas le rapport du groupe BNP Paribas
+  Cardif.
+- **Exercice** : « 31 décembre 2025 » sur la page de titre (37 et 30
+  occurrences).
+- **Rapport complet** : chapitres A à E au sommaire et dans le corps (par
+  exemple D p. 46, E p. 54 pour Cardif Assurance Vie), et aucune page QRT
+  (aucun code S.xx.xx.xx). Ce n'est pas l'annexe.
+
+**Lignes ajoutées.** `RAPPORTS_COMPLETS_SUPPLEMENTAIRES` contient maintenant
+6 sociétés. Le script a été relancé après une sauvegarde
+(`archive/kpis_avant_p3_cardif_20261016_221116.db`, SHA-256
+`8fae407ae7c86085657fe07a71b0f505152f413af65636a21a6ccff455585501`).
+- `documents_sfcr` : 45 → **47 lignes** (27 PDF distincts). Les 45 lignes
+  précédentes sont identiques, 2 sont ajoutées (Cardif Assurance Vie 57 p.,
+  Cardif Assurances Risques Divers 54 p.) et aucune n'est supprimée.
+- Les 47 `pdf_path` existent, et les 8 autres tables sont identiques à la
+  sauvegarde.
+- **Les 41 sociétés ont désormais un rapport complet** : aucune ne reste avec
+  une annexe seule.
 
 **Découverte au passage (anomalie 9).** `are-annexes-2025-etats-quantitatifs.pdf`
 est l'annexe QRT 2025 d'**AXA Retraite Entreprise** (première page :
