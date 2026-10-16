@@ -62,11 +62,14 @@ DB_AVANT_159 = RACINE / "archive" / "kpis_avant_sp_covea_20261016.db"
 # colonnes de `kpis` autorisées à changer.
 CORRECTIONS_160 = {("MAIF", "charge_sinistres"): {"value", "raw_value", "source_chapter"},
                    ("MAIF", "sp_nonvie"): {"value", "validated"},
-                   ("Covéa", "best_estimate"): {"source_page"}, ("Covéa", "marge_risque"): {"source_page"}}
+                   ("Covéa", "best_estimate"): {"source_page"}, ("Covéa", "marge_risque"): {"source_page"},
+                   # AG.Mut : page de marge_risque 207 -> 199, recopiée dans marge_risque_sur_be.
+                   ("AG.Mut", "marge_risque"): {"source_page"}, ("AG.Mut", "marge_risque_sur_be"): {"source_page"}}
 IGNORES_160 = [r"/kpisParSociete/MAIF/charge_sinistres/.*", r"/kpisParSociete/Covéa/(best_estimate|marge_risque)/.*",
-               r"/indicateursParSociete/MAIF/sp_nonvie_pct"]
+               r"/indicateursParSociete/MAIF/sp_nonvie_pct", r"/kpisParSociete/AG\.Mut/marge_risque/pageSource"]
 IGNORES_160_SOURCES = [r"/MAIF/charge_sinistres/(value|raw_value|source_chapter)", r"/MAIF/sp_nonvie/value",
-                       r"/Covéa/(best_estimate|marge_risque)/source_page"]
+                       r"/Covéa/(best_estimate|marge_risque)/source_page",
+                       r"/AG\.Mut/(marge_risque|marge_risque_sur_be)/source_page"]
 # Extrait réel, rapport-solvabilite-maif-2025.pdf p.113 (texte PyMuPDF).
 EXTRAIT_MAIF = """Primes acquises
  Brut – assurance directe
@@ -319,6 +322,12 @@ def main():
                              (cid_covea, kpi, cid_covea, kpi)).fetchall()
         verifier(f"Covéa/{kpi} : page 85 (KPI et ses 5 lignes)", pages == [(85,)] * 6, f"{pages}")
         verifier(f"Covéa/{kpi} : page 85 dans le JSON", kps["Covéa"][kpi]["pageSource"] == 85)
+    # AG.Mut : marge_risque p.199 (bilan S.02.01.02), comme ses 5 lignes, et sa copie dans marge_risque_sur_be.
+    rm = kps["AG.Mut"]["marge_risque"]
+    verifier("AG.Mut/marge_risque : page 199 (KPI et lignes)",
+             rm["pageSource"] == 199 and all(c["pageSource"] == 199 for c in rm["composants"]))
+    verifier("AG.Mut/marge_risque_sur_be : page 199 recopiée", kps["AG.Mut"]["marge_risque_sur_be"]["pageSource"] == 199
+             and kps["AG.Mut"]["marge_risque_sur_be"]["composants"][0]["pageSource"] == 199)
 
     if DB_AVANT_159.exists():
         avant = sqlite3.connect(DB_AVANT_159)

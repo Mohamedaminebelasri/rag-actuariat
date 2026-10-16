@@ -403,10 +403,14 @@ def appliquer_signes(conn):
         print(f"  {societe} {kpi} : ligne {index} = {valeur_k / 1000:,.3f} M€, total = {total:,.3f} M€")
 
 
-# 8. Page source vérifiée mais absente en base (Décision 160) : Covéa, les 5
-#    lignes « Meilleure estimation » et les 5 « Marge de risque » sont
-#    imprimées p.85 (S.02.01.02, passif) ; aucun total n'est imprimé ailleurs.
-PAGES_VERIFIEES = {("Covéa", "best_estimate"): 85, ("Covéa", "marge_risque"): 85}
+# 8. Page source vérifiée (Décision 160) : absente en base, ou fausse.
+#    Covéa : les 5 lignes « Meilleure estimation » et les 5 « Marge de
+#    risque » sont imprimées p.85 (S.02.01.02, passif) ; aucun total n'est
+#    imprimé ailleurs. AG.Mut : marge_risque pointait p.207 (triangle des
+#    sinistres S.19.01) ; ses lignes sont p.199 du rapport AG2R (S.02.01.02
+#    passif de la section AG.Mut, p.198-215) : R0590 = 116, R0680 = 1 K€,
+#    R0550 / R0640 / R0720 vides.
+PAGES_VERIFIEES = {("Covéa", "best_estimate"): 85, ("Covéa", "marge_risque"): 85, ("AG.Mut", "marge_risque"): 199}
 
 
 def appliquer_pages(conn):
