@@ -178,3 +178,216 @@ fortement, et il surestime les petites annexes de 4 à 15 pages.
 9. **Nom complet de l'entité « ARE » : non trouvé** dans les fichiers lus.
 10. **`en-Allianz-Group-SFCR-2024.pdf`** : langue et couverture par entité non
     vérifiées. Le préfixe « en- » et l'année 2024 viennent seulement du nom du fichier.
+
+---
+
+## 0.4 kpis.db et kpi_service.py
+
+Rédigé le 2026-10-16, en lecture seule.
+
+- `kpis.db` a été ouvert en `mode=ro`. Les appels à `kpi_service.py` ont été
+  faits sur une **copie** de la base dans le scratchpad, parce que
+  `KpiService._connexion()` ouvre la base en lecture-écriture
+  (`sqlite3.connect(self.db_path)`, `kpi_service.py:31`).
+- L'empreinte SHA-256 de `kpis.db` est identique avant et après :
+  `438e0475…0bbc9b`.
+- Scripts utilisés (scratchpad, hors dépôt) : `appels_kpi_service.py`,
+  `verif_pages.py`, `verif_num_imprime.py`.
+
+### Bilan
+
+| Point | Statut | En une phrase |
+|---|---|---|
+| 1. Schéma de `kpis.db` | ✅ | 7 tables utiles, 41 sociétés, 1 049 KPIs, année 2025 uniquement |
+| 2a. `get_kpis` | ✅ | Marche, mais renvoie `{}` aussi bien pour une société inconnue que pour une année absente |
+| 2b. `get_kpi` | ⚠️ | Marche, mais **lève une exception** sur une société inconnue (contrat différent des autres fonctions) |
+| 2c. `compare_kpis` | ⚠️ | Marche sur les 41 sociétés, sans filtre ni information de comparabilité |
+| 2d. `get_corpus_stats` | ⚠️ | Marche, mais mélange groupes et entités solo, modèles internes signalés et zéros |
+| 2e. `get_validation_report` | ⚠️ | Marche, mais compte les contrôles « NON CONTRÔLABLE » comme des échecs |
+| 2f. Champs renvoyés | ⚠️ | Valeur, unité et page présentes ; fiabilité éclatée en 3 champs ; nom de société, fichier PDF, libellé, composants absents |
+| 3. Cas limites | ⚠️ | Trois comportements différents selon la fonction (exception, `None`, `{}`) |
+| 4. Page physique ou imprimée | ⚠️ | `source_page` est la **page physique**. La « correction −1 dans le front » : **non trouvée** |
+| 5. 6 KPIs officiels (15/10) | ⚠️ | Valeurs accessibles ; composants et formules **non accessibles** |
+
+### 1. Schéma de `kpis.db`
+
+Source : `sqlite_master` et `pragma table_info`, base en lecture seule.
+
+| Table | Lignes | Colonnes |
+|---|---:|---|
+| `companies` | 41 | id INTEGER, name TEXT, type TEXT, country TEXT, type_document TEXT, scr_method TEXT, type_activite TEXT, unite_source TEXT, forme_juridique TEXT, famille_juridique TEXT, forme_juridique_source TEXT, groupe_parent TEXT, groupe_consolide_panel TEXT |
+| `kpis` | 1 049 | id INTEGER, company_id INTEGER, year INTEGER, category TEXT, kpi_name TEXT, value REAL, unit TEXT, source_page INTEGER, source_chapter TEXT, validated BOOLEAN, raw_value, raw_unit, source_pdf TEXT, avertissement INTEGER, note_avertissement TEXT |
+| `kpi_composants` | 1 169 | id INTEGER, company_id INTEGER, year INTEGER, kpi_name TEXT, composant_index INTEGER, composant_label TEXT, composant_code_qrt TEXT, composant_valeur REAL, composant_unite TEXT, composant_page INTEGER, operation TEXT, kpi_code TEXT, composant_detail TEXT, composant_source_pdf TEXT, composant_valide INTEGER |
+| `kpi_formules` | 188 | company_id INTEGER, year INTEGER, kpi_name TEXT, type TEXT, texte TEXT, facteur REAL, note TEXT |
+| `validation_checks` | 2 171 | id INTEGER, company_id INTEGER, year INTEGER, check_name TEXT, expected_value REAL, computed_value REAL, passed BOOLEAN, details TEXT, legitime INTEGER, note_legitimite TEXT |
+| `impact_mesures_lt` | 41 | company_id INTEGER, year INTEGER, utilise_va INTEGER, mesure_transitoire INTEGER, fp_avec REAL, scr_avec REAL, delta_fp_va REAL, delta_scr_va REAL, delta_fp_transitoires REAL, delta_scr_transitoires REAL, ratio_scr_sans_va_publie REAL, source_page INTEGER, source TEXT |
+| `corrections` | 0 | id INTEGER, company_id INTEGER, kpi_name TEXT, year INTEGER, ancienne_valeur REAL, ancienne_unite TEXT, nouvelle_valeur TEXT, commentaire TEXT, date_correction TEXT |
+
+`sqlite_sequence` (5 lignes) est une table interne de SQLite.
+
+Index présents : `idx_kpis_company_year`, `idx_kpis_kpi_name`,
+`idx_kpi_composants_company_kpi`.
+
+Répartition des KPIs par catégorie (27 noms distincts au total) :
+
+| Catégorie | KPIs distincts | Lignes |
+|---|---:|---:|
+| `scr` | 8 | 328 |
+| `fonds_propres` | 5 | 205 |
+| `indicateurs_comparables` | 6 | 188 |
+| `provisions` | 3 | 123 |
+| `activité` | 2 | 82 |
+| `solvabilité` | 2 | 82 |
+| `mcr` | 1 | 41 |
+
+Années présentes dans `kpis` : 2025 uniquement (41 sociétés).
+
+### 2. Les 5 fonctions de `kpi_service.py`
+
+**Signatures.** Résultat de `inspect.signature`. Les 5 fonctions sont des
+méthodes de la classe `KpiService(db_path=DB_PATH)`, **sans aucune annotation
+de type** (`__annotations__` vide pour les 5).
+
+| Fonction | Signature | Retour (d'après le code et l'appel) |
+|---|---|---|
+| `get_kpis` | `(self, company_name, year)` | `dict {kpi_name: ligne}`, ou `{}` si société inconnue (`kpi_service.py:174`) |
+| `get_kpi` | `(self, company_name, year, kpi_name)` | `dict` (ligne `kpis` complète), ou `None` ; lève `KpiIntrouvable` si société inconnue (`:54`) |
+| `compare_kpis` | `(self, kpi_name, year)` | `dict {société: ligne ou None}` pour toutes les sociétés de `companies` (`:189`) |
+| `get_corpus_stats` | `(self, kpi_name, year)` | `{n, moyenne, mediane, min, max}` sur les valeurs non NULL (`:195`) |
+| `get_validation_report` | `(self, company_name, year)` | `{summary: {n_checks, n_passed, n_failed, checks_echoues}, checks: [...]}` (`:216`) |
+
+**Appels réels sur Groupama et sur une entité Aéma (MACIF SAM), année 2025.**
+
+- `get_kpis("Groupama", 2025)` → dict de 26 KPIs.
+  `get_kpis("MACIF SAM", 2025)` → dict de 26 KPIs.
+  Clés de chaque ligne : `id, company_id, year, category, kpi_name, value,
+  unit, source_page, source_chapter, validated, raw_value, raw_unit,
+  source_pdf, avertissement, note_avertissement`.
+- `get_kpi("Groupama", 2025, "ratio_scr")` →
+  `{"value": 274.0, "unit": "pct", "source_page": 85, "source_chapter": "E.1", "validated": 1, "source_pdf": null, "avertissement": 0, …}`
+- `get_kpi("MACIF SAM", 2025, "ratio_scr")` →
+  `{"value": 319.0, "unit": "pct", "source_page": 463, "source_chapter": "Document combiné 'Aéma Groupe RAPPORT UNIQUE...' (621p), entité isolée pages 452-467 (…) — S.23.01.01.01/R0620", "validated": 1, …}`
+- `compare_kpis("ratio_scr", 2025)` → 41 sociétés, 0 `None`. Extrait :
+  `{"Groupama": {"value": 274.0, "source_page": 85, …}, "MACIF SAM": {"value": 319.0, "source_page": 463, …}}`
+- `get_corpus_stats("ratio_scr", 2025)` →
+  `{"n": 41, "moyenne": 276.94, "mediane": 227.0, "min": 128.0, "max": 953.0}`
+- `get_validation_report("Groupama", 2025)` →
+  `summary = {"n_checks": 59, "n_passed": 53, "n_failed": 6, "checks_echoues": ["sp_nonvie_ligne_primes_acquises_brutes_1", …, "sp_nonvie_ligne_charge_sinistres_3"]}`
+- `get_validation_report("MACIF SAM", 2025)` →
+  `summary = {"n_checks": 56, "n_passed": 50, "n_failed": 6, …}`, mêmes 6 contrôles.
+  - Le détail de ces « échecs » est
+    `"NON CONTRÔLABLE — … aucune section « Primes acquises » lisible p.80 de SFCR_2025_Groupe-Groupama.pdf (page image, sans texte)"`,
+    avec `passed=0` et `legitime=0`.
+  - Sur toute la base : 36 contrôles `sp_nonvie_ligne_*` sont dans ce cas,
+    répartis sur 10 sociétés.
+
+**Champs renvoyés : ce qui est là, ce qui manque.**
+
+| Champ attendu | Statut | Où / pourquoi |
+|---|---|---|
+| Valeur | ✅ | `value` (REAL) ; `raw_value` / `raw_unit` = chiffre brut du PDF (par exemple 14 256 819 K€ pour le SCR de CNP) |
+| Unité | ✅ | `unit` : `pct`, `pts` ou `M€` |
+| Page source | ✅ | `source_page`. NULL sur 6 lignes sur 1 049. C'est une page **physique** (voir point 4) |
+| Statut de fiabilité | ⚠️ | Éclaté en trois champs : `validated` (0/1), `avertissement` (0/1) et `note_avertissement`. Il n'existe pas de statut unique (« Vérifié » / « Calculé » / « Non comparable »). Les contrôles sont dans une autre fonction, et le champ `legitime` n'est pas pris en compte dans le résumé |
+| Nom de la société | ❌ | Seul `company_id` est renvoyé dans la ligne |
+| Fichier PDF source | ❌ | `source_pdf` est NULL partout sauf 17 lignes Generali. La correspondance société → PDF n'existe que dans `frontend/src/lib/pdf-par-societe.ts` |
+| Libellé et définition du KPI | ❌ | Ils existent dans `kpi_definitions.py` et `kpi_labels_fr.py`, mais ne sont pas exposés par `KpiService` |
+| Composants et formule | ❌ | Les tables `kpi_composants` (1 169 lignes) et `kpi_formules` (188 lignes) ne sont lues par **aucune** méthode de `KpiService` |
+| Comparabilité | ❌ | `type`, `scr_method` et `groupe_parent` (table `companies`) ne sont pas joints aux résultats de `compare_kpis` ni de `get_corpus_stats` |
+| Page imprimée | ❌ | Non stockée |
+
+### 3. Cas limites (appels réels)
+
+| Cas | `get_kpis` | `get_kpi` | `compare_kpis` | `get_corpus_stats` | `get_validation_report` |
+|---|---|---|---|---|---|
+| **KPI à valeur NULL** (`scr_souscription_sante`, 5 sociétés en base, par exemple AXA France IARD) | ligne présente avec `value: null` | ligne avec `value: null`, `source_page: null`, et l'explication dans `source_chapter` (« NULL : inclus dans un autre poste… ») | 5 lignes `value: null`, 36 non NULL, 0 `None` | NULL ignorés : `n=36`, mais `min=0.0` (des zéros sont comptés) | sans objet |
+| **Société inexistante** (`"Société Inexistante"`) | `{}` | **exception** `KpiIntrouvable: Entreprise 'Société Inexistante' absente de companies` | sans objet (porte sur toutes les sociétés) | sans objet | `{"summary": {"n_checks": 0, …}, "checks": []}` |
+| **KPI inexistant** (`"kpi_bidon"`) | sans objet | `None` | 41 entrées, toutes `None` | `{"n": 0, "moyenne": null, …}` | sans objet |
+| **Année absente** (`Groupama`, 2024) | `{}` (identique au cas « société inexistante ») | non testé | non testé | non testé | non testé |
+| **Casse ou accent différent** (`"groupama"`, `"Aéma Groupe"`) | non testé | **exception** `KpiIntrouvable`. La recherche se fait par `name =` exact ; la société s'appelle `"Aema Groupe"`, alors que `groupe_parent` vaut `"Aéma Groupe"` | non testé | non testé | non testé |
+
+Conséquences pour un agent :
+- un KPI inexistant, un KPI absent pour une société et une société absente
+  d'une comparaison donnent tous la même réponse (`None`) ;
+- une année absente et une société inexistante donnent toutes deux `{}` ;
+- `get_kpi` est la seule fonction qui interrompt l'appelant par une exception.
+
+### 4. Page physique ou page imprimée
+
+| Vérification | Résultat |
+|---|---|
+| Convention déclarée | `corriger_source_page.py` (l. 2-4) : `source_page` = « page PHYSIQUE réelle où chaque valeur de KPI apparaît dans son PDF source » |
+| Test empirique (`verif_pages.py`) | 204 lignes testées (`ratio_scr`, `ratio_mcr`, `scr_total`, `mcr`, `fonds_propres_eligibles`) dans le texte natif des pages physiques `p-1`, `p` et `p+1` (pypdf, numérotation à partir de 1). **74 trouvées sur la page physique `p`, 0 seulement sur `p-1`, 0 seulement sur `p+1`**. 117 non retrouvées (pages image comme Aéma, ou format de nombre non reconnu : non concluant), 13 non testables |
+| Bornes Aéma | `aema_entites.py` : MACIF SAM couvre les pages 452-467 du PDF original ; son `source_page` vaut 463, ce qui est cohérent avec une page physique |
+| Écart entre numéro imprimé et page physique (`verif_num_imprime.py`, numéro isolé en en-tête ou en pied de page) | **Varie selon le document** : 0 pour CNP, MACSF et SwissLife ; −1 pour l'annexe QRT d'AXA France IARD ; −2 pour MGEN (4 pages sur 5) ; non détecté pour les 14 autres PDF testés |
+| « Décalage −1 corrigé seulement dans le front » | **Non trouvé.** `export_kpis_for_frontend.py` recopie `source_page` tel quel (`"pageSource": row["source_page"]`, l. 211). Le front l'affiche tel quel (« p. N », `kpi-ligne.tsx:46`) et le passe tel quel au lecteur pdf.js (`initialPage` → `doc.getPage(currentPage)`, numérotation à partir de 1, `pdf-page-viewer.tsx:88-117`). Aucune opération `± 1` sur la page trouvée dans `frontend/src` |
+
+Conclusion :
+- la page renvoyée par `kpi_service.py` est la **page physique** du PDF ;
+- elle ouvre la bonne page dans un lecteur PDF ;
+- elle peut différer du numéro imprimé sur le document (−1 ou −2 sur certains
+  PDF, 0 sur d'autres) ;
+- un agent qui cite « p. N » doit préciser qu'il s'agit de la page du fichier
+  PDF, ou disposer du numéro imprimé, qui n'est stocké nulle part.
+
+### 5. Les 6 KPIs officiels (Décision 158, ajoutés le 15/10)
+
+Date confirmée par `git log` : `peupler_kpis_officiels_indicateurs.py` apparaît
+dans le commit `07c85c9` du 2026-10-15.
+
+Ils sont stockés dans `kpis` (catégorie `indicateurs_comparables`). Ils sont
+donc **accessibles** par `get_kpi`, `get_kpis`, `compare_kpis` et
+`get_corpus_stats` :
+
+| KPI | Unité | Lignes (non NULL) | Groupama (valeur, page, `validated`) | MACIF SAM | `get_corpus_stats` (n, médiane) |
+|---|---|---:|---|---|---|
+| `ratio_scr_sans_mesures_lt` | pct | 41 (41) | 217,6 · p. 84 · 1 | 313,4 · p. 462 · 1 | 41 · 217,6 |
+| `impact_va` | pts | 41 (41) | −4,2 · p. 84 · 1 | −5,2 · p. 462 · 1 | 41 · −2,4 |
+| `impact_transitoires` | pts | 4 (4) | −51,9 · p. 84 · 1 | `None` (absent) | 4 · −35,4 |
+| `marge_risque_sur_be` | pct | 41 (41) | 3,45 · p. 79 · 1 | 5,71 · p. 453 · 1 | 41 · 2,73 |
+| `mcr_en_pct_scr` | pct | 36 (36) | `None` (absent ; Groupama est un groupe) | 25,17 · p. 463 · 1 | 36 · 37,825 |
+| `sp_nonvie` | pct | 25 (25) | 63,1 · p. 80 · **0** | 73,1 · p. 455 · **0** | 25 · 70,7 |
+
+Limites :
+- leurs **composants et formules** (`kpi_composants`, `kpi_formules`) ne sont
+  exposés par aucune méthode ;
+- `sp_nonvie` a `validated=0` pour Groupama et MACIF SAM ;
+- l'absence d'un KPI (`None`) n'est pas expliquée : `mcr_en_pct_scr` est
+  calculé « solo seulement », `impact_transitoires` ne concerne que 4 sociétés
+  (Décision 158).
+
+### Ce qui manque pour en faire un outil d'agent
+
+1. **Résolution des noms de société.** Aujourd'hui, seule une correspondance
+   exacte sur `companies.name` fonctionne (`"groupama"` et `"Aéma Groupe"`
+   échouent). Il faut :
+   - un outil « lister les sociétés » (`liste_entreprises()` existe, mais ne
+     fait pas partie des 5 fonctions) ;
+   - une gestion des alias (accents, casse, nom du groupe).
+2. **Catalogue des KPIs.** Noms techniques, libellé français, unité,
+   définition et catégorie, à partir de `kpi_definitions.py` et
+   `kpi_labels_fr.py`. Sans ce catalogue, l'agent doit deviner `kpi_name`.
+3. **Contrat d'erreur unique et explicite.** Distinguer société inconnue,
+   année absente, KPI inconnu, KPI non applicable et valeur NULL, au lieu
+   d'un mélange d'exception, de `None` et de `{}`.
+4. **Réponse auto-suffisante pour citer.** Ajouter le nom de la société, le
+   **fichier PDF** (reprendre `PDF_PAR_SOCIETE` côté Python), la page physique
+   clairement nommée (et la page imprimée si on la veut), le libellé et un
+   statut de fiabilité unique (validé, avertissement + note).
+5. **Traçabilité.** Exposer `kpi_composants` et `kpi_formules`, pour que
+   l'agent puisse expliquer un KPI calculé (par exemple les 6 KPIs officiels).
+6. **Comparaisons honnêtes.** Ajouter des filtres et des métadonnées de
+   comparabilité dans `compare_kpis` et `get_corpus_stats` :
+   - type groupe ou solo, `scr_method`, `avertissement` ;
+   - exclusion optionnelle des zéros.
+
+   Les statistiques actuelles mélangent tout : par exemple `n=36` avec
+   `min=0.0` sur `scr_souscription_sante`.
+7. **Résumé de validation fiable.** Séparer les contrôles « NON CONTRÔLABLE »
+   des vrais échecs, et tenir compte de `legitime`.
+8. **Technique.**
+   - annotations de type et schémas JSON des paramètres et retours, pour la
+     définition des outils ;
+   - connexion SQLite en lecture seule (`mode=ro`) ;
+   - un seul millésime (2025) en base : toute question sur l'évolution d'une
+     année à l'autre est hors de portée de `kpis.db`.
