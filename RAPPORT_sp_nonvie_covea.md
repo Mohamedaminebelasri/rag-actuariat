@@ -1,11 +1,67 @@
-# Rapport — S/P non-vie « Vérifié » et pages source Covéa (Décision 159)
+# Rapport — S/P non-vie « Vérifié » et pages source Covéa (Décisions 159 et 160)
 
 Date : 16/10/2026. Tag de départ : `avant-sp-covea`. Sauvegardes (non
 commitées) : `archive/kpis_avant_sp_covea_20261016.db`,
 `archive/donnees-extraites_avant_sp_covea.json`,
 `archive/kpi-sources_avant_sp_covea.json`.
 
-## A. S/P non-vie : 14 « Vérifié » sur 25 (0 avant)
+## Mise à jour — tes deux décisions appliquées (Décision 160)
+
+Tag `avant-maif-signe`. Sauvegardes : `archive/kpis_avant_maif_signe_20261016.db`,
+`archive/donnees-extraites_avant_maif_signe.json`,
+`archive/kpi-sources_avant_maif_signe.json`.
+
+| | Avant | Après |
+|---|---|---|
+| Ligne MAIF « sinistres – réassurance non proportionnelle acceptée » | +2,097 M€ | **−2,097 M€** (comme p.113) |
+| Charge de sinistres MAIF | 2 393,639 M€ | **2 389,445 M€** |
+| S/P non-vie MAIF | 60,4 %, non vérifié | **60,3 %, « Vérifié »** |
+| Échecs MAIF du contrôle | 4 | **0** |
+| S/P non-vie vérifiés | 14 sur 25 | **15 sur 25** |
+| Page source `best_estimate` / `marge_risque` Covéa | vide | **85** (le KPI et ses 5 lignes) |
+
+- La correction est écrite dans `corrections_comparabilite.py` (sections 7
+  et 8). Elle est donc rejouée après chaque réextraction. Si la ligne ne
+  ressemble plus à celle attendue, le script s'arrête au lieu de corriger
+  au hasard.
+- La cause est le format comptable : le signe « - » est séparé du nombre,
+  et le lecteur de libellés ne le voit pas. Le lecteur n'a pas été modifié.
+- **Rien d'autre n'a changé** (comparaison avec la sauvegarde). Seuls deux
+  autres contrôles bougent : signe et ordre de grandeur de la charge de
+  sinistres MAIF. Ils prennent la nouvelle valeur et passent toujours.
+
+**Le même défaut existe-t-il ailleurs ? Non.** J'ai cherché sur 1 187
+montants positifs (pages avec texte) ceux qui sont imprimés avec un « - »
+devant. En dehors de MAIF, il n'y a que 2 fausses alertes :
+
+| Société | Montant | Explication |
+|---|---|---|
+| MAIF | fonds propres niveau 2 (9 725 K€) | le tiret est la case vide d'à côté ; 5 319 982 + 9 725 = 5 329 707 |
+| AG.Mut | marge de risque (117 K€) | le « -117 » de la p.207 est une case du triangle des sinistres, sans rapport |
+
+**Autre problème trouvé, non corrigé :** la page source de `marge_risque`
+d'AG.Mut est la page 207 (le triangle des sinistres). Ses lignes sont
+pourtant page 199. Dis-moi si je dois la corriger.
+
+Limite : 59 pages sont des images (annexes du rapport Aéma, Generali IARD,
+Groupama…) et ne peuvent pas être relues de cette façon.
+
+**Fichiers modifiés :**
+- code : `corrections_comparabilite.py`, `peupler_kpis_officiels_indicateurs.py`
+  (repli page 85 supprimé, devenu inutile) et `test_kpis_officiels.py` ;
+- données : `kpis.db`, `donnees-extraites.json` et `kpi-sources.json`.
+
+Les deux fichiers de données sont régénérés par le même export. Dans
+`kpi-sources.json`, 6 champs changent : charge et S/P de MAIF, pages de
+Covéa.
+
+**Tests :**
+- `validate_kpis.py --all` (Python du .venv) : 0 échec réel ;
+- `test_kpis_officiels.py` : OK, avec les deux sauvegardes ;
+- `test_normalisation_signe.py` : OK ;
+- `corrections_comparabilite.py` rejoué deux fois : même résultat.
+
+## A. S/P non-vie : 14 « Vérifié » sur 25 (0 avant) — 15 après la Décision 160
 
 Nouveau contrôle dans `validate_kpis.py`. Pour chaque société, le script
 ouvre la page source du tableau des primes et sinistres (S.05.01) et
@@ -34,8 +90,8 @@ Le KPI n'est « Vérifié » que si tout concorde.
 faux. Le tableau le prouve : 2 367 845 + 23 697 − 2 097 − 281 401 =
 2 108 044, exactement le net imprimé. Avec +2 097, le calcul ne tombe pas
 juste. Conséquence : le S/P non-vie de MAIF serait de 60,3 % au lieu de
-60,4 %, et sa charge de sinistres est trop haute de 4,2 M€. Je n'ai rien
-corrigé : dis-moi si je dois le faire.
+60,4 %, et sa charge de sinistres est trop haute de 4,2 M€. → **Corrigé
+depuis, à ta demande (voir la mise à jour en haut).**
 
 ## B. Covéa : la page 85 est la bonne, rien n'est changé
 
@@ -58,8 +114,7 @@ Le repli « page 85 » ne sert qu'à Covéa : aucune autre société ne
 l'utilise. À savoir, sans lien avec ce repli : ces deux KPIs de Covéa et le
 `ratio_mcr` de CNP n'ont pas de page source en base. Certaines lignes de
 détail n'en ont pas non plus (`provisions_techniques` de 8 sociétés, primes
-et sinistres de CNP). Je peux écrire la page 85 en base pour Covéa si tu
-veux.
+et sinistres de CNP). → **Page 85 écrite en base depuis, à ta demande.**
 
 ## Ce qui a changé (comparaison avant / après)
 
@@ -96,4 +151,5 @@ valeurs, même statut « Vérifié », mêmes contrôles 1 à 11.
 
 ## Commits
 
-Voir `git log avant-sp-covea..HEAD`.
+Voir `git log avant-sp-covea..HEAD` (Décision 159) et
+`git log avant-maif-signe..HEAD` (Décision 160).

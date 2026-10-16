@@ -10127,7 +10127,8 @@ Biens −1 920) ; en base +2,097 M€. Preuve par le tableau : 2 367 845 +
 23 697 − 2 097 − 281 401 (part des réassureurs) = 2 108 044 (net
 imprimé) ; avec +2 097, l'identité ne tombe pas juste. Effet : S/P non-vie
 60,3 % au lieu de 60,4 %, et `charge_sinistres` de MAIF surévaluée de
-4,194 M€. Rien n'est corrigé sans accord de l'utilisateur.
+4,194 M€. Rien n'est corrigé sans accord de l'utilisateur. *(Corrigé à la
+demande de l'utilisateur : Décision 160.)*
 
 Cas AXA France IARD : la ligne « réassurance non proportionnelle acceptée »
 des sinistres (−12 038,51 K€) est négative en base comme dans le PDF ;
@@ -10144,7 +10145,8 @@ ce ne sont pas les KPIs, qui sont bruts. Le contrôle
 `marge_risque_sur_be` de Covéa (6,26 %) reste « Vérifié ». Le repli
 `PAGE_VERIFIEE` de `peupler_kpis_officiels_indicateurs.py` ne sert qu'à
 Covéa ; les deux KPIs gardent `source_page` NULL en base (possible de
-l'écrire à 85 sur demande).
+l'écrire à 85 sur demande). *(Page 85 écrite en base à la demande de
+l'utilisateur : Décision 160.)*
 
 **Avant / après** (base et JSON comparés à la sauvegarde) : dans `kpis`,
 seul `validated` de 14 `sp_nonvie` change (0 → 1) ; dans
@@ -10162,3 +10164,67 @@ Ordre de rejeu complet : extractions → `populate_company_metadata.py` →
 `.venv/Scripts/python.exe -I validate_kpis.py --all` →
 `peupler_kpis_officiels_indicateurs.py` → `export_kpis_for_frontend.py` →
 `test_kpis_officiels.py`.
+
+## Décision 160 — MAIF : signe d'une ligne de sinistres corrigé ; page 85 de Covéa écrite en base
+
+Décisions de l'utilisateur après la Décision 159. Tag de départ
+`avant-maif-signe` ; sauvegardes locales non commitées :
+`archive/kpis_avant_maif_signe_20261016.db`,
+`archive/donnees-extraites_avant_maif_signe.json`,
+`archive/kpi-sources_avant_maif_signe.json`.
+
+**1. MAIF, ligne « Brut – Réassurance non proportionnelle acceptée » de la
+charge des sinistres : +2,097 → −2,097 M€.** Imprimée −2 097 K€ p.113 de
+`rapport-solvabilite-maif-2025.pdf` (preuve : Décision 159). Cause : en
+format comptable, le « - » est détaché du nombre et `extraire_par_libelle`
+(appelé par `batch_diagnostic` / `peupler_composants_libelles_fr.py`) ne
+le voit pas. Correction dans `corrections_comparabilite.py`, nouvelle
+section 7 `SIGNES_CORRIGES` (rejouée après chaque ré-extraction ;
+idempotente : refuse d'agir si la ligne n'a plus le libellé ou la valeur
+absolue attendus) : le composant prend la valeur imprimée, le KPI
+`charge_sinistres` redevient la somme de ses composants (2 393,639 →
+**2 389,445 M€**, `raw_value` en K€), `source_chapter` « A.2 — signe d'une
+ligne corrigé p.113 (Décision 160) ». L'extracteur n'est pas modifié.
+Résultat : les 4 échecs MAIF du contrôle 12 disparaissent, `sp_nonvie` de
+MAIF passe de 60,4 % à **60,3 %** et devient « Vérifié » (identité du
+tableau : 2 389 445 − 281 401 = 2 108 044). **15 sp_nonvie vérifiés sur
+25.** `validate_kpis.py --all` : 0 échec réel ; `charge_sinistres` de MAIF
+reste non vérifié (aucun contrôle ne couvre ce KPI) et sans avertissement.
+
+**2. Covéa, `best_estimate` et `marge_risque` : `source_page` = 85** (KPI et
+ses 5 lignes chacun), section 8 `PAGES_VERIFIEES` de
+`corrections_comparabilite.py`. Le repli `PAGE_VERIFIEE` de
+`peupler_kpis_officiels_indicateurs.py` est supprimé (inutile : il ne
+remplissait que les pages vides). `source_chapter` reste « D.2 ».
+
+**Même défaut de signe ailleurs ? Non trouvé.** Recherche en lecture seule
+sur 1 187 montants positifs (KPIs extraits et leurs lignes, pages avec
+texte) : imprimés avec un « - » devant ? 3 cas en plus de MAIF, aucun
+n'est un signe perdu :
+- MAIF `fonds_propres_t2` (p.122) : le tiret est la case vide du niveau 1
+  restreint (5 319 982 + 9 725 = 5 329 707) ;
+- AG.Mut `marge_risque` (117 K€, deux fois) : le « -117 » de la p.207 est
+  une case du triangle des sinistres (S.19.01), sans rapport. Mais cela
+  montre un **autre défaut, non corrigé** : la page source de
+  `marge_risque` d'AG.Mut est 207 (triangle), alors que ses lignes sont
+  p.199 (R0590 = 116, R0680 = 1).
+Limite : 59 pages image (annexes QRT Aéma, Generali IARD, Groupama…) ne
+peuvent pas être examinées ainsi.
+
+**Avant / après** (comparé à la sauvegarde) : `kpis` — `charge_sinistres`
+MAIF (`value`, `raw_value`, `source_chapter`), `sp_nonvie` MAIF (`value`,
+`validated`), `best_estimate` / `marge_risque` Covéa (`source_page`) ;
+`kpi_composants` — 1 ligne MAIF de `charge_sinistres` et la ligne
+correspondante de `sp_nonvie`, `composant_valide` de 3 lignes `sp_nonvie`
+MAIF, pages des 10 lignes Covéa ; `validation_checks` — seuls
+`signe_charge_sinistres` et `magnitude_charge_sinistres` de MAIF changent
+de valeur (toujours passés) et 4 contrôles 12 MAIF passent ;
+`kpi_formules`, `impact_mesures_lt`, `companies` identiques.
+`donnees-extraites.json` : ces champs, `indicateursParSociete.MAIF.sp_nonvie_pct`
+(60,4 → 60,3) et `genereLe`. `kpi-sources.json` (régénéré par le même
+export) : 6 champs (`value` / `raw_value` / `source_chapter` de la charge
+MAIF, `value` du S/P MAIF, `source_page` des 2 KPIs Covéa).
+`test_kpis_officiels.py` : MAIF dans la liste des vérifiés, contrôles de
+la ligne MAIF, du total, du S/P à 60,3 % et des pages 85 ; comparaisons
+avec les sauvegardes limitées aux corrections voulues (`CORRECTIONS_160`).
+`corrections_comparabilite.py` rejoué deux fois : résultat identique.
