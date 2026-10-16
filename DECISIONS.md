@@ -10343,3 +10343,11 @@ citent un tableau officiel, toujours expliqué).
 À signaler à la fenêtre front (non modifié) : le commentaire de
 `frontend/src/lib/donnees-extraites-utils.ts` (l.151, « chapitreSource,
 qui garde la base technique ») n'est plus exact.
+
+## Décision 162 — Périmètre d'indexation du Chat AI
+
+- L'ingestion Qdrant du Chat AI n'indexe **que** les PDF listés dans la table `documents_sfcr` de `kpis.db` (47 lignes, 27 PDF au 16/10/2026). Tout autre PDF de `data/` est hors périmètre et n'est jamais indexé.
+- Hors périmètre (5) : `SFCR_2024_Groupe-Groupama.pdf` et `en-Allianz-Group-SFCR-2024.pdf` (exercice 2024 ; `kpis.db` ne contient que 2025) ; `Pacifica-–-SFCR-2025.pdf`, `Rapport_de_solvabilité_Allianz_IARD_2025.pdf` et `are-annexes-2025-etats-quantitatifs.pdf` (AXA Retraite Entreprise) (entités absentes de `kpis.db`).
+- Les rapports 2024 sont conservés dans `data/` pour de futures questions d'évolution N-1.
+- L'ajout de Pacifica, Allianz IARD et AXA Retraite Entreprise à `kpis.db` est reporté (à discuter avec le fondateur).
+- À traiter au titre 0.2 : les collections Qdrant actuelles contiennent déjà Groupama 2024 (`ingest_qdrant_2024.py`, Décision 031), ce qui n'est pas conforme à cette règle (non vérifié sur le serveur).

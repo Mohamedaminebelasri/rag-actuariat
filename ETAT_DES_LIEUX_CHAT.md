@@ -422,6 +422,35 @@ Vérifications sur le texte (PyMuPDF), pour les deux fichiers :
 - **Les 41 sociétés ont désormais un rapport complet** : aucune ne reste avec
   une annexe seule.
 
+### P4 — résolu (16/10)
+
+**Vérification.** `data/` contient 32 PDF et `documents_sfcr` en cite 27.
+Les 27 chemins existent tous. **Exactement 5 PDF sont absents** de la table :
+ni les deux Cardif ajoutés au P3, ni les autres nouveaux fichiers n'y
+figurent. Aucune de ces entités n'est dans `companies`. Les seules sociétés
+voisines en base sont Allianz Vie, AXA France Vie et AXA France IARD, et
+Groupama pour l'exercice 2025.
+
+| Fichier (`data/`) | Entité (page de titre) | Exercice | Type | Pages | Raison |
+|---|---|---|---|---:|---|
+| `SFCR_2024_Groupe-Groupama.pdf` | Groupe Groupama (Groupama Assurances Mutuelles) | 2024 (« au 31 décembre 2024 ») | rapport complet (A à E) | 86 | année 2024 |
+| `en-Allianz-Group-SFCR-2024.pdf` | Allianz Group (en anglais) | 2024 (« 31 December 2024 ») | rapport complet (A à E) | 240 | année 2024, et entité de groupe absente de `kpis.db` |
+| `Pacifica-–-SFCR-2025.pdf` | Pacifica | 2025 (« 31/12/2025 ») | rapport complet (A à E, annexes QRT incluses) | 69 | entité absente de `kpis.db` |
+| `Rapport_de_solvabilité_Allianz_IARD_2025.pdf` | Allianz Iard | 2025 (« 31 décembre 2025 ») | rapport complet (A à E, annexes QRT incluses) | 106 | entité absente de `kpis.db` |
+| `are-annexes-2025-etats-quantitatifs.pdf` | AXA Retraite Entreprise | 2025 (d'après le titre ; aucune date 31/12 dans le texte) | annexe QRT seule, nomenclature nationale RC (Décision 070) | 4 | entité absente de `kpis.db` |
+
+**Règle.** La **Décision 162** (« Périmètre d'indexation du Chat AI ») fixe
+que l'ingestion Qdrant du Chat AI n'indexe que les PDF de `documents_sfcr` ;
+ces 5 fichiers ne sont jamais indexés. Ils restent dans `data/` : les
+rapports 2024 servent aux futures questions N-1, et l'ajout des 3 autres
+entités à `kpis.db` est reporté (à discuter avec le fondateur). Rien n'a été
+modifié : ni `kpis.db`, ni le code, ni les PDF.
+
+**Écart à traiter au 0.2.** D'après la Décision 031 et `ingest_qdrant_2024.py`,
+les collections Qdrant actuelles contiennent déjà des points Groupama 2024,
+ce qui n'est pas conforme à la Décision 162. Je ne l'ai pas encore vérifié
+sur le serveur.
+
 **Découverte au passage (anomalie 9).** `are-annexes-2025-etats-quantitatifs.pdf`
 est l'annexe QRT 2025 d'**AXA Retraite Entreprise** (première page :
 « AXA Retraite Entreprise — Rapport sur la Solvabilité et la Situation
