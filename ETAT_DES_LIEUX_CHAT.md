@@ -804,3 +804,48 @@ fixe, car l'écart varie selon le document (point 4 : 0 pour CNP, MACSF et
 SwissLife ; −1 pour l'annexe QRT d'AXA France IARD ; −2 pour MGEN). Le
 format exact de la citation sera fixé au titre 5 du plan. Rien d'autre n'a
 été modifié : ni `kpis.db`, ni le code, ni CLAUDE.md.
+
+### P7 — résolu (16/10)
+
+**Avant le changement.**
+- **Requêtes :** `kpi_service.py` ne contient que des `SELECT` (13 appels
+  `execute`). Il n'a aucun `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `PRAGMA`
+  ni `commit` explicite.
+- **Appelants :** le seul fichier du dépôt qui l'importe est
+  `export_kpis_json.py`, en lecture seule. Ce script est obsolète
+  (Décision 157 : « ne pas relancer », car il écrit `kpis_export.json`).
+  `ajouter_valeurs_brutes.py` ne le cite que dans un commentaire. Aucun
+  fichier non suivi ne l'importe, et le front ne l'appelle pas. Personne
+  n'a donc besoin d'écrire par sa connexion.
+- **Référence « avant » :** elle a été capturée sur une **copie** de
+  `kpis.db`. Elle couvre les 5 fonctions sur Groupama, MACIF SAM et Abeille
+  Vie (Aéma), `compare_kpis` et `get_corpus_stats` sur `ratio_scr`,
+  `scr_total` et `sp_nonvie`, les 3 cas limites du point 3, et
+  `export_kpis_json.construire_export()` en mémoire (sans écrire de
+  fichier).
+
+**Changement.** Seule `_connexion()` est modifiée (+5 lignes, −1). La
+connexion devient
+`sqlite3.connect(f"{Path(db_path).resolve().as_uri()}?mode=ro", uri=True)`,
+soit `file:///C:/Users/PC/Documents/rag-actuariat/kpis.db?mode=ro`. Si le
+fichier est absent, `FileNotFoundError("Base KPI introuvable : …")` est levée
+avant la connexion. La gestion des erreurs des fonctions n'est pas touchée
+(P8).
+
+**Contrôles.**
+
+| Contrôle | Résultat |
+|---|---|
+| 5 fonctions + `construire_export()` : avant (copie, ancien code) / après (original, `mode=ro`) | ✅ 22 entrées identiques, aucune différence (les cas limites aussi : `{}`, `None`, `KpiIntrouvable`) |
+| `UPDATE` puis `INSERT` sur une copie, avec `_connexion()` du service | ✅ tous deux refusés : `sqlite3.OperationalError: attempt to write a readonly database` ; la copie est inchangée (`cmp`) |
+| Base absente | ✅ `FileNotFoundError : Base KPI introuvable : …\base_absente.db`, aucun fichier créé |
+| Chemin avec espace et accent (`Dossier avec espace é`) | ✅ lecture correcte (Groupama `ratio_scr` 274.0, p. 85) |
+| Chemin par défaut, script lancé depuis un autre dossier | ✅ lecture correcte |
+| Empreinte de l'original `kpis.db` | ✅ identique avant et après (`08b6fa17846d7adb…`), aucune modification Git |
+| Scripts appelants | `export_kpis_json.py` est vérifié par `construire_export()` en mémoire (identique). Son `main()` n'a pas été relancé, car il réécrirait `kpis_export.json`, supprimé par la Décision 157 |
+
+Remarque, sans correction (hors périmètre) : les méthodes utilisent
+`with self._connexion() as conn:`. Ce bloc gère une transaction, mais ne
+**ferme** pas la connexion : elle reste ouverte jusqu'au ramasse-miettes.
+C'est sans risque en lecture seule, mais à reprendre au titre 3 si l'agent
+appelle le service très souvent.

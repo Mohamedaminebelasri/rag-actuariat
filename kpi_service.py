@@ -28,7 +28,12 @@ class KpiService:
         self.db_path = db_path
 
     def _connexion(self):
-        conn = sqlite3.connect(self.db_path)
+        # Lecture seule imposée par SQLite (mode=ro) : toute écriture est
+        # refusée, et une base absente lève une erreur au lieu d'être créée vide.
+        chemin = Path(self.db_path).resolve()
+        if not chemin.is_file():
+            raise FileNotFoundError(f"Base KPI introuvable : {chemin}")
+        conn = sqlite3.connect(f"{chemin.as_uri()}?mode=ro", uri=True)
         conn.row_factory = sqlite3.Row
         return conn
 
