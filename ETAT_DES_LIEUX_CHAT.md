@@ -1042,9 +1042,11 @@ la base) :
   tourne sur l'original en lecture seule : « Contrôles Groupama 2025 :
   53/59 passés », sans liste d'échecs.
 
-### P14 — vérification (16/10)
+### P14 — résolu (16/10)
 
-Lecture seule ; aucun fichier n'a été modifié en dehors de ce rapport.
+Vérification d'abord, en lecture seule (points 1 à 3), puis correction
+(point 4). Le tableau ci-dessous montre les libellés **avant** la
+correction.
 
 **1. Libellés des 27 KPI** : `label` de `kpi_definitions.py` comparé à
 `catalogue_kpis.libelle`, qui est le libellé affiché par le front. Il y a
@@ -1134,6 +1136,33 @@ front :
   (`kpi_labels_fr.py` etc.) sont un sujet distinct. Elles reproduisent le
   texte imprimé dans les rapports, et ne doivent **pas** être alignées sur
   les libellés d'affichage.
+
+**4. Correction.** Les 17 libellés différents de `KPI_DEFINITIONS` dans
+`kpi_definitions.py` sont remplacés par le libellé du front (colonne
+« Libellé front » du tableau, identique à `catalogue_kpis`). Le diff fait
+17 lignes, uniquement des champs `label`. En particulier, « Fonds propres
+de base Tier 1 non repris / repris » devient « Fonds propres Tier 1 non
+restreint / restreint ». `kpi_labels_fr.py` n'est pas modifié.
+
+Contrôles :
+- **Libellés :** les 27 libellés de `kpi_definitions.py` (21 extraits et 6
+  officiels) sont désormais identiques à `catalogue_kpis.libelle`.
+- **Autres clés :** aucune autre clé n'a changé, par comparaison des
+  définitions avant et après. `kpi_name`, `category`, `unit`, `qrt_source`,
+  `sfcr_chapter`, `sign` et, pour les officiels, `indicateur`, `classement`
+  et `description` sont identiques. Le nombre et l'ordre des KPI aussi. Le
+  contrôle intégré (`python kpi_definitions.py`) passe.
+- **Catalogue :** `kpis.db` a été sauvegardée
+  (`archive/kpis_avant_p14_libelles_20261016_231903.db`, SHA-256
+  `5647a3df62f7e09ec1a96878c6e549c1f37ad64fe774f59132439bdc98ffdc99`), puis
+  `creer_table_catalogue_kpis.py` a été relancé. `catalogue_kpis` et les 9
+  autres tables sont **strictement identiques**. Comme le script réécrit la
+  table et change les octets du fichier sans changer son contenu, le
+  fichier sauvegardé a été remis en place : `kpis.db` n'est pas modifiée
+  par ce changement.
+- **Anciens termes :** il ne reste aucune occurrence de « non repris » ni
+  de « Tier 1 repris » dans le code Python du projet (recherche sur tous
+  les `.py`, hors `.venv`).
 
 ### P15 — résolu (16/10)
 

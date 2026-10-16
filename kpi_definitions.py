@@ -28,7 +28,7 @@ KPI_DEFINITIONS = [
     # --- Solvabilité (2) ---
     {
         "kpi_name": "ratio_scr",
-        "label": "Ratio de couverture du SCR",
+        "label": "Ratio SCR",
         "category": "solvabilité",
         "unit": "pct",
         "qrt_source": "S.23.01",
@@ -37,7 +37,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "ratio_mcr",
-        "label": "Ratio de couverture du MCR",
+        "label": "Ratio MCR",
         "category": "solvabilité",
         "unit": "pct",
         "qrt_source": "S.23.01",
@@ -48,7 +48,7 @@ KPI_DEFINITIONS = [
     # --- Fonds propres (5) ---
     {
         "kpi_name": "fonds_propres_eligibles",
-        "label": "Total des fonds propres éligibles",
+        "label": "Fonds propres éligibles",
         "category": "fonds_propres",
         "unit": "M€",
         "qrt_source": "S.23.01",
@@ -57,7 +57,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "fonds_propres_t1_nr",
-        "label": "Fonds propres de base Tier 1 non repris",
+        "label": "Fonds propres Tier 1 non restreint",
         "category": "fonds_propres",
         "unit": "M€",
         "qrt_source": "S.23.01",
@@ -66,7 +66,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "fonds_propres_t1_r",
-        "label": "Fonds propres de base Tier 1 repris",
+        "label": "Fonds propres Tier 1 restreint",
         "category": "fonds_propres",
         "unit": "M€",
         "qrt_source": "S.23.01",
@@ -75,7 +75,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "fonds_propres_t2",
-        "label": "Fonds propres de base Tier 2",
+        "label": "Fonds propres Tier 2",
         "category": "fonds_propres",
         "unit": "M€",
         "qrt_source": "S.23.01",
@@ -84,7 +84,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "fonds_propres_t3",
-        "label": "Fonds propres de base Tier 3",
+        "label": "Fonds propres Tier 3",
         "category": "fonds_propres",
         "unit": "M€",
         "qrt_source": "S.23.01",
@@ -95,7 +95,7 @@ KPI_DEFINITIONS = [
     # --- SCR (8) ---
     {
         "kpi_name": "scr_total",
-        "label": "Capital de solvabilité requis (SCR total)",
+        "label": "SCR total",
         "category": "scr",
         "unit": "M€",
         "qrt_source": "S.25.01",
@@ -113,7 +113,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "scr_souscription_vie",
-        "label": "SCR — Risque de souscription vie",
+        "label": "SCR — Souscription vie",
         "category": "scr",
         "unit": "M€",
         "qrt_source": "S.25.01",
@@ -122,7 +122,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "scr_souscription_nonvie",
-        "label": "SCR — Risque de souscription non-vie",
+        "label": "SCR — Souscription non-vie",
         "category": "scr",
         "unit": "M€",
         "qrt_source": "S.25.01",
@@ -131,7 +131,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "scr_souscription_sante",
-        "label": "SCR — Risque de souscription santé",
+        "label": "SCR — Souscription santé",
         "category": "scr",
         "unit": "M€",
         "qrt_source": "S.25.01",
@@ -140,7 +140,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "scr_contrepartie",
-        "label": "SCR — Risque de contrepartie (défaut)",
+        "label": "SCR — Risque de contrepartie",
         "category": "scr",
         "unit": "M€",
         "qrt_source": "S.25.01",
@@ -158,7 +158,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "scr_diversification",
-        "label": "SCR — Effet de diversification",
+        "label": "Effet de diversification",
         "category": "scr",
         "unit": "M€",
         "qrt_source": "S.25.01",
@@ -169,7 +169,7 @@ KPI_DEFINITIONS = [
     # --- Provisions (3) ---
     {
         "kpi_name": "best_estimate",
-        "label": "Best estimate (provisions techniques)",
+        "label": "Best estimate",
         "category": "provisions",
         "unit": "M€",
         "qrt_source": "S.02.01",
@@ -187,7 +187,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "provisions_techniques",
-        "label": "Provisions techniques totales",
+        "label": "Provisions techniques",
         "category": "provisions",
         "unit": "M€",
         "qrt_source": "S.02.01",
@@ -198,7 +198,7 @@ KPI_DEFINITIONS = [
     # --- MCR (1) ---
     {
         "kpi_name": "mcr",
-        "label": "Capital minimum requis (MCR)",
+        "label": "MCR",
         "category": "mcr",
         "unit": "M€",
         "qrt_source": "S.28.01",
@@ -218,7 +218,7 @@ KPI_DEFINITIONS = [
     },
     {
         "kpi_name": "charge_sinistres",
-        "label": "Charge des sinistres",
+        "label": "Charge de sinistres",
         "category": "activité",
         "unit": "M€",
         "qrt_source": "S.05.01",
