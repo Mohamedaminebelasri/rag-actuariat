@@ -247,8 +247,10 @@ export function AidePanel({ sousOnglet }: { sousOnglet: SousOnglet }) {
                   grisée signale un KPI non comparable (activité, modèle de capital, périmètre ou forme juridique
                   différents), une icône « i » une comparaison avec réserve ; la note en donne la raison. La moyenne
                   exclut les sociétés déjà consolidées dans un groupe sélectionné et ne mélange pas
-                  solo et groupe. « Comparer à ses pairs » sélectionne les sociétés de même activité, modèle et
-                  périmètre que la première sélectionnée.
+                  solo et groupe. « Comparer à ses pairs » part de la première société sélectionnée et garde, parmi
+                  les sociétés de même activité, modèle et périmètre, les 7 dont le SCR est le plus proche du sien
+                  (8 au total). Quand le groupe de pairs est plus grand, une phrase le rappelle ; le classement
+                  « Position parmi les pairs » (Analyse individuelle) utilise toujours tout le groupe.
                 </p>
               </Section>
 
